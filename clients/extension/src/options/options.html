@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LeetLoop Settings</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>LeetLoop Settings</h1>
+      <p class="subtitle">Configure your Supabase connection for cloud sync</p>
+    </header>
+
+    <form id="settings-form">
+      <section class="section">
+        <h2>Supabase Configuration</h2>
+        <p class="description">
+          Enter your Supabase project credentials to enable cloud sync.
+          You can find these in your Supabase project settings under API.
+        </p>
+
+        <div class="form-group">
+          <label for="supabase-url">Project URL</label>
+          <input
+            type="url"
+            id="supabase-url"
+            name="supabaseUrl"
+            placeholder="https://your-project.supabase.co"
+          >
+          <span class="hint">Your Supabase project URL</span>
+        </div>
+
+        <div class="form-group">
+          <label for="supabase-key">Anon Key</label>
+          <input
+            type="password"
+            id="supabase-key"
+            name="supabaseAnonKey"
+            placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          >
+          <span class="hint">Your Supabase anon/public key (safe to use in browser)</span>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>User ID</h2>
+        <div class="form-group">
+          <label for="user-id">Anonymous ID</label>
+          <input
+            type="text"
+            id="user-id"
+            name="userId"
+            readonly
+          >
+          <span class="hint">Your unique anonymous identifier (auto-generated)</span>
+        </div>
+      </section>
+
+      <div class="actions">
+        <button type="submit" class="btn-primary">Save Settings</button>
+        <button type="button" id="sync-btn" class="btn-secondary">Sync Pending</button>
+      </div>
+
+      <div id="status" class="status"></div>
+    </form>
+
+    <section class="section">
+      <h2>Setup Instructions</h2>
+      <ol class="instructions">
+        <li>Create a free Supabase project at <a href="https://supabase.com" target="_blank">supabase.com</a></li>
+        <li>Run the migrations from <code>supabase/migrations/</code> in the SQL Editor</li>
+        <li>Copy your Project URL and anon key from Project Settings → API</li>
+        <li>Paste them above and click Save Settings</li>
+      </ol>
+    </section>
+  </div>
+  <script src="options.js" type="module"></script>
+</body>
+</html>

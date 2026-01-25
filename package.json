@@ -1,0 +1,28 @@
+{
+  "name": "leetloop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A personal learning system that captures LeetCode problem-solving behavior and uses spaced repetition to strengthen weak areas",
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev": "pnpm -r dev",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "dev:web": "pnpm --filter @leetloop/web dev",
+    "dev:api": "cd api && uvicorn app.main:app --reload --port 8080",
+    "build:web": "pnpm --filter @leetloop/web build",
+    "build:extension": "pnpm --filter @leetloop/extension build",
+    "db:push": "supabase db push",
+    "db:reset": "supabase db reset",
+    "db:diff": "supabase db diff",
+    "db:status": "supabase migration list"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0"
+  },
+  "packageManager": "pnpm@8.15.0",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
