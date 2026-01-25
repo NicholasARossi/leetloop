@@ -1,42 +1,55 @@
 /**
  * Authentication module for Chrome Extension
- * Handles Google OAuth via chrome.identity.launchWebAuthFlow
+ * Handles Google OAuth by redirecting to the web app
  */
 
 import { Session, User, AuthChangeEvent } from '@supabase/supabase-js';
 import { getSupabaseClient, getSession } from './lib/supabase';
 
-// OAuth configuration (set via manifest.json oauth2.client_id)
-// const GOOGLE_CLIENT_ID = '__GOOGLE_CLIENT_ID__';
+// Web app URL for authentication (dev default, can be overridden)
+const WEB_APP_URL = 'http://localhost:3001';
 
 /**
- * Get the redirect URL for OAuth
+ * Sign in with Google by opening the web app login page
+ * The web app handles OAuth and the web-bridge content script
+ * syncs the session back to the extension
  */
-function getRedirectUrl(): string {
-  return chrome.identity.getRedirectURL('oauth');
+export async function signInWithGoogle(): Promise<{ user: User | null; error: Error | null; redirected: boolean }> {
+  try {
+    // Open the web app login page with source=extension parameter
+    const loginUrl = `${WEB_APP_URL}/login?source=extension`;
+
+    // Open in a new tab
+    await chrome.tabs.create({ url: loginUrl });
+
+    // Return immediately - the session will be synced via web-bridge
+    // when the user completes authentication
+    return { user: null, error: null, redirected: true };
+  } catch (error) {
+    console.error('[LeetLoop] Failed to open login page:', error);
+    return { user: null, error: error as Error, redirected: false };
+  }
 }
 
 /**
- * Sign in with Google using chrome.identity
+ * Legacy sign in method using chrome.identity (kept for reference)
+ * @deprecated Use signInWithGoogle() which redirects to web app
  */
-export async function signInWithGoogle(): Promise<{ user: User | null; error: Error | null }> {
+export async function signInWithGoogleLegacy(): Promise<{ user: User | null; error: Error | null }> {
   const client = await getSupabaseClient();
   if (!client) {
     return { user: null, error: new Error('Supabase not configured') };
   }
 
   try {
-    // Get the Supabase project URL from client
     const supabaseUrl = (client as any).supabaseUrl;
-    const redirectUrl = getRedirectUrl();
+    const redirectUrl = chrome.identity.getRedirectURL('oauth');
 
-    // Build the OAuth URL for Supabase
     const authUrl = new URL(`${supabaseUrl}/auth/v1/authorize`);
     authUrl.searchParams.set('provider', 'google');
     authUrl.searchParams.set('redirect_to', redirectUrl);
     authUrl.searchParams.set('skip_http_redirect', 'true');
 
-    // Launch the OAuth flow
     const responseUrl = await new Promise<string>((resolve, reject) => {
       chrome.identity.launchWebAuthFlow(
         {
@@ -55,19 +68,16 @@ export async function signInWithGoogle(): Promise<{ user: User | null; error: Er
       );
     });
 
-    // Parse the callback URL for tokens
     const url = new URL(responseUrl);
     const hashParams = new URLSearchParams(url.hash.substring(1));
     const accessToken = hashParams.get('access_token');
     const refreshToken = hashParams.get('refresh_token');
 
     if (!accessToken) {
-      // Check for error
       const error = hashParams.get('error_description') || hashParams.get('error');
       return { user: null, error: new Error(error || 'No access token received') };
     }
 
-    // Set the session in Supabase
     const { data, error } = await client.auth.setSession({
       access_token: accessToken,
       refresh_token: refreshToken || '',

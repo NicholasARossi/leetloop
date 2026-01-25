@@ -11,13 +11,70 @@ import {
 import { User, Session } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/client'
 
-// Create a single client instance outside the component
-let supabaseInstance: ReturnType<typeof createClient> | null = null
+// Storage keys for extension bridge
+const STORAGE_KEYS = {
+  SESSION_BRIDGE: 'leetloop_session_bridge',
+  GUEST_ID: 'leetloop_user_id',
+  MIGRATION_COMPLETE: 'leetloop_migration_complete',
+}
+
+// Custom events for extension bridge
+const CUSTOM_EVENTS = {
+  AUTH_CHANGE: 'leetloop:auth-change',
+  SIGNED_OUT: 'leetloop:signed-out',
+  GUEST_ID: 'leetloop:guest-id',
+}
+
+// Get the singleton client
 function getSupabase() {
-  if (!supabaseInstance) {
-    supabaseInstance = createClient()
+  return createClient()
+}
+
+/**
+ * Store session tokens in localStorage for extension bridge
+ */
+function storeSessionBridge(session: Session | null): void {
+  if (typeof window === 'undefined') return
+
+  console.log('[LeetLoop Web] storeSessionBridge called, hasSession:', !!session)
+
+  if (session?.access_token && session?.refresh_token) {
+    const bridgeData = {
+      access_token: session.access_token,
+      refresh_token: session.refresh_token,
+    }
+    localStorage.setItem(STORAGE_KEYS.SESSION_BRIDGE, JSON.stringify(bridgeData))
+    console.log('[LeetLoop Web] Session bridge stored in localStorage')
+
+    // Dispatch custom event for extension bridge
+    window.dispatchEvent(
+      new CustomEvent(CUSTOM_EVENTS.AUTH_CHANGE, { detail: bridgeData })
+    )
+    console.log('[LeetLoop Web] Dispatched auth-change event')
+  } else {
+    localStorage.removeItem(STORAGE_KEYS.SESSION_BRIDGE)
   }
-  return supabaseInstance
+}
+
+/**
+ * Dispatch guest ID to extension bridge
+ */
+function dispatchGuestId(guestId: string): void {
+  if (typeof window === 'undefined') return
+
+  window.dispatchEvent(
+    new CustomEvent(CUSTOM_EVENTS.GUEST_ID, { detail: guestId })
+  )
+}
+
+/**
+ * Notify extension of sign out
+ */
+function notifySignOut(): void {
+  if (typeof window === 'undefined') return
+
+  localStorage.removeItem(STORAGE_KEYS.SESSION_BRIDGE)
+  window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.SIGNED_OUT))
 }
 
 interface AuthContextType {
@@ -44,35 +101,71 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let mounted = true
+    let subscription: { unsubscribe: () => void } | null = null
 
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (mounted) {
-        setSession(session)
-        setUser(session?.user ?? null)
-        setLoading(false)
-      }
-    })
+    const initAuth = async () => {
+      try {
+        // Get initial session
+        const { data: { session } } = await supabase.auth.getSession()
+        if (mounted) {
+          setSession(session)
+          setUser(session?.user ?? null)
+          setLoading(false)
 
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (mounted) {
-        setSession(session)
-        setUser(session?.user ?? null)
-        setLoading(false)
-
-        // Handle migration when user signs in
-        if (event === 'SIGNED_IN' && session?.user) {
-          await migrateGuestDataIfNeeded(supabase, session.user.id)
+          // Store session for extension bridge
+          storeSessionBridge(session)
+        }
+      } catch (error) {
+        // Ignore AbortError from locks in dev mode
+        if (error instanceof Error && error.name === 'AbortError') {
+          console.log('[LeetLoop] Ignoring AbortError in dev mode')
+        } else {
+          console.error('[LeetLoop] Error getting session:', error)
+        }
+        if (mounted) {
+          setLoading(false)
         }
       }
-    })
+    }
+
+    initAuth()
+
+    // Dispatch guest ID for extension bridge on mount
+    const guestId = getAnonUserId()
+    if (guestId) {
+      dispatchGuestId(guestId)
+    }
+
+    // Listen for auth changes
+    try {
+      const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
+        if (mounted) {
+          setSession(session)
+          setUser(session?.user ?? null)
+          setLoading(false)
+
+          // Store session for extension bridge
+          storeSessionBridge(session)
+
+          // Handle migration when user signs in
+          if (event === 'SIGNED_IN' && session?.user) {
+            await migrateGuestDataIfNeeded(supabase, session.user.id)
+          }
+
+          // Notify extension of sign out
+          if (event === 'SIGNED_OUT') {
+            notifySignOut()
+          }
+        }
+      })
+      subscription = data.subscription
+    } catch (error) {
+      console.error('[LeetLoop] Error setting up auth listener:', error)
+    }
 
     return () => {
       mounted = false
-      subscription.unsubscribe()
+      subscription?.unsubscribe()
     }
   }, [supabase])
 
@@ -105,6 +198,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = async () => {
     const { error } = await supabase.auth.signOut()
     if (error) throw error
+    // Explicitly notify extension (also handled in onAuthStateChange but being explicit)
+    notifySignOut()
   }
 
   return (

@@ -5,9 +5,12 @@
 
 import { createClient, SupabaseClient, Session } from '@supabase/supabase-js';
 
-// Extension environment variables (set during build or from options)
-const SUPABASE_URL = '__SUPABASE_URL__';
-const SUPABASE_ANON_KEY = '__SUPABASE_ANON_KEY__';
+// Extension environment variables (injected at build time via esbuild define)
+declare const __SUPABASE_URL__: string;
+declare const __SUPABASE_ANON_KEY__: string;
+
+const SUPABASE_URL = typeof __SUPABASE_URL__ !== 'undefined' ? __SUPABASE_URL__ : '';
+const SUPABASE_ANON_KEY = typeof __SUPABASE_ANON_KEY__ !== 'undefined' ? __SUPABASE_ANON_KEY__ : '';
 
 /**
  * Custom storage adapter for chrome.storage.local
@@ -43,7 +46,7 @@ export async function getSupabaseClient(): Promise<SupabaseClient | null> {
   const url = config.supabaseUrl || SUPABASE_URL;
   const key = config.supabaseAnonKey || SUPABASE_ANON_KEY;
 
-  if (!url || url === '__SUPABASE_URL__' || !key || key === '__SUPABASE_ANON_KEY__') {
+  if (!url || url.startsWith('__') || !key || key.startsWith('__')) {
     console.log('[LeetLoop] Supabase not configured');
     return null;
   }
