@@ -7,6 +7,8 @@
 import type { BackgroundMessage, StoredSubmission, SubmissionPayload } from './types';
 import { loadConfig } from './config';
 import { syncSubmission, syncPendingSubmissions } from './supabase';
+import { checkAndMigrateGuestData } from './migration';
+import { onAuthStateChange } from './auth';
 
 /**
  * Generate a UUID v4
@@ -109,6 +111,22 @@ chrome.runtime.onMessage.addListener((message: BackgroundMessage, _sender, sendR
 
     return true;
   }
+
+  if (message.type === 'CHECK_MIGRATION') {
+    checkAndMigrateGuestData()
+      .then((result) => {
+        sendResponse({ success: true, result });
+        // Re-sync pending submissions after migration
+        if (result.success) {
+          loadConfig().then((config) => syncPendingSubmissions(config));
+        }
+      })
+      .catch((error) => {
+        sendResponse({ success: false, error: String(error) });
+      });
+
+    return true;
+  }
 });
 
 /**
@@ -119,7 +137,36 @@ chrome.runtime.onInstalled.addListener(async () => {
 
   // Initialize config
   await loadConfig();
+
+  // Set up auth state listener
+  setupAuthListener();
 });
+
+/**
+ * Set up auth state change listener for automatic migration
+ */
+async function setupAuthListener() {
+  try {
+    await onAuthStateChange(async (event, session) => {
+      console.log('[LeetLoop] Auth state changed:', event);
+
+      if (event === 'SIGNED_IN' && session?.user) {
+        // User just signed in, check for migration
+        console.log('[LeetLoop] User signed in, checking migration');
+        const result = await checkAndMigrateGuestData();
+        console.log('[LeetLoop] Migration result:', result);
+
+        if (result.success) {
+          // Re-sync any pending submissions
+          const config = await loadConfig();
+          await syncPendingSubmissions(config);
+        }
+      }
+    });
+  } catch (error) {
+    console.error('[LeetLoop] Failed to set up auth listener:', error);
+  }
+}
 
 /**
  * Periodically sync pending submissions
