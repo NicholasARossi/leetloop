@@ -1,0 +1,22 @@
+# FastAPI and ASGI
+fastapi==0.109.2
+uvicorn[standard]==0.27.1
+gunicorn==21.2.0
+
+# Pydantic
+pydantic==2.6.1
+pydantic-settings==2.1.0
+
+# Supabase
+supabase==2.3.4
+
+# Google AI (Gemini)
+google-generativeai==0.3.2
+
+# Async support
+httpx==0.25.2
+anyio==4.2.0
+
+# Utilities
+python-dotenv==1.0.1
+python-multipart==0.0.9
