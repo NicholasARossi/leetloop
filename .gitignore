@@ -4,6 +4,12 @@ node_modules/
 # Build outputs
 dist/
 *.tsbuildinfo
+.next/
+out/
+
+# Test artifacts
+playwright-report/
+test-results/
 
 # Environment
 .env
@@ -27,3 +33,9 @@ pnpm-debug.log*
 
 # Test coverage
 coverage/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
