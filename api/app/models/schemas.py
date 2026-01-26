@@ -208,3 +208,141 @@ class CodeAnalysisResponse(BaseModel):
     suggestions: list[str] = []
     time_complexity: Optional[str] = None
     space_complexity: Optional[str] = None
+
+
+# ============ Learning Path Models ============
+
+
+class PathProblem(BaseModel):
+    """A problem within a learning path category."""
+
+    slug: str
+    title: str
+    difficulty: Difficulty
+    order: int
+
+
+class PathCategory(BaseModel):
+    """A category/pattern group within a learning path."""
+
+    name: str
+    order: int
+    problems: list[PathProblem]
+
+
+class LearningPath(BaseModel):
+    """A structured learning path (e.g., NeetCode 150, Blind 75)."""
+
+    id: UUID
+    name: str
+    description: Optional[str] = None
+    total_problems: int
+    categories: list[PathCategory]
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+
+class LearningPathSummary(BaseModel):
+    """Summary view of a learning path (without full problem details)."""
+
+    id: UUID
+    name: str
+    description: Optional[str] = None
+    total_problems: int
+
+
+class UserPathProgress(BaseModel):
+    """User's progress on a specific learning path."""
+
+    id: UUID
+    user_id: UUID
+    path_id: UUID
+    completed_problems: list[str] = []
+    current_category: Optional[str] = None
+    started_at: datetime
+    last_activity_at: Optional[datetime] = None
+
+
+class PathProgressResponse(BaseModel):
+    """Complete path progress with path details."""
+
+    path: LearningPath
+    progress: Optional[UserPathProgress] = None
+    completed_count: int = 0
+    completion_percentage: float = 0.0
+    categories_progress: dict[str, dict] = {}  # {category_name: {total, completed, problems}}
+
+
+class CompleteProblemRequest(BaseModel):
+    """Request to mark a problem as completed in a path."""
+
+    problem_slug: str
+
+
+class SetCurrentPathRequest(BaseModel):
+    """Request to set user's current learning path."""
+
+    path_id: UUID
+
+
+# ============ Today's Focus Models ============
+
+
+class DailyFocusProblem(BaseModel):
+    """A problem recommended for today's focus."""
+
+    slug: str
+    title: str
+    difficulty: Optional[Difficulty] = None
+    category: str
+    reason: str
+    priority: int  # 1 = highest priority
+
+
+class TodaysFocus(BaseModel):
+    """Daily mission data for Today's Focus page."""
+
+    user_id: UUID
+    streak: int = 0
+    daily_goal: int = 5
+    completed_today: int = 0
+    reviews_due: list[DailyFocusProblem] = []
+    path_problems: list[DailyFocusProblem] = []
+    skill_builders: list[DailyFocusProblem] = []
+    llm_insight: Optional[str] = None
+    generated_at: datetime
+
+
+# ============ Mastery Models ============
+
+
+class DomainScore(BaseModel):
+    """Score for a specific DSA domain."""
+
+    name: str
+    score: float = Field(ge=0, le=100, default=0.0)
+    status: str  # "WEAK", "FAIR", "GOOD", "STRONG"
+    problems_attempted: int = 0
+    problems_solved: int = 0
+    sub_patterns: list[dict] = []  # [{name, score, attempted}]
+
+
+class MasteryResponse(BaseModel):
+    """Complete mastery/readiness data for a user."""
+
+    user_id: UUID
+    readiness_score: float = Field(ge=0, le=100, default=0.0)
+    readiness_summary: str = ""
+    domains: list[DomainScore] = []
+    weak_areas: list[str] = []
+    strong_areas: list[str] = []
+    generated_at: datetime
+
+
+class DomainDetailResponse(BaseModel):
+    """Detailed breakdown of a specific domain."""
+
+    domain: DomainScore
+    failure_analysis: Optional[str] = None
+    recommended_path: list[PathProblem] = []
+    recent_submissions: list[Submission] = []

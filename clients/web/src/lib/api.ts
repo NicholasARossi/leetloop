@@ -160,6 +160,48 @@ export const leetloopApi = {
 
   getTips: (userId: string) =>
     api<{ tips: string[] }>(`/api/coaching/tips/${userId}`),
+
+  // Learning Paths
+  getPaths: () =>
+    api<LearningPathSummary[]>('/api/paths'),
+
+  getPath: (pathId: string) =>
+    api<LearningPath>(`/api/paths/${pathId}`),
+
+  getPathProgress: (pathId: string, userId: string) =>
+    api<PathProgressResponse>(`/api/paths/${pathId}/progress/${userId}`),
+
+  completeProblem: (pathId: string, userId: string, problemSlug: string) =>
+    api<{ success: boolean; problem_slug: string }>(
+      `/api/paths/${pathId}/complete/${userId}`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ problem_slug: problemSlug }),
+      }
+    ),
+
+  setCurrentPath: (userId: string, pathId: string) =>
+    api<{ success: boolean; path_id: string; path_name: string }>(
+      `/api/users/${userId}/current-path`,
+      {
+        method: 'PUT',
+        body: JSON.stringify({ path_id: pathId }),
+      }
+    ),
+
+  getCurrentPath: (userId: string) =>
+    api<PathProgressResponse>(`/api/users/${userId}/current-path`),
+
+  // Today's Focus
+  getTodaysFocus: (userId: string) =>
+    api<TodaysFocus>(`/api/today/${userId}`),
+
+  // Mastery
+  getMastery: (userId: string) =>
+    api<MasteryResponse>(`/api/mastery/${userId}`),
+
+  getDomainDetail: (userId: string, domainName: string) =>
+    api<DomainDetailResponse>(`/api/mastery/${userId}/${encodeURIComponent(domainName)}`),
 }
 
 // Types (matching backend schemas)
@@ -250,6 +292,115 @@ export interface CodeAnalysis {
   suggestions: string[]
   time_complexity?: string
   space_complexity?: string
+}
+
+// Learning Path Types
+export interface PathProblem {
+  slug: string
+  title: string
+  difficulty: 'Easy' | 'Medium' | 'Hard'
+  order: number
+}
+
+export interface PathCategory {
+  name: string
+  order: number
+  problems: PathProblem[]
+}
+
+export interface LearningPath {
+  id: string
+  name: string
+  description?: string
+  total_problems: number
+  categories: PathCategory[]
+}
+
+export interface LearningPathSummary {
+  id: string
+  name: string
+  description?: string
+  total_problems: number
+}
+
+export interface CategoryProgress {
+  total: number
+  completed: number
+  problems: {
+    slug: string
+    title: string
+    difficulty?: string
+    completed: boolean
+  }[]
+}
+
+export interface PathProgressResponse {
+  path: LearningPath
+  progress?: {
+    id: string
+    user_id: string
+    path_id: string
+    completed_problems: string[]
+    current_category?: string
+    started_at: string
+    last_activity_at?: string
+  }
+  completed_count: number
+  completion_percentage: number
+  categories_progress: Record<string, CategoryProgress>
+}
+
+// Today's Focus Types
+export interface DailyFocusProblem {
+  slug: string
+  title: string
+  difficulty?: 'Easy' | 'Medium' | 'Hard'
+  category: string
+  reason: string
+  priority: number
+}
+
+export interface TodaysFocus {
+  user_id: string
+  streak: number
+  daily_goal: number
+  completed_today: number
+  reviews_due: DailyFocusProblem[]
+  path_problems: DailyFocusProblem[]
+  skill_builders: DailyFocusProblem[]
+  llm_insight?: string
+  generated_at: string
+}
+
+// Mastery Types
+export interface DomainScore {
+  name: string
+  score: number
+  status: 'WEAK' | 'FAIR' | 'GOOD' | 'STRONG'
+  problems_attempted: number
+  problems_solved: number
+  sub_patterns: {
+    name: string
+    score: number
+    attempted: number
+  }[]
+}
+
+export interface MasteryResponse {
+  user_id: string
+  readiness_score: number
+  readiness_summary: string
+  domains: DomainScore[]
+  weak_areas: string[]
+  strong_areas: string[]
+  generated_at: string
+}
+
+export interface DomainDetailResponse {
+  domain: DomainScore
+  failure_analysis?: string
+  recommended_path: PathProblem[]
+  recent_submissions: Submission[]
 }
 
 export { ApiError }
