@@ -23,7 +23,7 @@ export default function Home() {
           {loading ? (
             <div className="btn-primary opacity-50 cursor-wait">Loading...</div>
           ) : user ? (
-            <Link href="/dashboard" className="btn-primary">
+            <Link href="/today" className="btn-primary">
               Go to Dashboard
             </Link>
           ) : (
@@ -31,7 +31,7 @@ export default function Home() {
               <Link href="/login" className="btn-primary">
                 Get Started
               </Link>
-              <Link href="/dashboard" className="btn-secondary">
+              <Link href="/today" className="btn-secondary">
                 Continue as Guest
               </Link>
             </>

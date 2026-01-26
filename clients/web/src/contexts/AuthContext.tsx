@@ -250,17 +250,28 @@ async function migrateGuestDataIfNeeded(
   // Check if migration already done
   const migrationDone = localStorage.getItem('leetloop_migration_complete')
   if (migrationDone === 'true') {
+    console.log('[LeetLoop] Migration already marked complete, skipping')
+    console.log('[LeetLoop] To retry migration, run: localStorage.removeItem("leetloop_migration_complete")')
     return
   }
 
   // Get guest user ID
   const guestUserId = localStorage.getItem('leetloop_user_id')
-  if (!guestUserId || guestUserId === authUserId) {
+  if (!guestUserId) {
+    console.log('[LeetLoop] No guest user ID found, nothing to migrate')
     localStorage.setItem('leetloop_migration_complete', 'true')
     return
   }
 
-  console.log('[LeetLoop] Migrating guest data from', guestUserId, 'to', authUserId)
+  if (guestUserId === authUserId) {
+    console.log('[LeetLoop] Guest ID matches auth ID, no migration needed')
+    localStorage.setItem('leetloop_migration_complete', 'true')
+    return
+  }
+
+  console.log('[LeetLoop] Starting migration...')
+  console.log('[LeetLoop] Guest UUID:', guestUserId)
+  console.log('[LeetLoop] Auth User ID:', authUserId)
 
   try {
     const { data, error } = await supabase.rpc('migrate_guest_to_auth', {
@@ -269,13 +280,56 @@ async function migrateGuestDataIfNeeded(
     })
 
     if (error) {
-      console.error('[LeetLoop] Migration error:', error)
+      console.error('[LeetLoop] Migration RPC error:', error)
+      console.error('[LeetLoop] Error code:', error.code)
+      console.error('[LeetLoop] Error message:', error.message)
+      console.error('[LeetLoop] Error details:', error.details)
+      console.error('[LeetLoop] Migration NOT marked complete due to error')
+      console.error('[LeetLoop] You can manually migrate by running SQL in Supabase:')
+      console.error(`UPDATE submissions SET user_id = '${authUserId}' WHERE user_id = '${guestUserId}';`)
+      console.error(`UPDATE skill_scores SET user_id = '${authUserId}' WHERE user_id = '${guestUserId}';`)
+      console.error(`UPDATE review_queue SET user_id = '${authUserId}' WHERE user_id = '${guestUserId}';`)
       return
     }
 
-    console.log('[LeetLoop] Migration complete:', data)
+    // Verify response structure
+    if (!data || typeof data !== 'object') {
+      console.error('[LeetLoop] Migration returned unexpected data:', data)
+      console.error('[LeetLoop] Migration NOT marked complete due to unexpected response')
+      return
+    }
+
+    // Check if migration actually succeeded
+    if (data.success !== true) {
+      console.error('[LeetLoop] Migration returned success=false:', data)
+      console.error('[LeetLoop] Migration NOT marked complete')
+      return
+    }
+
+    console.log('[LeetLoop] Migration successful!')
+    console.log('[LeetLoop] Migrated counts:', data.migrated)
     localStorage.setItem('leetloop_migration_complete', 'true')
+
+    // Update guest ID to auth ID so future local operations use correct ID
+    localStorage.setItem('leetloop_user_id', authUserId)
+    console.log('[LeetLoop] Updated local user ID to auth ID')
   } catch (error) {
     console.error('[LeetLoop] Migration exception:', error)
+    console.error('[LeetLoop] Migration NOT marked complete due to exception')
+    console.error('[LeetLoop] Guest UUID for manual migration:', guestUserId)
+    console.error('[LeetLoop] Auth User ID for manual migration:', authUserId)
+  }
+}
+
+// Export helper for debugging - call from browser console: window.resetLeetLoopMigration()
+if (typeof window !== 'undefined') {
+  (window as unknown as Record<string, unknown>).resetLeetLoopMigration = () => {
+    localStorage.removeItem('leetloop_migration_complete')
+    console.log('[LeetLoop] Migration flag cleared. Sign out and back in to retry migration.')
+  }
+
+  (window as unknown as Record<string, unknown>).getLeetLoopMigrationInfo = () => {
+    console.log('[LeetLoop] Migration complete:', localStorage.getItem('leetloop_migration_complete'))
+    console.log('[LeetLoop] Guest user ID:', localStorage.getItem('leetloop_user_id'))
   }
 }

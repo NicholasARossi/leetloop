@@ -1,0 +1,16 @@
+services:
+  leetloop:
+    build: .
+    ports:
+      - "3001:3001"  # Web dashboard
+      - "8080:8080"  # API
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - ENVIRONMENT=production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
