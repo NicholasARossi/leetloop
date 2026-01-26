@@ -36,6 +36,9 @@ class Settings(BaseSettings):
     rate_limit_requests: int = 100
     rate_limit_period: int = 60  # seconds
 
+    # Cron job authentication
+    cron_secret: Optional[str] = None
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"

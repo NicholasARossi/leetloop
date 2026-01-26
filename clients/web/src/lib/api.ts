@@ -202,6 +202,15 @@ export const leetloopApi = {
 
   getDomainDetail: (userId: string, domainName: string) =>
     api<DomainDetailResponse>(`/api/mastery/${userId}/${encodeURIComponent(domainName)}`),
+
+  // Mission Control
+  getDailyMission: (userId: string) =>
+    api<MissionResponse>(`/api/mission/${userId}`),
+
+  regenerateMission: (userId: string) =>
+    api<MissionResponse>(`/api/mission/${userId}/regenerate`, {
+      method: 'POST',
+    }),
 }
 
 // Types (matching backend schemas)
@@ -401,6 +410,49 @@ export interface DomainDetailResponse {
   failure_analysis?: string
   recommended_path: PathProblem[]
   recent_submissions: Submission[]
+}
+
+// Mission Control Types
+export type QuestStatus = 'completed' | 'current' | 'upcoming'
+
+export interface MainQuest {
+  slug: string
+  title: string
+  difficulty?: 'Easy' | 'Medium' | 'Hard'
+  category: string
+  order: number
+  status: QuestStatus
+}
+
+export interface SideQuest {
+  slug: string
+  title: string
+  difficulty?: 'Easy' | 'Medium' | 'Hard'
+  reason: string
+  source_problem_slug?: string
+  target_weakness: string
+  quest_type: 'review_due' | 'skill_gap' | 'slow_solve'
+  completed: boolean
+}
+
+export interface DailyObjective {
+  title: string
+  description: string
+  skill_tags: string[]
+  target_count: number
+  completed_count: number
+}
+
+export interface MissionResponse {
+  user_id: string
+  mission_date: string
+  objective: DailyObjective
+  main_quests: MainQuest[]
+  side_quests: SideQuest[]
+  streak: number
+  total_completed_today: number
+  can_regenerate: boolean
+  generated_at: string
 }
 
 export { ApiError }
