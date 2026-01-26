@@ -68,6 +68,7 @@ class SkillScore(BaseModel):
     success_rate: float = Field(ge=0, le=1, default=0.0)
     avg_time_seconds: Optional[float] = None
     last_practiced: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 
 # ============ Review Queue Models ============

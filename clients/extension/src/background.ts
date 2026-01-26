@@ -7,6 +7,9 @@
 import type { BackgroundMessage, StoredSubmission, SubmissionPayload } from './types';
 import { loadConfig } from './config';
 import { syncSubmission, syncPendingSubmissions } from './supabase';
+import { getSupabaseClient } from './lib/supabase';
+import { checkAndMigrateGuestData } from './migration';
+import { onAuthStateChange, signOut } from './auth';
 
 /**
  * Generate a UUID v4
@@ -109,7 +112,106 @@ chrome.runtime.onMessage.addListener((message: BackgroundMessage, _sender, sendR
 
     return true;
   }
+
+  if (message.type === 'CHECK_MIGRATION') {
+    checkAndMigrateGuestData()
+      .then((result) => {
+        sendResponse({ success: true, result });
+        // Re-sync pending submissions after migration
+        if (result.success) {
+          loadConfig().then((config) => syncPendingSubmissions(config));
+        }
+      })
+      .catch((error) => {
+        sendResponse({ success: false, error: String(error) });
+      });
+
+    return true;
+  }
+
+  if (message.type === 'WEB_SESSION_SYNC') {
+    handleWebSessionSync(message.payload as { access_token: string; refresh_token: string })
+      .then((result) => {
+        sendResponse(result);
+      })
+      .catch((error) => {
+        sendResponse({ success: false, error: String(error) });
+      });
+
+    return true;
+  }
+
+  if (message.type === 'WEB_SIGNED_OUT') {
+    handleWebSignedOut()
+      .then(() => {
+        sendResponse({ success: true });
+      })
+      .catch((error) => {
+        sendResponse({ success: false, error: String(error) });
+      });
+
+    return true;
+  }
 });
+
+/**
+ * Handle session sync from web app
+ */
+async function handleWebSessionSync(payload: { access_token: string; refresh_token: string }): Promise<{ success: boolean; error?: string }> {
+  console.log('[LeetLoop] handleWebSessionSync called with tokens:', {
+    hasAccessToken: !!payload.access_token,
+    hasRefreshToken: !!payload.refresh_token,
+    accessTokenPreview: payload.access_token?.substring(0, 20) + '...',
+  });
+
+  const client = await getSupabaseClient();
+  if (!client) {
+    console.log('[LeetLoop] Supabase client not available for session sync');
+    return { success: false, error: 'Supabase client not available' };
+  }
+
+  try {
+    const { data, error } = await client.auth.setSession({
+      access_token: payload.access_token,
+      refresh_token: payload.refresh_token,
+    });
+
+    if (error) {
+      console.error('[LeetLoop] Failed to set session from web:', error);
+      return { success: false, error: error.message };
+    }
+
+    console.log('[LeetLoop] Session synced from web app');
+
+    // Trigger migration check if user is now signed in
+    if (data.session?.user) {
+      const migrationResult = await checkAndMigrateGuestData();
+      console.log('[LeetLoop] Migration check after web sync:', migrationResult);
+
+      if (migrationResult.success) {
+        const config = await loadConfig();
+        await syncPendingSubmissions(config);
+      }
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('[LeetLoop] Error syncing session from web:', error);
+    return { success: false, error: (error as Error).message };
+  }
+}
+
+/**
+ * Handle sign out from web app
+ */
+async function handleWebSignedOut(): Promise<void> {
+  console.log('[LeetLoop] Handling sign out from web app');
+
+  const { error } = await signOut();
+  if (error) {
+    console.error('[LeetLoop] Error signing out:', error);
+  }
+}
 
 /**
  * Handle extension installation
@@ -119,7 +221,36 @@ chrome.runtime.onInstalled.addListener(async () => {
 
   // Initialize config
   await loadConfig();
+
+  // Set up auth state listener
+  setupAuthListener();
 });
+
+/**
+ * Set up auth state change listener for automatic migration
+ */
+async function setupAuthListener() {
+  try {
+    await onAuthStateChange(async (event, session) => {
+      console.log('[LeetLoop] Auth state changed:', event);
+
+      if (event === 'SIGNED_IN' && session?.user) {
+        // User just signed in, check for migration
+        console.log('[LeetLoop] User signed in, checking migration');
+        const result = await checkAndMigrateGuestData();
+        console.log('[LeetLoop] Migration result:', result);
+
+        if (result.success) {
+          // Re-sync any pending submissions
+          const config = await loadConfig();
+          await syncPendingSubmissions(config);
+        }
+      }
+    });
+  } catch (error) {
+    console.error('[LeetLoop] Failed to set up auth listener:', error);
+  }
+}
 
 /**
  * Periodically sync pending submissions

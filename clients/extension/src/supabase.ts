@@ -1,40 +1,95 @@
 /**
- * Supabase client for the extension
+ * Supabase sync operations for the extension
  */
 
 import type { Config } from './config';
+import { loadConfig } from './config';
 import type { StoredSubmission } from './types';
+import { getSupabaseClient } from './lib/supabase';
+
+// Build-time environment variables
+declare const __SUPABASE_URL__: string;
+declare const __SUPABASE_ANON_KEY__: string;
+
+const SUPABASE_URL = typeof __SUPABASE_URL__ !== 'undefined' ? __SUPABASE_URL__ : '';
+const SUPABASE_ANON_KEY = typeof __SUPABASE_ANON_KEY__ !== 'undefined' ? __SUPABASE_ANON_KEY__ : '';
 
 /**
- * Sync a submission to Supabase
+ * Get user ID directly from storage without using Supabase client
+ * This avoids potential deadlocks with concurrent getSession calls
+ */
+async function getUserIdFromStorage(): Promise<string> {
+  const storageKey = 'sb-ewezpbczwioxyflyffyy-auth-token';
+  const result = await chrome.storage.local.get([storageKey, 'guestUserId']);
+
+  // Try to get auth user ID from stored session
+  const sessionData = result[storageKey];
+  if (sessionData) {
+    try {
+      const parsed = JSON.parse(sessionData);
+      if (parsed?.user?.id) {
+        console.log('[LeetLoop] Using auth user ID from storage:', parsed.user.id);
+        return parsed.user.id;
+      }
+    } catch (e) {
+      console.log('[LeetLoop] Could not parse session data:', e);
+    }
+  }
+
+  // Fall back to guest ID
+  const config = await loadConfig();
+  console.log('[LeetLoop] Using guest user ID:', config.guestUserId);
+  return config.guestUserId;
+}
+
+/**
+ * Sync a submission to Supabase using the JS client
  */
 export async function syncSubmission(
   config: Config,
   submission: StoredSubmission
 ): Promise<boolean> {
-  console.log('[LeetLoop] Attempting sync with config:', {
-    url: config.supabaseUrl,
-    hasKey: !!config.supabaseAnonKey,
-    userId: config.userId,
-  });
+  console.log('[LeetLoop] syncSubmission starting for:', submission.problem_slug);
 
-  if (!config.supabaseUrl || !config.supabaseAnonKey) {
+  const userId = await getUserIdFromStorage();
+
+  console.log('[LeetLoop] Attempting sync with userId:', userId);
+
+  // Always use direct fetch to avoid Supabase client session issues
+  return syncSubmissionFetch(config, submission, userId);
+}
+
+/**
+ * Fallback: Sync using raw fetch (when Supabase client not configured)
+ */
+async function syncSubmissionFetch(
+  config: Config,
+  submission: StoredSubmission,
+  userId: string
+): Promise<boolean> {
+  // Use build-time values, fall back to config
+  const supabaseUrl = SUPABASE_URL || config.supabaseUrl;
+  const supabaseKey = SUPABASE_ANON_KEY || config.supabaseAnonKey;
+
+  if (!supabaseUrl || !supabaseKey) {
     console.log('[LeetLoop] Supabase not configured, skipping sync');
     return false;
   }
 
+  console.log('[LeetLoop] Using Supabase URL:', supabaseUrl.substring(0, 30) + '...');
+
   try {
-    const response = await fetch(`${config.supabaseUrl}/rest/v1/submissions`, {
+    const response = await fetch(`${supabaseUrl}/rest/v1/submissions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'apikey': config.supabaseAnonKey,
-        'Authorization': `Bearer ${config.supabaseAnonKey}`,
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`,
         'Prefer': 'return=minimal',
       },
       body: JSON.stringify({
         id: submission.id,
-        user_id: config.userId,
+        user_id: userId,
         problem_slug: submission.problem_slug,
         problem_title: submission.problem_title,
         problem_id: submission.problem_id,
@@ -77,6 +132,31 @@ export async function getUserStats(config: Config): Promise<{
   accepted: number;
   failed: number;
 } | null> {
+  const client = await getSupabaseClient();
+  const userId = await getUserIdFromStorage();
+
+  if (client) {
+    try {
+      const { data, error } = await client.rpc('get_user_stats', {
+        p_user_id: userId,
+      });
+
+      if (error) {
+        console.error('[LeetLoop] Stats error:', error);
+        return null;
+      }
+
+      return {
+        total: data?.[0]?.total_submissions ?? 0,
+        accepted: data?.[0]?.accepted_count ?? 0,
+        failed: data?.[0]?.failed_count ?? 0,
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  // Fallback to fetch
   if (!config.supabaseUrl || !config.supabaseAnonKey) {
     return null;
   }
@@ -91,7 +171,7 @@ export async function getUserStats(config: Config): Promise<{
           'apikey': config.supabaseAnonKey,
           'Authorization': `Bearer ${config.supabaseAnonKey}`,
         },
-        body: JSON.stringify({ p_user_id: config.userId }),
+        body: JSON.stringify({ p_user_id: userId }),
       }
     );
 
@@ -116,7 +196,8 @@ export async function getUserStats(config: Config): Promise<{
 export async function syncPendingSubmissions(config: Config): Promise<number> {
   console.log('[LeetLoop] syncPendingSubmissions called');
 
-  if (!config.supabaseUrl || !config.supabaseAnonKey) {
+  const client = await getSupabaseClient();
+  if (!client && (!config.supabaseUrl || !config.supabaseAnonKey)) {
     console.log('[LeetLoop] Supabase not configured for pending sync');
     return 0;
   }
@@ -127,13 +208,24 @@ export async function syncPendingSubmissions(config: Config): Promise<number> {
 
   console.log('[LeetLoop] Found submissions:', submissions.length, 'unsynced:', unsynced.length);
 
+  if (unsynced.length === 0) {
+    console.log('[LeetLoop] No unsynced submissions to process');
+    return 0;
+  }
+
   let syncedCount = 0;
 
-  for (const submission of unsynced) {
-    const success = await syncSubmission(config, submission);
-    if (success) {
-      submission.synced = true;
-      syncedCount++;
+  for (const [i, submission] of unsynced.entries()) {
+    console.log(`[LeetLoop] Processing submission ${i + 1}/${unsynced.length}:`, submission.problem_slug);
+    try {
+      const success = await syncSubmission(config, submission);
+      console.log(`[LeetLoop] Sync result for ${submission.problem_slug}:`, success);
+      if (success) {
+        submission.synced = true;
+        syncedCount++;
+      }
+    } catch (err) {
+      console.error(`[LeetLoop] Sync threw error for ${submission.problem_slug}:`, err);
     }
   }
 

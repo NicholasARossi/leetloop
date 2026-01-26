@@ -6,11 +6,18 @@
   "permissions": [
     "storage",
     "activeTab",
-    "alarms"
+    "alarms",
+    "identity"
   ],
   "host_permissions": [
-    "https://leetcode.com/*"
+    "https://leetcode.com/*",
+    "https://*.supabase.co/*",
+    "http://localhost:3001/*"
   ],
+  "oauth2": {
+    "client_id": "__GOOGLE_CLIENT_ID__",
+    "scopes": ["openid", "email", "profile"]
+  },
   "background": {
     "service_worker": "background.js",
     "type": "module"
@@ -25,6 +32,11 @@
     {
       "matches": ["https://leetcode.com/*"],
       "js": ["content.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["http://localhost:3001/*"],
+      "js": ["web-bridge.js"],
       "run_at": "document_idle"
     }
   ],

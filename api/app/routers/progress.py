@@ -50,13 +50,13 @@ async def get_user_progress(
         reviews_due = reviews_response.count or 0
 
         stats = UserStats(
-            total_submissions=stats_data.get("total_submissions", 0),
-            accepted_count=stats_data.get("accepted_count", 0),
-            failed_count=stats_data.get("failed_count", 0),
-            success_rate=stats_data.get("success_rate", 0.0),
-            problems_solved=stats_data.get("problems_solved", 0),
-            problems_attempted=stats_data.get("problems_attempted", 0),
-            streak_days=stats_data.get("streak_days", 0),
+            total_submissions=stats_data.get("total_submissions") or 0,
+            accepted_count=stats_data.get("accepted_count") or 0,
+            failed_count=stats_data.get("failed_count") or 0,
+            success_rate=stats_data.get("success_rate") or 0.0,
+            problems_solved=stats_data.get("problems_solved") or 0,
+            problems_attempted=stats_data.get("problems_attempted") or 0,
+            streak_days=stats_data.get("streak_days") or 0,
             reviews_due=reviews_due,
         )
 
@@ -116,13 +116,13 @@ async def get_user_stats(
         reviews_due = reviews_response.count or 0
 
         return UserStats(
-            total_submissions=stats_data.get("total_submissions", 0),
-            accepted_count=stats_data.get("accepted_count", 0),
-            failed_count=stats_data.get("failed_count", 0),
-            success_rate=stats_data.get("success_rate", 0.0),
-            problems_solved=stats_data.get("problems_solved", 0),
-            problems_attempted=stats_data.get("problems_attempted", 0),
-            streak_days=stats_data.get("streak_days", 0),
+            total_submissions=stats_data.get("total_submissions") or 0,
+            accepted_count=stats_data.get("accepted_count") or 0,
+            failed_count=stats_data.get("failed_count") or 0,
+            success_rate=stats_data.get("success_rate") or 0.0,
+            problems_solved=stats_data.get("problems_solved") or 0,
+            problems_attempted=stats_data.get("problems_attempted") or 0,
+            streak_days=stats_data.get("streak_days") or 0,
             reviews_due=reviews_due,
         )
     except Exception as e:

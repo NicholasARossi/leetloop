@@ -42,10 +42,13 @@ export interface InterceptorMessage {
 /**
  * Message sent from content script to background service worker
  */
-export interface BackgroundMessage {
-  type: 'SUBMISSION_CAPTURED';
-  payload: SubmissionPayload;
-}
+export type BackgroundMessage =
+  | { type: 'SUBMISSION_CAPTURED'; payload: SubmissionPayload }
+  | { type: 'SYNC_PENDING' }
+  | { type: 'GET_CONFIG' }
+  | { type: 'CHECK_MIGRATION' }
+  | { type: 'WEB_SESSION_SYNC'; payload: { access_token: string; refresh_token: string } }
+  | { type: 'WEB_SIGNED_OUT' };
 
 /**
  * Full submission payload sent to background/Supabase

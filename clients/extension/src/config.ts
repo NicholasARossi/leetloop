@@ -2,10 +2,13 @@
  * Extension configuration
  */
 
+import { getAuthUserId } from './auth';
+
 export interface Config {
   supabaseUrl: string;
   supabaseAnonKey: string;
   userId: string;
+  guestUserId: string;
   enabled: boolean;
 }
 
@@ -13,6 +16,7 @@ const DEFAULT_CONFIG: Config = {
   supabaseUrl: '',
   supabaseAnonKey: '',
   userId: '',
+  guestUserId: '',
   enabled: true,
 };
 
@@ -31,20 +35,63 @@ function generateUUID(): string {
  * Load configuration from chrome.storage
  */
 export async function loadConfig(): Promise<Config> {
-  const result = await chrome.storage.local.get(['config', 'userId']);
+  const result = await chrome.storage.local.get(['config', 'userId', 'guestUserId', 'webGuestUserId']);
 
-  // Ensure we have a user ID
-  let userId = result.userId;
-  if (!userId) {
-    userId = generateUUID();
-    await chrome.storage.local.set({ userId });
+  // Prefer webGuestUserId (synced from web app) over local guestUserId for consistency
+  let guestUserId = result.webGuestUserId || result.guestUserId || result.userId;
+  if (!guestUserId) {
+    guestUserId = generateUUID();
+    await chrome.storage.local.set({ guestUserId });
+  }
+
+  // If we got a web guest ID, also store it as guestUserId for consistency
+  if (result.webGuestUserId && result.webGuestUserId !== result.guestUserId) {
+    await chrome.storage.local.set({ guestUserId: result.webGuestUserId });
   }
 
   return {
     ...DEFAULT_CONFIG,
     ...result.config,
-    userId,
+    userId: result.userId || guestUserId,
+    guestUserId,
   };
+}
+
+/**
+ * Sync guest UUID from web app
+ * Called when the web-bridge detects a guest ID in localStorage
+ */
+export async function syncWebGuestId(webGuestId: string): Promise<void> {
+  const result = await chrome.storage.local.get(['guestUserId']);
+
+  // Only update if we don't have a local guest ID yet, or it matches
+  // This prevents overwriting local data if the web has a different UUID
+  if (!result.guestUserId) {
+    await chrome.storage.local.set({
+      guestUserId: webGuestId,
+      webGuestUserId: webGuestId,
+    });
+    console.log('[LeetLoop] Synced guest ID from web:', webGuestId);
+  } else {
+    // Store web guest ID separately so we know they might be different
+    await chrome.storage.local.set({ webGuestUserId: webGuestId });
+  }
+}
+
+/**
+ * Get the effective user ID (auth user ID or guest UUID)
+ * This should be used for all data operations
+ */
+export async function getEffectiveUserId(): Promise<string> {
+  // First check if user is authenticated
+  const authUserId = await getAuthUserId();
+  if (authUserId) {
+    return authUserId;
+  }
+
+  // Fall back to guest ID
+  const config = await loadConfig();
+  return config.guestUserId;
 }
 
 /**
