@@ -215,6 +215,43 @@ function handleToggle(event: Event) {
 }
 
 /**
+ * Handle sync button click
+ */
+async function handleSync() {
+  const syncBtn = document.getElementById('sync-btn') as HTMLButtonElement;
+  const syncText = document.getElementById('sync-text') as HTMLSpanElement;
+
+  syncBtn.disabled = true;
+  syncText.textContent = 'Syncing...';
+
+  try {
+    const response = await chrome.runtime.sendMessage({ type: 'SYNC_PENDING' });
+    console.log('[LeetLoop Popup] Sync response:', response);
+
+    if (response?.success) {
+      syncText.textContent = `Synced ${response.synced || 0}`;
+      setTimeout(() => {
+        syncText.textContent = 'Sync';
+        syncBtn.disabled = false;
+      }, 2000);
+    } else {
+      syncText.textContent = 'Error';
+      setTimeout(() => {
+        syncText.textContent = 'Sync';
+        syncBtn.disabled = false;
+      }, 2000);
+    }
+  } catch (error) {
+    console.error('[LeetLoop Popup] Sync error:', error);
+    syncText.textContent = 'Error';
+    setTimeout(() => {
+      syncText.textContent = 'Sync';
+      syncBtn.disabled = false;
+    }, 2000);
+  }
+}
+
+/**
  * Initialize auth state
  */
 async function initAuth() {
@@ -250,4 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const signOutBtn = document.getElementById('sign-out-btn');
   signOutBtn?.addEventListener('click', handleSignOut);
+
+  const syncBtn = document.getElementById('sync-btn');
+  syncBtn?.addEventListener('click', handleSync);
 });

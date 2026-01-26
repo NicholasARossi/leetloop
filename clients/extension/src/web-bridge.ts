@@ -18,13 +18,61 @@ const CUSTOM_EVENTS = {
 };
 
 /**
+ * Check if the extension context is still valid
+ * This can become invalid when the extension is reloaded/updated
+ */
+function isExtensionContextValid(): boolean {
+  try {
+    // Accessing chrome.runtime.id will throw if context is invalidated
+    return !!chrome.runtime?.id;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Safely send a message to the background script
+ * Handles the case where the extension has been reloaded
+ */
+function safeSendMessage(
+  message: unknown,
+  callback?: (response: unknown) => void
+): void {
+  if (!isExtensionContextValid()) {
+    console.log('[LeetLoop Bridge] Extension context invalidated, skipping message');
+    return;
+  }
+
+  try {
+    chrome.runtime.sendMessage(message, (response) => {
+      if (chrome.runtime.lastError) {
+        // Extension may have been reloaded - this is expected
+        console.log('[LeetLoop Bridge] Message failed (extension may have reloaded):',
+          chrome.runtime.lastError.message);
+      } else if (callback) {
+        callback(response);
+      }
+    });
+  } catch (error) {
+    // Extension context was invalidated during the call
+    console.log('[LeetLoop Bridge] Could not send message:', error);
+  }
+}
+
+/**
  * Sync guest UUID from web app localStorage to extension storage
  */
 async function syncGuestId(): Promise<void> {
+  if (!isExtensionContextValid()) return;
+
   const guestId = localStorage.getItem(STORAGE_KEYS.GUEST_ID);
   if (guestId) {
-    await chrome.storage.local.set({ webGuestUserId: guestId });
-    console.log('[LeetLoop Bridge] Synced guest ID from web:', guestId);
+    try {
+      await chrome.storage.local.set({ webGuestUserId: guestId });
+      console.log('[LeetLoop Bridge] Synced guest ID from web:', guestId);
+    } catch (error) {
+      console.log('[LeetLoop Bridge] Could not sync guest ID:', error);
+    }
   }
 }
 
@@ -32,6 +80,8 @@ async function syncGuestId(): Promise<void> {
  * Sync session from web app localStorage to extension
  */
 async function syncSession(): Promise<void> {
+  if (!isExtensionContextValid()) return;
+
   const sessionData = localStorage.getItem(STORAGE_KEYS.SESSION_BRIDGE);
   if (!sessionData) {
     return;
@@ -41,22 +91,21 @@ async function syncSession(): Promise<void> {
     const session = JSON.parse(sessionData);
     if (session?.access_token && session?.refresh_token) {
       // Send session to background script
-      chrome.runtime.sendMessage({
+      safeSendMessage({
         type: 'WEB_SESSION_SYNC',
         payload: {
           access_token: session.access_token,
           refresh_token: session.refresh_token,
         },
-      }, (response) => {
-        if (chrome.runtime.lastError) {
-          console.error('[LeetLoop Bridge] Failed to sync session:', chrome.runtime.lastError);
-        } else if (response?.success) {
+      }, (response: unknown) => {
+        const resp = response as { success?: boolean } | undefined;
+        if (resp?.success) {
           console.log('[LeetLoop Bridge] Session synced successfully');
         }
       });
     }
   } catch (error) {
-    console.error('[LeetLoop Bridge] Failed to parse session:', error);
+    console.log('[LeetLoop Bridge] Failed to parse session:', error);
   }
 }
 
@@ -64,16 +113,17 @@ async function syncSession(): Promise<void> {
  * Handle auth change event from web app
  */
 function handleAuthChange(event: CustomEvent<{ access_token: string; refresh_token: string } | null>): void {
+  if (!isExtensionContextValid()) return;
+
   const sessionData = event.detail;
 
   if (sessionData?.access_token && sessionData?.refresh_token) {
-    chrome.runtime.sendMessage({
+    safeSendMessage({
       type: 'WEB_SESSION_SYNC',
       payload: sessionData,
-    }, (response) => {
-      if (chrome.runtime.lastError) {
-        console.error('[LeetLoop Bridge] Failed to sync session:', chrome.runtime.lastError);
-      } else if (response?.success) {
+    }, (response: unknown) => {
+      const resp = response as { success?: boolean } | undefined;
+      if (resp?.success) {
         console.log('[LeetLoop Bridge] Auth change synced');
       }
     });
@@ -84,12 +134,13 @@ function handleAuthChange(event: CustomEvent<{ access_token: string; refresh_tok
  * Handle signed out event from web app
  */
 function handleSignedOut(): void {
-  chrome.runtime.sendMessage({
+  if (!isExtensionContextValid()) return;
+
+  safeSendMessage({
     type: 'WEB_SIGNED_OUT',
-  }, (response) => {
-    if (chrome.runtime.lastError) {
-      console.error('[LeetLoop Bridge] Failed to notify sign out:', chrome.runtime.lastError);
-    } else if (response?.success) {
+  }, (response: unknown) => {
+    const resp = response as { success?: boolean } | undefined;
+    if (resp?.success) {
       console.log('[LeetLoop Bridge] Sign out synced');
     }
   });
@@ -99,11 +150,17 @@ function handleSignedOut(): void {
  * Handle guest ID event from web app
  */
 function handleGuestId(event: CustomEvent<string>): void {
+  if (!isExtensionContextValid()) return;
+
   const guestId = event.detail;
   if (guestId) {
-    chrome.storage.local.set({ webGuestUserId: guestId }).then(() => {
-      console.log('[LeetLoop Bridge] Guest ID synced:', guestId);
-    });
+    chrome.storage.local.set({ webGuestUserId: guestId })
+      .then(() => {
+        console.log('[LeetLoop Bridge] Guest ID synced:', guestId);
+      })
+      .catch((error) => {
+        console.log('[LeetLoop Bridge] Could not sync guest ID:', error);
+      });
   }
 }
 
@@ -111,9 +168,15 @@ function handleGuestId(event: CustomEvent<string>): void {
  * Check migration status and sync to extension
  */
 async function syncMigrationStatus(): Promise<void> {
+  if (!isExtensionContextValid()) return;
+
   const migrationComplete = localStorage.getItem(STORAGE_KEYS.MIGRATION_COMPLETE);
   if (migrationComplete === 'true') {
-    await chrome.storage.local.set({ webMigrationComplete: true });
+    try {
+      await chrome.storage.local.set({ webMigrationComplete: true });
+    } catch (error) {
+      console.log('[LeetLoop Bridge] Could not sync migration status:', error);
+    }
   }
 }
 
@@ -121,6 +184,12 @@ async function syncMigrationStatus(): Promise<void> {
  * Initialize the web bridge
  */
 async function init(): Promise<void> {
+  // Check if extension context is still valid before initializing
+  if (!isExtensionContextValid()) {
+    console.log('[LeetLoop Bridge] Extension context invalid, skipping initialization');
+    return;
+  }
+
   console.log('[LeetLoop Bridge] Initializing web bridge on', window.location.href);
 
   // Check what's in localStorage
@@ -139,6 +208,9 @@ async function init(): Promise<void> {
 
   // Also watch for localStorage changes (backup mechanism)
   window.addEventListener('storage', (event) => {
+    // Check context validity on each storage event
+    if (!isExtensionContextValid()) return;
+
     if (event.key === STORAGE_KEYS.SESSION_BRIDGE) {
       syncSession();
     } else if (event.key === STORAGE_KEYS.GUEST_ID) {
@@ -153,7 +225,13 @@ async function init(): Promise<void> {
 
 // Initialize when DOM is ready
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
+  document.addEventListener('DOMContentLoaded', () => {
+    init().catch((error) => {
+      console.log('[LeetLoop Bridge] Initialization failed:', error);
+    });
+  });
 } else {
-  init();
+  init().catch((error) => {
+    console.log('[LeetLoop Bridge] Initialization failed:', error);
+  });
 }

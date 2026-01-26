@@ -7,6 +7,18 @@
 
 import type { InterceptorMessage, SubmissionPayload, Session, Difficulty } from './types';
 
+/**
+ * Check if the extension context is still valid
+ * This can become invalid when the extension is reloaded/updated
+ */
+function isExtensionContextValid(): boolean {
+  try {
+    return !!chrome.runtime?.id;
+  } catch {
+    return false;
+  }
+}
+
 // Session tracking
 let currentSession: Session | null = null;
 
@@ -119,12 +131,25 @@ function handleSubmission(message: InterceptorMessage) {
   };
 
   // Send to background service worker
-  chrome.runtime.sendMessage({
-    type: 'SUBMISSION_CAPTURED',
-    payload: submissionPayload,
-  });
+  if (!isExtensionContextValid()) {
+    console.log('[LeetLoop] Extension context invalid, cannot forward submission');
+    return;
+  }
 
-  console.log('[LeetLoop] Submission forwarded to background:', submissionPayload.status);
+  try {
+    chrome.runtime.sendMessage({
+      type: 'SUBMISSION_CAPTURED',
+      payload: submissionPayload,
+    }, (response) => {
+      if (chrome.runtime.lastError) {
+        console.error('[LeetLoop] Failed to forward submission:', chrome.runtime.lastError.message);
+      } else if (response?.success) {
+        console.log('[LeetLoop] Submission forwarded successfully:', submissionPayload.status);
+      }
+    });
+  } catch (error) {
+    console.error('[LeetLoop] Error forwarding submission:', error);
+  }
 }
 
 /**
