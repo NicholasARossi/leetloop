@@ -75,7 +75,7 @@ export default function MasteryPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-pulse text-slate-500">Loading mastery data...</div>
+        <div className="text-gray-500">Loading mastery data...</div>
       </div>
     )
   }
@@ -83,8 +83,8 @@ export default function MasteryPage() {
   if (error) {
     return (
       <div className="card p-8 text-center">
-        <p className="text-red-500 mb-4">{error}</p>
-        <p className="text-sm text-slate-500">
+        <p className="text-red-600 mb-4">{error}</p>
+        <p className="text-sm text-gray-500">
           Make sure the backend API is running.
         </p>
       </div>
@@ -111,15 +111,15 @@ export default function MasteryPage() {
 
       {/* Focus Areas */}
       {data.weak_areas.length > 0 && (
-        <div className="card p-4 border-l-4 border-red-500">
-          <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
+        <div className="card border-l-4 border-l-coral">
+          <h3 className="font-semibold text-black mb-2">
             Focus Areas
           </h3>
           <div className="flex flex-wrap gap-2">
             {data.weak_areas.map(area => (
               <span
                 key={area}
-                className="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-full text-sm"
+                className="tag"
               >
                 {area}
               </span>
@@ -133,7 +133,7 @@ export default function MasteryPage() {
         {/* Weak domains first */}
         {weakDomains.length > 0 && (
           <div>
-            <h2 className="text-sm font-semibold text-red-600 dark:text-red-400 uppercase tracking-wide mb-3">
+            <h2 className="section-title text-coral">
               Needs Work ({weakDomains.length})
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -151,7 +151,7 @@ export default function MasteryPage() {
         {/* Fair domains */}
         {fairDomains.length > 0 && (
           <div>
-            <h2 className="text-sm font-semibold text-yellow-600 dark:text-yellow-400 uppercase tracking-wide mb-3">
+            <h2 className="section-title">
               Developing ({fairDomains.length})
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -169,7 +169,7 @@ export default function MasteryPage() {
         {/* Good domains */}
         {goodDomains.length > 0 && (
           <div>
-            <h2 className="text-sm font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide mb-3">
+            <h2 className="section-title">
               Proficient ({goodDomains.length})
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -187,7 +187,7 @@ export default function MasteryPage() {
         {/* Strong domains */}
         {strongDomains.length > 0 && (
           <div>
-            <h2 className="text-sm font-semibold text-green-600 dark:text-green-400 uppercase tracking-wide mb-3">
+            <h2 className="section-title">
               Mastered ({strongDomains.length})
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -214,7 +214,7 @@ export default function MasteryPage() {
       {/* Loading detail overlay */}
       {loadingDetail && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="animate-pulse text-white">Loading domain details...</div>
+          <div className="text-white">Loading domain details...</div>
         </div>
       )}
     </div>

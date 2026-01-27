@@ -77,7 +77,7 @@ export default function PathPage() {
   if (loading && !pathProgress) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-pulse text-slate-500">Loading path...</div>
+        <div className="text-gray-500">Loading path...</div>
       </div>
     )
   }
@@ -85,8 +85,8 @@ export default function PathPage() {
   if (error && !pathProgress) {
     return (
       <div className="card p-8 text-center">
-        <p className="text-red-500 mb-4">{error}</p>
-        <p className="text-sm text-slate-500">
+        <p className="text-red-600 mb-4">{error}</p>
+        <p className="text-sm text-gray-500">
           Make sure the backend API is running.
         </p>
       </div>
@@ -100,7 +100,7 @@ export default function PathPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="card p-6">
+      <div className="card">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <PathSelector
@@ -114,10 +114,10 @@ export default function PathPage() {
           {pathProgress && (
             <div className="flex items-center gap-4">
               <div className="text-right">
-                <div className="text-2xl font-bold text-slate-900 dark:text-white">
+                <div className="stat-value text-2xl">
                   {completedCount}/{totalProblems}
                 </div>
-                <div className="text-sm text-slate-500">
+                <div className="stat-label">
                   {progress.toFixed(1)}% complete
                 </div>
               </div>
@@ -132,7 +132,7 @@ export default function PathPage() {
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="6"
-                    className="text-slate-200 dark:text-slate-700"
+                    className="text-gray-200"
                   />
                   <circle
                     cx="32"
@@ -141,16 +141,10 @@ export default function PathPage() {
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="6"
-                    strokeLinecap="round"
+                    strokeLinecap="square"
                     strokeDasharray={2 * Math.PI * 28}
                     strokeDashoffset={2 * Math.PI * 28 * (1 - progress / 100)}
-                    className={`transition-all duration-500 ${
-                      progress >= 100
-                        ? 'text-green-500'
-                        : progress >= 50
-                        ? 'text-brand-500'
-                        : 'text-yellow-500'
-                    }`}
+                    className="text-coral transition-all duration-500"
                   />
                 </svg>
               </div>
@@ -159,7 +153,7 @@ export default function PathPage() {
         </div>
 
         {pathProgress?.path.description && (
-          <p className="mt-4 text-sm text-slate-600 dark:text-slate-400">
+          <p className="mt-4 text-sm text-gray-600">
             {pathProgress.path.description}
           </p>
         )}

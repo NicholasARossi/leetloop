@@ -89,22 +89,20 @@ export default function CoachPage() {
   return (
     <div className="h-[calc(100vh-8rem)] flex flex-col">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-          AI Coach
-        </h1>
+        <h1 className="heading-accent text-xl">AI Coach</h1>
       </div>
 
       <div className="flex-1 flex gap-6 min-h-0">
         {/* Chat Area */}
-        <div className="flex-1 card flex flex-col">
+        <div className="flex-1 card flex flex-col p-0 overflow-hidden">
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.length === 0 ? (
               <div className="text-center py-12">
-                <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
+                <h2 className="text-lg font-semibold text-black mb-2">
                   Welcome to your AI Coach
                 </h2>
-                <p className="text-slate-500 mb-6">
+                <p className="text-gray-500 mb-6">
                   Ask questions about algorithms, get help with problems, or review your progress.
                 </p>
                 <div className="flex flex-wrap justify-center gap-2">
@@ -112,7 +110,7 @@ export default function CoachPage() {
                     <button
                       key={prompt}
                       onClick={() => setInput(prompt)}
-                      className="px-3 py-1.5 text-sm bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 rounded-lg text-slate-700 dark:text-slate-300 transition-colors"
+                      className="tag hover:bg-coral hover:border-black transition-colors cursor-pointer"
                     >
                       {prompt}
                     </button>
@@ -130,10 +128,10 @@ export default function CoachPage() {
                 >
                   <div
                     className={clsx(
-                      'max-w-[80%] px-4 py-2 rounded-lg',
+                      'max-w-[80%] px-4 py-2 border-2',
                       msg.role === 'user'
-                        ? 'bg-brand-600 text-white'
-                        : 'bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white'
+                        ? 'bg-coral border-black text-black'
+                        : 'bg-gray-100 border-gray-600 text-gray-700'
                     )}
                   >
                     <p className="whitespace-pre-wrap">{msg.content}</p>
@@ -143,11 +141,11 @@ export default function CoachPage() {
             )}
             {loading && (
               <div className="flex justify-start">
-                <div className="bg-slate-100 dark:bg-slate-700 px-4 py-2 rounded-lg">
+                <div className="bg-gray-100 border-2 border-gray-600 px-4 py-2">
                   <div className="flex gap-1">
-                    <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                    <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                    <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                   </div>
                 </div>
               </div>
@@ -156,7 +154,7 @@ export default function CoachPage() {
           </div>
 
           {/* Input */}
-          <div className="border-t border-slate-200 dark:border-slate-700 p-4">
+          <div className="border-t-2 border-black p-4">
             <div className="flex gap-2">
               <textarea
                 value={input}
@@ -182,12 +180,10 @@ export default function CoachPage() {
         </div>
 
         {/* Tips Sidebar */}
-        <div className="w-80 card p-4 hidden lg:block">
-          <h2 className="font-semibold text-slate-900 dark:text-white mb-4">
-            Personalized Tips
-          </h2>
+        <div className="w-80 card hidden lg:block">
+          <h2 className="section-title">Personalized Tips</h2>
           {tips.length === 0 ? (
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-gray-500">
               Tips will appear here based on your practice patterns.
             </p>
           ) : (
@@ -195,7 +191,7 @@ export default function CoachPage() {
               {tips.map((tip, idx) => (
                 <li
                   key={idx}
-                  className="text-sm text-slate-600 dark:text-slate-400 pl-4 border-l-2 border-brand-500"
+                  className="text-sm text-gray-600 pl-4 border-l-2 border-coral"
                 >
                   {tip}
                 </li>
@@ -203,8 +199,8 @@ export default function CoachPage() {
             </ul>
           )}
 
-          <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
-            <h3 className="font-medium text-slate-900 dark:text-white mb-2">
+          <div className="mt-6 pt-4 border-t-2 border-gray-200">
+            <h3 className="font-medium text-black mb-2 text-sm uppercase tracking-wide">
               Quick Questions
             </h3>
             <div className="space-y-2">
@@ -212,7 +208,7 @@ export default function CoachPage() {
                 <button
                   key={prompt}
                   onClick={() => setInput(prompt)}
-                  className="w-full text-left text-sm text-slate-600 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400"
+                  className="w-full text-left text-sm text-gray-600 hover:text-coral transition-colors"
                 >
                   {prompt}
                 </button>

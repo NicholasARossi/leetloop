@@ -162,7 +162,7 @@ body {
 
   /* Stat display */
   .stat-value {
-    @apply text-3xl font-bold text-black;
+    @apply text-3xl text-black;
     font-family: 'Banquise', sans-serif;
   }
 
@@ -181,6 +181,49 @@ body {
 
   .badge-accent {
     @apply bg-coral border-black text-black;
+  }
+
+  /* Difficulty badges */
+  .badge-easy {
+    @apply inline-block px-2 py-0.5 text-xs uppercase tracking-wide border-2 bg-gray-100 border-gray-500 text-gray-700;
+  }
+
+  .badge-medium {
+    @apply inline-block px-2 py-0.5 text-xs uppercase tracking-wide border-2 bg-coral border-black text-black;
+  }
+
+  .badge-hard {
+    @apply inline-block px-2 py-0.5 text-xs uppercase tracking-wide border-2 bg-black border-black text-white;
+  }
+
+  /* Status badges */
+  .badge-accepted {
+    @apply inline-block px-2 py-0.5 text-xs uppercase tracking-wide border-2 bg-coral border-black text-black;
+  }
+
+  .badge-failed {
+    @apply inline-block px-2 py-0.5 text-xs uppercase tracking-wide border-2 bg-gray-200 border-gray-600 text-gray-700;
+  }
+
+  /* Table styles */
+  .table-header {
+    @apply bg-gray-100 border-b-2 border-black;
+  }
+
+  .table-header th {
+    @apply text-left py-3 px-4 text-xs font-medium text-gray-600 uppercase tracking-wide;
+  }
+
+  .table-row {
+    @apply border-b border-gray-200 transition-colors;
+  }
+
+  .table-row:hover {
+    @apply bg-gray-50;
+  }
+
+  .table-row td {
+    @apply py-3 px-4 text-sm text-gray-700;
   }
 }
 

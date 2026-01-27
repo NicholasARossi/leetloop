@@ -53,7 +53,7 @@ export default function ReviewsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-pulse text-slate-500">Loading reviews...</div>
+        <div className="text-gray-500">Loading reviews...</div>
       </div>
     )
   }
@@ -61,47 +61,45 @@ export default function ReviewsPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-          Review Queue
-        </h1>
-        <span className="text-sm text-slate-500">
+        <h1 className="heading-accent text-xl">Review Queue</h1>
+        <span className="tag">
           {dueReviews.length} due now
         </span>
       </div>
 
       {/* Due Now */}
-      <div className="card overflow-hidden">
-        <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-red-50 dark:bg-red-900/20">
-          <h2 className="text-lg font-semibold text-red-700 dark:text-red-400">
+      <div className="card p-0 overflow-hidden">
+        <div className="p-4 border-b-2 border-black bg-coral">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-black">
             Due Now ({dueReviews.length})
           </h2>
         </div>
 
         {dueReviews.length === 0 ? (
           <div className="flex items-center justify-center h-32">
-            <p className="text-slate-500">
+            <p className="text-gray-500">
               All caught up! No reviews due right now.
             </p>
           </div>
         ) : (
-          <div className="divide-y divide-slate-100 dark:divide-slate-700">
+          <div>
             {dueReviews.map((review) => (
-              <div key={review.id} className="p-4">
+              <div key={review.id} className="p-4 border-b border-gray-200 last:border-b-0">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <a
                       href={`https://leetcode.com/problems/${review.problem_slug}/`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-medium text-slate-900 dark:text-white hover:text-brand-600"
+                      className="font-medium text-black hover:text-coral transition-colors"
                     >
                       {review.problem_title || review.problem_slug}
                     </a>
-                    <p className="text-sm text-slate-500 mt-1">
+                    <p className="text-sm text-gray-500 mt-1">
                       {review.reason || 'Needs review'}
                     </p>
-                    <p className="text-xs text-slate-400 mt-1">
-                      Review #{review.review_count + 1} &middot; Interval: {review.interval_days} day(s)
+                    <p className="text-xs text-gray-400 mt-1">
+                      Review #{review.review_count + 1} · Interval: {review.interval_days} day(s)
                     </p>
                   </div>
 
@@ -118,9 +116,8 @@ export default function ReviewsPage() {
                       onClick={() => handleComplete(review.id, true)}
                       disabled={completing === review.id}
                       className={clsx(
-                        'px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
-                        'bg-green-100 text-green-700 hover:bg-green-200',
-                        'dark:bg-green-900/30 dark:text-green-400 dark:hover:bg-green-900/50',
+                        'px-3 py-1.5 text-sm font-medium transition-all border-2 border-black',
+                        'bg-white hover:bg-coral',
                         completing === review.id && 'opacity-50 cursor-wait'
                       )}
                     >
@@ -130,9 +127,8 @@ export default function ReviewsPage() {
                       onClick={() => handleComplete(review.id, false)}
                       disabled={completing === review.id}
                       className={clsx(
-                        'px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
-                        'bg-red-100 text-red-700 hover:bg-red-200',
-                        'dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50',
+                        'px-3 py-1.5 text-sm font-medium transition-all border-2 border-gray-600',
+                        'bg-gray-100 hover:bg-gray-200',
                         completing === review.id && 'opacity-50 cursor-wait'
                       )}
                     >
@@ -147,34 +143,34 @@ export default function ReviewsPage() {
       </div>
 
       {/* Upcoming */}
-      <div className="card overflow-hidden">
-        <div className="p-4 border-b border-slate-200 dark:border-slate-700">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+      <div className="card p-0 overflow-hidden">
+        <div className="p-4 border-b-2 border-black bg-gray-100">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-700">
             Upcoming ({upcomingReviews.length})
           </h2>
         </div>
 
         {upcomingReviews.length === 0 ? (
           <div className="flex items-center justify-center h-32">
-            <p className="text-slate-500">No upcoming reviews scheduled.</p>
+            <p className="text-gray-500">No upcoming reviews scheduled.</p>
           </div>
         ) : (
-          <div className="divide-y divide-slate-100 dark:divide-slate-700">
+          <div>
             {upcomingReviews.slice(0, 10).map((review) => (
-              <div key={review.id} className="p-4 flex items-center justify-between">
+              <div key={review.id} className="p-4 flex items-center justify-between border-b border-gray-200 last:border-b-0">
                 <div>
-                  <span className="font-medium text-slate-900 dark:text-white">
+                  <span className="font-medium text-black">
                     {review.problem_title || review.problem_slug}
                   </span>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-gray-500">
                     {review.reason || 'Scheduled review'}
                   </p>
                 </div>
                 <div className="text-right">
-                  <span className="text-sm text-slate-600 dark:text-slate-400">
+                  <span className="text-sm text-gray-600">
                     {formatDistanceToNow(new Date(review.next_review), { addSuffix: true })}
                   </span>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-gray-400">
                     {format(new Date(review.next_review), 'MMM d, yyyy')}
                   </p>
                 </div>
@@ -185,20 +181,18 @@ export default function ReviewsPage() {
       </div>
 
       {/* How it works */}
-      <div className="card p-6">
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
-          How Spaced Repetition Works
-        </h2>
-        <div className="text-sm text-slate-600 dark:text-slate-400 space-y-2">
+      <div className="card">
+        <h2 className="section-title">How Spaced Repetition Works</h2>
+        <div className="text-sm text-gray-600 space-y-2">
           <p>
             When you fail a problem, it gets added to your review queue with a 1-day interval.
           </p>
           <p>
-            <strong className="text-green-600">Pass:</strong> The interval doubles (up to 30 days).
+            <strong className="text-black">Pass:</strong> The interval doubles (up to 30 days).
             You'll see the problem again after the new interval.
           </p>
           <p>
-            <strong className="text-red-600">Fail:</strong> The interval resets to 1 day.
+            <strong className="text-gray-700">Fail:</strong> The interval resets to 1 day.
             You'll need to review it again tomorrow.
           </p>
           <p>

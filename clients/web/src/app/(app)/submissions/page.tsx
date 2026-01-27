@@ -51,9 +51,7 @@ export default function SubmissionsPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-          Submissions
-        </h1>
+        <h1 className="heading-accent text-xl">Submissions</h1>
 
         <div className="flex gap-3">
           <select
@@ -82,70 +80,58 @@ export default function SubmissionsPage() {
         </div>
       </div>
 
-      <div className="card overflow-hidden">
+      <div className="card overflow-hidden p-0">
         {loading ? (
           <div className="flex items-center justify-center h-64">
-            <div className="animate-pulse text-slate-500">Loading submissions...</div>
+            <div className="text-gray-500">Loading submissions...</div>
           </div>
         ) : submissions.length === 0 ? (
           <div className="flex items-center justify-center h-64">
-            <p className="text-slate-500">No submissions found.</p>
+            <p className="text-gray-500">No submissions found.</p>
           </div>
         ) : (
           <table className="w-full">
-            <thead className="bg-slate-50 dark:bg-slate-700/50">
+            <thead className="table-header">
               <tr>
-                <th className="text-left py-3 px-4 text-sm font-medium text-slate-600 dark:text-slate-400">
-                  Problem
-                </th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-slate-600 dark:text-slate-400">
-                  Difficulty
-                </th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-slate-600 dark:text-slate-400">
-                  Status
-                </th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-slate-600 dark:text-slate-400">
-                  Language
-                </th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-slate-600 dark:text-slate-400">
-                  Runtime
-                </th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-slate-600 dark:text-slate-400">
-                  Submitted
-                </th>
+                <th>Problem</th>
+                <th>Difficulty</th>
+                <th>Status</th>
+                <th>Language</th>
+                <th>Runtime</th>
+                <th>Submitted</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
+            <tbody>
               {submissions.map((sub) => (
                 <tr
                   key={sub.id}
-                  className="hover:bg-slate-50 dark:hover:bg-slate-700/30 cursor-pointer"
+                  className="table-row cursor-pointer"
                   onClick={() => setSelectedSubmission(sub)}
                 >
-                  <td className="py-3 px-4">
+                  <td>
                     <a
                       href={`https://leetcode.com/problems/${sub.problem_slug}/`}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="font-medium text-slate-900 dark:text-white hover:text-brand-600"
+                      className="font-medium text-black hover:text-coral transition-colors"
                     >
                       {sub.problem_title}
                     </a>
                   </td>
-                  <td className="py-3 px-4">
+                  <td>
                     {sub.difficulty && <DifficultyBadge difficulty={sub.difficulty} />}
                   </td>
-                  <td className="py-3 px-4">
+                  <td>
                     <StatusBadge status={sub.status} />
                   </td>
-                  <td className="py-3 px-4 text-sm text-slate-600 dark:text-slate-400">
+                  <td className="text-gray-600">
                     {sub.language || '-'}
                   </td>
-                  <td className="py-3 px-4 text-sm text-slate-600 dark:text-slate-400">
+                  <td className="text-gray-600">
                     {sub.runtime_ms ? `${sub.runtime_ms}ms` : '-'}
                   </td>
-                  <td className="py-3 px-4 text-sm text-slate-500">
+                  <td className="text-gray-500">
                     {formatDistanceToNow(new Date(sub.submitted_at), { addSuffix: true })}
                   </td>
                 </tr>
@@ -165,24 +151,24 @@ export default function SubmissionsPage() {
             className="card max-w-4xl w-full max-h-[80vh] overflow-hidden flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-start">
+            <div className="p-4 border-b-2 border-black flex justify-between items-start">
               <div>
-                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+                <h2 className="text-lg font-semibold text-black">
                   {selectedSubmission.problem_title}
                 </h2>
-                <div className="flex items-center gap-2 mt-1">
+                <div className="flex items-center gap-2 mt-2">
                   <StatusBadge status={selectedSubmission.status} />
                   {selectedSubmission.difficulty && (
                     <DifficultyBadge difficulty={selectedSubmission.difficulty} />
                   )}
-                  <span className="text-sm text-slate-500">
+                  <span className="text-sm text-gray-500">
                     {format(new Date(selectedSubmission.submitted_at), 'PPp')}
                   </span>
                 </div>
               </div>
               <button
                 onClick={() => setSelectedSubmission(null)}
-                className="text-slate-400 hover:text-slate-600"
+                className="text-gray-400 hover:text-black transition-colors"
               >
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -191,11 +177,11 @@ export default function SubmissionsPage() {
             </div>
             <div className="p-4 overflow-auto flex-1">
               {selectedSubmission.code ? (
-                <pre className="bg-slate-900 text-slate-100 p-4 rounded-lg text-sm overflow-x-auto">
+                <pre className="bg-gray-900 text-gray-100 p-4 border-2 border-black text-sm overflow-x-auto">
                   <code>{selectedSubmission.code}</code>
                 </pre>
               ) : (
-                <p className="text-slate-500">No code available for this submission.</p>
+                <p className="text-gray-500">No code available for this submission.</p>
               )}
             </div>
           </div>

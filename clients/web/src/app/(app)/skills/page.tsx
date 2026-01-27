@@ -31,73 +31,63 @@ export default function SkillsPage() {
   }, [userId])
 
   const getScoreColor = (score: number) => {
-    if (score >= 70) return 'text-green-600 dark:text-green-400'
-    if (score >= 40) return 'text-yellow-600 dark:text-yellow-400'
-    return 'text-red-600 dark:text-red-400'
-  }
-
-  const getProgressColor = (score: number) => {
-    if (score >= 70) return 'bg-green-500'
-    if (score >= 40) return 'bg-yellow-500'
-    return 'bg-red-500'
+    if (score >= 70) return 'text-black'
+    if (score >= 40) return 'text-gray-600'
+    return 'text-gray-400'
   }
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-pulse text-slate-500">Loading skills...</div>
+        <div className="text-gray-500">Loading skills...</div>
       </div>
     )
   }
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-        Skill Breakdown
-      </h1>
+      <h1 className="heading-accent text-xl">Skill Breakdown</h1>
 
       {/* Radar Chart */}
-      <div className="card p-6">
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
-          Skill Distribution
-        </h2>
+      <div className="card">
+        <h2 className="section-title">Skill Distribution</h2>
         <SkillRadar skills={skills} className="max-w-2xl mx-auto" />
       </div>
 
       {/* Skill List */}
-      <div className="card overflow-hidden">
-        <div className="p-4 border-b border-slate-200 dark:border-slate-700">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+      <div className="card p-0 overflow-hidden">
+        <div className="p-4 border-b-2 border-black bg-gray-100">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-700">
             All Skills
           </h2>
         </div>
 
         {skills.length === 0 ? (
           <div className="flex items-center justify-center h-64">
-            <p className="text-slate-500">
+            <p className="text-gray-500">
               No skill data yet. Start solving problems to build your skill profile!
             </p>
           </div>
         ) : (
-          <div className="divide-y divide-slate-100 dark:divide-slate-700">
+          <div>
             {skills
               .sort((a, b) => a.score - b.score) // Weakest first
               .map((skill) => (
                 <div
                   key={skill.tag}
-                  className="p-4 hover:bg-slate-50 dark:hover:bg-slate-700/30"
+                  className="p-4 border-b border-gray-200 hover:bg-gray-50 transition-colors"
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div>
-                      <span className="font-medium text-slate-900 dark:text-white">
+                      <span className="font-medium text-black">
                         {skill.tag.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
                       </span>
-                      <span className="text-sm text-slate-500 ml-2">
+                      <span className="text-sm text-gray-500 ml-2">
                         {skill.total_attempts} attempts
                       </span>
                     </div>
                     <div className="flex items-center gap-4">
-                      <span className="text-sm text-slate-500">
+                      <span className="text-sm text-gray-500">
                         {Math.round(skill.success_rate * 100)}% success
                       </span>
                       <span className={clsx('font-semibold', getScoreColor(skill.score))}>
@@ -107,15 +97,15 @@ export default function SkillsPage() {
                   </div>
 
                   {/* Progress Bar */}
-                  <div className="h-2 bg-slate-200 dark:bg-slate-600 rounded-full overflow-hidden">
+                  <div className="progress-bar">
                     <div
-                      className={clsx('h-full rounded-full transition-all', getProgressColor(skill.score))}
+                      className="progress-fill transition-all"
                       style={{ width: `${skill.score}%` }}
                     />
                   </div>
 
                   {skill.last_practiced && (
-                    <p className="text-xs text-slate-500 mt-2">
+                    <p className="text-xs text-gray-500 mt-2">
                       Last practiced{' '}
                       {formatDistanceToNow(new Date(skill.last_practiced), { addSuffix: true })}
                     </p>
@@ -128,11 +118,9 @@ export default function SkillsPage() {
 
       {/* Weak Areas Summary */}
       {skills.length > 0 && (
-        <div className="card p-6">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
-            Focus Areas
-          </h2>
-          <p className="text-slate-600 dark:text-slate-400 mb-4">
+        <div className="card">
+          <h2 className="section-title">Focus Areas</h2>
+          <p className="text-gray-600 mb-4">
             These skills need the most attention based on your performance:
           </p>
           <div className="flex flex-wrap gap-2">
@@ -142,13 +130,13 @@ export default function SkillsPage() {
               .map((skill) => (
                 <span
                   key={skill.tag}
-                  className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 px-3 py-1 rounded-full text-sm font-medium"
+                  className="tag"
                 >
                   {skill.tag.replace(/-/g, ' ')}
                 </span>
               ))}
             {skills.filter((s) => s.score < 50).length === 0 && (
-              <span className="text-slate-500">
+              <span className="text-gray-500">
                 Great job! All your skills are above 50. Keep practicing to maintain them!
               </span>
             )}

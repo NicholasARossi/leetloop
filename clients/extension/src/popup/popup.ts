@@ -293,7 +293,7 @@ function setDailyAccent() {
     (Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000
   );
   const colorIndex = dayOfYear % accentColors.length;
-  const accent = accentColors[colorIndex];
+  const accent = accentColors[colorIndex] ?? '#FF8888';
 
   document.documentElement.style.setProperty('--accent', accent);
   document.documentElement.style.setProperty('--accent-light', accent + '30');
