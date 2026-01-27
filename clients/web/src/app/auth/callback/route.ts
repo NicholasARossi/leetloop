@@ -3,9 +3,14 @@ import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url)
+  const { searchParams } = new URL(request.url)
   const code = searchParams.get('code')
-  const next = searchParams.get('next') ?? '/today'
+  const next = searchParams.get('next') ?? '/dashboard'
+
+  // Use X-Forwarded-Host header (set by Cloud Run) or fall back to Host header
+  const host = request.headers.get('x-forwarded-host') || request.headers.get('host') || 'localhost:3000'
+  const protocol = request.headers.get('x-forwarded-proto') || 'https'
+  const origin = `${protocol}://${host}`
 
   if (code) {
     const cookieStore = cookies()

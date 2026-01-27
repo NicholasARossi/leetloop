@@ -10,9 +10,11 @@ import { getSupabaseClient } from './lib/supabase';
 // Build-time environment variables
 declare const __SUPABASE_URL__: string;
 declare const __SUPABASE_ANON_KEY__: string;
+declare const __API_URL__: string;
 
 const SUPABASE_URL = typeof __SUPABASE_URL__ !== 'undefined' ? __SUPABASE_URL__ : '';
 const SUPABASE_ANON_KEY = typeof __SUPABASE_ANON_KEY__ !== 'undefined' ? __SUPABASE_ANON_KEY__ : '';
+const API_URL = typeof __API_URL__ !== 'undefined' ? __API_URL__ : '';
 
 /**
  * Get user ID directly from storage without using Supabase client
@@ -43,7 +45,7 @@ async function getUserIdFromStorage(): Promise<string> {
 }
 
 /**
- * Sync a submission to Supabase using the JS client
+ * Sync a submission - routes through API if available, otherwise direct to Supabase
  */
 export async function syncSubmission(
   config: Config,
@@ -52,11 +54,72 @@ export async function syncSubmission(
   console.log('[LeetLoop] syncSubmission starting for:', submission.problem_slug);
 
   const userId = await getUserIdFromStorage();
-
   console.log('[LeetLoop] Attempting sync with userId:', userId);
 
-  // Always use direct fetch to avoid Supabase client session issues
+  // Use build-time API URL, fall back to config
+  const apiUrl = API_URL || config.apiUrl;
+
+  // Prefer API route if configured
+  if (apiUrl) {
+    console.log('[LeetLoop] Using API route:', apiUrl.substring(0, 30) + '...');
+    return syncSubmissionViaApi(apiUrl, submission, userId);
+  }
+
+  // Fall back to direct Supabase
+  console.log('[LeetLoop] Using direct Supabase route');
   return syncSubmissionFetch(config, submission, userId);
+}
+
+/**
+ * Sync submission through the LeetLoop API backend
+ */
+async function syncSubmissionViaApi(
+  apiUrl: string,
+  submission: StoredSubmission,
+  userId: string
+): Promise<boolean> {
+  try {
+    const response = await fetch(`${apiUrl}/api/submissions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: submission.id,
+        user_id: userId,
+        problem_slug: submission.problem_slug,
+        problem_title: submission.problem_title,
+        problem_id: submission.problem_id,
+        difficulty: submission.difficulty,
+        tags: submission.tags,
+        status: submission.status,
+        runtime_ms: submission.runtime_ms,
+        runtime_percentile: submission.runtime_percentile,
+        memory_mb: submission.memory_mb,
+        memory_percentile: submission.memory_percentile,
+        attempt_number: submission.attempt_number,
+        time_elapsed_seconds: submission.time_elapsed_seconds,
+        language: submission.language,
+        code: submission.code,
+        code_length: submission.code_length,
+        session_id: submission.session_id,
+        submitted_at: submission.submitted_at,
+      }),
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      console.log('[LeetLoop] Synced via API:', submission.id, result);
+      return true;
+    }
+
+    const errorText = await response.text();
+    console.error('[LeetLoop] API sync failed:', response.status, errorText);
+    return false;
+  } catch (error) {
+    console.error('[LeetLoop] API sync error:', error);
+    return false;
+  }
 }
 
 /**

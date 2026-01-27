@@ -12,7 +12,10 @@
   "host_permissions": [
     "https://leetcode.com/*",
     "https://*.supabase.co/*",
-    "http://localhost:3001/*"
+    "https://*.run.app/*",
+    "http://localhost:3001/*",
+    "http://localhost:8080/*",
+    "http://localhost:8081/*"
   ],
   "oauth2": {
     "client_id": "__GOOGLE_CLIENT_ID__",

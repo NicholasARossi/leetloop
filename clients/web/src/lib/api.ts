@@ -192,10 +192,6 @@ export const leetloopApi = {
   getCurrentPath: (userId: string) =>
     api<PathProgressResponse>(`/api/users/${userId}/current-path`),
 
-  // Today's Focus
-  getTodaysFocus: (userId: string) =>
-    api<TodaysFocus>(`/api/today/${userId}`),
-
   // Mastery
   getMastery: (userId: string) =>
     api<MasteryResponse>(`/api/mastery/${userId}`),
@@ -357,28 +353,6 @@ export interface PathProgressResponse {
   completed_count: number
   completion_percentage: number
   categories_progress: Record<string, CategoryProgress>
-}
-
-// Today's Focus Types
-export interface DailyFocusProblem {
-  slug: string
-  title: string
-  difficulty?: 'Easy' | 'Medium' | 'Hard'
-  category: string
-  reason: string
-  priority: number
-}
-
-export interface TodaysFocus {
-  user_id: string
-  streak: number
-  daily_goal: number
-  completed_today: number
-  reviews_due: DailyFocusProblem[]
-  path_problems: DailyFocusProblem[]
-  skill_builders: DailyFocusProblem[]
-  llm_insight?: string
-  generated_at: string
 }
 
 // Mastery Types

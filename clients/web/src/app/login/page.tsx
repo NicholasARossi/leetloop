@@ -26,7 +26,7 @@ export default function LoginPage() {
         setError('Check your email to confirm your account.')
       } else {
         await signIn(email, password)
-        router.push('/today')
+        router.push('/dashboard')
       }
     } catch (err: any) {
       setError(err.message || 'An error occurred')
@@ -170,7 +170,7 @@ export default function LoginPage() {
 
         <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
           <Link
-            href="/today"
+            href="/dashboard"
             className="block text-center text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
           >
             Continue as guest

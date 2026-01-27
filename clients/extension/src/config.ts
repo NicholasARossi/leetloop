@@ -7,6 +7,7 @@ import { getAuthUserId } from './auth';
 export interface Config {
   supabaseUrl: string;
   supabaseAnonKey: string;
+  apiUrl: string;
   userId: string;
   guestUserId: string;
   enabled: boolean;
@@ -15,6 +16,7 @@ export interface Config {
 const DEFAULT_CONFIG: Config = {
   supabaseUrl: '',
   supabaseAnonKey: '',
+  apiUrl: '',
   userId: '',
   guestUserId: '',
   enabled: true,

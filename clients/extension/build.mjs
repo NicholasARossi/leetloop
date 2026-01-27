@@ -34,7 +34,11 @@ if (!envLoaded) {
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '__SUPABASE_URL__';
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || '__SUPABASE_ANON_KEY__';
 
+// Get API URL for routing submissions through backend
+const API_URL = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || '';
+
 console.log(`Supabase URL: ${SUPABASE_URL ? SUPABASE_URL.substring(0, 30) + '...' : 'not set'}`);
+console.log(`API URL: ${API_URL || 'not set (will use direct Supabase)'}`);
 
 // Ensure dist directory exists
 if (!existsSync(join(__dirname, 'dist'))) {
@@ -82,6 +86,7 @@ const buildOptions = {
   define: {
     '__SUPABASE_URL__': JSON.stringify(SUPABASE_URL),
     '__SUPABASE_ANON_KEY__': JSON.stringify(SUPABASE_ANON_KEY),
+    '__API_URL__': JSON.stringify(API_URL),
   },
 };
 

@@ -21,9 +21,17 @@ COPY packages ./packages
 # Install dependencies
 RUN pnpm install --frozen-lockfile
 
+# Build args for Next.js build (needed for static generation)
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ARG NEXT_PUBLIC_API_URL
+
 # Build web client with standalone output
 ENV BUILD_STANDALONE=true
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 
 RUN pnpm --filter @leetloop/web build
 
@@ -70,32 +78,7 @@ COPY --from=web-builder /app/clients/web/public /app/web/clients/web/public
 
 # Create supervisor config
 RUN mkdir -p /var/log/supervisor
-COPY <<EOF /etc/supervisor/conf.d/leetloop.conf
-[supervisord]
-nodaemon=true
-user=root
-
-[program:api]
-command=gunicorn -c gunicorn_conf.py app.main:app
-directory=/app/api
-autostart=true
-autorestart=true
-stdout_logfile=/dev/stdout
-stdout_logfile_maxbytes=0
-stderr_logfile=/dev/stderr
-stderr_logfile_maxbytes=0
-
-[program:web]
-command=node server.js
-directory=/app/web/clients/web
-environment=NODE_ENV="production",PORT="3001",HOSTNAME="0.0.0.0"
-autostart=true
-autorestart=true
-stdout_logfile=/dev/stdout
-stdout_logfile_maxbytes=0
-stderr_logfile=/dev/stderr
-stderr_logfile_maxbytes=0
-EOF
+COPY supervisord.conf /etc/supervisor/conf.d/leetloop.conf
 
 # Environment variables
 ENV PYTHONUNBUFFERED=1

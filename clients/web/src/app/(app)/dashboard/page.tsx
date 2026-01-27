@@ -64,17 +64,17 @@ export default function DashboardPage() {
   if (error) {
     return (
       <div className="max-w-5xl mx-auto">
-        <div className="card p-8 text-center">
-          <p className="text-red-500 mb-4">{error}</p>
-          <p className="text-sm text-slate-500">
+        <div className="card text-center">
+          <p className="text-red-600 mb-4">{error}</p>
+          <p className="text-sm text-gray-500 mb-4">
             Make sure the backend API is running at{' '}
-            <code className="bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">
+            <code className="bg-gray-100 px-2 py-1">
               {process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}
             </code>
           </p>
           <button
             onClick={loadMission}
-            className="mt-4 btn-primary"
+            className="btn-primary"
           >
             Try Again
           </button>
@@ -86,8 +86,8 @@ export default function DashboardPage() {
   if (!mission) {
     return (
       <div className="max-w-5xl mx-auto">
-        <div className="card p-8 text-center">
-          <p className="text-slate-500">No mission data available.</p>
+        <div className="card text-center">
+          <p className="text-gray-500">No mission data available.</p>
         </div>
       </div>
     )
@@ -97,23 +97,21 @@ export default function DashboardPage() {
   const formattedDate = format(today, 'EEEE, MMMM d')
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
-      {/* Header with date and regenerate */}
+    <div className="max-w-5xl mx-auto space-y-8">
+      {/* Header with date and streak */}
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-slate-500 dark:text-slate-400 text-sm">{formattedDate}</p>
-          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white mt-1">
+          <p className="text-gray-500 text-sm">{formattedDate}</p>
+          <h1 className="text-xl font-display mt-1">
             Your Daily Mission
           </h1>
         </div>
 
         {/* Streak badge */}
         {mission.streak > 0 && (
-          <div className="flex items-center gap-2 px-4 py-2 bg-amber-100 dark:bg-amber-500/20 rounded-lg">
-            <span className="text-2xl">🔥</span>
-            <div>
-              <p className="text-amber-700 dark:text-amber-400 font-semibold">{mission.streak} day streak</p>
-            </div>
+          <div className="card-sm flex items-center gap-3">
+            <span className="stat-value text-2xl">{mission.streak}</span>
+            <span className="stat-label">day streak</span>
           </div>
         )}
       </div>
