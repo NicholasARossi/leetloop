@@ -24,12 +24,15 @@ class Settings(BaseSettings):
 
     # Google AI (Gemini)
     google_api_key: Optional[str] = None
+    gemini_model: str = "gemini-2.0-flash"  # Gemini model with large context window
 
-    # CORS
+    # CORS - includes Chrome extension and Cloud Run origins
     allowed_origins: list[str] = [
         "http://localhost:3000",
         "http://localhost:3001",
-        "https://leetloop.vercel.app",
+        "http://localhost:8080",
+        "https://leetloop-693222603964.us-central1.run.app",
+        "https://leetloop-web-693222603964.us-central1.run.app",
     ]
 
     # Rate limiting

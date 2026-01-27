@@ -110,20 +110,23 @@ class MissionGenerator:
 
         user_id_str = str(user_id)
 
-        # Get recent failures (last 7 days)
+        # Get ALL recent failures (last 7 days) WITH code for LLM analysis
         seven_days_ago = (datetime.utcnow() - timedelta(days=7)).isoformat()
         failures_response = (
             self.supabase.table("submissions")
-            .select("problem_slug, problem_title, difficulty, tags, submitted_at")
+            .select("problem_slug, problem_title, difficulty, tags, status, code, language, submitted_at")
             .eq("user_id", user_id_str)
             .neq("status", "Accepted")
             .gte("submitted_at", seven_days_ago)
             .order("submitted_at", desc=True)
-            .limit(20)
-            .execute()
+            .execute()  # No limit - fetch all for LLM context
         )
         if failures_response.data:
             context["recent_failures"] = failures_response.data
+            # Also store failures with code separately for side quest prompt
+            context["recent_failures_with_code"] = [
+                f for f in failures_response.data if f.get("code")
+            ]
 
         # Get slow solves from problem_attempt_stats
         slow_response = (
@@ -304,6 +307,137 @@ Only output the JSON, nothing else."""
                 "skill_tags": [],
             }
 
+    def _build_side_quest_prompt(
+        self,
+        context: dict,
+        candidate_quests: list[dict],
+        path_info: dict,
+    ) -> str:
+        """
+        Build a rich prompt for LLM-driven side quest selection.
+
+        Includes:
+        - Current position in NeetCode 150 (main plot)
+        - All failures from last 7 days WITH code
+        - List of solved problems
+        - Candidate problems pool
+        """
+        prompt_parts = []
+
+        # Section 1: Main plot position
+        current_category = context.get("path_progress", {}).get("current_category", "Unknown")
+        solved_count = len(context.get("solved_problems", []))
+        total_problems = path_info.get("total_problems", 150)
+        upcoming = path_info.get("upcoming_in_category", [])
+
+        prompt_parts.append(f"""## Your Position in NeetCode 150 (Main Plot)
+Current Category: {current_category}
+Problems Completed: {solved_count}/{total_problems}
+Next up in path: {', '.join(upcoming[:3]) if upcoming else 'None'}
+
+This learner is working through "{current_category}" - side quests should complement this focus.""")
+
+        # Section 2: All failures with code
+        failures_with_code = context.get("recent_failures_with_code", [])
+        if failures_with_code:
+            prompt_parts.append("\n## All Failures from Last 7 Days (with code)\n")
+            for i, f in enumerate(failures_with_code, 1):
+                title = f.get("problem_title") or f.get("problem_slug", "").replace("-", " ").title()
+                difficulty = f.get("difficulty", "Unknown")
+                status = f.get("status", "Failed")
+                tags = ", ".join(f.get("tags") or []) or "No tags"
+                language = f.get("language", "python")
+                code = f.get("code", "# No code available")
+
+                prompt_parts.append(f"""### Failure {i}: {title} ({difficulty}) - {status}
+Tags: {tags}
+Language: {language}
+
+```{language}
+{code}
+```
+""")
+        else:
+            prompt_parts.append("\n## Recent Failures\nNo failures with code in the last 7 days.\n")
+
+        # Section 3: Solved problems (truncated list)
+        solved = context.get("solved_problems", [])
+        solved_display = ", ".join(solved[:50])
+        if len(solved) > 50:
+            solved_display += f", ... ({len(solved)} total)"
+        prompt_parts.append(f"\n## Solved Problems ({len(solved)} total)\n{solved_display}\n")
+
+        # Section 4: Candidate problems
+        prompt_parts.append("\n## Candidate Problems for Side Quests")
+        for cq in candidate_quests:
+            prompt_parts.append(f"- {cq['slug']}: {cq['title']} ({cq.get('difficulty', 'Unknown')}) - Source: {cq['quest_type']}")
+
+        # Section 5: Instructions
+        prompt_parts.append("""
+## Your Task
+Analyze ALL the failure code above. Look for:
+1. CODE PATTERNS: What mistakes keep appearing? (e.g., O(n^3) brute force instead of O(n^2) two pointers)
+2. ALGORITHM GAPS: Which techniques don't they understand? (e.g., not using sorted array with two pointers)
+3. ERROR TYPES: TLE = efficiency problem, WA = logic bug, RE = edge cases
+
+Select 2-3 side quests from the candidates that:
+1. Address the ROOT CAUSE of failures (not symptoms)
+2. Complement their current NeetCode 150 category
+3. Build toward mastery of the weak pattern
+
+If no candidates are appropriate, explain why and suggest what type of problem would help.
+
+Output JSON only:
+{
+  "analysis": "Brief analysis of the learner's struggle patterns based on the code",
+  "side_quests": [
+    {
+      "slug": "problem-slug-from-candidates",
+      "title": "Problem Title",
+      "reason": "Why this problem addresses the root cause of their failures",
+      "target_weakness": "The skill or pattern this addresses",
+      "quest_type": "skill_gap|review_due|slow_solve"
+    }
+  ]
+}""")
+
+        return "\n".join(prompt_parts)
+
+    async def _get_path_info(self, context: dict) -> dict:
+        """Get path metadata for the side quest prompt."""
+        path_id = context.get("current_path_id", "11111111-1111-1111-1111-111111111150")
+        solved = set(context.get("solved_problems", []))
+        current_category = context.get("path_progress", {}).get("current_category")
+
+        path_response = (
+            self.supabase.table("learning_paths")
+            .select("categories, name")
+            .eq("id", path_id)
+            .single()
+            .execute()
+        )
+
+        if not path_response.data:
+            return {"total_problems": 150, "upcoming_in_category": []}
+
+        categories = path_response.data.get("categories", [])
+        total_problems = sum(len(cat.get("problems", [])) for cat in categories)
+
+        # Find upcoming problems in current category
+        upcoming = []
+        for cat in categories:
+            if cat.get("name") == current_category:
+                for prob in sorted(cat.get("problems", []), key=lambda x: x.get("order", 0)):
+                    if prob["slug"] not in solved:
+                        upcoming.append(prob["title"])
+                break
+
+        return {
+            "total_problems": total_problems,
+            "upcoming_in_category": upcoming,
+            "path_name": path_response.data.get("name", "NeetCode 150"),
+        }
+
     async def _get_main_quests(self, user_id: UUID, context: dict) -> list[dict]:
         """
         Get next problems from user's learning path as main quests.
@@ -361,49 +495,48 @@ Only output the JSON, nothing else."""
         objective: dict,
     ) -> list[dict]:
         """
-        Generate side quests that target user's weaknesses.
+        Generate side quests using LLM-driven selection with rich context.
 
-        Combines:
-        1. Review due items
-        2. Problems targeting weak skills
-        3. LLM-selected problems for the objective
+        Process:
+        1. Gather candidate pool (reviews, weak skills, slow solves)
+        2. Build rich prompt with code context
+        3. Call Gemini to SELECT and EXPLAIN side quests
+        4. Fall back to rule-based if LLM fails
 
         Returns list of 2-3 side quests.
         """
         user_id_str = str(user_id)
-        side_quests = []
         solved = set(context.get("solved_problems", []))
 
-        # 1. Check for reviews due
+        # Step 1: Gather candidate pool
+        candidate_quests = []
+
+        # 1a. Check for reviews due
         reviews_response = (
             self.supabase.table("review_queue")
             .select("problem_slug, problem_title, reason")
             .eq("user_id", user_id_str)
             .lte("next_review", datetime.utcnow().isoformat())
             .order("priority", desc=True)
-            .limit(1)
+            .limit(3)
             .execute()
         )
         if reviews_response.data:
-            r = reviews_response.data[0]
-            side_quests.append({
-                "slug": r["problem_slug"],
-                "title": r.get("problem_title") or r["problem_slug"].replace("-", " ").title(),
-                "difficulty": None,
-                "reason": r.get("reason", "Due for review - failed previously"),
-                "source_problem_slug": None,
-                "target_weakness": "retention",
-                "quest_type": "review_due",
-                "completed": False,
-            })
+            for r in reviews_response.data:
+                candidate_quests.append({
+                    "slug": r["problem_slug"],
+                    "title": r.get("problem_title") or r["problem_slug"].replace("-", " ").title(),
+                    "difficulty": None,
+                    "reason": r.get("reason", "Due for review - failed previously"),
+                    "source_problem_slug": None,
+                    "target_weakness": "retention",
+                    "quest_type": "review_due",
+                    "completed": False,
+                })
 
-        # 2. Add skill gap problem
-        if context.get("weak_skills") and len(side_quests) < 3:
+        # 1b. Add skill gap problems
+        if context.get("weak_skills"):
             for skill in context["weak_skills"]:
-                if len(side_quests) >= 3:
-                    break
-
-                # Find an unsolved problem with this tag
                 failed_response = (
                     self.supabase.table("submissions")
                     .select("problem_slug, problem_title, difficulty")
@@ -411,32 +544,30 @@ Only output the JSON, nothing else."""
                     .neq("status", "Accepted")
                     .contains("tags", [skill["tag"]])
                     .order("submitted_at", desc=True)
-                    .limit(1)
+                    .limit(2)
                     .execute()
                 )
                 if failed_response.data:
-                    prob = failed_response.data[0]
-                    if prob["problem_slug"] not in solved and not any(
-                        q["slug"] == prob["problem_slug"] for q in side_quests
-                    ):
-                        side_quests.append({
-                            "slug": prob["problem_slug"],
-                            "title": prob.get("problem_title") or prob["problem_slug"].replace("-", " ").title(),
-                            "difficulty": prob.get("difficulty"),
-                            "reason": f"Strengthen {skill['tag']} (score: {skill['score']:.0f}%)",
-                            "source_problem_slug": None,
-                            "target_weakness": skill["tag"],
-                            "quest_type": "skill_gap",
-                            "completed": False,
-                        })
+                    for prob in failed_response.data:
+                        if prob["problem_slug"] not in solved and not any(
+                            q["slug"] == prob["problem_slug"] for q in candidate_quests
+                        ):
+                            candidate_quests.append({
+                                "slug": prob["problem_slug"],
+                                "title": prob.get("problem_title") or prob["problem_slug"].replace("-", " ").title(),
+                                "difficulty": prob.get("difficulty"),
+                                "reason": f"Strengthen {skill['tag']} (score: {skill['score']:.0f}%)",
+                                "source_problem_slug": None,
+                                "target_weakness": skill["tag"],
+                                "quest_type": "skill_gap",
+                                "completed": False,
+                            })
 
-        # 3. Add slow solve retry
-        if context.get("slow_solves") and len(side_quests) < 3:
+        # 1c. Add slow solve retries
+        if context.get("slow_solves"):
             for slow in context["slow_solves"]:
-                if len(side_quests) >= 3:
-                    break
-                if not any(q["slug"] == slow["problem_slug"] for q in side_quests):
-                    side_quests.append({
+                if not any(q["slug"] == slow["problem_slug"] for q in candidate_quests):
+                    candidate_quests.append({
                         "slug": slow["problem_slug"],
                         "title": slow.get("problem_title") or slow["problem_slug"].replace("-", " ").title(),
                         "difficulty": slow.get("difficulty"),
@@ -446,6 +577,71 @@ Only output the JSON, nothing else."""
                         "quest_type": "slow_solve",
                         "completed": False,
                     })
+
+        # If no candidates, return empty
+        if not candidate_quests:
+            return []
+
+        # Step 2: Try LLM-driven selection if configured and we have code context
+        if self.gemini.configured and context.get("recent_failures_with_code"):
+            try:
+                path_info = await self._get_path_info(context)
+                prompt = self._build_side_quest_prompt(context, candidate_quests, path_info)
+
+                response = self.gemini.model.generate_content(prompt)
+                text = response.text.strip()
+
+                # Extract JSON from response
+                if "```json" in text:
+                    text = text.split("```json")[1].split("```")[0]
+                elif "```" in text:
+                    text = text.split("```")[1].split("```")[0]
+
+                llm_response = json.loads(text)
+
+                # Build side quests from LLM selection
+                llm_side_quests = []
+                candidate_map = {cq["slug"]: cq for cq in candidate_quests}
+
+                for sq in llm_response.get("side_quests", []):
+                    slug = sq.get("slug")
+                    if slug in candidate_map:
+                        base = candidate_map[slug].copy()
+                        # Use LLM's explanation as reason
+                        base["reason"] = sq.get("reason", base["reason"])
+                        base["target_weakness"] = sq.get("target_weakness", base["target_weakness"])
+                        base["quest_type"] = sq.get("quest_type", base["quest_type"])
+                        base["llm_analysis"] = llm_response.get("analysis", "")
+                        llm_side_quests.append(base)
+
+                if llm_side_quests:
+                    print(f"LLM selected {len(llm_side_quests)} side quests")
+                    return llm_side_quests[:3]
+
+            except Exception as e:
+                print(f"LLM side quest selection failed: {e}, falling back to rule-based")
+
+        # Step 3: Fall back to rule-based selection
+        return self._rule_based_side_quests(candidate_quests)
+
+    def _rule_based_side_quests(self, candidates: list[dict]) -> list[dict]:
+        """
+        Rule-based fallback for side quest selection.
+
+        Priority:
+        1. Review due items (spaced repetition)
+        2. Skill gap problems
+        3. Slow solve retries
+        """
+        side_quests = []
+        quest_type_priority = ["review_due", "skill_gap", "slow_solve"]
+
+        for quest_type in quest_type_priority:
+            for cq in candidates:
+                if len(side_quests) >= 3:
+                    break
+                if cq["quest_type"] == quest_type and cq["slug"] not in [q["slug"] for q in side_quests]:
+                    side_quests.append(cq)
 
         return side_quests[:3]
 

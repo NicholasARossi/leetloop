@@ -23,7 +23,7 @@ class GeminiGateway:
         settings = get_settings()
         if settings.google_api_key:
             genai.configure(api_key=settings.google_api_key)
-            self.model = genai.GenerativeModel("gemini-1.5-flash")
+            self.model = genai.GenerativeModel(settings.gemini_model)
             self.configured = True
         else:
             self.model = None
