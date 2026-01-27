@@ -2,57 +2,190 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-rgb: 255, 255, 255;
+/* Banquise Font */
+@font-face {
+  font-family: 'Banquise';
+  src: url('/fonts/Banquise-Regular.woff') format('woff'),
+       url('/fonts/Banquise-Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-rgb: 15, 23, 42;
-  }
+/* IBM Plex Mono from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* Daily accent color - set by JS, default coral */
+  --accent-color: #FF8888;
+  --accent-color-light: #FF888830;
+  --shadow-color: #525252;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
+  font-family: 'IBM Plex Mono', 'Consolas', monospace;
+  background-color: #d3d3d3;
+  background-size: 50px 50px;
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.2) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.2) 75%,
+    transparent 75%,
+    transparent
+  );
+  color: #171717;
+  font-size: 13px;
+  line-height: 1.6;
 }
 
 @layer components {
+  /* Card with hard shadow */
   .card {
-    @apply bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700;
+    @apply bg-white border-2 border-black p-6;
+    box-shadow: 6px 6px 0 theme('colors.gray.700');
   }
 
+  .card-sm {
+    @apply bg-white border-2 border-black p-4;
+    box-shadow: 4px 4px 0 theme('colors.gray.600');
+  }
+
+  /* Primary button */
   .btn-primary {
-    @apply bg-brand-600 hover:bg-brand-700 text-white font-medium py-2 px-4 rounded-lg transition-colors;
+    @apply bg-white border-2 border-black px-4 py-2 font-medium transition-all;
+    box-shadow: 3px 3px 0 theme('colors.gray.600');
   }
 
+  .btn-primary:hover {
+    @apply bg-coral border-black;
+    box-shadow: 3px 3px 0 black;
+  }
+
+  .btn-primary:active {
+    box-shadow: 1px 1px 0 black;
+    transform: translate(2px, 2px);
+  }
+
+  /* Secondary button */
   .btn-secondary {
-    @apply bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium py-2 px-4 rounded-lg transition-colors;
+    @apply bg-gray-100 border-2 border-gray-600 px-4 py-2 text-gray-700 transition-all;
   }
 
+  .btn-secondary:hover {
+    @apply bg-gray-200 border-black text-black;
+  }
+
+  /* Form inputs */
   .input {
-    @apply w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent;
+    @apply w-full px-4 py-2 border-2 border-black bg-white focus:outline-none;
+    box-shadow: 3px 3px 0 theme('colors.gray.600');
   }
 
-  .badge-easy {
-    @apply bg-leetcode-easy/10 text-leetcode-easy px-2 py-0.5 rounded text-sm font-medium;
+  .input:focus {
+    box-shadow: 3px 3px 0 var(--accent-color);
   }
 
-  .badge-medium {
-    @apply bg-leetcode-medium/10 text-leetcode-medium px-2 py-0.5 rounded text-sm font-medium;
+  /* Heading with accent background (Lego style) */
+  .heading-accent {
+    font-family: 'Banquise', sans-serif;
+    text-transform: uppercase;
+    background-color: var(--accent-color);
+    color: black;
+    padding: 6px 14px;
+    display: inline-block;
+    text-shadow:
+      -1px -1px 0 #000,
+      1px -1px 0 #000,
+      -1px 1px 0 #000,
+      1px 1px 0 #000;
   }
 
-  .badge-hard {
-    @apply bg-leetcode-hard/10 text-leetcode-hard px-2 py-0.5 rounded text-sm font-medium;
+  /* Section title */
+  .section-title {
+    @apply text-xs uppercase tracking-widest text-gray-600 pb-2 mb-4 border-b-2 border-black;
+    font-family: 'Banquise', sans-serif;
   }
 
-  .badge-accepted {
-    @apply bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 px-2 py-0.5 rounded text-sm font-medium;
+  /* Tags */
+  .tag {
+    @apply inline-block px-3 py-1 text-xs uppercase tracking-wide bg-gray-100 border-2 border-gray-600 text-gray-600;
   }
 
-  .badge-failed {
-    @apply bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 px-2 py-0.5 rounded text-sm font-medium;
+  .tag-accent {
+    @apply bg-coral border-black text-black;
   }
+
+  /* Progress bar */
+  .progress-bar {
+    @apply h-3 bg-gray-200 border-2 border-black;
+  }
+
+  .progress-fill {
+    @apply h-full bg-coral;
+  }
+
+  /* Quest/List items */
+  .list-item {
+    @apply bg-white border-2 border-black p-4 mb-4 transition-all;
+    box-shadow: 4px 4px 0 theme('colors.gray.600');
+  }
+
+  .list-item:hover {
+    border-color: var(--accent-color);
+    box-shadow: 4px 4px 0 var(--accent-color);
+  }
+
+  /* Checkbox style */
+  .checkbox {
+    @apply w-3 h-3 border-2 border-black bg-white flex-shrink-0;
+  }
+
+  .checkbox.checked {
+    @apply bg-coral;
+  }
+
+  /* Nav item */
+  .nav-link {
+    @apply flex items-center gap-3 px-5 py-3 text-gray-600 border-l-4 border-transparent transition-all;
+  }
+
+  .nav-link:hover {
+    @apply bg-gray-100 text-black;
+  }
+
+  .nav-link.active {
+    @apply bg-coral text-black border-l-black font-medium;
+  }
+
+  /* Stat display */
+  .stat-value {
+    @apply text-3xl font-bold text-black;
+    font-family: 'Banquise', sans-serif;
+  }
+
+  .stat-label {
+    @apply text-xs uppercase tracking-wider text-gray-500 mt-1;
+  }
+
+  /* Badge */
+  .badge {
+    @apply inline-block px-2 py-0.5 text-xs uppercase tracking-wide border-2;
+  }
+
+  .badge-default {
+    @apply bg-gray-100 border-gray-500 text-gray-600;
+  }
+
+  .badge-accent {
+    @apply bg-coral border-black text-black;
+  }
+}
+
+/* Utility for display font */
+.font-display {
+  font-family: 'Banquise', sans-serif;
+  text-transform: uppercase;
 }

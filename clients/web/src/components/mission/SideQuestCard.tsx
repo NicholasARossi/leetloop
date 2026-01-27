@@ -1,86 +1,56 @@
 'use client'
 
 import { SideQuest } from '@/lib/api'
-import { DifficultyBadge } from '@/components/ui/DifficultyBadge'
 import { clsx } from 'clsx'
 
 interface SideQuestCardProps {
   quest: SideQuest
 }
 
-const questTypeLabels: Record<string, { label: string; className: string }> = {
-  review_due: {
-    label: 'Review Due',
-    className: 'bg-rose-100 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400',
-  },
-  skill_gap: {
-    label: 'Skill Gap',
-    className: 'bg-violet-100 dark:bg-violet-500/20 text-violet-600 dark:text-violet-400',
-  },
-  slow_solve: {
-    label: 'Needs Practice',
-    className: 'bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400',
-  },
+const questTypeLabels: Record<string, string> = {
+  review_due: 'Review',
+  skill_gap: 'Skill Gap',
+  slow_solve: 'Practice',
 }
 
 export function SideQuestCard({ quest }: SideQuestCardProps) {
   const leetcodeUrl = `https://leetcode.com/problems/${quest.slug}/`
-  const typeInfo = questTypeLabels[quest.quest_type] || questTypeLabels.skill_gap
+  const typeLabel = questTypeLabels[quest.quest_type] || 'Side Quest'
 
   return (
-    <div
-      className={clsx(
-        'bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-4',
-        quest.completed && 'opacity-60'
-      )}
-    >
-      {/* Type badge */}
-      <div className="flex items-center gap-2 mb-3">
-        <span className={clsx('px-2 py-0.5 text-xs rounded-full font-medium', typeInfo.className)}>
-          {typeInfo.label}
-        </span>
-      </div>
-
-      {/* Problem row */}
-      <div className="flex items-center gap-3">
+    <div className={clsx('list-item', quest.completed && 'opacity-60')}>
+      <div className="flex items-center gap-4">
         {/* Checkbox */}
         <div
           className={clsx(
-            'w-6 h-6 border-2 rounded flex items-center justify-center flex-shrink-0',
-            quest.completed
-              ? 'bg-emerald-100 dark:bg-emerald-500/20 border-emerald-500'
-              : 'border-slate-300 dark:border-slate-600'
+            'checkbox',
+            quest.completed && 'checked'
           )}
-        >
-          {quest.completed && (
-            <svg className="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-          )}
-        </div>
+        />
 
         {/* Problem info */}
         <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-xs text-gray-500 uppercase">{typeLabel}</span>
+            {quest.difficulty && (
+              <span className="text-xs text-gray-400">· {quest.difficulty}</span>
+            )}
+          </div>
           <a
             href={leetcodeUrl}
             target="_blank"
             rel="noopener noreferrer"
             className={clsx(
-              'font-medium text-sm hover:text-sky-600 dark:hover:text-sky-400 transition-colors',
-              quest.completed
-                ? 'line-through text-slate-400 dark:text-slate-500'
-                : 'text-slate-900 dark:text-white'
+              'font-medium text-sm hover:underline',
+              quest.completed ? 'line-through text-gray-400' : 'text-black'
             )}
           >
             {quest.title}
           </a>
-          <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">
+          <p className="text-gray-500 text-xs mt-1">
             {quest.reason}
           </p>
         </div>
-
-        {/* Difficulty */}
-        {quest.difficulty && <DifficultyBadge difficulty={quest.difficulty} />}
       </div>
     </div>
   )

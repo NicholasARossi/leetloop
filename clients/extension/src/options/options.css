@@ -1,3 +1,25 @@
+/* Daily accent color - set by JS */
+:root {
+  --accent: #FF8888;
+  --accent-light: #FF888830;
+
+  /* Grays */
+  --white: #ffffff;
+  --gray-50: #fafafa;
+  --gray-100: #f5f5f5;
+  --gray-200: #e5e5e5;
+  --gray-300: #d3d3d3;
+  --gray-400: #a3a3a3;
+  --gray-500: #737373;
+  --gray-600: #525252;
+  --gray-700: #404040;
+  --gray-800: #262626;
+  --gray-900: #171717;
+  --black: #000000;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
 * {
   margin: 0;
   padding: 0;
@@ -5,11 +27,22 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 16px;
-  line-height: 1.5;
-  color: #1a1a1a;
-  background: #f5f5f5;
+  font-family: 'IBM Plex Mono', 'Consolas', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--gray-900);
+  background-color: var(--gray-300);
+  background-size: 50px 50px;
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.2) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.2) 75%,
+    transparent 75%,
+    transparent
+  );
   min-height: 100vh;
 }
 
@@ -21,36 +54,52 @@ body {
 
 .header {
   margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 3px solid var(--black);
 }
 
 .header h1 {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 600;
-  margin-bottom: 8px;
+  background: var(--accent);
+  color: var(--black);
+  padding: 8px 16px;
+  display: inline-block;
+  text-shadow:
+    -1px -1px 0 var(--black),
+    1px -1px 0 var(--black),
+    -1px 1px 0 var(--black),
+    1px 1px 0 var(--black);
 }
 
 .subtitle {
-  color: #666;
+  color: var(--gray-600);
+  margin-top: 12px;
+  font-size: 12px;
 }
 
 .section {
-  background: white;
-  border-radius: 12px;
+  background: var(--white);
+  border: 2px solid var(--black);
   padding: 24px;
   margin-bottom: 24px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 6px 6px 0 var(--gray-700);
 }
 
 .section h2 {
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
   margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--gray-300);
 }
 
 .description {
-  color: #666;
+  color: var(--gray-600);
   margin-bottom: 20px;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .form-group {
@@ -65,35 +114,38 @@ label {
   display: block;
   font-weight: 500;
   margin-bottom: 6px;
-  font-size: 14px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gray-600);
 }
 
 input {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 14px;
+  border: 2px solid var(--black);
+  background: var(--white);
+  font-size: 13px;
   font-family: inherit;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: all 0.1s;
+  box-shadow: 3px 3px 0 var(--gray-600);
 }
 
 input:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  box-shadow: 3px 3px 0 var(--accent);
 }
 
 input[readonly] {
-  background: #f5f5f5;
-  color: #666;
+  background: var(--gray-100);
+  color: var(--gray-600);
 }
 
 .hint {
   display: block;
-  font-size: 12px;
-  color: #888;
-  margin-top: 4px;
+  font-size: 11px;
+  color: var(--gray-500);
+  margin-top: 6px;
 }
 
 .actions {
@@ -104,60 +156,69 @@ input[readonly] {
 
 button {
   padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 500;
+  font-family: inherit;
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
-}
-
-button:active {
-  transform: scale(0.98);
+  transition: all 0.1s;
+  border: 2px solid var(--black);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .btn-primary {
-  background: #3b82f6;
-  color: white;
-  border: none;
+  background: var(--white);
+  color: var(--black);
+  box-shadow: 3px 3px 0 var(--gray-600);
 }
 
 .btn-primary:hover {
-  background: #2563eb;
+  background: var(--accent);
+  box-shadow: 3px 3px 0 var(--black);
+}
+
+.btn-primary:active {
+  box-shadow: 1px 1px 0 var(--black);
+  transform: translate(2px, 2px);
 }
 
 .btn-secondary {
-  background: white;
-  color: #1a1a1a;
-  border: 1px solid #ddd;
+  background: var(--gray-100);
+  color: var(--gray-700);
+  border-color: var(--gray-600);
+  box-shadow: none;
 }
 
 .btn-secondary:hover {
-  background: #f5f5f5;
+  background: var(--gray-200);
+  border-color: var(--black);
 }
 
 .status {
   padding: 12px 16px;
-  border-radius: 8px;
-  font-size: 14px;
+  font-size: 12px;
   display: none;
+  border: 2px solid;
 }
 
 .status.success {
   display: block;
-  background: #dcfce7;
-  color: #166534;
+  background: var(--accent-light);
+  border-color: var(--accent);
+  color: var(--black);
 }
 
 .status.error {
   display: block;
   background: #fee2e2;
+  border-color: #ef4444;
   color: #991b1b;
 }
 
 .instructions {
   margin-left: 20px;
-  font-size: 14px;
-  color: #666;
+  font-size: 12px;
+  color: var(--gray-600);
 }
 
 .instructions li {
@@ -165,18 +226,18 @@ button:active {
 }
 
 .instructions a {
-  color: #3b82f6;
-  text-decoration: none;
-}
-
-.instructions a:hover {
+  color: var(--black);
   text-decoration: underline;
 }
 
+.instructions a:hover {
+  color: var(--accent);
+}
+
 .instructions code {
-  background: #f0f0f0;
+  background: var(--gray-100);
   padding: 2px 6px;
-  border-radius: 4px;
-  font-family: 'SF Mono', Consolas, monospace;
-  font-size: 13px;
+  border: 1px solid var(--gray-400);
+  font-family: inherit;
+  font-size: 12px;
 }

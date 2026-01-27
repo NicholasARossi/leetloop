@@ -1,9 +1,7 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '@/contexts/AuthContext'
-
-const inter = Inter({ subsets: ['latin'] })
+import { DailyAccent } from '@/components/DailyAccent'
 
 export const metadata: Metadata = {
   title: 'LeetLoop - Systematic LeetCode Coach',
@@ -17,7 +15,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-slate-50 dark:bg-slate-900`}>
+      <body>
+        <DailyAccent />
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { clsx } from 'clsx'
 
 const navigation = [
-  { name: "Today's Focus", href: '/today', icon: TodayIcon },
+  { name: 'Dashboard', href: '/dashboard', icon: DashboardIcon },
   { name: 'Path Progress', href: '/path', icon: PathIcon },
   { name: 'Mastery', href: '/mastery', icon: MasteryIcon },
   { name: 'Reviews', href: '/reviews', icon: ReviewsIcon },
@@ -17,14 +17,14 @@ export function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <aside className="w-64 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 min-h-screen">
-      <div className="p-6">
-        <Link href="/today" className="flex items-center gap-2">
-          <span className="text-2xl font-bold text-brand-600">LeetLoop</span>
+    <aside className="w-60 bg-white border-r-[3px] border-black min-h-screen flex flex-col">
+      <div className="p-5 pb-8">
+        <Link href="/dashboard">
+          <span className="heading-accent text-xl">LEETLOOP</span>
         </Link>
       </div>
 
-      <nav className="px-4 pb-4">
+      <nav className="flex-1">
         <ul className="space-y-1">
           {navigation.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)
@@ -33,10 +33,8 @@ export function Sidebar() {
                 <Link
                   href={item.href}
                   className={clsx(
-                    'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-                    isActive
-                      ? 'bg-brand-50 text-brand-700 dark:bg-brand-900/20 dark:text-brand-400'
-                      : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700/50'
+                    'nav-link text-sm',
+                    isActive && 'active'
                   )}
                 >
                   <item.icon className="w-5 h-5" />
@@ -52,10 +50,10 @@ export function Sidebar() {
 }
 
 // Icon components
-function TodayIcon({ className }: { className?: string }) {
+function DashboardIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
     </svg>
   )
 }
