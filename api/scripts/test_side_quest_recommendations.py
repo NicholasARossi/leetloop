@@ -362,7 +362,7 @@ def call_gemini(prompt: str, dry_run: bool = False) -> dict:
             return {"error": "No API key"}
 
         genai.configure(api_key=api_key)
-        model_name = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
+        model_name = os.getenv("GEMINI_MODEL", "gemini-3-flash-preview")
         model = genai.GenerativeModel(model_name)
 
         print(f"\n--- Calling Gemini ({model_name}) ---")

@@ -24,7 +24,7 @@ class Settings(BaseSettings):
 
     # Google AI (Gemini)
     google_api_key: Optional[str] = None
-    gemini_model: str = "gemini-2.0-flash"  # Gemini model with large context window
+    gemini_model: str = "gemini-3-flash-preview"  # Gemini 3 Flash with 1M context window
 
     # CORS - includes Chrome extension and Cloud Run origins
     allowed_origins: list[str] = [
