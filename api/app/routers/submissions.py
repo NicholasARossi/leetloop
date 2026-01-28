@@ -4,9 +4,10 @@ from datetime import datetime
 from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
+from app.auth import AuthenticatedUser, get_optional_user
 from app.db.supabase import get_supabase_client
 
 router = APIRouter()
@@ -45,20 +46,26 @@ class SubmissionResponse(BaseModel):
 
 
 @router.post("/submissions", response_model=SubmissionResponse)
-async def create_submission(submission: SubmissionCreate) -> SubmissionResponse:
+async def create_submission(
+    submission: SubmissionCreate,
+    user: Optional[AuthenticatedUser] = Depends(get_optional_user),
+) -> SubmissionResponse:
     """
     Receive a submission from the Chrome extension and store it in Supabase.
 
-    This endpoint replaces direct Supabase calls from the extension,
-    allowing centralized submission processing and validation.
+    If the caller is authenticated, user_id is overridden from the JWT.
+    Unauthenticated calls still work for backward compatibility.
     """
     supabase = get_supabase_client()
+
+    # If authenticated, override user_id from JWT
+    effective_user_id = user.id if user else str(submission.user_id)
 
     try:
         # Convert to dict and prepare for insert
         data = {
             "id": str(submission.id),
-            "user_id": str(submission.user_id),
+            "user_id": effective_user_id,
             "problem_slug": submission.problem_slug,
             "problem_title": submission.problem_title,
             "problem_id": submission.problem_id,
@@ -97,7 +104,10 @@ async def create_submission(submission: SubmissionCreate) -> SubmissionResponse:
 
 
 @router.post("/submissions/batch", response_model=list[SubmissionResponse])
-async def create_submissions_batch(submissions: list[SubmissionCreate]) -> list[SubmissionResponse]:
+async def create_submissions_batch(
+    submissions: list[SubmissionCreate],
+    user: Optional[AuthenticatedUser] = Depends(get_optional_user),
+) -> list[SubmissionResponse]:
     """
     Receive multiple submissions from the Chrome extension.
     Useful for syncing backlog of unsynced submissions.
@@ -106,7 +116,7 @@ async def create_submissions_batch(submissions: list[SubmissionCreate]) -> list[
 
     for submission in submissions:
         try:
-            result = await create_submission(submission)
+            result = await create_submission(submission, user)
             results.append(result)
         except HTTPException as e:
             results.append(SubmissionResponse(

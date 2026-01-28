@@ -39,6 +39,9 @@ class Settings(BaseSettings):
     rate_limit_requests: int = 100
     rate_limit_period: int = 60  # seconds
 
+    # JWT verification (Supabase JWT secret for extension auth)
+    supabase_jwt_secret: Optional[str] = None
+
     # Cron job authentication
     cron_secret: Optional[str] = None
 

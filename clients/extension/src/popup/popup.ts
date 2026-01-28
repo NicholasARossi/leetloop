@@ -4,7 +4,7 @@
 
 import type { StoredSubmission } from '../types';
 import { signInWithGoogle, signOut, getCurrentUser, onAuthStateChange } from '../auth';
-import type { User } from '@supabase/supabase-js';
+import type { AuthUser } from '../lib/auth-store';
 
 /**
  * Format relative time
@@ -45,7 +45,7 @@ function renderSubmissionItem(submission: StoredSubmission): HTMLElement {
 /**
  * Update auth UI based on user state
  */
-function updateAuthUI(user: User | null, loading: boolean = false) {
+function updateAuthUI(user: AuthUser | null, loading: boolean = false) {
   const loadingEl = document.getElementById('auth-loading');
   const signedOutEl = document.getElementById('auth-signed-out');
   const signedInEl = document.getElementById('auth-signed-in');
@@ -264,9 +264,9 @@ async function initAuth() {
     updateAuthUI(user);
 
     // Listen for auth state changes
-    await onAuthStateChange((_event, session) => {
-      console.log('[LeetLoop Popup] Auth state changed:', _event, session?.user?.email);
-      updateAuthUI(session?.user ?? null);
+    onAuthStateChange((user) => {
+      console.log('[LeetLoop Popup] Auth state changed:', user?.email || 'signed out');
+      updateAuthUI(user);
     });
   } catch (error) {
     console.error('[LeetLoop Popup] Auth init error:', error);

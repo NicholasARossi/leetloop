@@ -12,9 +12,6 @@
     "test:manual": "npx tsx tests/manual-test.ts",
     "test:interactive": "playwright test tests/interactive.spec.ts --headed"
   },
-  "dependencies": {
-    "@supabase/supabase-js": "^2.39.0"
-  },
   "devDependencies": {
     "@types/chrome": "^0.0.254",
     "@playwright/test": "^1.40.0",

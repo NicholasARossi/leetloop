@@ -1,5 +1,5 @@
 import * as esbuild from 'esbuild';
-import { copyFileSync, mkdirSync, existsSync, readFileSync } from 'fs';
+import { copyFileSync, mkdirSync, existsSync, readFileSync, writeFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { config } from 'dotenv';
@@ -30,15 +30,14 @@ if (!envLoaded) {
   console.warn('No .env file found, using placeholder values');
 }
 
-// Get Supabase config from environment
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '__SUPABASE_URL__';
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || '__SUPABASE_ANON_KEY__';
-
 // Get API URL for routing submissions through backend
 const API_URL = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || '';
 
-console.log(`Supabase URL: ${SUPABASE_URL ? SUPABASE_URL.substring(0, 30) + '...' : 'not set'}`);
-console.log(`API URL: ${API_URL || 'not set (will use direct Supabase)'}`);
+// Get Web App URL for auth redirects and web-bridge content script
+const WEB_APP_URL = process.env.WEB_APP_URL || process.env.NEXT_PUBLIC_WEB_APP_URL || 'http://localhost:3001';
+
+console.log(`API URL: ${API_URL || 'not set'}`);
+console.log(`Web App URL: ${WEB_APP_URL}`);
 
 // Ensure dist directory exists
 if (!existsSync(join(__dirname, 'dist'))) {
@@ -47,7 +46,6 @@ if (!existsSync(join(__dirname, 'dist'))) {
 
 // Copy static files
 const staticFiles = [
-  'manifest.json',
   'src/popup/popup.html',
   'src/popup/popup.css',
   'src/options/options.html',
@@ -67,6 +65,14 @@ for (const file of staticFiles) {
   }
 }
 
+// Process manifest.json - replace localhost URLs with WEB_APP_URL
+const manifestSrc = join(__dirname, 'manifest.json');
+const manifestDest = join(__dirname, 'dist', 'manifest.json');
+let manifestContent = readFileSync(manifestSrc, 'utf-8');
+manifestContent = manifestContent.replace(/http:\/\/localhost:3001/g, WEB_APP_URL.replace(/\/$/, ''));
+writeFileSync(manifestDest, manifestContent);
+console.log(`Processed manifest.json -> dist/ (WEB_APP_URL: ${WEB_APP_URL})`);
+
 // Build configuration
 const buildOptions = {
   entryPoints: [
@@ -84,9 +90,8 @@ const buildOptions = {
   sourcemap: true,
   minify: !isWatch,
   define: {
-    '__SUPABASE_URL__': JSON.stringify(SUPABASE_URL),
-    '__SUPABASE_ANON_KEY__': JSON.stringify(SUPABASE_ANON_KEY),
     '__API_URL__': JSON.stringify(API_URL),
+    '__WEB_APP_URL__': JSON.stringify(WEB_APP_URL.replace(/\/$/, '')),
   },
 };
 
