@@ -20,6 +20,11 @@
   --accent-color: #FF8888;
   --accent-color-light: #FF888830;
   --shadow-color: #525252;
+
+  /* Chamfer sizes for mech/schematic aesthetic */
+  --chamfer-sm: 8px;
+  --chamfer-md: 16px;
+  --chamfer-lg: 24px;
 }
 
 body {
@@ -42,50 +47,105 @@ body {
 }
 
 @layer components {
-  /* Card with hard shadow */
+  /* Card with chamfered corners - mech style (top-left + bottom-right chamfer) */
   .card {
-    @apply bg-white border-2 border-black p-6;
-    box-shadow: 6px 6px 0 theme('colors.gray.700');
+    @apply p-6;
+    position: relative;
+    background: white;
+    border: 2px solid black;
+    clip-path: polygon(
+      var(--chamfer-md) 0,
+      100% 0,
+      100% calc(100% - var(--chamfer-md)),
+      calc(100% - var(--chamfer-md)) 100%,
+      0 100%,
+      0 var(--chamfer-md)
+    );
   }
 
   .card-sm {
-    @apply bg-white border-2 border-black p-4;
-    box-shadow: 4px 4px 0 theme('colors.gray.600');
+    @apply p-4;
+    position: relative;
+    background: white;
+    border: 2px solid black;
+    clip-path: polygon(
+      var(--chamfer-sm) 0,
+      100% 0,
+      100% calc(100% - var(--chamfer-sm)),
+      calc(100% - var(--chamfer-sm)) 100%,
+      0 100%,
+      0 var(--chamfer-sm)
+    );
   }
 
-  /* Primary button */
+  /* Primary button - mech style */
   .btn-primary {
-    @apply bg-white border-2 border-black px-4 py-2 font-medium transition-all;
-    box-shadow: 3px 3px 0 theme('colors.gray.600');
+    @apply px-4 py-2 font-medium transition-all;
+    position: relative;
+    background: white;
+    border: 2px solid black;
+    clip-path: polygon(
+      var(--chamfer-sm) 0,
+      100% 0,
+      100% calc(100% - var(--chamfer-sm)),
+      calc(100% - var(--chamfer-sm)) 100%,
+      0 100%,
+      0 var(--chamfer-sm)
+    );
   }
 
   .btn-primary:hover {
-    @apply bg-coral border-black;
-    box-shadow: 3px 3px 0 black;
+    background: var(--accent-color);
   }
 
   .btn-primary:active {
-    box-shadow: 1px 1px 0 black;
-    transform: translate(2px, 2px);
+    transform: translate(1px, 1px);
   }
 
-  /* Secondary button */
+  /* Secondary button - mech style */
   .btn-secondary {
-    @apply bg-gray-100 border-2 border-gray-600 px-4 py-2 text-gray-700 transition-all;
+    @apply px-4 py-2 text-gray-700 transition-all;
+    position: relative;
+    background: theme('colors.gray.100');
+    border: 2px solid black;
+    clip-path: polygon(
+      var(--chamfer-sm) 0,
+      100% 0,
+      100% calc(100% - var(--chamfer-sm)),
+      calc(100% - var(--chamfer-sm)) 100%,
+      0 100%,
+      0 var(--chamfer-sm)
+    );
   }
 
   .btn-secondary:hover {
-    @apply bg-gray-200 border-black text-black;
+    @apply text-black;
+    background: theme('colors.gray.200');
   }
 
-  /* Form inputs */
+  .btn-secondary:active {
+    transform: translate(1px, 1px);
+  }
+
+  /* Form inputs with chamfer */
   .input {
-    @apply w-full px-4 py-2 border-2 border-black bg-white focus:outline-none;
-    box-shadow: 3px 3px 0 theme('colors.gray.600');
+    @apply w-full px-4 py-2 focus:outline-none;
+    position: relative;
+    background: white;
+    color: black;
+    border: 2px solid black;
+    clip-path: polygon(
+      var(--chamfer-sm) 0,
+      100% 0,
+      100% calc(100% - var(--chamfer-sm)),
+      calc(100% - var(--chamfer-sm)) 100%,
+      0 100%,
+      0 var(--chamfer-sm)
+    );
   }
 
   .input:focus {
-    box-shadow: 3px 3px 0 var(--accent-color);
+    border-color: var(--accent-color);
   }
 
   /* Heading with accent background (Lego style) */
@@ -93,7 +153,7 @@ body {
     font-family: 'Banquise', sans-serif;
     text-transform: uppercase;
     background-color: var(--accent-color);
-    color: black;
+    color: #fff;
     padding: 6px 14px;
     display: inline-block;
     text-shadow:
@@ -109,33 +169,69 @@ body {
     font-family: 'Banquise', sans-serif;
   }
 
-  /* Tags */
+  /* Tags - mech style */
   .tag {
-    @apply inline-block px-3 py-1 text-xs uppercase tracking-wide bg-gray-100 border-2 border-gray-600 text-gray-600;
+    @apply inline-block px-3 py-1 text-xs uppercase tracking-wide text-gray-600;
+    position: relative;
+    background: theme('colors.gray.100');
+    border: 2px solid black;
+    clip-path: polygon(
+      var(--chamfer-sm) 0,
+      100% 0,
+      100% calc(100% - var(--chamfer-sm)),
+      calc(100% - var(--chamfer-sm)) 100%,
+      0 100%,
+      0 var(--chamfer-sm)
+    );
   }
 
   .tag-accent {
-    @apply bg-coral border-black text-black;
+    @apply text-black;
+    background: var(--accent-color);
   }
 
-  /* Progress bar */
+  /* Progress bar - mech style */
   .progress-bar {
-    @apply h-3 bg-gray-200 border-2 border-black;
+    @apply h-3;
+    position: relative;
+    background: theme('colors.gray.200');
+    border: 2px solid black;
+    clip-path: polygon(
+      4px 0,
+      100% 0,
+      100% calc(100% - 4px),
+      calc(100% - 4px) 100%,
+      0 100%,
+      0 4px
+    );
   }
 
   .progress-fill {
-    @apply h-full bg-coral;
+    @apply bg-coral;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
   }
 
-  /* Quest/List items */
+  /* Quest/List items - mech style */
   .list-item {
-    @apply bg-white border-2 border-black p-4 mb-4 transition-all;
-    box-shadow: 4px 4px 0 theme('colors.gray.600');
+    @apply p-4 mb-4 transition-all;
+    position: relative;
+    background: white;
+    border: 2px solid black;
+    clip-path: polygon(
+      var(--chamfer-md) 0,
+      100% 0,
+      100% calc(100% - var(--chamfer-md)),
+      calc(100% - var(--chamfer-md)) 100%,
+      0 100%,
+      0 var(--chamfer-md)
+    );
   }
 
   .list-item:hover {
     border-color: var(--accent-color);
-    box-shadow: 4px 4px 0 var(--accent-color);
   }
 
   /* Checkbox style */
@@ -160,49 +256,112 @@ body {
     @apply bg-coral text-black border-l-black font-medium;
   }
 
-  /* Stat display */
+  /* Stat display - Banquise should never be bold */
   .stat-value {
     @apply text-3xl text-black;
     font-family: 'Banquise', sans-serif;
+    font-weight: normal !important;
   }
 
   .stat-label {
     @apply text-xs uppercase tracking-wider text-gray-500 mt-1;
   }
 
-  /* Badge */
+  /* Badge - mech style */
   .badge {
-    @apply inline-block px-2 py-0.5 text-xs uppercase tracking-wide border-2;
+    @apply inline-block px-2 py-0.5 text-xs uppercase tracking-wide;
+    position: relative;
+    border: 2px solid black;
+    clip-path: polygon(
+      6px 0,
+      100% 0,
+      100% calc(100% - 6px),
+      calc(100% - 6px) 100%,
+      0 100%,
+      0 6px
+    );
   }
 
   .badge-default {
-    @apply bg-gray-100 border-gray-500 text-gray-600;
+    @apply text-gray-600;
+    background: theme('colors.gray.100');
   }
 
   .badge-accent {
-    @apply bg-coral border-black text-black;
+    @apply text-black;
+    background: var(--accent-color);
   }
 
-  /* Difficulty badges */
+  /* Difficulty badges - mech style */
   .badge-easy {
-    @apply inline-block px-2 py-0.5 text-xs uppercase tracking-wide border-2 bg-gray-100 border-gray-500 text-gray-700;
+    @apply inline-block px-2 py-0.5 text-xs uppercase tracking-wide text-gray-700;
+    background: theme('colors.gray.100');
+    border: 2px solid black;
+    clip-path: polygon(
+      6px 0,
+      100% 0,
+      100% calc(100% - 6px),
+      calc(100% - 6px) 100%,
+      0 100%,
+      0 6px
+    );
   }
 
   .badge-medium {
-    @apply inline-block px-2 py-0.5 text-xs uppercase tracking-wide border-2 bg-coral border-black text-black;
+    @apply inline-block px-2 py-0.5 text-xs uppercase tracking-wide text-black;
+    background: var(--accent-color);
+    border: 2px solid black;
+    clip-path: polygon(
+      6px 0,
+      100% 0,
+      100% calc(100% - 6px),
+      calc(100% - 6px) 100%,
+      0 100%,
+      0 6px
+    );
   }
 
   .badge-hard {
-    @apply inline-block px-2 py-0.5 text-xs uppercase tracking-wide border-2 bg-black border-black text-white;
+    @apply inline-block px-2 py-0.5 text-xs uppercase tracking-wide text-white;
+    background: black;
+    border: 2px solid black;
+    clip-path: polygon(
+      6px 0,
+      100% 0,
+      100% calc(100% - 6px),
+      calc(100% - 6px) 100%,
+      0 100%,
+      0 6px
+    );
   }
 
-  /* Status badges */
+  /* Status badges - mech style */
   .badge-accepted {
-    @apply inline-block px-2 py-0.5 text-xs uppercase tracking-wide border-2 bg-coral border-black text-black;
+    @apply inline-block px-2 py-0.5 text-xs uppercase tracking-wide text-black;
+    background: var(--accent-color);
+    border: 2px solid black;
+    clip-path: polygon(
+      6px 0,
+      100% 0,
+      100% calc(100% - 6px),
+      calc(100% - 6px) 100%,
+      0 100%,
+      0 6px
+    );
   }
 
   .badge-failed {
-    @apply inline-block px-2 py-0.5 text-xs uppercase tracking-wide border-2 bg-gray-200 border-gray-600 text-gray-700;
+    @apply inline-block px-2 py-0.5 text-xs uppercase tracking-wide text-gray-700;
+    background: theme('colors.gray.200');
+    border: 2px solid black;
+    clip-path: polygon(
+      6px 0,
+      100% 0,
+      100% calc(100% - 6px),
+      calc(100% - 6px) 100%,
+      0 100%,
+      0 6px
+    );
   }
 
   /* Table styles */
@@ -227,8 +386,167 @@ body {
   }
 }
 
-/* Utility for display font */
+/* Utility for display font - Banquise should never be bold */
 .font-display {
   font-family: 'Banquise', sans-serif;
   text-transform: uppercase;
+  font-weight: normal !important;
+}
+
+/* Global rule: Banquise font should never be bold */
+[style*="Banquise"],
+.heading-accent,
+.stat-value,
+.section-title,
+.font-display {
+  font-weight: normal !important;
+}
+
+/* =============================================================================
+   SCHEMATIC DESIGN SYSTEM
+   ============================================================================= */
+
+/* Registration marks - L-shaped corner marks */
+.reg-corners {
+  position: relative;
+}
+
+.reg-corners::before,
+.reg-corners::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 2px solid currentColor;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.reg-corners::before {
+  top: -4px;
+  left: -4px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.reg-corners::after {
+  bottom: -4px;
+  right: -4px;
+  border-left: none;
+  border-top: none;
+}
+
+/* Bracket corners - decorative frame */
+.bracket-corners {
+  position: relative;
+}
+
+.bracket-corners::before,
+.bracket-corners::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+
+.bracket-corners::before {
+  top: 4px;
+  left: 4px;
+  border-left: 2px solid var(--accent-color);
+  border-top: 2px solid var(--accent-color);
+}
+
+.bracket-corners::after {
+  bottom: 4px;
+  right: 4px;
+  border-right: 2px solid var(--accent-color);
+  border-bottom: 2px solid var(--accent-color);
+}
+
+/* Section identifier tag */
+.section-id {
+  @apply text-xs uppercase tracking-widest text-gray-400 font-mono;
+}
+
+.section-id::before {
+  content: '§ ';
+  color: var(--accent-color);
+}
+
+/* Dimension line (horizontal measurement) */
+.dimension-line {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dimension-line::before,
+.dimension-line::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, theme('colors.gray.400'), transparent);
+}
+
+.dimension-line::before {
+  background: linear-gradient(90deg, theme('colors.gray.400'), theme('colors.gray.400') calc(100% - 4px), transparent);
+}
+
+.dimension-line::after {
+  background: linear-gradient(90deg, transparent, theme('colors.gray.400') 4px, theme('colors.gray.400'));
+}
+
+/* Status light - hexagonal indicator */
+.status-light {
+  width: 10px;
+  height: 10px;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+.status-light-active {
+  background-color: var(--accent-color);
+  box-shadow: 0 0 6px var(--accent-color);
+}
+
+.status-light-inactive {
+  background-color: theme('colors.gray.400');
+}
+
+/* Coordinate display */
+.coord-display {
+  @apply font-mono text-xs text-gray-400 uppercase tracking-wider;
+}
+
+.coord-display::before {
+  content: '[';
+  color: var(--accent-color);
+}
+
+.coord-display::after {
+  content: ']';
+  color: var(--accent-color);
+}
+
+/* Schematic frame - full technical border treatment */
+.schematic-frame {
+  position: relative;
+  padding: 12px;
+}
+
+.schematic-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px dashed theme('colors.gray.300');
+  pointer-events: none;
+}
+
+/* Tech grid background */
+.tech-grid {
+  background-image:
+    linear-gradient(to right, theme('colors.gray.200') 1px, transparent 1px),
+    linear-gradient(to bottom, theme('colors.gray.200') 1px, transparent 1px);
+  background-size: 20px 20px;
 }
