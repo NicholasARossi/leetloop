@@ -16,7 +16,7 @@ export function PathSelector({ paths, selectedPathId, onSelect, loading }: PathS
         value={selectedPathId || ''}
         onChange={(e) => onSelect(e.target.value)}
         disabled={loading}
-        className="input w-full sm:w-64 pr-10 appearance-none bg-white dark:bg-slate-800"
+        className="input w-full sm:w-64 pr-10 appearance-none"
       >
         <option value="" disabled>Select a path...</option>
         {paths.map((path) => (
@@ -26,7 +26,7 @@ export function PathSelector({ paths, selectedPathId, onSelect, loading }: PathS
         ))}
       </select>
       <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-        <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </div>

@@ -207,6 +207,82 @@ export const leetloopApi = {
     api<MissionResponse>(`/api/mission/${userId}/regenerate`, {
       method: 'POST',
     }),
+
+  // Objectives
+  getObjectiveTemplates: () =>
+    api<ObjectiveTemplateSummary[]>('/api/objectives/templates'),
+
+  getObjectiveTemplate: (templateId: string) =>
+    api<ObjectiveTemplate>(`/api/objectives/templates/${templateId}`),
+
+  createObjective: (userId: string, data: CreateObjectiveRequest) =>
+    api<MetaObjective>(`/api/objectives/${userId}`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  getObjective: (userId: string) =>
+    api<MetaObjectiveResponse>(`/api/objectives/${userId}`),
+
+  updateObjective: (userId: string, data: UpdateObjectiveRequest) =>
+    api<MetaObjective>(`/api/objectives/${userId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+
+  getObjectiveProgress: (userId: string, days?: number) =>
+    api<ObjectiveProgress[]>(
+      `/api/objectives/${userId}/progress${days ? `?days=${days}` : ''}`
+    ),
+
+  getObjectivePace: (userId: string) =>
+    api<PaceStatus>(`/api/objectives/${userId}/pace`),
+
+  deleteObjective: (userId: string) =>
+    api<{ success: boolean; deleted: number }>(`/api/objectives/${userId}`, {
+      method: 'DELETE',
+    }),
+
+  // Onboarding
+  getOnboardingStatus: (userId: string) =>
+    api<OnboardingStatus>(`/api/onboarding/${userId}`),
+
+  updateOnboardingStep: (userId: string, step: string, completed: boolean = true, metadata?: Record<string, unknown>) =>
+    api<OnboardingStatus>(`/api/onboarding/${userId}/step`, {
+      method: 'POST',
+      body: JSON.stringify({ step, completed, metadata }),
+    }),
+
+  verifyExtension: (userId: string) =>
+    api<OnboardingStatus>(`/api/onboarding/${userId}/verify-extension`, {
+      method: 'POST',
+    }),
+
+  importHistory: (userId: string) =>
+    api<{ success: boolean; problems_imported: number; message: string }>(
+      `/api/onboarding/${userId}/import-history`,
+      { method: 'POST' }
+    ),
+
+  completeOnboarding: (userId: string) =>
+    api<OnboardingStatus>(`/api/onboarding/${userId}/complete`, {
+      method: 'POST',
+    }),
+
+  skipOnboardingStep: (userId: string, step: string) =>
+    api<OnboardingStatus>(`/api/onboarding/${userId}/skip-step`, {
+      method: 'POST',
+      body: JSON.stringify({ step, completed: true }),
+    }),
+
+  resetOnboarding: (userId: string) =>
+    api<OnboardingStatus>(`/api/onboarding/${userId}/reset`, {
+      method: 'DELETE',
+    }),
+
+  // Mission v2 (with reasoning)
+  getDailyMissionV2: (userId: string) =>
+    api<MissionResponseV2>(`/api/mission/${userId}`),
 }
 
 // Types (matching backend schemas)
@@ -427,6 +503,156 @@ export interface MissionResponse {
   total_completed_today: number
   can_regenerate: boolean
   generated_at: string
+}
+
+// Objective Types
+export interface ObjectiveTemplateSummary {
+  id: string
+  name: string
+  company: string
+  role: string
+  level?: string
+  description?: string
+  estimated_weeks: number
+}
+
+export interface ObjectiveTemplate extends ObjectiveTemplateSummary {
+  required_skills: Record<string, number>
+  recommended_path_ids: string[]
+  difficulty_distribution: Record<string, number>
+  created_at?: string
+}
+
+export interface CreateObjectiveRequest {
+  template_id?: string
+  title: string
+  target_company: string
+  target_role: string
+  target_level?: string
+  target_deadline: string // ISO date string
+  weekly_problem_target?: number
+  daily_problem_minimum?: number
+  required_skills?: Record<string, number>
+  path_ids?: string[]
+}
+
+export interface UpdateObjectiveRequest {
+  title?: string
+  target_deadline?: string
+  weekly_problem_target?: number
+  daily_problem_minimum?: number
+  required_skills?: Record<string, number>
+  path_ids?: string[]
+  status?: 'active' | 'paused' | 'completed'
+}
+
+export interface MetaObjective {
+  id: string
+  user_id: string
+  title: string
+  target_company: string
+  target_role: string
+  target_level?: string
+  target_deadline: string
+  started_at: string
+  weekly_problem_target: number
+  daily_problem_minimum: number
+  required_skills: Record<string, number>
+  path_ids: string[]
+  template_id?: string
+  status: 'active' | 'paused' | 'completed'
+  created_at?: string
+  updated_at?: string
+}
+
+export interface PaceStatus {
+  status: 'ahead' | 'on_track' | 'behind' | 'critical'
+  problems_this_week: number
+  weekly_target: number
+  problems_behind: number
+  pace_percentage: number
+  projected_completion_date?: string
+  daily_rate_needed: number
+}
+
+export interface SkillGap {
+  domain: string
+  current_score: number
+  target_score: number
+  gap: number
+  priority: number
+}
+
+export interface ObjectiveProgress {
+  id: string
+  user_id: string
+  objective_id: string
+  progress_date: string
+  problems_completed: number
+  problems_attempted: number
+  cumulative_problems: number
+  target_cumulative: number
+  pace_status: 'ahead' | 'on_track' | 'behind' | 'critical'
+}
+
+export interface MetaObjectiveResponse {
+  objective: MetaObjective
+  pace_status: PaceStatus
+  skill_gaps: SkillGap[]
+  days_remaining: number
+  total_days: number
+  problems_solved: number
+  total_problems_target: number
+  readiness_percentage: number
+}
+
+// Onboarding Types
+export interface OnboardingStatus {
+  user_id: string
+  has_objective: boolean
+  extension_installed: boolean
+  history_imported: boolean
+  first_path_selected: boolean
+  onboarding_complete: boolean
+  current_step: number
+  extension_verified_at?: string
+  history_imported_at?: string
+  problems_imported_count: number
+  created_at?: string
+  updated_at?: string
+}
+
+// Mission v2 Types (with Gemini reasoning)
+export interface MissionProblem {
+  problem_id: string
+  problem_title?: string
+  difficulty?: 'Easy' | 'Medium' | 'Hard'
+  source: 'path' | 'gap_fill' | 'review' | 'reinforcement'
+  reasoning: string
+  priority: number
+  skills: string[]
+  estimated_difficulty?: 'easy' | 'medium' | 'hard'
+  completed: boolean
+  completed_at?: string
+}
+
+export interface MissionResponseV2 {
+  user_id: string
+  mission_date: string
+  daily_objective: string
+  problems: MissionProblem[]
+  balance_explanation?: string
+  pacing_status?: 'ahead' | 'on_track' | 'behind' | 'critical'
+  pacing_note?: string
+  streak: number
+  total_completed_today: number
+  completed_count?: number
+  can_regenerate: boolean
+  generated_at: string
+  // Legacy fields for backward compatibility
+  objective?: DailyObjective
+  main_quests?: MainQuest[]
+  side_quests?: SideQuest[]
 }
 
 export { ApiError }

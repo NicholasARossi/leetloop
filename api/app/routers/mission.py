@@ -10,12 +10,9 @@ from supabase import Client
 from app.config import get_settings
 from app.db.supabase import get_supabase
 from app.models.schemas import (
-    MainQuest,
-    SideQuest,
-    DailyObjective,
-    MissionResponse,
-    MissionGenerateRequest,
-    QuestStatus,
+    DailyMissionResponseV2,
+    MissionProblem,
+    Difficulty,
 )
 from app.services.mission_generator import MissionGenerator
 from app.services.gemini_gateway import GeminiGateway
@@ -23,7 +20,57 @@ from app.services.gemini_gateway import GeminiGateway
 router = APIRouter()
 
 
-@router.get("/mission/{user_id}", response_model=MissionResponse)
+def _parse_difficulty(diff: str | None) -> Difficulty | None:
+    """Parse difficulty string to Difficulty enum."""
+    if not diff:
+        return None
+    diff_lower = diff.lower()
+    if diff_lower == "easy":
+        return Difficulty.EASY
+    elif diff_lower == "medium":
+        return Difficulty.MEDIUM
+    elif diff_lower == "hard":
+        return Difficulty.HARD
+    return None
+
+
+def _build_mission_response(mission_data: dict) -> DailyMissionResponseV2:
+    """Build DailyMissionResponseV2 from generator output."""
+    problems = [
+        MissionProblem(
+            problem_id=p.get("problem_id", ""),
+            problem_title=p.get("problem_title"),
+            difficulty=_parse_difficulty(p.get("difficulty")),
+            source=p.get("source", "path"),
+            reasoning=p.get("reasoning", ""),
+            priority=p.get("priority", 0),
+            skills=p.get("skills", []),
+            estimated_difficulty=p.get("estimated_difficulty"),
+            completed=p.get("completed", False),
+        )
+        for p in mission_data.get("problems", [])
+    ]
+
+    generated_at = mission_data.get("generated_at", datetime.utcnow().isoformat())
+    if isinstance(generated_at, str):
+        generated_at = datetime.fromisoformat(generated_at.replace("Z", "+00:00"))
+
+    return DailyMissionResponseV2(
+        user_id=UUID(mission_data["user_id"]),
+        mission_date=mission_data["mission_date"],
+        daily_objective=mission_data.get("daily_objective") or mission_data.get("objective", {}).get("title", ""),
+        problems=problems,
+        balance_explanation=mission_data.get("balance_explanation"),
+        pacing_status=mission_data.get("pacing_status"),
+        pacing_note=mission_data.get("pacing_note"),
+        streak=mission_data.get("streak", 0),
+        total_completed_today=mission_data.get("total_completed_today", 0),
+        can_regenerate=mission_data.get("can_regenerate", True),
+        generated_at=generated_at,
+    )
+
+
+@router.get("/mission/{user_id}", response_model=DailyMissionResponseV2)
 async def get_daily_mission(
     user_id: UUID,
     supabase: Annotated[Client, Depends(get_supabase)] = None,
@@ -34,60 +81,19 @@ async def get_daily_mission(
     If no mission exists for today, generates one on-demand.
 
     Returns:
-        MissionResponse with objective, main quests, and side quests
+        DailyMissionResponseV2 with problems and Gemini reasoning
     """
     try:
         gemini = GeminiGateway()
         generator = MissionGenerator(supabase, gemini)
 
         mission_data = await generator.generate_mission(user_id)
-
-        return MissionResponse(
-            user_id=UUID(mission_data["user_id"]),
-            mission_date=mission_data["mission_date"],
-            objective=DailyObjective(
-                title=mission_data["objective"]["title"],
-                description=mission_data["objective"]["description"],
-                skill_tags=mission_data["objective"].get("skill_tags", []),
-                target_count=mission_data["objective"].get("target_count", 5),
-                completed_count=mission_data["objective"].get("completed_count", 0),
-            ),
-            main_quests=[
-                MainQuest(
-                    slug=q["slug"],
-                    title=q["title"],
-                    difficulty=q.get("difficulty"),
-                    category=q.get("category", ""),
-                    order=q.get("order", 0),
-                    status=QuestStatus(q.get("status", "upcoming")),
-                )
-                for q in mission_data.get("main_quests", [])
-            ],
-            side_quests=[
-                SideQuest(
-                    slug=q["slug"],
-                    title=q["title"],
-                    difficulty=q.get("difficulty"),
-                    reason=q.get("reason", ""),
-                    source_problem_slug=q.get("source_problem_slug"),
-                    target_weakness=q.get("target_weakness", ""),
-                    quest_type=q.get("quest_type", "skill_gap"),
-                    completed=q.get("completed", False),
-                )
-                for q in mission_data.get("side_quests", [])
-            ],
-            streak=mission_data.get("streak", 0),
-            total_completed_today=mission_data.get("total_completed_today", 0),
-            can_regenerate=mission_data.get("can_regenerate", True),
-            generated_at=datetime.fromisoformat(mission_data["generated_at"].replace("Z", "+00:00"))
-            if isinstance(mission_data["generated_at"], str)
-            else mission_data["generated_at"],
-        )
+        return _build_mission_response(mission_data)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get mission: {str(e)}")
 
 
-@router.post("/mission/{user_id}/regenerate", response_model=MissionResponse)
+@router.post("/mission/{user_id}/regenerate", response_model=DailyMissionResponseV2)
 async def regenerate_mission(
     user_id: UUID,
     supabase: Annotated[Client, Depends(get_supabase)] = None,
@@ -98,61 +104,42 @@ async def regenerate_mission(
     Limited to 3 regenerations per day.
 
     Returns:
-        MissionResponse with new objective and quests
+        DailyMissionResponseV2 with new problems and reasoning
     """
     try:
         gemini = GeminiGateway()
         generator = MissionGenerator(supabase, gemini)
 
         mission_data = await generator.generate_mission(user_id, force_regenerate=True)
-
-        if not mission_data.get("can_regenerate", True):
-            # Return existing mission with can_regenerate=False to indicate limit reached
-            pass
-
-        return MissionResponse(
-            user_id=UUID(mission_data["user_id"]),
-            mission_date=mission_data["mission_date"],
-            objective=DailyObjective(
-                title=mission_data["objective"]["title"],
-                description=mission_data["objective"]["description"],
-                skill_tags=mission_data["objective"].get("skill_tags", []),
-                target_count=mission_data["objective"].get("target_count", 5),
-                completed_count=mission_data["objective"].get("completed_count", 0),
-            ),
-            main_quests=[
-                MainQuest(
-                    slug=q["slug"],
-                    title=q["title"],
-                    difficulty=q.get("difficulty"),
-                    category=q.get("category", ""),
-                    order=q.get("order", 0),
-                    status=QuestStatus(q.get("status", "upcoming")),
-                )
-                for q in mission_data.get("main_quests", [])
-            ],
-            side_quests=[
-                SideQuest(
-                    slug=q["slug"],
-                    title=q["title"],
-                    difficulty=q.get("difficulty"),
-                    reason=q.get("reason", ""),
-                    source_problem_slug=q.get("source_problem_slug"),
-                    target_weakness=q.get("target_weakness", ""),
-                    quest_type=q.get("quest_type", "skill_gap"),
-                    completed=q.get("completed", False),
-                )
-                for q in mission_data.get("side_quests", [])
-            ],
-            streak=mission_data.get("streak", 0),
-            total_completed_today=mission_data.get("total_completed_today", 0),
-            can_regenerate=mission_data.get("can_regenerate", True),
-            generated_at=datetime.fromisoformat(mission_data["generated_at"].replace("Z", "+00:00"))
-            if isinstance(mission_data["generated_at"], str)
-            else mission_data["generated_at"],
-        )
+        return _build_mission_response(mission_data)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to regenerate mission: {str(e)}")
+
+
+@router.delete("/mission/{user_id}/reset")
+async def reset_daily_mission(
+    user_id: UUID,
+    supabase: Annotated[Client, Depends(get_supabase)] = None,
+):
+    """
+    Delete today's mission to allow fresh generation.
+
+    Useful when a mission is in a bad state.
+    """
+    try:
+        # Use RPC function to bypass RLS
+        result = supabase.rpc(
+            "reset_daily_mission",
+            {"p_user_id": str(user_id)}
+        ).execute()
+
+        # RPC returns the JSONB result directly
+        if result.data:
+            return dict(result.data)
+
+        return {"success": True, "message": "Mission reset successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to reset mission: {str(e)}")
 
 
 @router.post("/mission/generate-all")

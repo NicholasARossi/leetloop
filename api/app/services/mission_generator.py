@@ -1,4 +1,4 @@
-"""Mission Generator Service - Creates personalized daily missions using LLM."""
+"""Mission Generator Service - Gemini-driven daily mission generation."""
 
 import json
 from datetime import datetime, date, timedelta
@@ -12,13 +12,20 @@ from app.services.gemini_gateway import GeminiGateway
 
 class MissionGenerator:
     """
-    Generates personalized daily missions for users.
+    Generates personalized daily missions using Gemini as the brain.
 
-    The generator:
-    1. Gathers context about user's recent struggles and progress
-    2. Uses LLM to create a focused daily objective
-    3. Selects main quest problems from the user's learning path
-    4. Uses LLM to select complementary side quest problems
+    The generator synthesizes ALL user data to create optimal practice sessions:
+    - User's career goal (company/role/deadline)
+    - Current learning path progress
+    - Skill scores by domain
+    - Review queue (failed problems)
+    - Submission history and patterns
+
+    Gemini outputs:
+    - Daily focus objective
+    - 4-6 problems with reasoning for each selection
+    - Balance explanation (path vs gap-filling)
+    - Pacing status relative to goal
     """
 
     def __init__(self, supabase: Client, gemini: Optional[GeminiGateway] = None):
@@ -40,7 +47,7 @@ class MissionGenerator:
             force_regenerate: Whether to regenerate even if a mission exists
 
         Returns:
-            Mission data dictionary
+            Mission data dictionary with problems and reasoning
         """
         if mission_date is None:
             mission_date = date.today()
@@ -49,139 +56,104 @@ class MissionGenerator:
         existing = await self._get_existing_mission(user_id, mission_date)
 
         if existing and not force_regenerate:
-            return await self._enrich_mission(existing)
+            return await self._enrich_mission(existing, user_id)
 
         if existing and force_regenerate:
             # Check regeneration limit
             if existing.get("regenerated_count", 0) >= 3:
-                return await self._enrich_mission(existing)
+                enriched = await self._enrich_mission(existing, user_id)
+                enriched["can_regenerate"] = False
+                return enriched
 
-        # Gather context for generation
-        context = await self._gather_context(user_id)
+        # Build comprehensive context for Gemini
+        context = await self._build_gemini_context(user_id)
 
-        # Generate objective
-        objective = await self._generate_objective(context)
+        # Generate mission with Gemini
+        gemini_response = await self._call_gemini(context)
 
-        # Get main quests from learning path
-        main_quests = await self._get_main_quests(user_id, context)
+        # Build and save mission
+        mission_data = await self._build_mission_data(
+            user_id,
+            mission_date,
+            gemini_response,
+            context,
+            existing,
+        )
 
-        # Generate side quests
-        side_quests = await self._generate_side_quests(user_id, context, objective)
+        return await self._enrich_mission(mission_data, user_id)
 
-        # Build mission data
-        mission_data = {
-            "user_id": str(user_id),
-            "mission_date": mission_date.isoformat(),
-            "objective_title": objective["title"],
-            "objective_description": objective["description"],
-            "objective_skill_tags": objective.get("skill_tags", []),
-            "main_quests": main_quests,
-            "side_quests": side_quests,
-            "completed_main_quests": [],
-            "completed_side_quests": [],
-            "regenerated_count": (existing.get("regenerated_count", 0) + 1) if existing else 0,
-            "generated_at": datetime.utcnow().isoformat(),
-            "generation_context": context,
-        }
-
-        # Save to database
-        await self._save_mission(user_id, mission_date, mission_data, existing is not None)
-
-        return await self._enrich_mission(mission_data)
-
-    async def _gather_context(self, user_id: UUID) -> dict:
+    async def _build_gemini_context(self, user_id: UUID) -> dict:
         """
-        Gather context about user's recent performance for mission generation.
+        Build comprehensive context for Gemini mission generation.
 
-        Returns dict with:
-        - recent_failures: Problems failed in last 7 days
-        - slow_solves: Problems that took many attempts
-        - weak_skills: Skills with score < 60
-        - path_progress: Current path completion status
-        - solved_problems: Set of already-solved problem slugs
+        Gathers:
+        - User's career goal (from meta_objectives)
+        - Current learning path + progress
+        - Skill scores by domain
+        - Review queue items
+        - Recent submission patterns
         """
-        context = {
-            "recent_failures": [],
-            "slow_solves": [],
-            "weak_skills": [],
-            "path_progress": {},
-            "solved_problems": set(),
-        }
-
         user_id_str = str(user_id)
+        context = {
+            "target_company": None,
+            "target_role": None,
+            "target_deadline": None,
+            "weekly_commitment": 25,
+            "days_until_deadline": None,
+            "current_path": None,
+            "skill_scores": [],
+            "review_queue": [],
+            "problems_attempted_total": 0,
+            "problems_solved_total": 0,
+            "current_streak": 0,
+            "recent_failure_patterns": [],
+            "recent_slow_solves": [],
+            "solved_problems": [],
+        }
 
-        # Get ALL recent failures (last 7 days) WITH code for LLM analysis
-        seven_days_ago = (datetime.utcnow() - timedelta(days=7)).isoformat()
-        failures_response = (
-            self.supabase.table("submissions")
-            .select("problem_slug, problem_title, difficulty, tags, status, code, language, submitted_at")
+        # Get user's objective (goal)
+        objective_response = (
+            self.supabase.table("meta_objectives")
+            .select("*")
             .eq("user_id", user_id_str)
-            .neq("status", "Accepted")
-            .gte("submitted_at", seven_days_ago)
-            .order("submitted_at", desc=True)
-            .execute()  # No limit - fetch all for LLM context
-        )
-        if failures_response.data:
-            context["recent_failures"] = failures_response.data
-            # Also store failures with code separately for side quest prompt
-            context["recent_failures_with_code"] = [
-                f for f in failures_response.data if f.get("code")
-            ]
-
-        # Get slow solves from problem_attempt_stats
-        slow_response = (
-            self.supabase.table("problem_attempt_stats")
-            .select("problem_slug, problem_title, difficulty, total_attempts, time_to_first_success_seconds")
-            .eq("user_id", user_id_str)
-            .eq("is_slow_solve", True)
-            .order("last_attempt_at", desc=True)
-            .limit(10)
+            .eq("status", "active")
+            .limit(1)
             .execute()
         )
-        if slow_response.data:
-            context["slow_solves"] = slow_response.data
 
-        # Get struggles (currently failing problems)
-        struggle_response = (
-            self.supabase.table("problem_attempt_stats")
-            .select("problem_slug, problem_title, difficulty, failed_attempts")
-            .eq("user_id", user_id_str)
-            .eq("is_struggle", True)
-            .order("last_attempt_at", desc=True)
-            .limit(5)
-            .execute()
-        )
-        if struggle_response.data:
-            context["struggles"] = struggle_response.data
+        if objective_response.data:
+            obj = objective_response.data[0]
+            context["target_company"] = obj.get("target_company")
+            context["target_role"] = obj.get("target_role")
+            context["weekly_commitment"] = obj.get("weekly_problem_target", 25)
 
-        # Get weak skills
-        skills_response = (
-            self.supabase.table("skill_scores")
-            .select("tag, score, total_attempts")
-            .eq("user_id", user_id_str)
-            .lt("score", 60)
-            .order("score")
-            .limit(5)
-            .execute()
-        )
-        if skills_response.data:
-            context["weak_skills"] = skills_response.data
+            deadline = obj.get("target_deadline")
+            if deadline:
+                if isinstance(deadline, str):
+                    deadline = datetime.fromisoformat(deadline).date()
+                context["target_deadline"] = deadline.isoformat()
+                context["days_until_deadline"] = (deadline - date.today()).days
 
-        # Get current path progress
+        # Get current path
         settings_response = (
             self.supabase.table("user_settings")
             .select("current_path_id")
             .eq("user_id", user_id_str)
             .execute()
         )
-        current_path_id = None
+
+        current_path_id = "11111111-1111-1111-1111-111111111150"  # Default NeetCode 150
         if settings_response.data and settings_response.data[0].get("current_path_id"):
             current_path_id = settings_response.data[0]["current_path_id"]
-        else:
-            # Default to NeetCode 150
-            current_path_id = "11111111-1111-1111-1111-111111111150"
 
-        context["current_path_id"] = current_path_id
+        # Get path details
+        path_response = (
+            self.supabase.table("learning_paths")
+            .select("id, name, categories")
+            .eq("id", current_path_id)
+            .single()
+            .execute()
+        )
 
         # Get path progress
         progress_response = (
@@ -191,11 +163,14 @@ class MissionGenerator:
             .eq("path_id", current_path_id)
             .execute()
         )
-        if progress_response.data:
-            context["path_progress"] = progress_response.data[0]
-            context["solved_problems"] = set(progress_response.data[0].get("completed_problems", []) or [])
 
-        # Also add accepted submissions to solved problems
+        completed_problems = []
+        current_category = None
+        if progress_response.data:
+            completed_problems = progress_response.data[0].get("completed_problems", []) or []
+            current_category = progress_response.data[0].get("current_category")
+
+        # Also get solved from submissions
         accepted_response = (
             self.supabase.table("submissions")
             .select("problem_slug")
@@ -204,448 +179,462 @@ class MissionGenerator:
             .execute()
         )
         if accepted_response.data:
-            for s in accepted_response.data:
-                context["solved_problems"].add(s["problem_slug"])
+            solved_slugs = {s["problem_slug"] for s in accepted_response.data}
+            completed_problems = list(set(completed_problems) | solved_slugs)
 
-        # Convert set to list for JSON serialization
-        context["solved_problems"] = list(context["solved_problems"])
+        context["solved_problems"] = completed_problems
+
+        if path_response.data:
+            categories = path_response.data.get("categories", [])
+            total_problems = sum(len(cat.get("problems", [])) for cat in categories)
+
+            # Find next uncompleted problem index
+            solved_set = set(completed_problems)
+            next_index = 0
+            for cat in sorted(categories, key=lambda x: x.get("order", 0)):
+                for prob in sorted(cat.get("problems", []), key=lambda x: x.get("order", 0)):
+                    if prob["slug"] not in solved_set:
+                        break
+                    next_index += 1
+                else:
+                    continue
+                break
+
+            context["current_path"] = {
+                "id": current_path_id,
+                "name": path_response.data.get("name", "NeetCode 150"),
+                "total_problems": total_problems,
+                "completed_count": len(completed_problems),
+                "next_uncompleted_index": next_index,
+                "current_category": current_category,
+                "categories": categories,  # Include for problem selection
+            }
+
+        # Get skill scores
+        skills_response = (
+            self.supabase.table("skill_scores")
+            .select("tag, score, total_attempts, avg_time_seconds")
+            .eq("user_id", user_id_str)
+            .order("score")
+            .execute()
+        )
+
+        if skills_response.data:
+            for skill in skills_response.data:
+                score = skill.get("score", 0)
+                if score < 40:
+                    status = "weak"
+                elif score < 60:
+                    status = "developing"
+                elif score < 80:
+                    status = "proficient"
+                else:
+                    status = "mastered"
+
+                context["skill_scores"].append({
+                    "domain": skill["tag"],
+                    "score": score,
+                    "status": status,
+                    "recent_failures": 0,  # TODO: calculate
+                    "average_solve_time": skill.get("avg_time_seconds"),
+                })
+
+        # Get review queue
+        reviews_response = (
+            self.supabase.table("review_queue")
+            .select("problem_slug, reason, next_review, interval_days, last_reviewed")
+            .eq("user_id", user_id_str)
+            .lte("next_review", datetime.utcnow().isoformat())
+            .order("priority", desc=True)
+            .limit(5)
+            .execute()
+        )
+
+        if reviews_response.data:
+            for review in reviews_response.data:
+                last_attempt = review.get("last_reviewed") or review.get("next_review")
+                context["review_queue"].append({
+                    "problem_id": review["problem_slug"],
+                    "last_attempt": last_attempt,
+                    "failure_reason": review.get("reason"),
+                    "interval": review.get("interval_days", 1),
+                })
+
+        # Get submission counts
+        stats_response = (
+            self.supabase.table("submissions")
+            .select("id, status", count="exact")
+            .eq("user_id", user_id_str)
+            .execute()
+        )
+
+        if stats_response.count:
+            context["problems_attempted_total"] = stats_response.count
+
+        solved_response = (
+            self.supabase.table("submissions")
+            .select("problem_slug")
+            .eq("user_id", user_id_str)
+            .eq("status", "Accepted")
+            .execute()
+        )
+
+        if solved_response.data:
+            context["problems_solved_total"] = len(set(s["problem_slug"] for s in solved_response.data))
+
+        # Get streak
+        streak_response = (
+            self.supabase.table("user_streaks")
+            .select("current_streak, last_activity_date")
+            .eq("user_id", user_id_str)
+            .execute()
+        )
+
+        if streak_response.data:
+            streak_data = streak_response.data[0]
+            last_date = streak_data.get("last_activity_date")
+            if last_date:
+                try:
+                    last_date_obj = datetime.fromisoformat(last_date.replace("Z", "+00:00")).date() if isinstance(last_date, str) else last_date
+                    days_diff = (date.today() - last_date_obj).days
+                    if days_diff <= 1:
+                        context["current_streak"] = streak_data.get("current_streak", 0)
+                except Exception:
+                    pass
+
+        # Get recent failure patterns
+        seven_days_ago = (datetime.utcnow() - timedelta(days=7)).isoformat()
+        failures_response = (
+            self.supabase.table("submissions")
+            .select("tags")
+            .eq("user_id", user_id_str)
+            .neq("status", "Accepted")
+            .gte("submitted_at", seven_days_ago)
+            .execute()
+        )
+
+        if failures_response.data:
+            tag_counts = {}
+            for f in failures_response.data:
+                for tag in (f.get("tags") or []):
+                    tag_counts[tag] = tag_counts.get(tag, 0) + 1
+            # Top 5 failure patterns
+            sorted_tags = sorted(tag_counts.items(), key=lambda x: -x[1])[:5]
+            context["recent_failure_patterns"] = [tag for tag, _ in sorted_tags]
+
+        # Get slow solves
+        slow_response = (
+            self.supabase.table("problem_attempt_stats")
+            .select("problem_slug")
+            .eq("user_id", user_id_str)
+            .eq("is_slow_solve", True)
+            .order("last_attempt_at", desc=True)
+            .limit(5)
+            .execute()
+        )
+
+        if slow_response.data:
+            context["recent_slow_solves"] = [s["problem_slug"] for s in slow_response.data]
 
         return context
 
-    async def _generate_objective(self, context: dict) -> dict:
+    async def _call_gemini(self, context: dict) -> dict:
         """
-        Use LLM to generate a focused daily objective based on user's struggles.
+        Call Gemini to generate the daily mission.
 
-        Returns:
-            Dict with title, description, skill_tags
+        Returns structured response with problems and reasoning.
         """
-        # Build prompt
-        failures_summary = []
-        if context.get("recent_failures"):
-            tag_counts = {}
-            for f in context["recent_failures"]:
-                for tag in (f.get("tags") or []):
-                    tag_counts[tag] = tag_counts.get(tag, 0) + 1
-            failures_summary = sorted(tag_counts.items(), key=lambda x: -x[1])[:5]
+        # Build available problems pool from path
+        available_problems = []
+        path = context.get("current_path")
+        solved_set = set(context.get("solved_problems", []))
 
-        slow_summary = []
-        if context.get("slow_solves"):
-            slow_summary = [
-                f"{s['problem_title']} ({s['total_attempts']} attempts)"
-                for s in context["slow_solves"][:3]
-            ]
+        if path and path.get("categories"):
+            for cat in sorted(path["categories"], key=lambda x: x.get("order", 0)):
+                for prob in sorted(cat.get("problems", []), key=lambda x: x.get("order", 0)):
+                    if prob["slug"] not in solved_set:
+                        available_problems.append({
+                            "slug": prob["slug"],
+                            "title": prob["title"],
+                            "difficulty": prob.get("difficulty"),
+                            "category": cat["name"],
+                        })
 
-        weak_summary = []
-        if context.get("weak_skills"):
-            weak_summary = [
-                f"{s['tag']} (score: {s['score']:.0f}%)"
-                for s in context["weak_skills"]
-            ]
+        # Build review problems
+        review_problems = [
+            {"slug": r["problem_id"], "reason": r.get("failure_reason", "Due for review")}
+            for r in context.get("review_queue", [])
+        ]
 
-        prompt = f"""Based on this LeetCode learner's recent performance, generate a focused daily objective.
-
-Recent failure patterns (tag: count):
-{failures_summary if failures_summary else "No recent failures"}
-
-Slow solves (took many attempts):
-{slow_summary if slow_summary else "None"}
-
-Weak skill areas:
-{weak_summary if weak_summary else "No data yet"}
-
-Generate a motivating daily objective that:
-1. Targets the MOST important weakness pattern
-2. Is specific and achievable in one session
-3. Frames the struggle positively
-
-Output as JSON:
-{{
-  "title": "Master [pattern/skill]",
-  "description": "A 1-2 sentence description of why this focus will help and what to practice",
-  "skill_tags": ["tag1", "tag2"]
-}}
-
-Only output the JSON, nothing else."""
+        prompt = self._build_gemini_prompt(context, available_problems, review_problems)
 
         if not self.gemini.configured:
-            # Fallback when LLM not available
-            if weak_summary:
-                primary_skill = context["weak_skills"][0]["tag"]
-                return {
-                    "title": f"Strengthen {primary_skill}",
-                    "description": f"Your {primary_skill} skills need work. Focus on understanding the core pattern through deliberate practice.",
-                    "skill_tags": [primary_skill],
-                }
-            return {
-                "title": "Build Your Foundation",
-                "description": "Focus on solving problems consistently. Each attempt teaches you something valuable.",
-                "skill_tags": [],
-            }
+            return self._fallback_mission(context, available_problems, review_problems)
 
         try:
             response = self.gemini.model.generate_content(prompt)
             text = response.text.strip()
+
             # Extract JSON from response
             if "```json" in text:
                 text = text.split("```json")[1].split("```")[0]
             elif "```" in text:
                 text = text.split("```")[1].split("```")[0]
-            return json.loads(text)
-        except Exception as e:
-            print(f"LLM objective generation failed: {e}")
-            # Fallback
-            if context.get("weak_skills"):
-                primary_skill = context["weak_skills"][0]["tag"]
-                return {
-                    "title": f"Strengthen {primary_skill}",
-                    "description": f"Focus on {primary_skill} problems today to build a stronger foundation.",
-                    "skill_tags": [primary_skill],
-                }
-            return {
-                "title": "Build Your Foundation",
-                "description": "Focus on solving problems consistently today.",
-                "skill_tags": [],
-            }
 
-    def _build_side_quest_prompt(
+            return json.loads(text)
+
+        except Exception as e:
+            print(f"Gemini mission generation failed: {e}")
+            return self._fallback_mission(context, available_problems, review_problems)
+
+    def _build_gemini_prompt(
         self,
         context: dict,
-        candidate_quests: list[dict],
-        path_info: dict,
+        available_problems: list,
+        review_problems: list,
     ) -> str:
-        """
-        Build a rich prompt for LLM-driven side quest selection.
+        """Build the Gemini prompt for mission generation."""
 
-        Includes:
-        - Current position in NeetCode 150 (main plot)
-        - All failures from last 7 days WITH code
-        - List of solved problems
-        - Candidate problems pool
-        """
-        prompt_parts = []
-
-        # Section 1: Main plot position
-        current_category = context.get("path_progress", {}).get("current_category", "Unknown")
-        solved_count = len(context.get("solved_problems", []))
-        total_problems = path_info.get("total_problems", 150)
-        upcoming = path_info.get("upcoming_in_category", [])
-
-        prompt_parts.append(f"""## Your Position in NeetCode 150 (Main Plot)
-Current Category: {current_category}
-Problems Completed: {solved_count}/{total_problems}
-Next up in path: {', '.join(upcoming[:3]) if upcoming else 'None'}
-
-This learner is working through "{current_category}" - side quests should complement this focus.""")
-
-        # Section 2: All failures with code
-        failures_with_code = context.get("recent_failures_with_code", [])
-        if failures_with_code:
-            prompt_parts.append("\n## All Failures from Last 7 Days (with code)\n")
-            for i, f in enumerate(failures_with_code, 1):
-                title = f.get("problem_title") or f.get("problem_slug", "").replace("-", " ").title()
-                difficulty = f.get("difficulty", "Unknown")
-                status = f.get("status", "Failed")
-                tags = ", ".join(f.get("tags") or []) or "No tags"
-                language = f.get("language", "python")
-                code = f.get("code", "# No code available")
-
-                prompt_parts.append(f"""### Failure {i}: {title} ({difficulty}) - {status}
-Tags: {tags}
-Language: {language}
-
-```{language}
-{code}
-```
-""")
+        # Goal section
+        goal_section = "## User Goal\n"
+        if context.get("target_company"):
+            goal_section += f"Target: {context['target_company']} - {context.get('target_role', 'Software Engineer')}\n"
+            if context.get("days_until_deadline"):
+                goal_section += f"Days until deadline: {context['days_until_deadline']}\n"
+            goal_section += f"Weekly commitment: {context.get('weekly_commitment', 25)} problems\n"
         else:
-            prompt_parts.append("\n## Recent Failures\nNo failures with code in the last 7 days.\n")
+            goal_section += "No specific goal set - focus on balanced skill development\n"
 
-        # Section 3: Solved problems (truncated list)
-        solved = context.get("solved_problems", [])
-        solved_display = ", ".join(solved[:50])
-        if len(solved) > 50:
-            solved_display += f", ... ({len(solved)} total)"
-        prompt_parts.append(f"\n## Solved Problems ({len(solved)} total)\n{solved_display}\n")
+        # Path section
+        path_section = "## Current Learning Path\n"
+        if context.get("current_path"):
+            path = context["current_path"]
+            progress_pct = (path["completed_count"] / path["total_problems"] * 100) if path["total_problems"] > 0 else 0
+            path_section += f"Path: {path['name']}\n"
+            path_section += f"Progress: {path['completed_count']}/{path['total_problems']} ({progress_pct:.0f}%)\n"
+            if path.get("current_category"):
+                path_section += f"Current category: {path['current_category']}\n"
+        else:
+            path_section += "No learning path selected\n"
 
-        # Section 4: Candidate problems
-        prompt_parts.append("\n## Candidate Problems for Side Quests")
-        for cq in candidate_quests:
-            prompt_parts.append(f"- {cq['slug']}: {cq['title']} ({cq.get('difficulty', 'Unknown')}) - Source: {cq['quest_type']}")
+        # Skills section
+        skills_section = "## Skill Scores\n"
+        weak_skills = [s for s in context.get("skill_scores", []) if s["status"] in ["weak", "developing"]]
+        strong_skills = [s for s in context.get("skill_scores", []) if s["status"] in ["proficient", "mastered"]]
 
-        # Section 5: Instructions
-        prompt_parts.append("""
-## Your Task
-Analyze ALL the failure code above. Look for:
-1. CODE PATTERNS: What mistakes keep appearing? (e.g., O(n^3) brute force instead of O(n^2) two pointers)
-2. ALGORITHM GAPS: Which techniques don't they understand? (e.g., not using sorted array with two pointers)
-3. ERROR TYPES: TLE = efficiency problem, WA = logic bug, RE = edge cases
+        if weak_skills:
+            skills_section += "WEAK areas (need focus):\n"
+            for s in weak_skills[:5]:
+                skills_section += f"  - {s['domain']}: {s['score']:.0f}% ({s['status']})\n"
+        if strong_skills:
+            skills_section += "STRONG areas:\n"
+            for s in strong_skills[:3]:
+                skills_section += f"  - {s['domain']}: {s['score']:.0f}%\n"
+        if not weak_skills and not strong_skills:
+            skills_section += "No skill data yet\n"
 
-Select 2-3 side quests from the candidates that:
-1. Address the ROOT CAUSE of failures (not symptoms)
-2. Complement their current NeetCode 150 category
-3. Build toward mastery of the weak pattern
+        # Review queue section
+        review_section = "## Review Queue (Due for Spaced Repetition)\n"
+        if review_problems:
+            for r in review_problems:
+                skills_section += f"  - {r['slug']}: {r.get('reason', 'Failed previously')}\n"
+        else:
+            review_section += "No reviews due\n"
 
-If no candidates are appropriate, explain why and suggest what type of problem would help.
+        # Available problems section
+        problems_section = "## Available Problems from Path\n"
+        if available_problems:
+            for p in available_problems[:15]:  # Show next 15
+                problems_section += f"  - {p['slug']}: {p['title']} ({p['difficulty']}) - {p['category']}\n"
+        else:
+            problems_section += "No problems available\n"
 
-Output JSON only:
-{
-  "analysis": "Brief analysis of the learner's struggle patterns based on the code",
-  "side_quests": [
-    {
-      "slug": "problem-slug-from-candidates",
-      "title": "Problem Title",
-      "reason": "Why this problem addresses the root cause of their failures",
-      "target_weakness": "The skill or pattern this addresses",
-      "quest_type": "skill_gap|review_due|slow_solve"
-    }
-  ]
-}""")
+        # Recent patterns
+        patterns_section = "## Recent Patterns\n"
+        if context.get("recent_failure_patterns"):
+            patterns_section += f"Common failure topics: {', '.join(context['recent_failure_patterns'])}\n"
+        if context.get("recent_slow_solves"):
+            patterns_section += f"Slow solves: {', '.join(context['recent_slow_solves'][:3])}\n"
+        patterns_section += f"Current streak: {context.get('current_streak', 0)} days\n"
+        patterns_section += f"Total solved: {context.get('problems_solved_total', 0)} problems\n"
 
-        return "\n".join(prompt_parts)
+        prompt = f"""You are a LeetCode practice coach. Generate a personalized daily mission based on all user data.
 
-    async def _get_path_info(self, context: dict) -> dict:
-        """Get path metadata for the side quest prompt."""
-        path_id = context.get("current_path_id", "11111111-1111-1111-1111-111111111150")
-        solved = set(context.get("solved_problems", []))
-        current_category = context.get("path_progress", {}).get("current_category")
+{goal_section}
 
-        path_response = (
-            self.supabase.table("learning_paths")
-            .select("categories, name")
-            .eq("id", path_id)
-            .single()
-            .execute()
-        )
+{path_section}
 
-        if not path_response.data:
-            return {"total_problems": 150, "upcoming_in_category": []}
+{skills_section}
 
-        categories = path_response.data.get("categories", [])
-        total_problems = sum(len(cat.get("problems", [])) for cat in categories)
+{review_section}
 
-        # Find upcoming problems in current category
-        upcoming = []
-        for cat in categories:
-            if cat.get("name") == current_category:
-                for prob in sorted(cat.get("problems", []), key=lambda x: x.get("order", 0)):
-                    if prob["slug"] not in solved:
-                        upcoming.append(prob["title"])
-                break
+{patterns_section}
+
+{problems_section}
+
+## Instructions
+Generate an optimal daily practice session (4-6 problems):
+1. PRIORITIZE review items if any are due (spaced repetition is critical)
+2. Include problems from the learning path to maintain progress
+3. Mix in gap-filling problems to address weak skills
+4. You MAY reorder path problems if it helps hit multiple learning objectives
+5. Always explain WHY each problem was chosen
+6. Consider deadline pacing - are they ahead or behind?
+
+## Output Format (JSON only)
+{{
+  "daily_objective": "Short phrase describing today's focus (e.g., 'Master Two Pointer patterns')",
+  "problems": [
+    {{
+      "problem_id": "problem-slug-from-available",
+      "source": "path|gap_fill|review|reinforcement",
+      "reasoning": "Why this problem was chosen - be specific",
+      "priority": 1,
+      "skills": ["skill1", "skill2"],
+      "estimated_difficulty": "easy|medium|hard"
+    }}
+  ],
+  "balance_explanation": "Today is X% path, Y% gap-filling because...",
+  "pacing_status": "ahead|on_track|behind|critical",
+  "pacing_note": "You're X days ahead/behind schedule" or "On track for your deadline"
+}}
+
+Only output the JSON, nothing else."""
+
+        return prompt
+
+    def _fallback_mission(
+        self,
+        context: dict,
+        available_problems: list,
+        review_problems: list,
+    ) -> dict:
+        """Generate fallback mission when Gemini is unavailable."""
+        problems = []
+
+        # Add reviews first (max 2)
+        for i, r in enumerate(review_problems[:2]):
+            problems.append({
+                "problem_id": r["slug"],
+                "source": "review",
+                "reasoning": r.get("reason", "Due for spaced repetition review"),
+                "priority": i + 1,
+                "skills": [],
+                "estimated_difficulty": "medium",
+            })
+
+        # Add path problems (fill to 5 total)
+        remaining = 5 - len(problems)
+        for i, p in enumerate(available_problems[:remaining]):
+            problems.append({
+                "problem_id": p["slug"],
+                "source": "path",
+                "reasoning": f"Next problem in your {p['category']} progression",
+                "priority": len(problems) + 1,
+                "skills": [p["category"]],
+                "estimated_difficulty": p.get("difficulty", "medium").lower(),
+            })
+
+        # Determine objective
+        weak_skills = [s for s in context.get("skill_scores", []) if s["status"] == "weak"]
+        if weak_skills:
+            objective = f"Strengthen {weak_skills[0]['domain']}"
+        elif review_problems:
+            objective = "Review and consolidate"
+        else:
+            objective = "Continue learning path progress"
+
+        # Calculate pacing
+        pacing_status = "on_track"
+        pacing_note = "Keep up the consistent practice!"
+        if context.get("days_until_deadline"):
+            days = context["days_until_deadline"]
+            if days < 14:
+                pacing_status = "critical"
+                pacing_note = f"Only {days} days until deadline - increase daily practice"
+            elif days < 30:
+                pacing_status = "behind"
+                pacing_note = f"{days} days remaining - stay focused"
 
         return {
-            "total_problems": total_problems,
-            "upcoming_in_category": upcoming,
-            "path_name": path_response.data.get("name", "NeetCode 150"),
+            "daily_objective": objective,
+            "problems": problems,
+            "balance_explanation": "Balanced mix of reviews and new path problems",
+            "pacing_status": pacing_status,
+            "pacing_note": pacing_note,
         }
 
-    async def _get_main_quests(self, user_id: UUID, context: dict) -> list[dict]:
-        """
-        Get next problems from user's learning path as main quests.
-
-        Returns list of up to 5 problems in order.
-        """
-        path_id = context.get("current_path_id", "11111111-1111-1111-1111-111111111150")
-        solved = set(context.get("solved_problems", []))
-
-        # Get path data
-        path_response = (
-            self.supabase.table("learning_paths")
-            .select("categories")
-            .eq("id", path_id)
-            .single()
-            .execute()
-        )
-
-        if not path_response.data:
-            return []
-
-        categories = path_response.data.get("categories", [])
-        main_quests = []
-
-        for cat in sorted(categories, key=lambda x: x.get("order", 0)):
-            if len(main_quests) >= 5:
-                break
-            for prob in sorted(cat.get("problems", []), key=lambda x: x.get("order", 0)):
-                if len(main_quests) >= 5:
-                    break
-
-                status = "completed" if prob["slug"] in solved else "upcoming"
-                if status == "upcoming" and not any(q["status"] == "current" for q in main_quests):
-                    status = "current"
-
-                # Include some completed to show progress, but prioritize uncompleted
-                if status == "completed" and len([q for q in main_quests if q["status"] == "completed"]) >= 2:
-                    continue
-
-                main_quests.append({
-                    "slug": prob["slug"],
-                    "title": prob["title"],
-                    "difficulty": prob.get("difficulty"),
-                    "category": cat["name"],
-                    "order": len(main_quests) + 1,
-                    "status": status,
-                })
-
-        return main_quests
-
-    async def _generate_side_quests(
+    async def _build_mission_data(
         self,
         user_id: UUID,
+        mission_date: date,
+        gemini_response: dict,
         context: dict,
-        objective: dict,
-    ) -> list[dict]:
-        """
-        Generate side quests using LLM-driven selection with rich context.
-
-        Process:
-        1. Gather candidate pool (reviews, weak skills, slow solves)
-        2. Build rich prompt with code context
-        3. Call Gemini to SELECT and EXPLAIN side quests
-        4. Fall back to rule-based if LLM fails
-
-        Returns list of 2-3 side quests.
-        """
+        existing: dict = None,
+    ) -> dict:
+        """Build mission data structure and save to database."""
         user_id_str = str(user_id)
-        solved = set(context.get("solved_problems", []))
 
-        # Step 1: Gather candidate pool
-        candidate_quests = []
+        # Get problem details for each selected problem
+        problem_details = {}
+        path = context.get("current_path", {})
+        if path.get("categories"):
+            for cat in path["categories"]:
+                for prob in cat.get("problems", []):
+                    problem_details[prob["slug"]] = {
+                        "title": prob["title"],
+                        "difficulty": prob.get("difficulty"),
+                        "category": cat["name"],
+                    }
 
-        # 1a. Check for reviews due
-        reviews_response = (
-            self.supabase.table("review_queue")
-            .select("problem_slug, problem_title, reason")
-            .eq("user_id", user_id_str)
-            .lte("next_review", datetime.utcnow().isoformat())
-            .order("priority", desc=True)
-            .limit(3)
-            .execute()
-        )
-        if reviews_response.data:
-            for r in reviews_response.data:
-                candidate_quests.append({
-                    "slug": r["problem_slug"],
-                    "title": r.get("problem_title") or r["problem_slug"].replace("-", " ").title(),
-                    "difficulty": None,
-                    "reason": r.get("reason", "Due for review - failed previously"),
-                    "source_problem_slug": None,
-                    "target_weakness": "retention",
-                    "quest_type": "review_due",
-                    "completed": False,
-                })
+        # Enrich problems with titles
+        problems = []
+        for p in gemini_response.get("problems", []):
+            problem_id = p.get("problem_id")
+            details = problem_details.get(problem_id, {})
+            problems.append({
+                "problem_id": problem_id,
+                "problem_title": details.get("title") or problem_id.replace("-", " ").title(),
+                "difficulty": details.get("difficulty"),
+                "source": p.get("source", "path"),
+                "reasoning": p.get("reasoning", "Selected for your practice"),
+                "priority": p.get("priority", 0),
+                "skills": p.get("skills", []),
+                "estimated_difficulty": p.get("estimated_difficulty"),
+                "completed": False,
+            })
 
-        # 1b. Add skill gap problems
-        if context.get("weak_skills"):
-            for skill in context["weak_skills"]:
-                failed_response = (
-                    self.supabase.table("submissions")
-                    .select("problem_slug, problem_title, difficulty")
-                    .eq("user_id", user_id_str)
-                    .neq("status", "Accepted")
-                    .contains("tags", [skill["tag"]])
-                    .order("submitted_at", desc=True)
-                    .limit(2)
-                    .execute()
-                )
-                if failed_response.data:
-                    for prob in failed_response.data:
-                        if prob["problem_slug"] not in solved and not any(
-                            q["slug"] == prob["problem_slug"] for q in candidate_quests
-                        ):
-                            candidate_quests.append({
-                                "slug": prob["problem_slug"],
-                                "title": prob.get("problem_title") or prob["problem_slug"].replace("-", " ").title(),
-                                "difficulty": prob.get("difficulty"),
-                                "reason": f"Strengthen {skill['tag']} (score: {skill['score']:.0f}%)",
-                                "source_problem_slug": None,
-                                "target_weakness": skill["tag"],
-                                "quest_type": "skill_gap",
-                                "completed": False,
-                            })
+        # Build mission data
+        mission_data = {
+            "user_id": user_id_str,
+            "mission_date": mission_date.isoformat(),
+            "daily_objective": gemini_response.get("daily_objective", "Focus on practice"),
+            "objective_title": gemini_response.get("daily_objective", "Focus on practice"),
+            "objective_description": gemini_response.get("balance_explanation", ""),
+            "objective_skill_tags": [],
+            "balance_explanation": gemini_response.get("balance_explanation"),
+            "pacing_status": gemini_response.get("pacing_status"),
+            "pacing_note": gemini_response.get("pacing_note"),
+            "problems": problems,
+            "main_quests": [],  # Legacy field
+            "side_quests": [],  # Legacy field
+            "completed_main_quests": [],
+            "completed_side_quests": [],
+            "regenerated_count": (existing.get("regenerated_count", 0) + 1) if existing else 0,
+            "generated_at": datetime.utcnow().isoformat(),
+            "gemini_response": gemini_response,
+            "generation_context": {
+                "target_company": context.get("target_company"),
+                "days_until_deadline": context.get("days_until_deadline"),
+            },
+        }
 
-        # 1c. Add slow solve retries
-        if context.get("slow_solves"):
-            for slow in context["slow_solves"]:
-                if not any(q["slug"] == slow["problem_slug"] for q in candidate_quests):
-                    candidate_quests.append({
-                        "slug": slow["problem_slug"],
-                        "title": slow.get("problem_title") or slow["problem_slug"].replace("-", " ").title(),
-                        "difficulty": slow.get("difficulty"),
-                        "reason": f"Took {slow['total_attempts']} attempts - solidify your understanding",
-                        "source_problem_slug": None,
-                        "target_weakness": "slow_solve",
-                        "quest_type": "slow_solve",
-                        "completed": False,
-                    })
+        # Save to database
+        await self._save_mission(user_id, mission_date, mission_data, existing is not None)
 
-        # If no candidates, return empty
-        if not candidate_quests:
-            return []
+        return mission_data
 
-        # Step 2: Try LLM-driven selection if configured and we have code context
-        if self.gemini.configured and context.get("recent_failures_with_code"):
-            try:
-                path_info = await self._get_path_info(context)
-                prompt = self._build_side_quest_prompt(context, candidate_quests, path_info)
-
-                response = self.gemini.model.generate_content(prompt)
-                text = response.text.strip()
-
-                # Extract JSON from response
-                if "```json" in text:
-                    text = text.split("```json")[1].split("```")[0]
-                elif "```" in text:
-                    text = text.split("```")[1].split("```")[0]
-
-                llm_response = json.loads(text)
-
-                # Build side quests from LLM selection
-                llm_side_quests = []
-                candidate_map = {cq["slug"]: cq for cq in candidate_quests}
-
-                for sq in llm_response.get("side_quests", []):
-                    slug = sq.get("slug")
-                    if slug in candidate_map:
-                        base = candidate_map[slug].copy()
-                        # Use LLM's explanation as reason
-                        base["reason"] = sq.get("reason", base["reason"])
-                        base["target_weakness"] = sq.get("target_weakness", base["target_weakness"])
-                        base["quest_type"] = sq.get("quest_type", base["quest_type"])
-                        base["llm_analysis"] = llm_response.get("analysis", "")
-                        llm_side_quests.append(base)
-
-                if llm_side_quests:
-                    print(f"LLM selected {len(llm_side_quests)} side quests")
-                    return llm_side_quests[:3]
-
-            except Exception as e:
-                print(f"LLM side quest selection failed: {e}, falling back to rule-based")
-
-        # Step 3: Fall back to rule-based selection
-        return self._rule_based_side_quests(candidate_quests)
-
-    def _rule_based_side_quests(self, candidates: list[dict]) -> list[dict]:
-        """
-        Rule-based fallback for side quest selection.
-
-        Priority:
-        1. Review due items (spaced repetition)
-        2. Skill gap problems
-        3. Slow solve retries
-        """
-        side_quests = []
-        quest_type_priority = ["review_due", "skill_gap", "slow_solve"]
-
-        for quest_type in quest_type_priority:
-            for cq in candidates:
-                if len(side_quests) >= 3:
-                    break
-                if cq["quest_type"] == quest_type and cq["slug"] not in [q["slug"] for q in side_quests]:
-                    side_quests.append(cq)
-
-        return side_quests[:3]
-
-    async def _get_existing_mission(self, user_id: UUID, mission_date: date) -> Optional[dict]:
+    async def _get_existing_mission(self, user_id: UUID, mission_date: date) -> dict:
         """Get existing mission for the date if it exists."""
         response = (
             self.supabase.table("daily_missions")
@@ -654,8 +643,24 @@ Output JSON only:
             .eq("mission_date", mission_date.isoformat())
             .execute()
         )
+
         if response.data:
-            return response.data[0]
+            mission = response.data[0]
+
+            # Also get mission_problems
+            problems_response = (
+                self.supabase.table("mission_problems")
+                .select("*")
+                .eq("mission_id", mission["id"])
+                .order("priority")
+                .execute()
+            )
+
+            if problems_response.data:
+                mission["problems"] = problems_response.data
+
+            return mission
+
         return None
 
     async def _save_mission(
@@ -666,60 +671,115 @@ Output JSON only:
         is_update: bool,
     ) -> None:
         """Save or update the mission in the database."""
-        data = {
-            "user_id": str(user_id),
+        user_id_str = str(user_id)
+
+        # Prepare main mission data
+        main_data = {
+            "user_id": user_id_str,
             "mission_date": mission_date.isoformat(),
-            "objective_title": mission_data["objective_title"],
-            "objective_description": mission_data["objective_description"],
-            "objective_skill_tags": mission_data["objective_skill_tags"],
-            "main_quests": mission_data["main_quests"],
-            "side_quests": mission_data["side_quests"],
-            "completed_main_quests": mission_data["completed_main_quests"],
-            "completed_side_quests": mission_data["completed_side_quests"],
-            "regenerated_count": mission_data["regenerated_count"],
-            "generated_at": mission_data["generated_at"],
-            "generation_context": mission_data["generation_context"],
+            "objective_title": mission_data.get("objective_title", mission_data.get("daily_objective", "")),
+            "objective_description": mission_data.get("objective_description", ""),
+            "objective_skill_tags": mission_data.get("objective_skill_tags", []),
+            "daily_objective": mission_data.get("daily_objective"),
+            "balance_explanation": mission_data.get("balance_explanation"),
+            "pacing_status": mission_data.get("pacing_status"),
+            "pacing_note": mission_data.get("pacing_note"),
+            "main_quests": mission_data.get("main_quests", []),
+            "side_quests": mission_data.get("side_quests", []),
+            "completed_main_quests": mission_data.get("completed_main_quests", []),
+            "completed_side_quests": mission_data.get("completed_side_quests", []),
+            "regenerated_count": mission_data.get("regenerated_count", 0),
+            "generated_at": mission_data.get("generated_at"),
+            "gemini_response": mission_data.get("gemini_response"),
+            "generation_context": mission_data.get("generation_context", {}),
             "updated_at": datetime.utcnow().isoformat(),
         }
 
         if is_update:
-            self.supabase.table("daily_missions").update(data).eq(
-                "user_id", str(user_id)
-            ).eq("mission_date", mission_date.isoformat()).execute()
-        else:
-            self.supabase.table("daily_missions").insert(data).execute()
+            # Get existing mission ID
+            existing = (
+                self.supabase.table("daily_missions")
+                .select("id")
+                .eq("user_id", user_id_str)
+                .eq("mission_date", mission_date.isoformat())
+                .single()
+                .execute()
+            )
 
-    async def _enrich_mission(self, mission_data: dict) -> dict:
+            if existing.data:
+                mission_id = existing.data["id"]
+
+                # Update mission
+                self.supabase.table("daily_missions").update(main_data).eq("id", mission_id).execute()
+
+                # Delete old problems
+                self.supabase.table("mission_problems").delete().eq("mission_id", mission_id).execute()
+
+                # Insert new problems
+                await self._save_mission_problems(mission_id, mission_data.get("problems", []))
+        else:
+            # Insert new mission
+            result = self.supabase.table("daily_missions").insert(main_data).execute()
+
+            if result.data:
+                mission_id = result.data[0]["id"]
+                await self._save_mission_problems(mission_id, mission_data.get("problems", []))
+
+    async def _save_mission_problems(self, mission_id: str, problems: list) -> None:
+        """Save mission problems to the junction table."""
+        if not problems:
+            return
+
+        problem_records = []
+        for p in problems:
+            problem_records.append({
+                "mission_id": mission_id,
+                "problem_id": p.get("problem_id"),
+                "problem_title": p.get("problem_title"),
+                "difficulty": p.get("difficulty"),
+                "source": p.get("source", "path"),
+                "reasoning": p.get("reasoning", ""),
+                "priority": p.get("priority", 0),
+                "skills": p.get("skills", []),
+                "estimated_difficulty": p.get("estimated_difficulty"),
+                "completed": p.get("completed", False),
+            })
+
+        if problem_records:
+            self.supabase.table("mission_problems").insert(problem_records).execute()
+
+    async def _enrich_mission(self, mission_data: dict, user_id: UUID) -> dict:
         """
         Enrich mission data with computed fields for the response.
-
-        Adds streak, completion counts, quest statuses, etc.
         """
-        user_id = mission_data["user_id"]
+        user_id_str = str(user_id) if isinstance(user_id, UUID) else mission_data.get("user_id")
 
         # Get streak
         streak = 0
         streak_response = (
             self.supabase.table("user_streaks")
             .select("current_streak, last_activity_date")
-            .eq("user_id", user_id)
+            .eq("user_id", user_id_str)
             .execute()
         )
         if streak_response.data:
             streak_data = streak_response.data[0]
             last_date = streak_data.get("last_activity_date")
             if last_date:
-                last_date_obj = datetime.fromisoformat(last_date.replace("Z", "+00:00")).date() if isinstance(last_date, str) else last_date
-                days_diff = (date.today() - last_date_obj).days
-                if days_diff <= 1:
-                    streak = streak_data.get("current_streak", 0)
+                try:
+                    last_date_obj = datetime.fromisoformat(last_date.replace("Z", "+00:00")).date() if isinstance(last_date, str) else last_date
+                    days_diff = (date.today() - last_date_obj).days
+                    if days_diff <= 1:
+                        streak = streak_data.get("current_streak", 0)
+                except Exception:
+                    pass
 
-        # Get today's completed problems from submissions
+        # Get today's completed problems
         today = date.today().isoformat()
         completed_today_response = (
             self.supabase.table("submissions")
             .select("problem_slug")
-            .eq("user_id", user_id)
+            .eq("user_id", user_id_str)
             .eq("status", "Accepted")
             .gte("submitted_at", f"{today}T00:00:00")
             .execute()
@@ -728,47 +788,38 @@ Output JSON only:
         if completed_today_response.data:
             completed_today_slugs = {s["problem_slug"] for s in completed_today_response.data}
 
-        # Update main quest statuses
-        main_quests = mission_data.get("main_quests", [])
-        completed_main = set(mission_data.get("completed_main_quests", []))
-        has_current = False
+        # Update problem completion status
+        problems = mission_data.get("problems", [])
+        for p in problems:
+            problem_id = p.get("problem_id")
+            if problem_id in completed_today_slugs:
+                p["completed"] = True
 
-        for quest in main_quests:
-            if quest["slug"] in completed_today_slugs or quest["slug"] in completed_main:
-                quest["status"] = "completed"
-            elif not has_current and quest.get("status") != "completed":
-                quest["status"] = "current"
-                has_current = True
-            else:
-                quest["status"] = "upcoming"
-
-        # Update side quest completion
-        side_quests = mission_data.get("side_quests", [])
-        completed_side = set(mission_data.get("completed_side_quests", []))
-        for quest in side_quests:
-            quest["completed"] = quest["slug"] in completed_today_slugs or quest["slug"] in completed_side
-
-        # Count completions
-        main_completed = sum(1 for q in main_quests if q.get("status") == "completed")
-        side_completed = sum(1 for q in side_quests if q.get("completed"))
-        total_completed = main_completed + side_completed
+        completed_count = sum(1 for p in problems if p.get("completed"))
 
         return {
-            "user_id": user_id,
-            "mission_date": mission_data["mission_date"],
-            "objective": {
-                "title": mission_data["objective_title"],
-                "description": mission_data["objective_description"],
-                "skill_tags": mission_data.get("objective_skill_tags", []),
-                "target_count": len(main_quests) + len(side_quests),
-                "completed_count": total_completed,
-            },
-            "main_quests": main_quests,
-            "side_quests": side_quests,
+            "user_id": user_id_str,
+            "mission_date": mission_data.get("mission_date", date.today().isoformat()),
+            "daily_objective": mission_data.get("daily_objective") or mission_data.get("objective_title", "Focus on practice"),
+            "problems": problems,
+            "balance_explanation": mission_data.get("balance_explanation"),
+            "pacing_status": mission_data.get("pacing_status"),
+            "pacing_note": mission_data.get("pacing_note"),
             "streak": streak,
             "total_completed_today": len(completed_today_slugs),
+            "completed_count": completed_count,
             "can_regenerate": mission_data.get("regenerated_count", 0) < 3,
-            "generated_at": mission_data["generated_at"],
+            "generated_at": mission_data.get("generated_at", datetime.utcnow().isoformat()),
+            # Legacy fields for backward compatibility
+            "objective": {
+                "title": mission_data.get("daily_objective") or mission_data.get("objective_title", ""),
+                "description": mission_data.get("balance_explanation") or mission_data.get("objective_description", ""),
+                "skill_tags": mission_data.get("objective_skill_tags", []),
+                "target_count": len(problems),
+                "completed_count": completed_count,
+            },
+            "main_quests": mission_data.get("main_quests", []),
+            "side_quests": mission_data.get("side_quests", []),
         }
 
     async def generate_all_missions(self) -> dict:
@@ -776,9 +827,6 @@ Output JSON only:
         Generate missions for all active users.
 
         Called by cron job for batch generation.
-
-        Returns:
-            Dict with counts of generated, skipped, failed
         """
         # Get users with activity in last 30 days
         thirty_days_ago = (datetime.utcnow() - timedelta(days=30)).isoformat()
@@ -790,7 +838,7 @@ Output JSON only:
         )
 
         if not users_response.data:
-            return {"generated": 0, "skipped": 0, "failed": 0}
+            return {"generated": 0, "skipped": 0, "failed": 0, "total_users": 0}
 
         # Deduplicate user IDs
         user_ids = list(set(row["user_id"] for row in users_response.data))
@@ -801,7 +849,6 @@ Output JSON only:
 
         for user_id in user_ids:
             try:
-                # Check if mission already exists for today
                 existing = await self._get_existing_mission(UUID(user_id), date.today())
                 if existing:
                     skipped += 1

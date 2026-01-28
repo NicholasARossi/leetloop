@@ -35,6 +35,11 @@ const config: Config = {
         'hard': '4px 4px 0 var(--shadow-color, #525252)',
         'hard-lg': '6px 6px 0 var(--shadow-color, #404040)',
       },
+      spacing: {
+        'chamfer-sm': 'var(--chamfer-sm)',
+        'chamfer-md': 'var(--chamfer-md)',
+        'chamfer-lg': 'var(--chamfer-lg)',
+      },
       animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },

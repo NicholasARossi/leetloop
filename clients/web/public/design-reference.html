@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LeetLoop Design Reference - Mech/Schematic Elements</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --accent-color: #FF8888;
+      --accent-color-light: #FF888830;
+      --bg-gray: #d3d3d3;
+      --black: #171717;
+      --white: #ffffff;
+      --gray-100: #f5f5f5;
+      --gray-200: #e5e5e5;
+      --gray-400: #a3a3a3;
+      --gray-600: #525252;
+      --gray-700: #404040;
+
+      /* Chamfer sizes */
+      --chamfer-sm: 6px;
+      --chamfer-md: 10px;
+      --chamfer-lg: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'IBM Plex Mono', monospace;
+      background-color: var(--bg-gray);
+      background-size: 50px 50px;
+      background-image: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.2) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0.2) 75%,
+        transparent 75%,
+        transparent
+      );
+      color: var(--black);
+      font-size: 13px;
+      line-height: 1.6;
+      padding: 40px;
+      min-height: 100vh;
+    }
+
+    /* ===========================================
+       CHAMFERED EDGES
+       Using clip-path to create 45-degree corners
+       =========================================== */
+
+    /* Small chamfer - for buttons, tags */
+    .chamfer-sm {
+      clip-path: polygon(
+        var(--chamfer-sm) 0,
+        100% 0,
+        100% calc(100% - var(--chamfer-sm)),
+        calc(100% - var(--chamfer-sm)) 100%,
+        0 100%,
+        0 var(--chamfer-sm)
+      );
+    }
+
+    /* Medium chamfer - for cards */
+    .chamfer-md {
+      clip-path: polygon(
+        var(--chamfer-md) 0,
+        100% 0,
+        100% calc(100% - var(--chamfer-md)),
+        calc(100% - var(--chamfer-md)) 100%,
+        0 100%,
+        0 var(--chamfer-md)
+      );
+    }
+
+    /* Large chamfer - for major sections */
+    .chamfer-lg {
+      clip-path: polygon(
+        var(--chamfer-lg) 0,
+        100% 0,
+        100% calc(100% - var(--chamfer-lg)),
+        calc(100% - var(--chamfer-lg)) 100%,
+        0 100%,
+        0 var(--chamfer-lg)
+      );
+    }
+
+    /* Alternate chamfer - top-right and bottom-left only */
+    .chamfer-alt {
+      clip-path: polygon(
+        0 0,
+        calc(100% - var(--chamfer-md)) 0,
+        100% var(--chamfer-md),
+        100% 100%,
+        var(--chamfer-md) 100%,
+        0 calc(100% - var(--chamfer-md))
+      );
+    }
+
+    /* Single corner chamfers */
+    .chamfer-tr {
+      clip-path: polygon(
+        0 0,
+        calc(100% - var(--chamfer-md)) 0,
+        100% var(--chamfer-md),
+        100% 100%,
+        0 100%
+      );
+    }
+
+    .chamfer-bl {
+      clip-path: polygon(
+        0 0,
+        100% 0,
+        100% 100%,
+        var(--chamfer-md) 100%,
+        0 calc(100% - var(--chamfer-md))
+      );
+    }
+
+    /* ===========================================
+       REGISTRATION MARKS & CROP MARKS
+       Print production artifacts as UI elements
+       =========================================== */
+
+    /* Corner registration mark - placed at corners of sections */
+    .reg-mark {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      pointer-events: none;
+    }
+
+    .reg-mark::before,
+    .reg-mark::after {
+      content: '';
+      position: absolute;
+      background: var(--gray-400);
+    }
+
+    .reg-mark--tl::before {
+      width: 12px;
+      height: 2px;
+      top: 0;
+      left: 0;
+    }
+    .reg-mark--tl::after {
+      width: 2px;
+      height: 12px;
+      top: 0;
+      left: 0;
+    }
+
+    .reg-mark--tr::before {
+      width: 12px;
+      height: 2px;
+      top: 0;
+      right: 0;
+    }
+    .reg-mark--tr::after {
+      width: 2px;
+      height: 12px;
+      top: 0;
+      right: 0;
+    }
+
+    .reg-mark--bl::before {
+      width: 12px;
+      height: 2px;
+      bottom: 0;
+      left: 0;
+    }
+    .reg-mark--bl::after {
+      width: 2px;
+      height: 12px;
+      bottom: 0;
+      left: 0;
+    }
+
+    .reg-mark--br::before {
+      width: 12px;
+      height: 2px;
+      bottom: 0;
+      right: 0;
+    }
+    .reg-mark--br::after {
+      width: 2px;
+      height: 12px;
+      bottom: 0;
+      right: 0;
+    }
+
+    /* Crop marks wrapper - adds marks outside element */
+    .crop-marks {
+      position: relative;
+      padding: 16px;
+    }
+
+    .crop-marks::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border: 1px dashed var(--gray-400);
+      pointer-events: none;
+    }
+
+    /* Corner brackets - another registration style */
+    .bracket-corners {
+      position: relative;
+    }
+
+    .bracket-corners::before,
+    .bracket-corners::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--gray-600);
+      pointer-events: none;
+    }
+
+    .bracket-corners::before {
+      top: -4px;
+      left: -4px;
+      border-right: none;
+      border-bottom: none;
+    }
+
+    .bracket-corners::after {
+      bottom: -4px;
+      right: -4px;
+      border-left: none;
+      border-top: none;
+    }
+
+    /* Full bracket corners (all four) */
+    .bracket-all {
+      position: relative;
+    }
+
+    .bracket-all .bracket {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      pointer-events: none;
+    }
+
+    .bracket-all .bracket::before,
+    .bracket-all .bracket::after {
+      content: '';
+      position: absolute;
+      background: var(--gray-600);
+    }
+
+    .bracket-all .bracket--tl { top: -2px; left: -2px; }
+    .bracket-all .bracket--tl::before { width: 12px; height: 2px; top: 0; left: 0; }
+    .bracket-all .bracket--tl::after { width: 2px; height: 12px; top: 0; left: 0; }
+
+    .bracket-all .bracket--tr { top: -2px; right: -2px; }
+    .bracket-all .bracket--tr::before { width: 12px; height: 2px; top: 0; right: 0; }
+    .bracket-all .bracket--tr::after { width: 2px; height: 12px; top: 0; right: 0; }
+
+    .bracket-all .bracket--bl { bottom: -2px; left: -2px; }
+    .bracket-all .bracket--bl::before { width: 12px; height: 2px; bottom: 0; left: 0; }
+    .bracket-all .bracket--bl::after { width: 2px; height: 12px; bottom: 0; left: 0; }
+
+    .bracket-all .bracket--br { bottom: -2px; right: -2px; }
+    .bracket-all .bracket--br::before { width: 12px; height: 2px; bottom: 0; right: 0; }
+    .bracket-all .bracket--br::after { width: 2px; height: 12px; bottom: 0; right: 0; }
+
+    /* Target/crosshair registration mark */
+    .target-mark {
+      position: relative;
+    }
+
+    .target-mark::before {
+      content: '⊕';
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      font-size: 14px;
+      color: var(--gray-400);
+      line-height: 1;
+    }
+
+    /* ===========================================
+       TECHNICAL SCHEMATIC LAYOUT ELEMENTS
+       =========================================== */
+
+    /* Dimension line - shows measurements */
+    .dimension-line {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--gray-600);
+    }
+
+    .dimension-line::before,
+    .dimension-line::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--gray-400);
+    }
+
+    .dimension-line span {
+      padding: 0 8px;
+      white-space: nowrap;
+    }
+
+    /* Grid reference labels */
+    .grid-label {
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gray-400);
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+    }
+
+    .grid-label--horizontal {
+      writing-mode: horizontal-tb;
+    }
+
+    /* Section identifier tag */
+    .section-id {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gray-600);
+      padding: 4px 8px;
+      border: 1px solid var(--gray-400);
+      background: var(--gray-100);
+    }
+
+    .section-id::before {
+      content: '§';
+      font-weight: bold;
+    }
+
+    /* Callout line - points to elements */
+    .callout {
+      position: relative;
+      padding-left: 24px;
+    }
+
+    .callout::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 16px;
+      height: 2px;
+      background: var(--accent-color);
+    }
+
+    .callout::after {
+      content: '';
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 6px;
+      height: 6px;
+      background: var(--accent-color);
+      clip-path: polygon(0 50%, 100% 0, 100% 100%);
+    }
+
+    /* Status indicator light */
+    .status-light {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-light::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--gray-400);
+      clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+    }
+
+    .status-light--active::before {
+      background: var(--accent-color);
+      box-shadow: 0 0 8px var(--accent-color);
+    }
+
+    .status-light--success::before {
+      background: #4ade80;
+    }
+
+    /* ===========================================
+       COMPOSED COMPONENTS
+       Combining chamfer + registration + schematic
+       =========================================== */
+
+    /* Mech-style card */
+    .mech-card {
+      position: relative;
+      background: var(--white);
+      border: 2px solid var(--black);
+      padding: 20px;
+      clip-path: polygon(
+        12px 0,
+        calc(100% - 12px) 0,
+        100% 12px,
+        100% calc(100% - 12px),
+        calc(100% - 12px) 100%,
+        12px 100%,
+        0 calc(100% - 12px),
+        0 12px
+      );
+      box-shadow: 6px 6px 0 var(--gray-700);
+    }
+
+    .mech-card__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--black);
+    }
+
+    .mech-card__title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .mech-card__id {
+      font-size: 9px;
+      color: var(--gray-600);
+      font-weight: 500;
+    }
+
+    /* Schematic panel */
+    .schematic-panel {
+      position: relative;
+      background: var(--white);
+      border: 2px solid var(--black);
+      padding: 24px;
+      margin: 20px;
+    }
+
+    .schematic-panel::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border: 1px dashed var(--gray-400);
+      pointer-events: none;
+    }
+
+    /* Panel corner chamfers (drawn with pseudo-elements) */
+    .schematic-panel .corner {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border: 8px solid transparent;
+    }
+
+    .schematic-panel .corner--tl {
+      top: -2px;
+      left: -2px;
+      border-top-color: var(--bg-gray);
+      border-left-color: var(--bg-gray);
+    }
+
+    .schematic-panel .corner--tr {
+      top: -2px;
+      right: -2px;
+      border-top-color: var(--bg-gray);
+      border-right-color: var(--bg-gray);
+    }
+
+    .schematic-panel .corner--bl {
+      bottom: -2px;
+      left: -2px;
+      border-bottom-color: var(--bg-gray);
+      border-left-color: var(--bg-gray);
+    }
+
+    .schematic-panel .corner--br {
+      bottom: -2px;
+      right: -2px;
+      border-bottom-color: var(--bg-gray);
+      border-right-color: var(--bg-gray);
+    }
+
+    /* Mech button */
+    .mech-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: var(--white);
+      border: 2px solid var(--black);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      clip-path: polygon(
+        6px 0,
+        100% 0,
+        100% calc(100% - 6px),
+        calc(100% - 6px) 100%,
+        0 100%,
+        0 6px
+      );
+      box-shadow: 3px 3px 0 var(--gray-600);
+      transition: all 0.1s ease;
+    }
+
+    .mech-btn:hover {
+      background: var(--accent-color);
+      box-shadow: 3px 3px 0 var(--black);
+    }
+
+    .mech-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 var(--black);
+    }
+
+    .mech-btn--primary {
+      background: var(--accent-color);
+    }
+
+    /* Mech tag/badge */
+    .mech-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      background: var(--gray-100);
+      border: 2px solid var(--gray-600);
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      clip-path: polygon(
+        4px 0,
+        100% 0,
+        100% calc(100% - 4px),
+        calc(100% - 4px) 100%,
+        0 100%,
+        0 4px
+      );
+    }
+
+    .mech-tag--accent {
+      background: var(--accent-color);
+      border-color: var(--black);
+    }
+
+    /* Hexagonal badge (full mech style) */
+    .hex-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      background: var(--accent-color);
+      border: 2px solid var(--black);
+      font-weight: 700;
+      font-size: 14px;
+      clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+    }
+
+    /* ===========================================
+       TECHNICAL DATA DISPLAY
+       =========================================== */
+
+    .data-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: var(--black);
+      border: 2px solid var(--black);
+    }
+
+    .data-cell {
+      background: var(--white);
+      padding: 12px;
+      text-align: center;
+    }
+
+    .data-cell__value {
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .data-cell__label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gray-600);
+    }
+
+    /* Coordinate display */
+    .coord-display {
+      display: inline-flex;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      border: 1px solid var(--gray-400);
+    }
+
+    .coord-display span {
+      padding: 4px 8px;
+      border-right: 1px solid var(--gray-400);
+    }
+
+    .coord-display span:last-child {
+      border-right: none;
+    }
+
+    .coord-display .label {
+      background: var(--gray-100);
+      font-weight: 600;
+    }
+
+    /* ===========================================
+       LAYOUT GRID WITH REGISTRATION
+       =========================================== */
+
+    .layout-grid {
+      display: grid;
+      grid-template-columns: 20px 1fr 1fr 20px;
+      grid-template-rows: 20px auto 20px;
+      gap: 16px;
+    }
+
+    .layout-grid__label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--gray-400);
+    }
+
+    .layout-grid__content {
+      grid-column: 2 / 4;
+      grid-row: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* ===========================================
+       DEMO SECTIONS
+       =========================================== */
+
+    .demo-section {
+      margin-bottom: 48px;
+    }
+
+    .demo-title {
+      font-size: 18px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 3px solid var(--black);
+    }
+
+    .demo-subtitle {
+      font-size: 11px;
+      color: var(--gray-600);
+      margin-bottom: 24px;
+    }
+
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .demo-item {
+      background: var(--white);
+      border: 2px solid var(--black);
+      padding: 16px;
+    }
+
+    .demo-item__label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gray-600);
+      margin-bottom: 8px;
+    }
+
+    .flex-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .spacer {
+      height: 24px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER WITH REGISTRATION MARKS -->
+  <header style="position: relative; margin-bottom: 48px; padding: 24px;">
+    <div class="reg-mark reg-mark--tl" style="position: absolute; top: 0; left: 0;"></div>
+    <div class="reg-mark reg-mark--tr" style="position: absolute; top: 0; right: 0;"></div>
+
+    <div class="section-id">SYS.DESIGN.v2</div>
+    <div class="spacer"></div>
+
+    <h1 style="font-size: 32px; font-weight: 700; text-transform: uppercase; letter-spacing: 4px;">
+      LeetLoop Design System
+    </h1>
+    <p style="color: var(--gray-600); margin-top: 8px;">
+      Mech-inspired UI elements with chamfered edges, registration marks, and schematic layouts
+    </p>
+
+    <div class="spacer"></div>
+    <div class="dimension-line"><span>REFERENCE DOCUMENT 001</span></div>
+  </header>
+
+  <!-- SECTION 1: CHAMFERED EDGES -->
+  <section class="demo-section">
+    <div class="demo-title">01 // Chamfered Edges</div>
+    <div class="demo-subtitle">45-degree angle cuts mimicking armor plating and mechanical components</div>
+
+    <div class="demo-grid">
+      <div class="demo-item">
+        <div class="demo-item__label">Small Chamfer (6px)</div>
+        <div style="background: var(--accent-color); padding: 16px; text-align: center;" class="chamfer-sm">
+          BUTTONS & TAGS
+        </div>
+      </div>
+
+      <div class="demo-item">
+        <div class="demo-item__label">Medium Chamfer (10px)</div>
+        <div style="background: var(--accent-color); padding: 16px; text-align: center;" class="chamfer-md">
+          CARDS & PANELS
+        </div>
+      </div>
+
+      <div class="demo-item">
+        <div class="demo-item__label">Large Chamfer (16px)</div>
+        <div style="background: var(--accent-color); padding: 16px; text-align: center;" class="chamfer-lg">
+          MAJOR SECTIONS
+        </div>
+      </div>
+
+      <div class="demo-item">
+        <div class="demo-item__label">Alternate Chamfer (TR + BL)</div>
+        <div style="background: var(--gray-200); padding: 16px; text-align: center;" class="chamfer-alt">
+          SECONDARY ELEMENTS
+        </div>
+      </div>
+
+      <div class="demo-item">
+        <div class="demo-item__label">Top-Right Only</div>
+        <div style="background: var(--gray-200); padding: 16px; text-align: center;" class="chamfer-tr">
+          ASYMMETRIC
+        </div>
+      </div>
+
+      <div class="demo-item">
+        <div class="demo-item__label">Hexagonal (Full Mech)</div>
+        <div class="flex-row" style="justify-content: center;">
+          <div class="hex-badge">42</div>
+          <div class="hex-badge" style="background: var(--gray-200);">A+</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: REGISTRATION MARKS -->
+  <section class="demo-section">
+    <div class="demo-title">02 // Registration Marks</div>
+    <div class="demo-subtitle">Print production artifacts used as structural UI elements</div>
+
+    <div class="demo-grid">
+      <div class="demo-item">
+        <div class="demo-item__label">Corner Brackets</div>
+        <div class="bracket-corners" style="padding: 24px; background: var(--gray-100);">
+          <div style="text-align: center; font-weight: 600;">CONTENT AREA</div>
+        </div>
+      </div>
+
+      <div class="demo-item">
+        <div class="demo-item__label">All Four Brackets</div>
+        <div class="bracket-all" style="padding: 24px; background: var(--gray-100);">
+          <span class="bracket bracket--tl"></span>
+          <span class="bracket bracket--tr"></span>
+          <span class="bracket bracket--bl"></span>
+          <span class="bracket bracket--br"></span>
+          <div style="text-align: center; font-weight: 600;">HIGHLIGHTED</div>
+        </div>
+      </div>
+
+      <div class="demo-item">
+        <div class="demo-item__label">Crop Marks Border</div>
+        <div class="crop-marks">
+          <div style="background: var(--white); padding: 16px; text-align: center; border: 1px solid var(--gray-400);">
+            PRINT AREA
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-item">
+        <div class="demo-item__label">Target/Registration</div>
+        <div class="target-mark" style="padding: 24px; background: var(--gray-100);">
+          <div style="font-weight: 600;">ALIGNED ELEMENT</div>
+        </div>
+      </div>
+
+      <div class="demo-item" style="grid-column: span 2;">
+        <div class="demo-item__label">Corner Registration Marks</div>
+        <div style="position: relative; padding: 32px; background: var(--gray-100);">
+          <div class="reg-mark reg-mark--tl" style="position: absolute; top: 8px; left: 8px;"></div>
+          <div class="reg-mark reg-mark--tr" style="position: absolute; top: 8px; right: 8px;"></div>
+          <div class="reg-mark reg-mark--bl" style="position: absolute; bottom: 8px; left: 8px;"></div>
+          <div class="reg-mark reg-mark--br" style="position: absolute; bottom: 8px; right: 8px;"></div>
+          <div style="text-align: center; font-weight: 600;">FULL REGISTRATION FRAME</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: SCHEMATIC ELEMENTS -->
+  <section class="demo-section">
+    <div class="demo-title">03 // Technical Schematic</div>
+    <div class="demo-subtitle">Engineering drawing elements as UI components</div>
+
+    <div class="demo-grid">
+      <div class="demo-item" style="grid-column: span 2;">
+        <div class="demo-item__label">Dimension Lines</div>
+        <div class="dimension-line"><span>Width: 320px</span></div>
+        <div class="spacer"></div>
+        <div class="dimension-line"><span>Section A-01</span></div>
+      </div>
+
+      <div class="demo-item">
+        <div class="demo-item__label">Section Identifiers</div>
+        <div class="flex-row">
+          <div class="section-id">A-01</div>
+          <div class="section-id">B-02</div>
+          <div class="section-id">C-03</div>
+        </div>
+      </div>
+
+      <div class="demo-item">
+        <div class="demo-item__label">Status Indicators</div>
+        <div class="flex-row" style="flex-direction: column; align-items: flex-start; gap: 8px;">
+          <span class="status-light status-light--active">System Online</span>
+          <span class="status-light status-light--success">Tests Passing</span>
+          <span class="status-light">Idle</span>
+        </div>
+      </div>
+
+      <div class="demo-item">
+        <div class="demo-item__label">Coordinate Display</div>
+        <div class="coord-display">
+          <span class="label">X</span>
+          <span>142</span>
+          <span class="label">Y</span>
+          <span>087</span>
+        </div>
+      </div>
+
+      <div class="demo-item">
+        <div class="demo-item__label">Callout Lines</div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div class="callout">Primary action</div>
+          <div class="callout">Secondary info</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: DATA DISPLAY -->
+  <section class="demo-section">
+    <div class="demo-title">04 // Technical Data Grid</div>
+    <div class="demo-subtitle">Engineering-style data presentation</div>
+
+    <div class="data-grid" style="max-width: 600px;">
+      <div class="data-cell">
+        <div class="data-cell__value" style="color: var(--accent-color);">87</div>
+        <div class="data-cell__label">Problems Solved</div>
+      </div>
+      <div class="data-cell">
+        <div class="data-cell__value">23</div>
+        <div class="data-cell__label">Day Streak</div>
+      </div>
+      <div class="data-cell">
+        <div class="data-cell__value">A+</div>
+        <div class="data-cell__label">Readiness</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: COMPOSED COMPONENTS -->
+  <section class="demo-section">
+    <div class="demo-title">05 // Composed Components</div>
+    <div class="demo-subtitle">Full components combining all techniques</div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+
+      <!-- Mech Card -->
+      <div class="mech-card">
+        <div class="mech-card__header">
+          <span class="mech-card__title">Daily Quest</span>
+          <span class="mech-card__id">QST-0042</span>
+        </div>
+        <div style="margin-bottom: 12px;">
+          <div class="mech-tag mech-tag--accent" style="margin-right: 8px;">Medium</div>
+          <div class="mech-tag">Arrays</div>
+        </div>
+        <p style="margin-bottom: 16px; color: var(--gray-700);">
+          Two Sum - Practice hash map lookups
+        </p>
+        <button class="mech-btn mech-btn--primary">
+          Start Mission
+        </button>
+      </div>
+
+      <!-- Schematic Panel -->
+      <div class="schematic-panel">
+        <div class="corner corner--tl"></div>
+        <div class="corner corner--tr"></div>
+        <div class="corner corner--bl"></div>
+        <div class="corner corner--br"></div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <span class="section-id">STATS</span>
+          <span class="status-light status-light--active">Live</span>
+        </div>
+
+        <div class="dimension-line" style="margin-bottom: 16px;"><span>Performance Metrics</span></div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="bracket-corners" style="padding: 12px; background: var(--gray-100); text-align: center;">
+            <div style="font-size: 24px; font-weight: 700;">94%</div>
+            <div style="font-size: 9px; text-transform: uppercase; color: var(--gray-600);">Accuracy</div>
+          </div>
+          <div class="bracket-corners" style="padding: 12px; background: var(--gray-100); text-align: center;">
+            <div style="font-size: 24px; font-weight: 700;">12ms</div>
+            <div style="font-size: 9px; text-transform: uppercase; color: var(--gray-600);">Avg Time</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <!-- Buttons Row -->
+    <div class="demo-item">
+      <div class="demo-item__label">Mech Buttons</div>
+      <div class="flex-row">
+        <button class="mech-btn">Secondary</button>
+        <button class="mech-btn mech-btn--primary">Primary Action</button>
+        <button class="mech-btn" style="background: var(--black); color: var(--white);">Danger</button>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <!-- Tags Row -->
+    <div class="demo-item">
+      <div class="demo-item__label">Mech Tags</div>
+      <div class="flex-row">
+        <span class="mech-tag">Default</span>
+        <span class="mech-tag mech-tag--accent">Accent</span>
+        <span class="mech-tag" style="background: var(--black); color: var(--white); border-color: var(--black);">Hard</span>
+        <span class="mech-tag" style="border-color: var(--accent-color);">Highlighted</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 6: CSS CODE REFERENCE -->
+  <section class="demo-section">
+    <div class="demo-title">06 // Implementation Reference</div>
+    <div class="demo-subtitle">Key CSS patterns for integration</div>
+
+    <div class="mech-card" style="font-size: 11px; background: var(--gray-100);">
+      <pre style="overflow-x: auto; white-space: pre-wrap;">
+/* CHAMFER CLIP-PATH FORMULA */
+.chamfer-md {
+  --chamfer: 10px;
+  clip-path: polygon(
+    var(--chamfer) 0,              /* top-left chamfer */
+    calc(100% - var(--chamfer)) 0, /* top-right chamfer start */
+    100% var(--chamfer),           /* top-right chamfer end */
+    100% calc(100% - var(--chamfer)), /* bottom-right chamfer start */
+    calc(100% - var(--chamfer)) 100%, /* bottom-right chamfer end */
+    var(--chamfer) 100%,           /* bottom-left chamfer start */
+    0 calc(100% - var(--chamfer)), /* bottom-left chamfer end */
+    0 var(--chamfer)               /* back to top-left */
+  );
+}
+
+/* REGISTRATION BRACKET */
+.bracket::before { width: 12px; height: 2px; }
+.bracket::after { width: 2px; height: 12px; }
+
+/* HEXAGONAL SHAPE */
+.hex {
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+}</pre>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="position: relative; margin-top: 48px; padding: 24px;">
+    <div class="reg-mark reg-mark--bl" style="position: absolute; bottom: 0; left: 0;"></div>
+    <div class="reg-mark reg-mark--br" style="position: absolute; bottom: 0; right: 0;"></div>
+
+    <div class="dimension-line"><span>END OF DOCUMENT</span></div>
+    <div style="text-align: center; margin-top: 16px; color: var(--gray-600); font-size: 10px;">
+      LEETLOOP DESIGN SYSTEM // MECH VARIANT // REV 2.0
+    </div>
+  </footer>
+
+</body>
+</html>
