@@ -98,12 +98,7 @@ body {
       0 100%,
       0 calc(var(--chamfer-md) - 2px)
     );
-    z-index: 0;
-  }
-
-  .card > * {
-    position: relative;
-    z-index: 1;
+    z-index: -1;
   }
 
   .card-sm {
@@ -133,12 +128,7 @@ body {
       0 100%,
       0 calc(var(--chamfer-sm) - 2px)
     );
-    z-index: 0;
-  }
-
-  .card-sm > * {
-    position: relative;
-    z-index: 1;
+    z-index: -1;
   }
 
   /* Primary button - mech style */
@@ -169,7 +159,7 @@ body {
       0 100%,
       0 calc(var(--chamfer-sm) - 2px)
     );
-    z-index: 0;
+    z-index: -1;
     transition: background 0.15s;
   }
 
@@ -209,7 +199,7 @@ body {
       0 100%,
       0 calc(var(--chamfer-sm) - 2px)
     );
-    z-index: 0;
+    z-index: -1;
     transition: background 0.15s;
   }
 
@@ -254,7 +244,7 @@ body {
       0 100%,
       0 calc(var(--chamfer-sm) - 2px)
     );
-    z-index: 0;
+    z-index: -1;
   }
 
   /* Heading with accent background (Lego style) */
@@ -306,7 +296,7 @@ body {
       0 100%,
       0 4px
     );
-    z-index: 0;
+    z-index: -1;
   }
 
   .tag-accent::before {
@@ -345,7 +335,7 @@ body {
       0 100%,
       0 2px
     );
-    z-index: 0;
+    z-index: -1;
   }
 
   .progress-fill {
@@ -384,13 +374,8 @@ body {
       0 100%,
       0 calc(var(--chamfer-md) - 2px)
     );
-    z-index: 0;
+    z-index: -1;
     transition: background 0.15s;
-  }
-
-  .list-item > * {
-    position: relative;
-    z-index: 1;
   }
 
   .list-item:hover {
@@ -457,7 +442,7 @@ body {
       0 100%,
       0 3px
     );
-    z-index: 0;
+    z-index: -1;
   }
 
   .badge-default {
@@ -504,7 +489,7 @@ body {
       0 100%,
       0 3px
     );
-    z-index: 0;
+    z-index: -1;
   }
 
   .badge-medium {
@@ -534,7 +519,7 @@ body {
       0 100%,
       0 3px
     );
-    z-index: 0;
+    z-index: -1;
   }
 
   .badge-hard {
@@ -564,7 +549,7 @@ body {
       0 100%,
       0 3px
     );
-    z-index: 0;
+    z-index: -1;
   }
 
   /* Status badges - mech style */
@@ -595,7 +580,7 @@ body {
       0 100%,
       0 3px
     );
-    z-index: 0;
+    z-index: -1;
   }
 
   .badge-failed {
@@ -625,7 +610,7 @@ body {
       0 100%,
       0 3px
     );
-    z-index: 0;
+    z-index: -1;
   }
 
   /* Table styles */
