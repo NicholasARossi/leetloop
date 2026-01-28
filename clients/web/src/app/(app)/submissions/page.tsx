@@ -58,6 +58,7 @@ export default function SubmissionsPage() {
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="input py-1.5 px-3 text-sm w-auto"
+            aria-label="Filter by status"
           >
             {STATUSES.map((s) => (
               <option key={s} value={s}>
@@ -70,6 +71,7 @@ export default function SubmissionsPage() {
             value={difficultyFilter}
             onChange={(e) => setDifficultyFilter(e.target.value)}
             className="input py-1.5 px-3 text-sm w-auto"
+            aria-label="Filter by difficulty"
           >
             {DIFFICULTIES.map((d) => (
               <option key={d} value={d}>
@@ -169,8 +171,9 @@ export default function SubmissionsPage() {
               <button
                 onClick={() => setSelectedSubmission(null)}
                 className="text-gray-400 hover:text-black transition-colors"
+                aria-label="Close modal"
               >
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
