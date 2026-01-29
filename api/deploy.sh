@@ -4,7 +4,7 @@
 set -e
 
 # Configuration
-PROJECT_ID="${GCP_PROJECT_ID:-693222603964}"
+PROJECT_ID="${GCP_PROJECT_ID:-leetloop-485404}"
 REGION="${GCP_REGION:-us-central1}"
 SERVICE_NAME="leetloop-api"
 IMAGE_NAME="gcr.io/${PROJECT_ID}/${SERVICE_NAME}"
