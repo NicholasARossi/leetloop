@@ -1,15 +1,15 @@
 /**
  * Background service worker
  *
- * Handles storage and Supabase sync for captured submissions.
+ * Handles storage and API sync for captured submissions.
  */
 
 import type { BackgroundMessage, StoredSubmission, SubmissionPayload } from './types';
 import { loadConfig } from './config';
 import { syncSubmission, syncPendingSubmissions } from './supabase';
-import { getSupabaseClient } from './lib/supabase';
 import { checkAndMigrateGuestData } from './migration';
 import { onAuthStateChange, signOut } from './auth';
+import { setTokens } from './lib/auth-store';
 
 /**
  * Generate a UUID v4
@@ -61,7 +61,7 @@ async function handleSubmission(payload: SubmissionPayload): Promise<StoredSubmi
   await storeSubmission(submission);
   console.log('[LeetLoop] Submission stored:', submission.status, submission.problem_slug);
 
-  // Try to sync to Supabase
+  // Try to sync to API
   const synced = await syncSubmission(config, submission);
   if (synced) {
     submission.synced = true;
@@ -164,34 +164,21 @@ async function handleWebSessionSync(payload: { access_token: string; refresh_tok
     accessTokenPreview: payload.access_token?.substring(0, 20) + '...',
   });
 
-  const client = await getSupabaseClient();
-  if (!client) {
-    console.log('[LeetLoop] Supabase client not available for session sync');
-    return { success: false, error: 'Supabase client not available' };
-  }
-
   try {
-    const { data, error } = await client.auth.setSession({
+    await setTokens({
       access_token: payload.access_token,
       refresh_token: payload.refresh_token,
     });
 
-    if (error) {
-      console.error('[LeetLoop] Failed to set session from web:', error);
-      return { success: false, error: error.message };
-    }
-
     console.log('[LeetLoop] Session synced from web app');
 
-    // Trigger migration check if user is now signed in
-    if (data.session?.user) {
-      const migrationResult = await checkAndMigrateGuestData();
-      console.log('[LeetLoop] Migration check after web sync:', migrationResult);
+    // Trigger migration check
+    const migrationResult = await checkAndMigrateGuestData();
+    console.log('[LeetLoop] Migration check after web sync:', migrationResult);
 
-      if (migrationResult.success) {
-        const config = await loadConfig();
-        await syncPendingSubmissions(config);
-      }
+    if (migrationResult.success) {
+      const config = await loadConfig();
+      await syncPendingSubmissions(config);
     }
 
     return { success: true };
@@ -229,12 +216,12 @@ chrome.runtime.onInstalled.addListener(async () => {
 /**
  * Set up auth state change listener for automatic migration
  */
-async function setupAuthListener() {
+function setupAuthListener() {
   try {
-    await onAuthStateChange(async (event, session) => {
-      console.log('[LeetLoop] Auth state changed:', event);
+    onAuthStateChange(async (user) => {
+      console.log('[LeetLoop] Auth state changed:', user?.email || 'signed out');
 
-      if (event === 'SIGNED_IN' && session?.user) {
+      if (user) {
         // User just signed in, check for migration
         console.log('[LeetLoop] User signed in, checking migration');
         const result = await checkAndMigrateGuestData();

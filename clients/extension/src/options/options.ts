@@ -23,10 +23,8 @@ function showStatus(message: string, type: 'success' | 'error') {
 async function loadSettings() {
   const config = await loadConfig();
 
-  (document.getElementById('supabase-url') as HTMLInputElement).value =
-    config.supabaseUrl || '';
-  (document.getElementById('supabase-key') as HTMLInputElement).value =
-    config.supabaseAnonKey || '';
+  (document.getElementById('api-url') as HTMLInputElement).value =
+    config.apiUrl || '';
   (document.getElementById('user-id') as HTMLInputElement).value =
     config.userId || '';
 }
@@ -37,15 +35,10 @@ async function loadSettings() {
 async function saveSettings(event: Event) {
   event.preventDefault();
 
-  const supabaseUrl = (document.getElementById('supabase-url') as HTMLInputElement).value.trim();
-  const supabaseAnonKey = (document.getElementById('supabase-key') as HTMLInputElement).value.trim();
+  const apiUrl = (document.getElementById('api-url') as HTMLInputElement).value.trim();
 
   try {
-    await saveConfig({
-      supabaseUrl,
-      supabaseAnonKey,
-    });
-
+    await saveConfig({ apiUrl });
     showStatus('Settings saved successfully!', 'success');
   } catch (error) {
     showStatus('Failed to save settings: ' + String(error), 'error');
