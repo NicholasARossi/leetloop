@@ -463,7 +463,7 @@ export interface DomainDetailResponse {
 }
 
 // Mission Control Types
-export type QuestStatus = 'completed' | 'current' | 'upcoming'
+export type QuestStatus = 'completed' | 'current' | 'active' | 'upcoming'
 
 export interface MainQuest {
   slug: string

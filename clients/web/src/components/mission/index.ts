@@ -1,3 +1,4 @@
+export { ActivityGrid } from './ActivityGrid'
 export { DailyObjectiveCard } from './DailyObjectiveCard'
 export { MainQuestColumn } from './MainQuestColumn'
 export { QuestItem } from './QuestItem'

@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LeetLoop - Two Column Dashboard Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --accent-color: #FF8888;
+      --accent-color-light: #FF888830;
+      --accent-color-dark: #cc6666;
+      --bg-gray: #d3d3d3;
+      --black: #171717;
+      --white: #ffffff;
+      --gray-100: #f5f5f5;
+      --gray-200: #e5e5e5;
+      --gray-300: #d4d4d4;
+      --gray-400: #a3a3a3;
+      --gray-500: #737373;
+      --gray-600: #525252;
+      --gray-700: #404040;
+
+      --success: #22c55e;
+      --warning: #eab308;
+      --danger: #ef4444;
+
+      --chamfer-sm: 8px;
+      --chamfer-md: 16px;
+      --chamfer-lg: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'IBM Plex Mono', monospace;
+      background-color: var(--bg-gray);
+      background-size: 50px 50px;
+      background-image: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.2) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0.2) 75%,
+        transparent 75%,
+        transparent
+      );
+      color: var(--black);
+      font-size: 13px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ===========================================
+       SHAPE SYSTEM
+       =========================================== */
+
+    /* PRIMARY: 2-Edge Chamfer (TL/BR) */
+    .shape-chamfer-2edge {
+      position: relative;
+      isolation: isolate;
+      background: var(--black);
+      clip-path: polygon(
+        var(--chamfer-md) 0,
+        100% 0,
+        100% calc(100% - var(--chamfer-md)),
+        calc(100% - var(--chamfer-md)) 100%,
+        0 100%,
+        0 var(--chamfer-md)
+      );
+    }
+
+    .shape-chamfer-2edge::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: var(--white);
+      clip-path: polygon(
+        calc(var(--chamfer-md) - 2px) 0,
+        100% 0,
+        100% calc(100% - var(--chamfer-md) + 2px),
+        calc(100% - var(--chamfer-md) + 2px) 100%,
+        0 100%,
+        0 calc(var(--chamfer-md) - 2px)
+      );
+      z-index: -1;
+    }
+
+    /* SECONDARY: Rectangle */
+    .shape-rect {
+      position: relative;
+      isolation: isolate;
+      background: var(--black);
+    }
+
+    .shape-rect::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: var(--white);
+      z-index: -1;
+    }
+
+    /* ACCENT: Full 8-Corner Chamfer */
+    .shape-chamfer-full {
+      position: relative;
+      isolation: isolate;
+      background: var(--black);
+      clip-path: polygon(
+        var(--chamfer-md) 0,
+        calc(100% - var(--chamfer-md)) 0,
+        100% var(--chamfer-md),
+        100% calc(100% - var(--chamfer-md)),
+        calc(100% - var(--chamfer-md)) 100%,
+        var(--chamfer-md) 100%,
+        0 calc(100% - var(--chamfer-md)),
+        0 var(--chamfer-md)
+      );
+    }
+
+    .shape-chamfer-full::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: var(--white);
+      clip-path: polygon(
+        calc(var(--chamfer-md) - 2px) 0,
+        calc(100% - var(--chamfer-md) + 2px) 0,
+        100% calc(var(--chamfer-md) - 2px),
+        100% calc(100% - var(--chamfer-md) + 2px),
+        calc(100% - var(--chamfer-md) + 2px) 100%,
+        calc(var(--chamfer-md) - 2px) 100%,
+        0 calc(100% - var(--chamfer-md) + 2px),
+        0 calc(var(--chamfer-md) - 2px)
+      );
+      z-index: -1;
+    }
+
+    /* Single notch */
+    .shape-notch-tr {
+      position: relative;
+      isolation: isolate;
+      background: var(--black);
+      clip-path: polygon(
+        0 0,
+        calc(100% - var(--chamfer-md)) 0,
+        100% var(--chamfer-md),
+        100% 100%,
+        0 100%
+      );
+    }
+
+    .shape-notch-tr::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: var(--white);
+      clip-path: polygon(
+        0 0,
+        calc(100% - var(--chamfer-md) + 2px) 0,
+        100% calc(var(--chamfer-md) - 2px),
+        100% 100%,
+        0 100%
+      );
+      z-index: -1;
+    }
+
+    /* Bracket corners decoration */
+    .bracket-corners::after {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      pointer-events: none;
+      z-index: 2;
+      background:
+        linear-gradient(to right, var(--accent-color) 16px, transparent 16px) 0 0 / 100% 2px no-repeat,
+        linear-gradient(to bottom, var(--accent-color) 16px, transparent 16px) 0 0 / 2px 100% no-repeat,
+        linear-gradient(to left, var(--accent-color) 16px, transparent 16px) 100% 100% / 100% 2px no-repeat,
+        linear-gradient(to top, var(--accent-color) 16px, transparent 16px) 100% 100% / 2px 100% no-repeat;
+    }
+
+    /* ===========================================
+       COMPONENTS
+       =========================================== */
+
+    .card { padding: 24px; }
+    .card-sm { padding: 16px; }
+
+    /* Stat badge */
+    .stat-badge {
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--white);
+      border: 2px solid var(--black);
+    }
+
+    .stat-badge-accent { background: var(--accent-color); }
+    .stat-badge-success { background: var(--success); color: white; }
+
+    .stat-badge-value {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .stat-badge-label {
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--gray-600);
+      margin-top: 2px;
+    }
+
+    .stat-badge-accent .stat-badge-label,
+    .stat-badge-success .stat-badge-label { color: var(--black); }
+
+    /* Number badge */
+    .num-badge {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 12px;
+      border: 2px solid var(--black);
+      background: var(--white);
+      flex-shrink: 0;
+    }
+
+    .num-badge-accent { background: var(--accent-color); }
+    .num-badge-muted {
+      border-color: var(--gray-400);
+      color: var(--gray-400);
+    }
+
+    /* Tags */
+    .tag {
+      display: inline-block;
+      padding: 4px 10px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      position: relative;
+      isolation: isolate;
+      background: var(--black);
+      clip-path: polygon(
+        6px 0, 100% 0, 100% calc(100% - 6px),
+        calc(100% - 6px) 100%, 0 100%, 0 6px
+      );
+    }
+
+    .tag::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: var(--gray-100);
+      clip-path: polygon(
+        4px 0, 100% 0, 100% calc(100% - 4px),
+        calc(100% - 4px) 100%, 0 100%, 0 4px
+      );
+      z-index: -1;
+    }
+
+    .tag-accent::before { background: var(--accent-color); }
+
+    .tag-rect {
+      display: inline-block;
+      padding: 4px 10px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: var(--gray-100);
+      border: 2px solid var(--gray-400);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      border: none;
+      position: relative;
+      isolation: isolate;
+      background: var(--black);
+      clip-path: polygon(
+        6px 0, 100% 0, 100% calc(100% - 6px),
+        calc(100% - 6px) 100%, 0 100%, 0 6px
+      );
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: var(--white);
+      clip-path: polygon(
+        4px 0, 100% 0, 100% calc(100% - 4px),
+        calc(100% - 4px) 100%, 0 100%, 0 4px
+      );
+      z-index: -1;
+      transition: background 0.15s;
+    }
+
+    .btn:hover::before { background: var(--accent-color); }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 10px;
+    }
+
+    .btn-rect {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      font-family: inherit;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      border: 2px solid var(--black);
+      background: var(--white);
+      transition: all 0.15s;
+    }
+
+    .btn-rect:hover { background: var(--accent-color); }
+
+    /* Progress bar */
+    .progress-rect {
+      height: 10px;
+      background: var(--gray-200);
+      border: 2px solid var(--black);
+      position: relative;
+    }
+
+    .progress-rect .fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      background: var(--accent-color);
+    }
+
+    /* Section elements */
+    .section-id {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--gray-400);
+    }
+
+    .section-id::before {
+      content: '// ';
+      color: var(--accent-color);
+    }
+
+    .section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--black);
+      margin-bottom: 16px;
+    }
+
+    /* ===========================================
+       LAYOUT
+       =========================================== */
+
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px;
+    }
+
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 24px;
+    }
+
+    .header-stats {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .two-column-grid {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .two-column-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Quest item states */
+    .quest-item {
+      padding: 14px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .quest-item-active {
+      background: var(--accent-color-light);
+      border-left: 4px solid var(--accent-color);
+    }
+
+    .quest-item-completed {
+      border-left: 4px solid var(--accent-color);
+    }
+
+    .quest-completed-check {
+      width: 24px;
+      height: 24px;
+      background: var(--accent-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .quest-content { flex: 1; }
+
+    .quest-title {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .quest-title-completed {
+      text-decoration: line-through;
+      color: var(--gray-400);
+    }
+
+    .quest-meta {
+      font-size: 10px;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+
+    /* Side quest card */
+    .sidequest-card {
+      margin-bottom: 12px;
+    }
+
+    .sidequest-indicator {
+      width: 8px;
+      height: 8px;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    .sidequest-indicator-review { background: var(--warning); }
+    .sidequest-indicator-gap { background: var(--danger); }
+    .sidequest-indicator-slow { background: var(--gray-400); }
+
+    .sidequest-type {
+      font-size: 9px;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .sidequest-title {
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .sidequest-reason {
+      font-size: 10px;
+      color: var(--gray-500);
+    }
+
+    /* Pacing indicator */
+    .pacing-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .pacing-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .pacing-ahead { background: var(--success); }
+    .pacing-on-track { background: var(--accent-color); }
+    .pacing-behind { background: var(--warning); }
+    .pacing-critical { background: var(--danger); }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard-container">
+    <!-- HEADER -->
+    <header class="dashboard-header">
+      <div>
+        <p class="section-id">DASHBOARD</p>
+        <h1 style="font-size: 18px; font-weight: 700; margin-top: 4px; text-transform: uppercase; letter-spacing: 2px;">
+          Today's Mission
+        </h1>
+        <div class="pacing-indicator" style="margin-top: 8px;">
+          <span class="pacing-dot pacing-ahead"></span>
+          <span>2 days ahead of schedule</span>
+        </div>
+      </div>
+      <div class="header-stats">
+        <div class="stat-badge stat-badge-accent">
+          <span class="stat-badge-value">12</span>
+          <span class="stat-badge-label">Streak</span>
+        </div>
+        <div class="stat-badge">
+          <span class="stat-badge-value">87</span>
+          <span class="stat-badge-label">Solved</span>
+        </div>
+        <div class="shape-rect" style="padding: 10px 16px;">
+          <span style="font-size: 10px; color: var(--gray-500); display: block;">Today</span>
+          <span style="font-size: 20px; font-weight: 700;">2/5</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- TWO COLUMN LAYOUT -->
+    <div class="two-column-grid">
+
+      <!-- LEFT: MAIN QUESTS -->
+      <div class="main-column">
+        <!-- Daily Objective Hero Card -->
+        <div class="shape-chamfer-2edge card bracket-corners" style="margin-bottom: 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div>
+              <p style="font-size: 10px; color: var(--gray-500); margin-bottom: 4px;">TODAY'S OBJECTIVE</p>
+              <p style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">Master Hash Map Patterns</p>
+              <p style="font-size: 11px; color: var(--gray-600); margin-bottom: 12px;">
+                Focus on two-pass and frequency counting patterns. Building toward your 2-month goal.
+              </p>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <span class="tag tag-accent">HASH MAP</span>
+                <span class="tag-rect">ARRAYS</span>
+                <span class="tag-rect">TWO POINTER</span>
+              </div>
+            </div>
+            <button class="btn">Regenerate</button>
+          </div>
+          <div style="margin-top: 16px; padding-top: 16px; border-top: 2px solid var(--gray-200);">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+              <span style="font-size: 10px; color: var(--gray-500);">PROGRESS</span>
+              <span style="font-size: 11px; font-weight: 600;">2/5 completed</span>
+            </div>
+            <div class="progress-rect">
+              <div class="fill" style="width: 40%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Quests Section -->
+        <p class="section-title">Main Quests</p>
+
+        <!-- Completed quest -->
+        <div class="shape-rect quest-item quest-item-completed">
+          <div class="quest-completed-check">
+            <svg width="14" height="14" fill="none" stroke="white" stroke-width="3" viewBox="0 0 24 24">
+              <path d="M5 13l4 4L19 7"/>
+            </svg>
+          </div>
+          <div class="quest-content">
+            <p class="quest-title quest-title-completed">Two Sum</p>
+            <p class="quest-meta">Solved in 4:32 - Hash map lookup</p>
+          </div>
+          <span class="tag-rect" style="border-color: var(--gray-300); color: var(--gray-400);">EASY</span>
+        </div>
+
+        <!-- Completed quest -->
+        <div class="shape-rect quest-item quest-item-completed">
+          <div class="quest-completed-check">
+            <svg width="14" height="14" fill="none" stroke="white" stroke-width="3" viewBox="0 0 24 24">
+              <path d="M5 13l4 4L19 7"/>
+            </svg>
+          </div>
+          <div class="quest-content">
+            <p class="quest-title quest-title-completed">Contains Duplicate</p>
+            <p class="quest-meta">Solved in 2:15 - Set membership</p>
+          </div>
+          <span class="tag-rect" style="border-color: var(--gray-300); color: var(--gray-400);">EASY</span>
+        </div>
+
+        <!-- Active quest -->
+        <div class="shape-rect quest-item quest-item-active">
+          <div class="num-badge num-badge-accent">3</div>
+          <div class="quest-content">
+            <p class="quest-title" style="font-weight: 600;">Group Anagrams</p>
+            <p class="quest-meta">Hash map with sorted key - your next challenge</p>
+          </div>
+          <button class="btn-rect">Solve</button>
+        </div>
+
+        <!-- Upcoming quest -->
+        <div class="shape-rect quest-item">
+          <div class="num-badge num-badge-muted">4</div>
+          <div class="quest-content">
+            <p class="quest-title">Valid Anagram</p>
+            <p class="quest-meta">Frequency counting pattern</p>
+          </div>
+          <span class="tag-rect">EASY</span>
+        </div>
+
+        <!-- Upcoming quest -->
+        <div class="shape-rect quest-item">
+          <div class="num-badge num-badge-muted">5</div>
+          <div class="quest-content">
+            <p class="quest-title">Top K Frequent Elements</p>
+            <p class="quest-meta">Heap + hash map combination</p>
+          </div>
+          <span class="tag-rect" style="border-color: var(--warning); color: var(--gray-700);">MEDIUM</span>
+        </div>
+
+        <!-- Balance explanation -->
+        <div class="shape-notch-tr" style="padding: 16px; margin-top: 24px;">
+          <p style="font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-500); margin-bottom: 8px;">AI Balance</p>
+          <p style="font-size: 11px; color: var(--gray-600);">
+            Today is <strong>80% learning path</strong>, 20% reinforcement. You're ahead of schedule, so we're prioritizing new concepts over reviews.
+          </p>
+        </div>
+      </div>
+
+      <!-- RIGHT: SIDE QUESTS + STATS -->
+      <div class="side-column">
+        <!-- Side Quests Section -->
+        <p class="section-title">Side Quests</p>
+
+        <!-- Review due -->
+        <div class="shape-chamfer-2edge card-sm sidequest-card">
+          <div style="display: flex; align-items: start; gap: 12px;">
+            <div class="sidequest-indicator sidequest-indicator-review"></div>
+            <div style="flex: 1;">
+              <p class="sidequest-type">Review Due</p>
+              <p class="sidequest-title">Merge Intervals</p>
+              <p class="sidequest-reason">Last solved 7 days ago - spaced repetition</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Skill gap -->
+        <div class="shape-chamfer-2edge card-sm sidequest-card">
+          <div style="display: flex; align-items: start; gap: 12px;">
+            <div class="sidequest-indicator sidequest-indicator-gap"></div>
+            <div style="flex: 1;">
+              <p class="sidequest-type">Skill Gap</p>
+              <p class="sidequest-title">Sliding Window Maximum</p>
+              <p class="sidequest-reason">Strengthen deque pattern - struggled on 3 similar</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slow solve -->
+        <div class="shape-chamfer-2edge card-sm sidequest-card">
+          <div style="display: flex; align-items: start; gap: 12px;">
+            <div class="sidequest-indicator sidequest-indicator-slow"></div>
+            <div style="flex: 1;">
+              <p class="sidequest-type">Slow Solve</p>
+              <p class="sidequest-title">3Sum</p>
+              <p class="sidequest-reason">Took 45min last time - needs optimization practice</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Grid (GitHub style - tightly packed squares with consistent 3px gaps) -->
+        <div style="margin-top: 32px;">
+          <p class="section-title">Activity</p>
+          <div class="shape-rect" style="padding: 12px; overflow-x: auto;">
+            <div style="display: inline-grid; grid-template-rows: repeat(7, 10px); grid-auto-flow: column; grid-auto-columns: 10px; gap: 3px;">
+              <!-- Week 1 --><div style="background: var(--gray-200); border-radius: 2px;"></div><div style="background: var(--accent-color); opacity: 0.3; border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--gray-200); border-radius: 2px;"></div><div style="background: var(--accent-color); opacity: 0.5; border-radius: 2px;"></div><div style="background: var(--gray-200); border-radius: 2px;"></div><div style="background: var(--accent-color); opacity: 0.3; border-radius: 2px;"></div>
+              <!-- Week 2 --><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--gray-200); border-radius: 2px;"></div><div style="background: var(--accent-color); opacity: 0.5; border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); opacity: 0.3; border-radius: 2px;"></div><div style="background: var(--gray-200); border-radius: 2px;"></div>
+              <!-- Week 3 --><div style="background: var(--gray-200); border-radius: 2px;"></div><div style="background: var(--accent-color); opacity: 0.5; border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--gray-200); border-radius: 2px;"></div><div style="background: var(--accent-color); opacity: 0.3; border-radius: 2px;"></div>
+              <!-- Week 4 --><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); opacity: 0.5; border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--gray-200); border-radius: 2px;"></div>
+              <!-- Week 5 --><div style="background: var(--accent-color); opacity: 0.3; border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); opacity: 0.5; border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div>
+              <!-- Week 6 --><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); opacity: 0.5; border-radius: 2px;"></div>
+              <!-- Week 7 --><div style="background: var(--gray-200); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--gray-200); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div>
+              <!-- Week 8 --><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); opacity: 0.5; border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div>
+              <!-- Week 9 --><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--gray-200); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div>
+              <!-- Week 10 --><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--gray-200); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div>
+              <!-- Week 11 --><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); opacity: 0.5; border-radius: 2px;"></div>
+              <!-- Week 12 (current) --><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--accent-color); border-radius: 2px;"></div><div style="background: var(--gray-200); border: 1px dashed var(--accent-color); border-radius: 2px;"></div><div style="background: var(--gray-100); border-radius: 2px;"></div><div style="background: var(--gray-100); border-radius: 2px;"></div><div style="background: var(--gray-100); border-radius: 2px;"></div>
+            </div>
+            <p style="font-size: 9px; color: var(--gray-500); margin-top: 8px;">12 weeks · 68 active days</p>
+          </div>
+        </div>
+
+        <!-- Weekly Stats -->
+        <div style="margin-top: 24px;">
+          <p class="section-title">This Week</p>
+          <div class="shape-chamfer-2edge" style="padding: 16px;">
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; text-align: center;">
+              <div>
+                <p style="font-size: 24px; font-weight: 700; line-height: 1;">14</p>
+                <p style="font-size: 9px; color: var(--gray-500); text-transform: uppercase;">Solved</p>
+              </div>
+              <div>
+                <p style="font-size: 24px; font-weight: 700; line-height: 1; color: var(--accent-color);">85%</p>
+                <p style="font-size: 9px; color: var(--gray-500); text-transform: uppercase;">Success</p>
+              </div>
+              <div>
+                <p style="font-size: 24px; font-weight: 700; line-height: 1;">6:42</p>
+                <p style="font-size: 9px; color: var(--gray-500); text-transform: uppercase;">Avg Time</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Goal Progress -->
+        <div style="margin-top: 24px;">
+          <p class="section-title">Goal Progress</p>
+          <div class="shape-rect" style="padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-size: 11px; font-weight: 500;">NeetCode 150</span>
+              <span style="font-size: 11px; font-weight: 700;">87/150</span>
+            </div>
+            <div class="progress-rect">
+              <div class="fill" style="width: 58%;"></div>
+            </div>
+            <p style="font-size: 10px; color: var(--gray-500); margin-top: 8px;">
+              18 days remaining - 3.5 problems/day needed
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer style="margin-top: 48px; text-align: center;">
+      <p style="font-size: 9px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 2px;">
+        // LEETLOOP // TWO-COLUMN DASHBOARD DEMO // REV 1.0
+      </p>
+    </footer>
+  </div>
+
+</body>
+</html>

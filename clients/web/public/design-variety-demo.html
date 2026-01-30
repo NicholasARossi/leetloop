@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LeetLoop - Shape Variety Demo (2-Edge Chamfer Primary)</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --accent-color: #FF8888;
+      --accent-color-light: #FF888830;
+      --bg-gray: #d3d3d3;
+      --black: #171717;
+      --white: #ffffff;
+      --gray-100: #f5f5f5;
+      --gray-200: #e5e5e5;
+      --gray-400: #a3a3a3;
+      --gray-600: #525252;
+      --gray-700: #404040;
+
+      --chamfer-sm: 8px;
+      --chamfer-md: 16px;
+      --chamfer-lg: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'IBM Plex Mono', monospace;
+      background-color: var(--bg-gray);
+      background-size: 50px 50px;
+      background-image: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.2) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0.2) 75%,
+        transparent 75%,
+        transparent
+      );
+      color: var(--black);
+      font-size: 13px;
+      line-height: 1.6;
+      padding: 40px;
+      min-height: 100vh;
+    }
+
+    /* ===========================================
+       SHAPE SYSTEM - WITH isolation: isolate FIX
+       =========================================== */
+
+    /* PRIMARY: 2-Edge Chamfer (TL/BR) - Your main card style */
+    .shape-chamfer-2edge {
+      position: relative;
+      isolation: isolate;
+      background: var(--black);
+      clip-path: polygon(
+        var(--chamfer-md) 0,
+        100% 0,
+        100% calc(100% - var(--chamfer-md)),
+        calc(100% - var(--chamfer-md)) 100%,
+        0 100%,
+        0 var(--chamfer-md)
+      );
+    }
+
+    .shape-chamfer-2edge::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: var(--white);
+      clip-path: polygon(
+        calc(var(--chamfer-md) - 2px) 0,
+        100% 0,
+        100% calc(100% - var(--chamfer-md) + 2px),
+        calc(100% - var(--chamfer-md) + 2px) 100%,
+        0 100%,
+        0 calc(var(--chamfer-md) - 2px)
+      );
+      z-index: -1;
+    }
+
+    /* SECONDARY: Rectangle - For list items, data displays */
+    .shape-rect {
+      position: relative;
+      isolation: isolate;
+      background: var(--black);
+    }
+
+    .shape-rect::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: var(--white);
+      z-index: -1;
+    }
+
+    /* ACCENT: Full 8-Corner Chamfer - Sparingly, for hero emphasis */
+    .shape-chamfer-full {
+      position: relative;
+      isolation: isolate;
+      background: var(--black);
+      clip-path: polygon(
+        var(--chamfer-md) 0,
+        calc(100% - var(--chamfer-md)) 0,
+        100% var(--chamfer-md),
+        100% calc(100% - var(--chamfer-md)),
+        calc(100% - var(--chamfer-md)) 100%,
+        var(--chamfer-md) 100%,
+        0 calc(100% - var(--chamfer-md)),
+        0 var(--chamfer-md)
+      );
+    }
+
+    .shape-chamfer-full::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: var(--white);
+      clip-path: polygon(
+        calc(var(--chamfer-md) - 2px) 0,
+        calc(100% - var(--chamfer-md) + 2px) 0,
+        100% calc(var(--chamfer-md) - 2px),
+        100% calc(100% - var(--chamfer-md) + 2px),
+        calc(100% - var(--chamfer-md) + 2px) 100%,
+        calc(var(--chamfer-md) - 2px) 100%,
+        0 calc(100% - var(--chamfer-md) + 2px),
+        0 calc(var(--chamfer-md) - 2px)
+      );
+      z-index: -1;
+    }
+
+    /* ACCENT: Opposite 2-Edge (TR/BL) - For visual rhythm */
+    .shape-chamfer-opposite {
+      position: relative;
+      isolation: isolate;
+      background: var(--black);
+      clip-path: polygon(
+        0 0,
+        calc(100% - var(--chamfer-md)) 0,
+        100% var(--chamfer-md),
+        100% 100%,
+        var(--chamfer-md) 100%,
+        0 calc(100% - var(--chamfer-md))
+      );
+    }
+
+    .shape-chamfer-opposite::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: var(--white);
+      clip-path: polygon(
+        0 0,
+        calc(100% - var(--chamfer-md) + 2px) 0,
+        100% calc(var(--chamfer-md) - 2px),
+        100% 100%,
+        calc(var(--chamfer-md) - 2px) 100%,
+        0 calc(100% - var(--chamfer-md) + 2px)
+      );
+      z-index: -1;
+    }
+
+    /* Single notch - for accent panels */
+    .shape-notch-tr {
+      position: relative;
+      isolation: isolate;
+      background: var(--black);
+      clip-path: polygon(
+        0 0,
+        calc(100% - var(--chamfer-md)) 0,
+        100% var(--chamfer-md),
+        100% 100%,
+        0 100%
+      );
+    }
+
+    .shape-notch-tr::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: var(--white);
+      clip-path: polygon(
+        0 0,
+        calc(100% - var(--chamfer-md) + 2px) 0,
+        100% calc(var(--chamfer-md) - 2px),
+        100% 100%,
+        0 100%
+      );
+      z-index: -1;
+    }
+
+    /* Number badge - simple square with notch */
+    .num-badge {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 12px;
+      border: 2px solid var(--black);
+      background: var(--white);
+    }
+
+    .num-badge-accent {
+      background: var(--accent-color);
+    }
+
+    /* ===========================================
+       COMPONENT STYLES
+       =========================================== */
+
+    .card { padding: 24px; }
+    .card-sm { padding: 16px; }
+
+    /* Tag - small 2-edge chamfer */
+    .tag {
+      display: inline-block;
+      padding: 4px 10px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      position: relative;
+      isolation: isolate;
+      background: var(--black);
+      clip-path: polygon(
+        6px 0,
+        100% 0,
+        100% calc(100% - 6px),
+        calc(100% - 6px) 100%,
+        0 100%,
+        0 6px
+      );
+    }
+
+    .tag::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: var(--gray-100);
+      clip-path: polygon(
+        4px 0,
+        100% 0,
+        100% calc(100% - 4px),
+        calc(100% - 4px) 100%,
+        0 100%,
+        0 4px
+      );
+      z-index: -1;
+    }
+
+    .tag-accent::before { background: var(--accent-color); }
+
+    /* Rectangular tag for secondary/info */
+    .tag-rect {
+      display: inline-block;
+      padding: 4px 10px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: var(--gray-100);
+      border: 2px solid var(--gray-400);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      border: none;
+      position: relative;
+      isolation: isolate;
+      background: var(--black);
+      clip-path: polygon(
+        6px 0,
+        100% 0,
+        100% calc(100% - 6px),
+        calc(100% - 6px) 100%,
+        0 100%,
+        0 6px
+      );
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: var(--white);
+      clip-path: polygon(
+        4px 0,
+        100% 0,
+        100% calc(100% - 4px),
+        calc(100% - 4px) 100%,
+        0 100%,
+        0 4px
+      );
+      z-index: -1;
+      transition: background 0.15s;
+    }
+
+    .btn:hover::before { background: var(--accent-color); }
+
+    .btn-rect {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      border: 2px solid var(--black);
+      background: var(--white);
+      transition: all 0.15s;
+    }
+
+    .btn-rect:hover { background: var(--accent-color); }
+
+    /* Progress bar - rectangular is cleaner */
+    .progress-rect {
+      height: 10px;
+      background: var(--gray-200);
+      border: 2px solid var(--black);
+      position: relative;
+    }
+
+    .progress-rect .fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      background: var(--accent-color);
+    }
+
+    /* Stat badge - compact rectangular */
+    .stat-badge {
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--white);
+      border: 2px solid var(--black);
+    }
+
+    .stat-badge-accent {
+      background: var(--accent-color);
+    }
+
+    .stat-badge-value {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .stat-badge-label {
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--gray-600);
+      margin-top: 2px;
+    }
+
+    .stat-badge-accent .stat-badge-label {
+      color: var(--black);
+    }
+
+    /* Bracket corners decoration */
+    .bracket-corners::after {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      pointer-events: none;
+      z-index: 2;
+      background:
+        linear-gradient(to right, var(--accent-color) 16px, transparent 16px) 0 0 / 100% 2px no-repeat,
+        linear-gradient(to bottom, var(--accent-color) 16px, transparent 16px) 0 0 / 2px 100% no-repeat,
+        linear-gradient(to left, var(--accent-color) 16px, transparent 16px) 100% 100% / 100% 2px no-repeat,
+        linear-gradient(to top, var(--accent-color) 16px, transparent 16px) 100% 100% / 2px 100% no-repeat;
+    }
+
+    /* Section elements */
+    .section-id {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--gray-400);
+    }
+
+    .section-id::before {
+      content: '// ';
+      color: var(--accent-color);
+    }
+
+    .section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--black);
+      margin-bottom: 16px;
+    }
+
+    .dimension-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gray-600);
+    }
+
+    .dimension-line::before,
+    .dimension-line::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--gray-400);
+    }
+
+    /* ===========================================
+       DEMO LAYOUT
+       =========================================== */
+
+    .demo-section { margin-bottom: 48px; }
+
+    .demo-title {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 3px solid var(--black);
+    }
+
+    .demo-subtitle {
+      font-size: 11px;
+      color: var(--gray-600);
+      margin-bottom: 24px;
+    }
+
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gray-400);
+      margin-bottom: 8px;
+    }
+
+    .spacer { height: 24px; }
+
+    .flex-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <header style="margin-bottom: 48px;">
+    <p class="section-id" style="margin-bottom: 8px;">SYS.DESIGN.variety-v2</p>
+    <h1 style="font-size: 24px; font-weight: 700; text-transform: uppercase; letter-spacing: 4px;">
+      Shape Variety (2-Edge Primary)
+    </h1>
+    <p style="color: var(--gray-600); margin-top: 8px;">
+      Keep the 2-edge chamfer you love. Add rectangles + stat badges for variety.
+    </p>
+  </header>
+
+  <!-- SHAPE HIERARCHY -->
+  <section class="demo-section">
+    <div class="demo-title">Shape Hierarchy</div>
+    <div class="demo-subtitle">Your 2-edge chamfer stays primary. Mix in rectangles for list items.</div>
+
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+      <div>
+        <p class="label">Primary (Keep!)</p>
+        <div class="shape-chamfer-2edge card" style="text-align: center;">
+          <p style="font-weight: 600; margin-bottom: 4px;">2-Edge Chamfer</p>
+          <p style="font-size: 10px; color: var(--gray-600);">Cards, containers</p>
+        </div>
+      </div>
+
+      <div>
+        <p class="label">List Items (New)</p>
+        <div class="shape-rect card" style="text-align: center;">
+          <p style="font-weight: 600; margin-bottom: 4px;">Rectangle</p>
+          <p style="font-size: 10px; color: var(--gray-600);">Scannable rows</p>
+        </div>
+      </div>
+
+      <div>
+        <p class="label">Accent (Sparingly)</p>
+        <div class="shape-chamfer-full card bracket-corners" style="text-align: center;">
+          <p style="font-weight: 600; margin-bottom: 4px;">Full Chamfer</p>
+          <p style="font-size: 10px; color: var(--gray-600);">Hero only</p>
+        </div>
+      </div>
+
+      <div>
+        <p class="label">Stat Badges (New)</p>
+        <div style="display: flex; justify-content: center; gap: 8px;">
+          <div class="stat-badge">
+            <span class="stat-badge-value">87</span>
+            <span class="stat-badge-label">Solved</span>
+          </div>
+          <div class="stat-badge stat-badge-accent">
+            <span class="stat-badge-value">A+</span>
+            <span class="stat-badge-label">Ready</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARISON -->
+  <section class="demo-section">
+    <div class="demo-title">Before vs After</div>
+    <div class="demo-subtitle">Same 2-edge cards, but list items become rectangles for contrast</div>
+
+    <div class="demo-grid">
+      <!-- BEFORE -->
+      <div>
+        <p class="label">Before: All 2-Edge Chamfer</p>
+        <div class="shape-chamfer-2edge card" style="margin-bottom: 12px;">
+          <p style="font-size: 10px; color: var(--gray-500); margin-bottom: 4px;">TODAY'S FOCUS</p>
+          <p style="font-weight: 600;">Hash Maps Deep Dive</p>
+        </div>
+        <div class="shape-chamfer-2edge card-sm" style="margin-bottom: 8px;">
+          <p style="font-size: 11px;">1. Two Sum</p>
+        </div>
+        <div class="shape-chamfer-2edge card-sm" style="margin-bottom: 8px;">
+          <p style="font-size: 11px;">2. Contains Duplicate</p>
+        </div>
+        <div class="shape-chamfer-2edge card-sm">
+          <p style="font-size: 11px;">3. Group Anagrams</p>
+        </div>
+        <p style="font-size: 10px; color: var(--gray-500); margin-top: 12px; text-align: center;">
+          Everything looks the same weight
+        </p>
+      </div>
+
+      <!-- AFTER -->
+      <div>
+        <p class="label">After: 2-Edge Cards + Rect List Items</p>
+        <div class="shape-chamfer-2edge card" style="margin-bottom: 12px;">
+          <p style="font-size: 10px; color: var(--gray-500); margin-bottom: 4px;">TODAY'S FOCUS</p>
+          <p style="font-weight: 600;">Hash Maps Deep Dive</p>
+        </div>
+        <div class="shape-rect card-sm" style="margin-bottom: 8px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="num-badge num-badge-accent">1</div>
+            <p style="font-size: 11px;">Two Sum</p>
+          </div>
+        </div>
+        <div class="shape-rect card-sm" style="margin-bottom: 8px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 24px; height: 24px; border: 2px solid var(--black); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px;">2</div>
+            <p style="font-size: 11px;">Contains Duplicate</p>
+          </div>
+        </div>
+        <div class="shape-rect card-sm">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 24px; height: 24px; border: 2px solid var(--black); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px;">3</div>
+            <p style="font-size: 11px;">Group Anagrams</p>
+          </div>
+        </div>
+        <p style="font-size: 10px; color: var(--accent-color); margin-top: 12px; text-align: center;">
+          Cards stand out, list items scannable
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FULL MOCKUP -->
+  <section class="demo-section">
+    <div class="demo-title">Full Dashboard Mockup</div>
+    <div class="demo-subtitle">2-edge chamfer cards + rectangular list items + stat badges</div>
+
+    <div style="background: var(--white); border: 2px solid var(--black); padding: 24px;">
+      <!-- Header -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div>
+          <p class="section-id">DASHBOARD</p>
+          <p style="font-size: 16px; font-weight: 600; margin-top: 4px;">Today's Mission</p>
+        </div>
+        <div style="display: flex; gap: 16px; align-items: center;">
+          <div class="stat-badge stat-badge-accent">
+            <span class="stat-badge-value">12</span>
+            <span class="stat-badge-label">Streak</span>
+          </div>
+          <div class="shape-rect" style="padding: 8px 16px;">
+            <span style="font-size: 10px; color: var(--gray-500); display: block;">Today</span>
+            <span style="font-size: 18px; font-weight: 700;">3/5</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 3fr 2fr; gap: 24px;">
+        <!-- Main column -->
+        <div>
+          <!-- Hero: 2-edge chamfer (your main style) with brackets for emphasis -->
+          <div class="shape-chamfer-2edge card bracket-corners" style="margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: start;">
+              <div>
+                <p style="font-size: 10px; color: var(--gray-500); margin-bottom: 4px;">TODAY'S OBJECTIVE</p>
+                <p style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">Master Hash Map Patterns</p>
+                <p style="font-size: 11px; color: var(--gray-600); margin-bottom: 12px;">
+                  Focus on two-pass and frequency counting patterns
+                </p>
+                <div class="flex-row" style="gap: 8px;">
+                  <span class="tag tag-accent">HASH MAP</span>
+                  <span class="tag-rect">ARRAYS</span>
+                </div>
+              </div>
+              <button class="btn">Regenerate</button>
+            </div>
+            <div style="margin-top: 16px; padding-top: 16px; border-top: 2px solid var(--gray-200);">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <span style="font-size: 10px; color: var(--gray-500);">PROGRESS</span>
+                <span style="font-size: 11px; font-weight: 600;">2/5 completed</span>
+              </div>
+              <div class="progress-rect">
+                <div class="fill" style="width: 40%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <p class="section-title">Main Quests</p>
+
+          <!-- Quest list: RECTANGLES for scannability -->
+          <div class="shape-rect" style="padding: 14px; margin-bottom: 10px; border-left: 4px solid var(--accent-color);">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div style="width: 24px; height: 24px; background: var(--accent-color); display: flex; align-items: center; justify-content: center;">
+                <svg width="14" height="14" fill="none" stroke="white" stroke-width="3" viewBox="0 0 24 24">
+                  <path d="M5 13l4 4L19 7"/>
+                </svg>
+              </div>
+              <div style="flex: 1;">
+                <p style="font-size: 12px; font-weight: 500; text-decoration: line-through; color: var(--gray-400);">Two Sum</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="shape-rect" style="padding: 14px; margin-bottom: 10px; border-left: 4px solid var(--accent-color);">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div style="width: 24px; height: 24px; background: var(--accent-color); display: flex; align-items: center; justify-content: center;">
+                <svg width="14" height="14" fill="none" stroke="white" stroke-width="3" viewBox="0 0 24 24">
+                  <path d="M5 13l4 4L19 7"/>
+                </svg>
+              </div>
+              <div style="flex: 1;">
+                <p style="font-size: 12px; font-weight: 500; text-decoration: line-through; color: var(--gray-400);">Contains Duplicate</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="shape-rect" style="padding: 14px; margin-bottom: 10px; background: var(--accent-color-light);">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div class="num-badge">3</div>
+              <div style="flex: 1;">
+                <p style="font-size: 12px; font-weight: 600;">Group Anagrams</p>
+                <p style="font-size: 10px; color: var(--gray-600);">Hash map with sorted key</p>
+              </div>
+              <button class="btn-rect" style="padding: 6px 12px; font-size: 10px;">Solve</button>
+            </div>
+          </div>
+
+          <div class="shape-rect" style="padding: 14px; margin-bottom: 10px;">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div style="width: 24px; height: 24px; border: 2px solid var(--gray-400); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px; color: var(--gray-400);">
+                4
+              </div>
+              <div style="flex: 1;">
+                <p style="font-size: 12px; font-weight: 500;">Valid Anagram</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="shape-rect" style="padding: 14px;">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div style="width: 24px; height: 24px; border: 2px solid var(--gray-400); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px; color: var(--gray-400);">
+                5
+              </div>
+              <div style="flex: 1;">
+                <p style="font-size: 12px; font-weight: 500;">Top K Frequent Elements</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Side column -->
+        <div>
+          <p class="section-title">Side Quests</p>
+
+          <!-- Side quests: 2-edge chamfer (secondary cards) -->
+          <div class="shape-chamfer-2edge card-sm" style="margin-bottom: 10px;">
+            <div style="display: flex; align-items: start; gap: 12px;">
+              <div style="width: 8px; height: 8px; background: var(--gray-400); flex-shrink: 0; margin-top: 4px;"></div>
+              <div>
+                <p style="font-size: 9px; color: var(--gray-500); text-transform: uppercase; margin-bottom: 2px;">Review Due</p>
+                <p style="font-size: 11px; font-weight: 500;">Merge Intervals</p>
+                <p style="font-size: 10px; color: var(--gray-500);">Last solved 7 days ago</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="shape-chamfer-2edge card-sm" style="margin-bottom: 24px;">
+            <div style="display: flex; align-items: start; gap: 12px;">
+              <div style="width: 8px; height: 8px; background: var(--gray-400); flex-shrink: 0; margin-top: 4px;"></div>
+              <div>
+                <p style="font-size: 9px; color: var(--gray-500); text-transform: uppercase; margin-bottom: 2px;">Skill Gap</p>
+                <p style="font-size: 11px; font-weight: 500;">Sliding Window Maximum</p>
+                <p style="font-size: 10px; color: var(--gray-500);">Strengthen deque skills</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stats: Notched rectangle for accent -->
+          <div class="shape-notch-tr" style="padding: 16px;">
+            <p style="font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-500); margin-bottom: 12px;">Weekly Stats</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div>
+                <p style="font-size: 24px; font-weight: 700; line-height: 1;">14</p>
+                <p style="font-size: 9px; color: var(--gray-500); text-transform: uppercase;">Solved</p>
+              </div>
+              <div>
+                <p style="font-size: 24px; font-weight: 700; line-height: 1; color: var(--accent-color);">85%</p>
+                <p style="font-size: 9px; color: var(--gray-500); text-transform: uppercase;">Success</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RULES -->
+  <section class="demo-section">
+    <div class="demo-title">Shape Rules Summary</div>
+
+    <div style="background: var(--white); border: 2px solid var(--black); padding: 24px;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+        <thead>
+          <tr style="border-bottom: 2px solid var(--black);">
+            <th style="text-align: left; padding: 12px 16px; font-weight: 600;">Shape</th>
+            <th style="text-align: left; padding: 12px 16px; font-weight: 600;">When to Use</th>
+            <th style="text-align: left; padding: 12px 16px; font-weight: 600;">Examples</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom: 1px solid var(--gray-200); background: var(--accent-color-light);">
+            <td style="padding: 12px 16px; font-weight: 600;">2-Edge Chamfer (TL/BR)</td>
+            <td style="padding: 12px 16px;">PRIMARY - All cards and containers</td>
+            <td style="padding: 12px 16px; color: var(--gray-600);">Daily objective, side quests, skill cards</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--gray-200);">
+            <td style="padding: 12px 16px; font-weight: 500;">Rectangle</td>
+            <td style="padding: 12px 16px;">List items, repeated elements</td>
+            <td style="padding: 12px 16px; color: var(--gray-600);">Quest list, table rows, form inputs</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--gray-200);">
+            <td style="padding: 12px 16px; font-weight: 500;">Stat Badge / Num Badge</td>
+            <td style="padding: 12px 16px;">Numbers, rankings, small emphasis</td>
+            <td style="padding: 12px 16px; color: var(--gray-600);">Streak count, step numbers, scores</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--gray-200);">
+            <td style="padding: 12px 16px; font-weight: 500;">Full Chamfer (8-corner)</td>
+            <td style="padding: 12px 16px;">Sparingly - hero emphasis only</td>
+            <td style="padding: 12px 16px; color: var(--gray-600);">Onboarding hero, special promotion</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px 16px; font-weight: 500;">Bracket Corners</td>
+            <td style="padding: 12px 16px;">Add to primary card for extra emphasis</td>
+            <td style="padding: 12px 16px; color: var(--gray-600);">Combine with 2-edge on hero card</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- TAGS & BUTTONS -->
+  <section class="demo-section">
+    <div class="demo-title">Tags & Buttons</div>
+
+    <div class="demo-grid">
+      <div>
+        <p class="label">Primary Tags (Chamfered)</p>
+        <div class="flex-row">
+          <span class="tag tag-accent">FEATURED</span>
+          <span class="tag tag-accent">PRIMARY</span>
+          <span class="tag">DEFAULT</span>
+        </div>
+      </div>
+      <div>
+        <p class="label">Secondary Tags (Rectangular)</p>
+        <div class="flex-row">
+          <span class="tag-rect">ARRAYS</span>
+          <span class="tag-rect">DP</span>
+          <span class="tag-rect" style="border-color: var(--gray-200);">OPTIONAL</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="demo-grid">
+      <div>
+        <p class="label">Primary Buttons (Chamfered)</p>
+        <div class="flex-row">
+          <button class="btn">Start Mission</button>
+          <button class="btn">Submit</button>
+        </div>
+      </div>
+      <div>
+        <p class="label">Secondary Buttons (Rectangular)</p>
+        <div class="flex-row">
+          <button class="btn-rect">Skip</button>
+          <button class="btn-rect" style="border-color: var(--gray-400); color: var(--gray-600);">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer style="margin-top: 48px;">
+    <div class="dimension-line"><span>END OF DEMO</span></div>
+    <p style="text-align: center; margin-top: 16px; color: var(--gray-600); font-size: 10px;">
+      LEETLOOP // 2-EDGE PRIMARY + VARIETY // REV 2.0
+    </p>
+  </footer>
+
+</body>
+</html>

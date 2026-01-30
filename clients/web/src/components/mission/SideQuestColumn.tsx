@@ -2,6 +2,7 @@
 
 import { SideQuest } from '@/lib/api'
 import { SideQuestCard } from './SideQuestCard'
+import { ActivityGrid } from './ActivityGrid'
 
 interface SideQuestColumnProps {
   quests: SideQuest[]
@@ -27,6 +28,14 @@ export function SideQuestColumn({ quests, streak, weeklySuccessRate }: SideQuest
           ))}
         </div>
       )}
+
+      {/* Activity Grid */}
+      <div className="mt-6">
+        <h3 className="section-title">Activity</h3>
+        <div className="card-sm">
+          <ActivityGrid weeks={12} />
+        </div>
+      </div>
 
       {/* Stats summary */}
       <div className="card-sm mt-6">

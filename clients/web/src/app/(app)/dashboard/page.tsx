@@ -8,6 +8,8 @@ import {
   MissionProblemCard,
   MissionSkeleton,
   PacingIndicator,
+  MainQuestColumn,
+  SideQuestColumn,
 } from '@/components/mission'
 import { format } from 'date-fns'
 import { clsx } from 'clsx'
@@ -106,12 +108,27 @@ export default function DashboardPage() {
 
   const today = new Date()
   const formattedDate = format(today, 'EEEE, MMMM d')
-  const completedCount = mission.problems?.filter(p => p.completed).length || 0
-  const totalCount = mission.problems?.length || 0
+
+  // Use main_quests/side_quests if available, otherwise derive from problems
+  const mainQuests = mission.main_quests || []
+  const sideQuests = mission.side_quests || []
+  const hasQuestData = mainQuests.length > 0 || sideQuests.length > 0
+
+  // For progress, count from main quests if available
+  const mainCompleted = mainQuests.filter(q => q.status === 'completed').length
+  const mainTotal = mainQuests.length
+  const sideCompleted = sideQuests.filter(q => q.completed).length
+
+  // Fallback to flat problems list for backwards compatibility
+  const problemsCompleted = mission.problems?.filter(p => p.completed).length || 0
+  const problemsTotal = mission.problems?.length || 0
+
+  const completedCount = hasQuestData ? mainCompleted : problemsCompleted
+  const totalCount = hasQuestData ? mainTotal : problemsTotal
   const progressPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-6xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
@@ -132,16 +149,22 @@ export default function DashboardPage() {
 
           {/* Streak badge */}
           {mission.streak > 0 && (
-            <div className="card-sm flex items-center gap-2 py-2 px-3">
-              <span className="stat-value text-lg">{mission.streak}</span>
-              <span className="text-xs text-gray-500">day streak</span>
+            <div className="stat-badge stat-badge-accent">
+              <span className="stat-value">{mission.streak}</span>
+              <span className="stat-label">Streak</span>
             </div>
           )}
+
+          {/* Today's progress badge */}
+          <div className="stat-badge">
+            <span className="stat-value">{completedCount}/{totalCount}</span>
+            <span className="stat-label">Today</span>
+          </div>
         </div>
       </div>
 
       {/* Daily Objective Card */}
-      <div className="card">
+      <div className="card bracket-corners">
         <div className="flex items-start justify-between gap-4 mb-4">
           <div className="flex-1">
             <p className="text-xs uppercase tracking-wider text-gray-500 mb-2">Today&apos;s Focus</p>
@@ -184,7 +207,8 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs text-gray-500 uppercase tracking-wide">Today&apos;s Progress</span>
             <span className="text-sm font-medium text-black">
-              {completedCount} of {totalCount}
+              {completedCount} of {totalCount} main quests
+              {sideCompleted > 0 && ` + ${sideCompleted} side`}
             </span>
           </div>
           <div className="progress-bar">
@@ -196,22 +220,36 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Problems List */}
-      {mission.problems && mission.problems.length > 0 && (
-        <div className="card">
-          <h3 className="section-title mb-4">
-            Problems for Today
-          </h3>
-          <div className="space-y-2">
-            {mission.problems.map((problem, index) => (
-              <MissionProblemCard
-                key={problem.problem_id}
-                problem={problem}
-                index={index}
-              />
-            ))}
-          </div>
+      {/* Two Column Layout: Main Quests + Side Quests */}
+      {hasQuestData ? (
+        <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-6">
+          {/* Main Quests Column */}
+          <MainQuestColumn quests={mainQuests} />
+
+          {/* Side Quests Column */}
+          <SideQuestColumn
+            quests={sideQuests}
+            streak={mission.streak}
+          />
         </div>
+      ) : (
+        /* Fallback: Flat problems list for backwards compatibility */
+        mission.problems && mission.problems.length > 0 && (
+          <div className="card">
+            <h3 className="section-title mb-4">
+              Problems for Today
+            </h3>
+            <div className="space-y-2">
+              {mission.problems.map((problem, index) => (
+                <MissionProblemCard
+                  key={problem.problem_id}
+                  problem={problem}
+                  index={index}
+                />
+              ))}
+            </div>
+          </div>
+        )
       )}
 
       {/* Pacing Note */}

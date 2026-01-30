@@ -473,28 +473,46 @@ class MissionGenerator:
 {problems_section}
 
 ## Instructions
-Generate an optimal daily practice session (4-6 problems):
-1. PRIORITIZE review items if any are due (spaced repetition is critical)
-2. Include problems from the learning path to maintain progress
-3. Mix in gap-filling problems to address weak skills
-4. You MAY reorder path problems if it helps hit multiple learning objectives
-5. Always explain WHY each problem was chosen
-6. Consider deadline pacing - are they ahead or behind?
+Generate an optimal daily practice session with MAIN QUESTS (learning path) and SIDE QUESTS (reinforcement):
+
+**MAIN QUESTS (3-5 problems):**
+- Primary learning path progression
+- These are the "must do" problems for today
+- Select from available path problems in order
+- May include 1 review item if critical
+
+**SIDE QUESTS (2-3 problems):**
+- Reinforcement and gap-filling
+- Reviews due for spaced repetition
+- Skill gap problems targeting weak areas
+- Slow-solve problems that need optimization practice
+
+Always explain WHY each problem was chosen. Consider deadline pacing.
 
 ## Output Format (JSON only)
 {{
   "daily_objective": "Short phrase describing today's focus (e.g., 'Master Two Pointer patterns')",
-  "problems": [
+  "main_quests": [
     {{
-      "problem_id": "problem-slug-from-available",
-      "source": "path|gap_fill|review|reinforcement",
-      "reasoning": "Why this problem was chosen - be specific",
-      "priority": 1,
-      "skills": ["skill1", "skill2"],
-      "estimated_difficulty": "easy|medium|hard"
+      "slug": "problem-slug-from-available",
+      "title": "Problem Title",
+      "category": "Arrays & Hashing",
+      "difficulty": "easy|medium|hard",
+      "reasoning": "Why this problem - be specific about learning goal",
+      "order": 1
     }}
   ],
-  "balance_explanation": "Today is X% path, Y% gap-filling because...",
+  "side_quests": [
+    {{
+      "slug": "problem-slug",
+      "title": "Problem Title",
+      "difficulty": "easy|medium|hard",
+      "quest_type": "review_due|skill_gap|slow_solve",
+      "reason": "Why this side quest - what weakness it addresses",
+      "target_weakness": "The skill or pattern being reinforced"
+    }}
+  ],
+  "balance_explanation": "Today is X% path, Y% reinforcement because...",
   "pacing_status": "ahead|on_track|behind|critical",
   "pacing_note": "You're X days ahead/behind schedule" or "On track for your deadline"
 }}
@@ -510,33 +528,49 @@ Only output the JSON, nothing else."""
         review_problems: list,
     ) -> dict:
         """Generate fallback mission when Gemini is unavailable."""
-        problems = []
+        main_quests = []
+        side_quests = []
 
-        # Add reviews first (max 2)
-        for i, r in enumerate(review_problems[:2]):
-            problems.append({
-                "problem_id": r["slug"],
-                "source": "review",
-                "reasoning": r.get("reason", "Due for spaced repetition review"),
-                "priority": i + 1,
-                "skills": [],
-                "estimated_difficulty": "medium",
-            })
-
-        # Add path problems (fill to 5 total)
-        remaining = 5 - len(problems)
-        for i, p in enumerate(available_problems[:remaining]):
-            problems.append({
-                "problem_id": p["slug"],
-                "source": "path",
+        # Build main quests from path problems (4 problems)
+        for i, p in enumerate(available_problems[:4]):
+            main_quests.append({
+                "slug": p["slug"],
+                "title": p["title"],
+                "category": p["category"],
+                "difficulty": p.get("difficulty", "Medium").lower(),
                 "reasoning": f"Next problem in your {p['category']} progression",
-                "priority": len(problems) + 1,
-                "skills": [p["category"]],
-                "estimated_difficulty": p.get("difficulty", "medium").lower(),
+                "order": i + 1,
             })
+
+        # Build side quests from reviews and weak skills (up to 3)
+        for r in review_problems[:2]:
+            side_quests.append({
+                "slug": r["slug"],
+                "title": r["slug"].replace("-", " ").title(),
+                "difficulty": "medium",
+                "quest_type": "review_due",
+                "reason": r.get("reason", "Due for spaced repetition review"),
+                "target_weakness": "retention",
+            })
+
+        # Add a skill gap side quest if we have weak skills
+        weak_skills = [s for s in context.get("skill_scores", []) if s["status"] == "weak"]
+        if weak_skills and len(side_quests) < 3:
+            # Find a problem targeting the weak skill
+            weak_domain = weak_skills[0]["domain"]
+            for p in available_problems[4:]:  # Look past main quests
+                if p.get("category", "").lower() == weak_domain.lower():
+                    side_quests.append({
+                        "slug": p["slug"],
+                        "title": p["title"],
+                        "difficulty": p.get("difficulty", "Medium").lower(),
+                        "quest_type": "skill_gap",
+                        "reason": f"Strengthen weak {weak_domain} skills",
+                        "target_weakness": weak_domain,
+                    })
+                    break
 
         # Determine objective
-        weak_skills = [s for s in context.get("skill_scores", []) if s["status"] == "weak"]
         if weak_skills:
             objective = f"Strengthen {weak_skills[0]['domain']}"
         elif review_problems:
@@ -558,8 +592,9 @@ Only output the JSON, nothing else."""
 
         return {
             "daily_objective": objective,
-            "problems": problems,
-            "balance_explanation": "Balanced mix of reviews and new path problems",
+            "main_quests": main_quests,
+            "side_quests": side_quests,
+            "balance_explanation": "Balanced mix of path progress and reinforcement",
             "pacing_status": pacing_status,
             "pacing_note": pacing_note,
         }
@@ -587,20 +622,61 @@ Only output the JSON, nothing else."""
                         "category": cat["name"],
                     }
 
-        # Enrich problems with titles
+        # Build main quests from response
+        main_quests = []
+        for q in gemini_response.get("main_quests", []):
+            slug = q.get("slug")
+            details = problem_details.get(slug, {})
+            main_quests.append({
+                "slug": slug,
+                "title": q.get("title") or details.get("title") or slug.replace("-", " ").title(),
+                "difficulty": q.get("difficulty") or details.get("difficulty"),
+                "category": q.get("category") or details.get("category", ""),
+                "order": q.get("order", 0),
+                "status": "upcoming",
+                "completed": False,
+            })
+
+        # Build side quests from response
+        side_quests = []
+        for q in gemini_response.get("side_quests", []):
+            slug = q.get("slug")
+            details = problem_details.get(slug, {})
+            side_quests.append({
+                "slug": slug,
+                "title": q.get("title") or details.get("title") or slug.replace("-", " ").title(),
+                "difficulty": q.get("difficulty") or details.get("difficulty"),
+                "reason": q.get("reason", "Recommended for reinforcement"),
+                "target_weakness": q.get("target_weakness", ""),
+                "quest_type": q.get("quest_type", "skill_gap"),
+                "completed": False,
+            })
+
+        # Also build flat problems list for backwards compatibility
         problems = []
-        for p in gemini_response.get("problems", []):
-            problem_id = p.get("problem_id")
-            details = problem_details.get(problem_id, {})
+        for i, q in enumerate(main_quests):
             problems.append({
-                "problem_id": problem_id,
-                "problem_title": details.get("title") or problem_id.replace("-", " ").title(),
-                "difficulty": details.get("difficulty"),
-                "source": p.get("source", "path"),
-                "reasoning": p.get("reasoning", "Selected for your practice"),
-                "priority": p.get("priority", 0),
-                "skills": p.get("skills", []),
-                "estimated_difficulty": p.get("estimated_difficulty"),
+                "problem_id": q["slug"],
+                "problem_title": q["title"],
+                "difficulty": q["difficulty"],
+                "source": "path",
+                "reasoning": gemini_response.get("main_quests", [{}])[i].get("reasoning", "Learning path progression"),
+                "priority": q["order"],
+                "skills": [q.get("category", "")],
+                "estimated_difficulty": q["difficulty"],
+                "completed": False,
+            })
+        for q in side_quests:
+            source_map = {"review_due": "review", "skill_gap": "gap_fill", "slow_solve": "reinforcement"}
+            problems.append({
+                "problem_id": q["slug"],
+                "problem_title": q["title"],
+                "difficulty": q["difficulty"],
+                "source": source_map.get(q["quest_type"], "gap_fill"),
+                "reasoning": q["reason"],
+                "priority": len(problems) + 1,
+                "skills": [q.get("target_weakness", "")],
+                "estimated_difficulty": q["difficulty"],
                 "completed": False,
             })
 
@@ -616,8 +692,8 @@ Only output the JSON, nothing else."""
             "pacing_status": gemini_response.get("pacing_status"),
             "pacing_note": gemini_response.get("pacing_note"),
             "problems": problems,
-            "main_quests": [],  # Legacy field
-            "side_quests": [],  # Legacy field
+            "main_quests": main_quests,
+            "side_quests": side_quests,
             "completed_main_quests": [],
             "completed_side_quests": [],
             "regenerated_count": (existing.get("regenerated_count", 0) + 1) if existing else 0,
@@ -788,26 +864,59 @@ Only output the JSON, nothing else."""
         if completed_today_response.data:
             completed_today_slugs = {s["problem_slug"] for s in completed_today_response.data}
 
-        # Update problem completion status
+        # Update problem completion status (flat list for backwards compat)
         problems = mission_data.get("problems", [])
         for p in problems:
             problem_id = p.get("problem_id")
             if problem_id in completed_today_slugs:
                 p["completed"] = True
 
+        # Update main quest completion status
+        main_quests = mission_data.get("main_quests", [])
+        for q in main_quests:
+            if q.get("slug") in completed_today_slugs:
+                q["completed"] = True
+                q["status"] = "completed"
+            elif any(mq.get("completed") for mq in main_quests if mq.get("order", 0) > q.get("order", 0)):
+                q["status"] = "upcoming"
+            else:
+                # First uncompleted is active
+                if not any(mq.get("completed") == False and mq.get("order", 0) < q.get("order", 0) for mq in main_quests):
+                    q["status"] = "active" if not q.get("completed") else "completed"
+                else:
+                    q["status"] = "upcoming"
+
+        # Set first uncompleted main quest as active
+        for q in sorted(main_quests, key=lambda x: x.get("order", 0)):
+            if not q.get("completed"):
+                q["status"] = "active"
+                break
+
+        # Update side quest completion status
+        side_quests = mission_data.get("side_quests", [])
+        for q in side_quests:
+            if q.get("slug") in completed_today_slugs:
+                q["completed"] = True
+
         completed_count = sum(1 for p in problems if p.get("completed"))
+        main_completed = sum(1 for q in main_quests if q.get("completed"))
+        side_completed = sum(1 for q in side_quests if q.get("completed"))
 
         return {
             "user_id": user_id_str,
             "mission_date": mission_data.get("mission_date", date.today().isoformat()),
             "daily_objective": mission_data.get("daily_objective") or mission_data.get("objective_title", "Focus on practice"),
             "problems": problems,
+            "main_quests": main_quests,
+            "side_quests": side_quests,
             "balance_explanation": mission_data.get("balance_explanation"),
             "pacing_status": mission_data.get("pacing_status"),
             "pacing_note": mission_data.get("pacing_note"),
             "streak": streak,
             "total_completed_today": len(completed_today_slugs),
             "completed_count": completed_count,
+            "main_completed": main_completed,
+            "side_completed": side_completed,
             "can_regenerate": mission_data.get("regenerated_count", 0) < 3,
             "generated_at": mission_data.get("generated_at", datetime.utcnow().isoformat()),
             # Legacy fields for backward compatibility
@@ -818,8 +927,6 @@ Only output the JSON, nothing else."""
                 "target_count": len(problems),
                 "completed_count": completed_count,
             },
-            "main_quests": mission_data.get("main_quests", []),
-            "side_quests": mission_data.get("side_quests", []),
         }
 
     async def generate_all_missions(self) -> dict:
