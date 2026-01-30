@@ -33,6 +33,8 @@ class Settings(BaseSettings):
         "http://localhost:8080",
         "https://leetloop-693222603964.us-central1.run.app",
         "https://leetloop-web-693222603964.us-central1.run.app",
+        "https://leetloop-api-fsro5u7gxq-uc.a.run.app",
+        "https://leetloop-web-fsro5u7gxq-uc.a.run.app",
     ]
 
     # Rate limiting

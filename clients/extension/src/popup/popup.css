@@ -705,6 +705,60 @@ body {
 }
 
 /* ===========================================
+   AUTH SYNC WARNING BANNER
+   =========================================== */
+
+.auth-sync-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  background: #fef3c7;
+  border: 2px solid #f59e0b;
+  font-size: 10px;
+  line-height: 1.4;
+  clip-path: polygon(
+    var(--chamfer-sm) 0,
+    100% 0,
+    100% calc(100% - var(--chamfer-sm)),
+    calc(100% - var(--chamfer-sm)) 100%,
+    0 100%,
+    0 var(--chamfer-sm)
+  );
+}
+
+.auth-sync-warning .warning-icon {
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.auth-sync-warning .warning-text {
+  flex: 1;
+  color: #92400e;
+}
+
+.auth-sync-warning .warning-dismiss {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border: none;
+  background: transparent;
+  color: #92400e;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  opacity: 0.6;
+  transition: opacity 0.1s;
+}
+
+.auth-sync-warning .warning-dismiss:hover {
+  opacity: 1;
+}
+
+/* ===========================================
    UTILITY ANIMATIONS
    =========================================== */
 

@@ -1,10 +1,14 @@
 """JWT authentication middleware for extension clients."""
 
+import json
 from dataclasses import dataclass
+from functools import lru_cache
 from typing import Optional
 
+import httpx
 import jwt
 from fastapi import Header, HTTPException
+from jwt import PyJWKClient
 
 from app.config import get_settings
 
@@ -15,24 +19,36 @@ class AuthenticatedUser:
     email: Optional[str]
 
 
-def _decode_jwt(token: str) -> dict:
-    """Decode and verify a Supabase JWT."""
+@lru_cache(maxsize=1)
+def _get_jwks_client() -> PyJWKClient:
+    """Get cached JWKS client for Supabase."""
     settings = get_settings()
-    secret = settings.supabase_jwt_secret
-    if not secret:
-        raise HTTPException(status_code=500, detail="JWT secret not configured")
+    jwks_url = f"{settings.supabase_url}/auth/v1/.well-known/jwks.json"
+    return PyJWKClient(jwks_url, cache_keys=True)
+
+
+def _decode_jwt(token: str) -> dict:
+    """Decode and verify a Supabase JWT using JWKS (supports ES256)."""
+    settings = get_settings()
 
     try:
+        # Get the signing key from Supabase JWKS endpoint
+        jwks_client = _get_jwks_client()
+        signing_key = jwks_client.get_signing_key_from_jwt(token)
+
         return jwt.decode(
             token,
-            secret,
-            algorithms=["HS256"],
+            signing_key.key,
+            algorithms=["ES256", "HS256"],
             audience="authenticated",
         )
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token expired")
     except jwt.InvalidTokenError as e:
         raise HTTPException(status_code=401, detail=f"Invalid token: {e}")
+    except Exception as e:
+        # JWKS fetch failed - log and return helpful error
+        raise HTTPException(status_code=500, detail=f"JWT verification failed: {e}")
 
 
 def get_current_user(

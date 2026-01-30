@@ -17,8 +17,8 @@ google-generativeai==0.3.2
 # Async support
 anyio>=4.2.0
 
-# JWT
-PyJWT==2.8.0
+# JWT (with cryptography for ES256 support)
+PyJWT[crypto]>=2.10.1
 
 # Utilities
 python-dotenv==1.0.1

@@ -252,6 +252,63 @@ async function handleSync() {
 }
 
 /**
+ * Check for auth sync issues and show warning if detected
+ */
+async function checkAuthSyncStatus(): Promise<void> {
+  const result = await chrome.storage.local.get(['leetloop_auth_tokens', 'webGuestUserId', 'guestUserId', 'authSyncWarningDismissed']);
+
+  const hasExtensionAuth = !!result.leetloop_auth_tokens?.access_token;
+  const hasWebGuestId = !!result.webGuestUserId;
+  const localGuestId = result.guestUserId;
+  const warningDismissed = result.authSyncWarningDismissed;
+
+  // If extension has no auth, but we have a web guest ID that differs from local guest ID,
+  // it suggests the web app was visited but auth didn't sync properly
+  if (!hasExtensionAuth && hasWebGuestId && localGuestId && result.webGuestUserId !== localGuestId) {
+    // Only show warning if not dismissed
+    if (!warningDismissed) {
+      showAuthSyncWarning('Guest ID mismatch detected. Your submissions may not sync correctly. Try signing in again.');
+    }
+  }
+
+  // Also check if submissions exist with different user IDs (data fragmentation)
+  const submissionsResult = await chrome.storage.local.get(['submissions']);
+  const submissions = submissionsResult.submissions || [];
+  if (submissions.length > 0 && !hasExtensionAuth) {
+    // User has submissions but no auth - they might be in guest mode
+    // This is fine, but if they think they're signed in, it's a problem
+    console.log('[LeetLoop] Note: Operating in guest mode with', submissions.length, 'local submissions');
+  }
+}
+
+/**
+ * Show auth sync warning banner
+ */
+function showAuthSyncWarning(message: string): void {
+  // Remove any existing warning
+  const existingWarning = document.querySelector('.auth-sync-warning');
+  if (existingWarning) existingWarning.remove();
+
+  const warningEl = document.createElement('div');
+  warningEl.className = 'auth-sync-warning';
+  warningEl.innerHTML = `
+    <span class="warning-icon">⚠️</span>
+    <span class="warning-text">${message}</span>
+    <button class="warning-dismiss" title="Dismiss">×</button>
+  `;
+
+  // Add dismiss handler
+  warningEl.querySelector('.warning-dismiss')?.addEventListener('click', () => {
+    warningEl.remove();
+    chrome.storage.local.set({ authSyncWarningDismissed: true });
+  });
+
+  // Insert at top of popup
+  const container = document.querySelector('.container');
+  container?.insertBefore(warningEl, container.firstChild);
+}
+
+/**
  * Initialize auth state
  */
 async function initAuth() {
@@ -263,10 +320,21 @@ async function initAuth() {
     console.log('[LeetLoop Popup] Current user:', user?.email || 'null');
     updateAuthUI(user);
 
+    // Check for auth sync issues only if user appears signed out
+    if (!user) {
+      await checkAuthSyncStatus();
+    }
+
     // Listen for auth state changes
     onAuthStateChange((user) => {
       console.log('[LeetLoop Popup] Auth state changed:', user?.email || 'signed out');
       updateAuthUI(user);
+      // Clear any warning dismissal when auth state changes
+      if (user) {
+        chrome.storage.local.remove('authSyncWarningDismissed');
+        const warning = document.querySelector('.auth-sync-warning');
+        if (warning) warning.remove();
+      }
     });
   } catch (error) {
     console.error('[LeetLoop Popup] Auth init error:', error);
