@@ -15,12 +15,17 @@ const noopLock = async <R>(
   return await fn()
 }
 
+// Use placeholder values during build time to allow static page generation
+// At runtime in browser, the real env vars will be used
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key'
+
 export function createClient() {
   if (client) return client
 
   client = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY,
     {
       auth: {
         flowType: 'pkce',
