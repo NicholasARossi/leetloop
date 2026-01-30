@@ -351,7 +351,7 @@ body {
   }
 
   .progress-fill {
-    @apply bg-coral;
+    background: var(--accent-color);
     position: absolute;
     inset: 2px;
     right: auto;
@@ -401,7 +401,7 @@ body {
   }
 
   .checkbox.checked {
-    @apply bg-coral;
+    background: var(--accent-color);
   }
 
   /* Nav item */
@@ -414,7 +414,8 @@ body {
   }
 
   .nav-link.active {
-    @apply bg-coral text-black border-l-black font-medium;
+    @apply text-black border-l-black font-medium;
+    background: var(--accent-color);
   }
 
   /* Stat display - Banquise should never be bold */
@@ -442,7 +443,7 @@ body {
   }
 
   .stat-badge-accent {
-    @apply bg-coral;
+    background: var(--accent-color);
   }
 
   .stat-badge-accent .stat-label {
@@ -459,11 +460,14 @@ body {
   }
 
   .list-item-rect.active {
-    @apply bg-coral/20 border-l-4 border-l-coral;
+    @apply border-l-4;
+    background: var(--accent-color-light);
+    border-left-color: var(--accent-color);
   }
 
   .list-item-rect.completed {
-    @apply border-l-4 border-l-coral;
+    @apply border-l-4;
+    border-left-color: var(--accent-color);
   }
 
   /* Side quest indicator dots */
