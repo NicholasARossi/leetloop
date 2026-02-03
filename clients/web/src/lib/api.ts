@@ -283,6 +283,59 @@ export const leetloopApi = {
   // Mission v2 (with reasoning)
   getDailyMissionV2: (userId: string) =>
     api<MissionResponseV2>(`/api/mission/${userId}`),
+
+  // System Design
+  getSystemDesignTracks: () =>
+    api<SystemDesignTrackSummary[]>('/api/system-design/tracks'),
+
+  getSystemDesignTrack: (trackId: string) =>
+    api<SystemDesignTrack>(`/api/system-design/tracks/${trackId}`),
+
+  getTrackProgress: (trackId: string, userId: string) =>
+    api<TrackProgressResponse>(`/api/system-design/tracks/${trackId}/progress/${userId}`),
+
+  createSystemDesignSession: (userId: string, data: CreateSessionRequest) =>
+    api<SystemDesignSession>(`/api/system-design/${userId}/sessions`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  getSystemDesignSession: (sessionId: string) =>
+    api<SystemDesignSession>(`/api/system-design/sessions/${sessionId}`),
+
+  submitSystemDesignResponse: (sessionId: string, questionId: number, responseText: string) =>
+    api<{ success: boolean; question_id: number; word_count: number }>(
+      `/api/system-design/sessions/${sessionId}/response`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ question_id: questionId, response_text: responseText }),
+      }
+    ),
+
+  completeSystemDesignSession: (sessionId: string) =>
+    api<SystemDesignGrade>(`/api/system-design/sessions/${sessionId}/complete`, {
+      method: 'POST',
+    }),
+
+  getSystemDesignGrade: (sessionId: string) =>
+    api<SystemDesignGrade>(`/api/system-design/sessions/${sessionId}/grade`),
+
+  getSystemDesignReviews: (userId: string, limit = 10) =>
+    api<SystemDesignReviewItem[]>(`/api/system-design/${userId}/reviews?limit=${limit}`),
+
+  completeSystemDesignReview: (reviewId: string, success: boolean) =>
+    api<{ id: string; next_review: string; new_interval_days: number }>(
+      `/api/system-design/reviews/${reviewId}/complete`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ success }),
+      }
+    ),
+
+  getSystemDesignHistory: (userId: string, limit = 20, offset = 0) =>
+    api<SessionHistoryResponse>(
+      `/api/system-design/${userId}/history?limit=${limit}&offset=${offset}`
+    ),
 }
 
 // Types (matching backend schemas)
@@ -653,6 +706,139 @@ export interface MissionResponseV2 {
   objective?: DailyObjective
   main_quests?: MainQuest[]
   side_quests?: SideQuest[]
+}
+
+// System Design Types
+export interface SystemDesignTrackSummary {
+  id: string
+  name: string
+  description?: string
+  track_type: string
+  total_topics: number
+}
+
+export interface TopicInfo {
+  name: string
+  order: number
+  difficulty: string
+  example_systems: string[]
+}
+
+export interface RubricWeights {
+  depth: number
+  tradeoffs: number
+  clarity: number
+  scalability: number
+}
+
+export interface SystemDesignTrack extends SystemDesignTrackSummary {
+  topics: TopicInfo[]
+  rubric: RubricWeights
+  created_at?: string
+}
+
+export interface UserTrackProgressData {
+  id: string
+  user_id: string
+  track_id: string
+  completed_topics: string[]
+  sessions_completed: number
+  average_score: number
+  started_at: string
+  last_activity_at: string
+}
+
+export interface TrackProgressResponse {
+  track: SystemDesignTrack
+  progress?: UserTrackProgressData
+  completion_percentage: number
+  next_topic?: string
+}
+
+export interface CreateSessionRequest {
+  track_id: string
+  topic: string
+  session_type?: string
+}
+
+export interface SessionQuestion {
+  id: number
+  text: string
+  focus_area: string
+  key_concepts: string[]
+  response?: string
+  word_count?: number
+}
+
+export interface SystemDesignSession {
+  id: string
+  user_id: string
+  track_id?: string
+  topic: string
+  questions: SessionQuestion[]
+  session_type?: string
+  status: string
+  started_at: string
+  completed_at?: string
+}
+
+export interface RubricScore {
+  dimension: string
+  score: number
+  feedback: string
+}
+
+export interface QuestionGrade {
+  question_id: number
+  score: number
+  feedback: string
+  rubric_scores: RubricScore[]
+  missed_concepts: string[]
+}
+
+export interface SystemDesignGrade {
+  id: string
+  session_id: string
+  overall_score: number
+  overall_feedback: string
+  question_grades: QuestionGrade[]
+  strengths: string[]
+  gaps: string[]
+  review_topics: string[]
+  would_hire?: boolean
+  graded_at: string
+}
+
+export interface SystemDesignReviewItem {
+  id: string
+  user_id: string
+  track_id?: string
+  topic: string
+  reason?: string
+  priority: number
+  next_review: string
+  interval_days: number
+  review_count: number
+  last_reviewed?: string
+  source_session_id?: string
+  created_at: string
+}
+
+export interface SessionHistoryItem {
+  id: string
+  track_name?: string
+  topic: string
+  session_type?: string
+  status: string
+  overall_score?: number
+  started_at: string
+  completed_at?: string
+}
+
+export interface SessionHistoryResponse {
+  sessions: SessionHistoryItem[]
+  total: number
+  has_more: boolean
 }
 
 export { ApiError }
