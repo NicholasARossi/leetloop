@@ -276,3 +276,50 @@ class GeminiGradingResponse(BaseModel):
     gaps: list[str] = []
     review_topics: list[str] = []
     would_hire: Optional[bool] = None
+
+
+# ============ Dashboard Integration Models ============
+
+
+class UserSystemDesignSettings(BaseModel):
+    """User's system design settings for dashboard integration."""
+
+    id: UUID
+    user_id: UUID
+    active_track_id: Optional[UUID] = None
+    show_on_dashboard: bool = True
+    daily_topic_enabled: bool = True
+    created_at: datetime
+    updated_at: datetime
+
+
+class SetActiveTrackRequest(BaseModel):
+    """Request to set active system design track."""
+
+    track_id: Optional[UUID] = None  # None to clear active track
+
+
+class NextTopicInfo(BaseModel):
+    """Information about the next topic to practice."""
+
+    track_id: UUID
+    track_name: str
+    track_type: str
+    topic_name: str
+    topic_order: int
+    topic_difficulty: str
+    example_systems: list[str] = []
+    topics_completed: int
+    total_topics: int
+
+
+class SystemDesignDashboardSummary(BaseModel):
+    """Summary for dashboard display."""
+
+    has_active_track: bool
+    active_track: Optional[TrackSummary] = None
+    next_topic: Optional[NextTopicInfo] = None
+    reviews_due_count: int = 0
+    reviews_due: list[SystemDesignReviewItem] = []
+    recent_score: Optional[float] = None
+    sessions_this_week: int = 0

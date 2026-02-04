@@ -336,6 +336,22 @@ export const leetloopApi = {
     api<SessionHistoryResponse>(
       `/api/system-design/${userId}/history?limit=${limit}&offset=${offset}`
     ),
+
+  // System Design Dashboard
+  getSystemDesignDashboard: (userId: string) =>
+    api<SystemDesignDashboardSummary>(`/api/system-design/${userId}/dashboard`),
+
+  setActiveSystemDesignTrack: (userId: string, trackId: string | null) =>
+    api<{ success: boolean; active_track_id?: string }>(
+      `/api/system-design/${userId}/active-track`,
+      {
+        method: 'PUT',
+        body: JSON.stringify({ track_id: trackId }),
+      }
+    ),
+
+  getActiveSystemDesignTrack: (userId: string) =>
+    api<ActiveTrackResponse>(`/api/system-design/${userId}/active-track`),
 }
 
 // Types (matching backend schemas)
@@ -839,6 +855,34 @@ export interface SessionHistoryResponse {
   sessions: SessionHistoryItem[]
   total: number
   has_more: boolean
+}
+
+// System Design Dashboard Types
+export interface NextTopicInfo {
+  track_id: string
+  track_name: string
+  track_type: string
+  topic_name: string
+  topic_order: number
+  topic_difficulty: string
+  example_systems: string[]
+  topics_completed: number
+  total_topics: number
+}
+
+export interface SystemDesignDashboardSummary {
+  has_active_track: boolean
+  active_track?: SystemDesignTrackSummary
+  next_topic?: NextTopicInfo
+  reviews_due_count: number
+  reviews_due: SystemDesignReviewItem[]
+  recent_score?: number
+  sessions_this_week: number
+}
+
+export interface ActiveTrackResponse {
+  active_track_id?: string
+  track?: SystemDesignTrackSummary
 }
 
 export { ApiError }

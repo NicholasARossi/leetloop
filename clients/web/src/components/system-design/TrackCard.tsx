@@ -6,10 +6,11 @@ import type { SystemDesignTrackSummary, UserTrackProgressData } from '@/lib/api'
 interface TrackCardProps {
   track: SystemDesignTrackSummary
   progress?: UserTrackProgressData
+  isActive?: boolean
   onClick?: () => void
 }
 
-export function TrackCard({ track, progress, onClick }: TrackCardProps) {
+export function TrackCard({ track, progress, isActive, onClick }: TrackCardProps) {
   const completedTopics = progress?.completed_topics?.length || 0
   const completionPercentage = track.total_topics > 0
     ? (completedTopics / track.total_topics) * 100
@@ -35,7 +36,10 @@ export function TrackCard({ track, progress, onClick }: TrackCardProps) {
   return (
     <button
       onClick={onClick}
-      className="list-item w-full text-left reg-corners"
+      className={clsx(
+        'list-item w-full text-left reg-corners',
+        isActive && 'border-sky-500 bg-sky-50/50'
+      )}
     >
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-center gap-2">
@@ -46,6 +50,11 @@ export function TrackCard({ track, progress, onClick }: TrackCardProps) {
           <h3 className="font-medium text-black text-sm">
             {track.name}
           </h3>
+          {isActive && (
+            <span className="bg-sky-100 text-sky-700 text-[10px] font-semibold px-1.5 py-0.5 border border-sky-300">
+              ACTIVE
+            </span>
+          )}
         </div>
         <span className="tag">
           {getTrackTypeLabel(track.track_type)}

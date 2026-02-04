@@ -24,6 +24,8 @@ export default function SystemDesignPage() {
   const [selectedTrack, setSelectedTrack] = useState<SystemDesignTrack | null>(null)
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
   const [starting, setStarting] = useState(false)
+  const [activeTrackId, setActiveTrackId] = useState<string | null>(null)
+  const [settingActive, setSettingActive] = useState(false)
 
   useEffect(() => {
     async function loadData() {
@@ -33,13 +35,16 @@ export default function SystemDesignPage() {
       setError(null)
 
       try {
-        // Load tracks
-        const tracksData = await leetloopApi.getSystemDesignTracks()
-        setTracks(tracksData)
+        // Load tracks, history, and active track in parallel
+        const [tracksData, historyData, activeTrackData] = await Promise.all([
+          leetloopApi.getSystemDesignTracks(),
+          leetloopApi.getSystemDesignHistory(userId, 10),
+          leetloopApi.getActiveSystemDesignTrack(userId).catch(() => null),
+        ])
 
-        // Load history
-        const historyData = await leetloopApi.getSystemDesignHistory(userId, 10)
+        setTracks(tracksData)
         setHistory(historyData.sessions)
+        setActiveTrackId(activeTrackData?.active_track_id || null)
 
         // Load progress for each track
         const progressMap: Record<string, UserTrackProgressData> = {}
@@ -99,6 +104,21 @@ export default function SystemDesignPage() {
     setSelectedTopic(null)
   }
 
+  async function handleSetActiveTrack(trackId: string) {
+    if (!userId || settingActive) return
+
+    setSettingActive(true)
+    try {
+      await leetloopApi.setActiveSystemDesignTrack(userId, trackId)
+      setActiveTrackId(trackId)
+    } catch (err) {
+      console.error('Failed to set active track:', err)
+      setError('Failed to set active track.')
+    } finally {
+      setSettingActive(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -141,6 +161,7 @@ export default function SystemDesignPage() {
               key={track.id}
               track={track}
               progress={trackProgress[track.id]}
+              isActive={activeTrackId === track.id}
               onClick={() => handleTrackSelect(track)}
             />
           ))}
@@ -201,7 +222,14 @@ export default function SystemDesignPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="card max-w-lg w-full max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="heading-accent">{selectedTrack.name}</h2>
+              <div className="flex items-center gap-2">
+                <h2 className="heading-accent">{selectedTrack.name}</h2>
+                {activeTrackId === selectedTrack.id && (
+                  <span className="bg-sky-100 text-sky-700 text-[10px] font-semibold px-2 py-0.5 border border-sky-300">
+                    ACTIVE
+                  </span>
+                )}
+              </div>
               <button
                 onClick={handleCloseModal}
                 className="text-gray-500 hover:text-black"
@@ -209,6 +237,17 @@ export default function SystemDesignPage() {
                 Close
               </button>
             </div>
+
+            {/* Set as Active button */}
+            {activeTrackId !== selectedTrack.id && (
+              <button
+                onClick={() => handleSetActiveTrack(selectedTrack.id)}
+                disabled={settingActive}
+                className="w-full mb-4 py-2 px-4 border-2 border-sky-500 text-sky-700 text-sm font-medium hover:bg-sky-50 transition-colors disabled:opacity-50"
+              >
+                {settingActive ? 'Setting...' : 'Set as Active Track for Dashboard'}
+              </button>
+            )}
 
             {selectedTrack.description && (
               <p className="text-sm text-gray-600 mb-4">

@@ -17,6 +17,23 @@ from app.models.system_design_schemas import (
 )
 
 
+# Book content context for enhanced question generation
+class BookContentContext:
+    """Context from ingested book content for a topic."""
+
+    def __init__(
+        self,
+        chapter_title: str = "",
+        summary: str = "",
+        key_concepts: list[str] = None,
+        case_studies: list[dict] = None,
+    ):
+        self.chapter_title = chapter_title
+        self.summary = summary
+        self.key_concepts = key_concepts or []
+        self.case_studies = case_studies or []
+
+
 class SystemDesignService:
     """
     Service for generating system design questions and grading responses.
@@ -39,12 +56,14 @@ class SystemDesignService:
     async def generate_questions(
         self,
         context: GeminiQuestionContext,
+        book_content: Optional[BookContentContext] = None,
     ) -> list[GeneratedQuestion]:
         """
         Generate 2-3 hard, scenario-based system design questions.
 
         Args:
             context: Topic, track type, and user context
+            book_content: Optional book content to enhance question generation
 
         Returns:
             List of generated questions with focus areas and key concepts
@@ -52,7 +71,7 @@ class SystemDesignService:
         if not self.configured:
             return self._fallback_questions(context.topic)
 
-        prompt = self._build_question_prompt(context)
+        prompt = self._build_question_prompt(context, book_content)
 
         try:
             response = self.model.generate_content(prompt)
@@ -92,18 +111,41 @@ class SystemDesignService:
             print(f"Gemini grading failed: {e}")
             return self._fallback_grading(context)
 
-    def _build_question_prompt(self, context: GeminiQuestionContext) -> str:
+    def _build_question_prompt(
+        self,
+        context: GeminiQuestionContext,
+        book_content: Optional[BookContentContext] = None,
+    ) -> str:
         """Build prompt for question generation."""
         examples = ", ".join(context.example_systems) if context.example_systems else "real-world systems"
         weak_areas_note = ""
         if context.user_weak_areas:
             weak_areas_note = f"\n\nThe user has shown weakness in: {', '.join(context.user_weak_areas)}. Include at least one question that probes these areas."
 
+        # Add book content context if available
+        book_context_note = ""
+        if book_content and (book_content.key_concepts or book_content.summary):
+            book_context_note = f"""
+
+REFERENCE MATERIAL from "Reliable Machine Learning":
+Chapter: {book_content.chapter_title}
+Summary: {book_content.summary}
+Key Concepts to Test: {', '.join(book_content.key_concepts[:10])}
+"""
+            if book_content.case_studies:
+                case_study_names = [cs.get("name", "") for cs in book_content.case_studies[:3]]
+                book_context_note += f"Case Studies: {', '.join(case_study_names)}\n"
+
+            book_context_note += """
+IMPORTANT: Generate questions that test understanding of the concepts from this chapter.
+Questions should probe real-world application of ML reliability principles."""
+
         return f"""You are a senior system design interviewer at a top tech company. Generate 2-3 HARD, scenario-based system design questions about "{context.topic}".
 
 Track type: {context.track_type.upper()}
 Example systems to reference: {examples}
 {weak_areas_note}
+{book_context_note}
 
 Requirements:
 1. Questions must be SPECIFIC scenarios, not generic "design X" questions

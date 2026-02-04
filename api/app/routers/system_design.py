@@ -14,13 +14,16 @@ from app.models.system_design_schemas import (
     CreateSessionRequest,
     GeminiGradingContext,
     GeminiQuestionContext,
+    NextTopicInfo,
     QuestionGrade,
     RubricWeights,
     SessionGrade,
     SessionHistoryItem,
     SessionHistoryResponse,
     SessionQuestion,
+    SetActiveTrackRequest,
     SubmitResponseRequest,
+    SystemDesignDashboardSummary,
     SystemDesignReviewItem,
     SystemDesignSession,
     SystemDesignTrack,
@@ -29,7 +32,7 @@ from app.models.system_design_schemas import (
     TrackSummary,
     UserTrackProgress,
 )
-from app.services.system_design_service import get_system_design_service
+from app.services.system_design_service import BookContentContext, get_system_design_service
 
 router = APIRouter()
 
@@ -127,13 +130,13 @@ async def get_track_progress(
             created_at=track_data.get("created_at"),
         )
 
-        # Get user progress
+        # Get user progress (use limit(1) instead of maybe_single to avoid None response)
         progress_response = (
             supabase.table("user_track_progress")
             .select("*")
             .eq("user_id", str(user_id))
             .eq("track_id", str(track_id))
-            .maybeSingle()
+            .limit(1)
             .execute()
         )
 
@@ -142,7 +145,7 @@ async def get_track_progress(
         next_topic = None
 
         if progress_response.data:
-            progress = UserTrackProgress(**progress_response.data)
+            progress = UserTrackProgress(**progress_response.data[0])
             completed = len(progress.completed_topics)
             total = track.total_topics
             completion_percentage = (completed / total * 100) if total > 0 else 0.0
@@ -216,6 +219,28 @@ async def create_session(
                 weak_areas.extend(g.get("gaps", []))
         weak_areas = list(set(weak_areas))[:5]  # Dedupe and limit
 
+        # Check for book content linked to this track/topic
+        book_content = None
+        try:
+            book_response = (
+                supabase.table("book_content")
+                .select("chapter_title, summary, key_concepts, case_studies")
+                .eq("track_id", str(request.track_id))
+                .eq("chapter_title", request.topic)
+                .limit(1)
+                .execute()
+            )
+            if book_response.data:
+                bc = book_response.data[0]
+                book_content = BookContentContext(
+                    chapter_title=bc.get("chapter_title", ""),
+                    summary=bc.get("summary", ""),
+                    key_concepts=bc.get("key_concepts", []),
+                    case_studies=bc.get("case_studies", []),
+                )
+        except Exception:
+            pass  # Book content is optional enhancement
+
         # Generate questions via Gemini
         service = get_system_design_service()
         context = GeminiQuestionContext(
@@ -224,7 +249,7 @@ async def create_session(
             example_systems=example_systems,
             user_weak_areas=weak_areas,
         )
-        generated = await service.generate_questions(context)
+        generated = await service.generate_questions(context, book_content)
 
         # Convert to storage format
         questions_json = [
@@ -713,19 +738,19 @@ def _update_track_progress(
 ):
     """Update user's track progress after completing a session."""
     try:
-        # Get existing progress
+        # Get existing progress (use limit(1) instead of maybe_single)
         progress_response = (
             supabase.table("user_track_progress")
             .select("*")
             .eq("user_id", str(user_id))
             .eq("track_id", str(track_id))
-            .maybeSingle()
+            .limit(1)
             .execute()
         )
 
         if progress_response.data:
             # Update existing
-            progress = progress_response.data
+            progress = progress_response.data[0]
             completed = set(progress.get("completed_topics", []))
             completed.add(topic)
 
@@ -750,3 +775,236 @@ def _update_track_progress(
             }).execute()
     except Exception as e:
         print(f"Failed to update track progress: {e}")
+
+
+# ============ Dashboard Integration ============
+
+
+@router.get("/system-design/{user_id}/dashboard", response_model=SystemDesignDashboardSummary)
+async def get_dashboard_summary(
+    user_id: UUID,
+    supabase: Annotated[Client, Depends(get_supabase)] = None,
+):
+    """Get system design summary for dashboard display."""
+    from datetime import timedelta
+
+    try:
+        # Get user settings
+        settings_response = (
+            supabase.table("user_system_design_settings")
+            .select("*")
+            .eq("user_id", str(user_id))
+            .limit(1)
+            .execute()
+        )
+
+        has_active_track = False
+        active_track = None
+        next_topic = None
+
+        if settings_response.data and settings_response.data[0].get("active_track_id"):
+            has_active_track = True
+            active_track_id = settings_response.data[0]["active_track_id"]
+
+            # Get active track details
+            track_response = (
+                supabase.table("system_design_tracks")
+                .select("id, name, description, track_type, total_topics, topics")
+                .eq("id", active_track_id)
+                .single()
+                .execute()
+            )
+
+            if track_response.data:
+                track_data = track_response.data
+                active_track = TrackSummary(
+                    id=track_data["id"],
+                    name=track_data["name"],
+                    description=track_data.get("description"),
+                    track_type=track_data["track_type"],
+                    total_topics=track_data.get("total_topics", 0),
+                )
+
+                # Get user's progress to find next topic
+                progress_response = (
+                    supabase.table("user_track_progress")
+                    .select("completed_topics")
+                    .eq("user_id", str(user_id))
+                    .eq("track_id", active_track_id)
+                    .limit(1)
+                    .execute()
+                )
+
+                completed_topics = []
+                if progress_response.data:
+                    completed_topics = progress_response.data[0].get("completed_topics", [])
+
+                # Find next uncompleted topic
+                topics = track_data.get("topics", [])
+                for topic in sorted(topics, key=lambda t: t.get("order", 0)):
+                    if topic.get("name") not in completed_topics:
+                        next_topic = NextTopicInfo(
+                            track_id=UUID(track_data["id"]),
+                            track_name=track_data["name"],
+                            track_type=track_data["track_type"],
+                            topic_name=topic.get("name", ""),
+                            topic_order=topic.get("order", 0),
+                            topic_difficulty=topic.get("difficulty", "medium"),
+                            example_systems=topic.get("example_systems", []),
+                            topics_completed=len(completed_topics),
+                            total_topics=track_data.get("total_topics", 0),
+                        )
+                        break
+
+        # Get reviews due
+        reviews_response = supabase.rpc(
+            "get_due_system_design_reviews",
+            {"p_user_id": str(user_id), "p_limit": 5}
+        ).execute()
+
+        reviews_due = []
+        if reviews_response.data:
+            reviews_due = [SystemDesignReviewItem(**r) for r in reviews_response.data]
+
+        # Get recent sessions this week
+        week_ago = (datetime.utcnow() - timedelta(days=7)).isoformat()
+        sessions_response = (
+            supabase.table("system_design_sessions")
+            .select("id", count="exact")
+            .eq("user_id", str(user_id))
+            .gte("started_at", week_ago)
+            .execute()
+        )
+        sessions_this_week = sessions_response.count or 0
+
+        # Get most recent score
+        recent_grade_response = (
+            supabase.table("system_design_grades")
+            .select("overall_score, session_id")
+            .order("graded_at", desc=True)
+            .limit(1)
+            .execute()
+        )
+        recent_score = None
+        if recent_grade_response.data:
+            # Verify this grade belongs to the user
+            grade = recent_grade_response.data[0]
+            session_check = (
+                supabase.table("system_design_sessions")
+                .select("user_id")
+                .eq("id", grade["session_id"])
+                .eq("user_id", str(user_id))
+                .limit(1)
+                .execute()
+            )
+            if session_check.data:
+                recent_score = grade["overall_score"]
+
+        return SystemDesignDashboardSummary(
+            has_active_track=has_active_track,
+            active_track=active_track,
+            next_topic=next_topic,
+            reviews_due_count=len(reviews_due),
+            reviews_due=reviews_due,
+            recent_score=recent_score,
+            sessions_this_week=sessions_this_week,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get dashboard summary: {str(e)}")
+
+
+@router.put("/system-design/{user_id}/active-track")
+async def set_active_track(
+    user_id: UUID,
+    request: SetActiveTrackRequest,
+    supabase: Annotated[Client, Depends(get_supabase)] = None,
+):
+    """Set user's active system design track."""
+    try:
+        # Check if track exists (if setting one)
+        if request.track_id:
+            track_response = (
+                supabase.table("system_design_tracks")
+                .select("id, name")
+                .eq("id", str(request.track_id))
+                .single()
+                .execute()
+            )
+            if not track_response.data:
+                raise HTTPException(status_code=404, detail="Track not found")
+
+        # Upsert settings
+        settings_data = {
+            "user_id": str(user_id),
+            "active_track_id": str(request.track_id) if request.track_id else None,
+            "updated_at": datetime.utcnow().isoformat(),
+        }
+
+        response = (
+            supabase.table("user_system_design_settings")
+            .upsert(settings_data, on_conflict="user_id")
+            .execute()
+        )
+
+        track_name = None
+        if request.track_id and track_response.data:
+            track_name = track_response.data.get("name")
+
+        return {
+            "success": True,
+            "active_track_id": str(request.track_id) if request.track_id else None,
+            "track_name": track_name,
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to set active track: {str(e)}")
+
+
+@router.get("/system-design/{user_id}/active-track")
+async def get_active_track(
+    user_id: UUID,
+    supabase: Annotated[Client, Depends(get_supabase)] = None,
+):
+    """Get user's active system design track."""
+    try:
+        settings_response = (
+            supabase.table("user_system_design_settings")
+            .select("active_track_id")
+            .eq("user_id", str(user_id))
+            .limit(1)
+            .execute()
+        )
+
+        if not settings_response.data or not settings_response.data[0].get("active_track_id"):
+            return {"active_track_id": None, "track": None}
+
+        active_track_id = settings_response.data[0]["active_track_id"]
+
+        # Get track details
+        track_response = (
+            supabase.table("system_design_tracks")
+            .select("*")
+            .eq("id", active_track_id)
+            .single()
+            .execute()
+        )
+
+        if not track_response.data:
+            return {"active_track_id": None, "track": None}
+
+        track_data = track_response.data
+        return {
+            "active_track_id": active_track_id,
+            "track": TrackSummary(
+                id=track_data["id"],
+                name=track_data["name"],
+                description=track_data.get("description"),
+                track_type=track_data["track_type"],
+                total_topics=track_data.get("total_topics", 0),
+            ),
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get active track: {str(e)}")
