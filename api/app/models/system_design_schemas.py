@@ -281,6 +281,21 @@ class GeminiGradingResponse(BaseModel):
 # ============ Dashboard Integration Models ============
 
 
+class DashboardQuestion(BaseModel):
+    """A focused sub-question for dashboard display (2 concepts per question)."""
+
+    id: str  # UUID for the cached question
+    scenario: str  # Shared scenario/context for the question set
+    text: str  # The specific sub-question (focused on 2 concepts)
+    focus_area: str  # What aspect this sub-question probes
+    key_concepts: list[str] = []  # 2 concepts to address
+    topic: str
+    track_id: UUID
+    part_number: int = 1  # Which part of the series (1, 2, or 3)
+    total_parts: int = 3  # Total parts in the full question
+    completed: bool = False  # Whether user has answered this
+
+
 class UserSystemDesignSettings(BaseModel):
     """User's system design settings for dashboard integration."""
 
@@ -319,7 +334,99 @@ class SystemDesignDashboardSummary(BaseModel):
     has_active_track: bool
     active_track: Optional[TrackSummary] = None
     next_topic: Optional[NextTopicInfo] = None
+    daily_questions: list[DashboardQuestion] = []  # Pre-generated questions for today
     reviews_due_count: int = 0
     reviews_due: list[SystemDesignReviewItem] = []
     recent_score: Optional[float] = None
     sessions_this_week: int = 0
+
+
+# ============ Simplified Attempt Models (Single Question Flow) ============
+
+
+class CreateAttemptRequest(BaseModel):
+    """Request to create a new single-question attempt."""
+
+    track_id: UUID
+    topic: str
+
+
+class SubmitAttemptRequest(BaseModel):
+    """Request to submit response for an attempt."""
+
+    response_text: str
+
+
+class AttemptGrade(BaseModel):
+    """Simplified grading result for an attempt."""
+
+    score: float = Field(ge=1, le=10)
+    verdict: str  # "pass", "fail", "borderline"
+    feedback: str
+    missed_concepts: list[str] = []
+    review_topics: list[str] = []
+
+
+class SystemDesignAttempt(BaseModel):
+    """A single-question system design attempt."""
+
+    id: UUID
+    user_id: UUID
+    track_id: Optional[UUID] = None
+    topic: str
+    question_text: str
+    question_focus_area: Optional[str] = None
+    question_key_concepts: list[str] = []
+    response_text: Optional[str] = None
+    word_count: int = 0
+    score: Optional[float] = None
+    verdict: Optional[str] = None
+    feedback: Optional[str] = None
+    missed_concepts: list[str] = []
+    review_topics: list[str] = []
+    status: str = "pending"
+    created_at: datetime
+    graded_at: Optional[datetime] = None
+
+
+class AttemptHistoryItem(BaseModel):
+    """Summary of a past attempt for history view."""
+
+    id: UUID
+    topic: str
+    question_text: str
+    score: Optional[float] = None
+    verdict: Optional[str] = None
+    status: str
+    created_at: datetime
+    graded_at: Optional[datetime] = None
+    track_name: Optional[str] = None
+
+
+class AttemptHistoryResponse(BaseModel):
+    """List of past attempts with pagination."""
+
+    attempts: list[AttemptHistoryItem]
+    total: int
+    has_more: bool
+
+
+# ============ Simplified Gemini Models for Single Question ============
+
+
+class GeminiSingleQuestionResponse(BaseModel):
+    """Gemini's generated single question."""
+
+    text: str
+    focus_area: str
+    key_concepts: list[str] = []
+
+
+class GeminiSimplifiedGradingResponse(BaseModel):
+    """Gemini's simplified grading response for single question."""
+
+    score: float = Field(ge=1, le=10)
+    verdict: str  # "pass", "fail", "borderline"
+    feedback: str
+    missed_concepts: list[str] = []
+    review_topics: list[str] = []

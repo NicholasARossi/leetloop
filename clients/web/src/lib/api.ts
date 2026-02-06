@@ -352,6 +352,34 @@ export const leetloopApi = {
 
   getActiveSystemDesignTrack: (userId: string) =>
     api<ActiveTrackResponse>(`/api/system-design/${userId}/active-track`),
+
+  // System Design Attempts (Simplified Single-Question Flow)
+  createSystemDesignAttempt: (userId: string, data: CreateAttemptRequest) =>
+    api<SystemDesignAttempt>(`/api/system-design/${userId}/attempt`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  submitSystemDesignAttempt: (attemptId: string, responseText: string) =>
+    api<AttemptGrade>(`/api/system-design/attempts/${attemptId}/submit`, {
+      method: 'POST',
+      body: JSON.stringify({ response_text: responseText }),
+    }),
+
+  getSystemDesignAttempt: (attemptId: string) =>
+    api<SystemDesignAttempt>(`/api/system-design/attempts/${attemptId}`),
+
+  getSystemDesignAttemptHistory: (userId: string, limit = 20, offset = 0) =>
+    api<AttemptHistoryResponse>(
+      `/api/system-design/${userId}/attempts?limit=${limit}&offset=${offset}`
+    ),
+
+  // Submit answer for a dashboard question
+  submitDashboardQuestion: (questionId: string, responseText: string) =>
+    api<AttemptGrade>(`/api/system-design/daily-questions/${questionId}/submit`, {
+      method: 'POST',
+      body: JSON.stringify({ response_text: responseText }),
+    }),
 }
 
 // Types (matching backend schemas)
@@ -870,10 +898,24 @@ export interface NextTopicInfo {
   total_topics: number
 }
 
+export interface DashboardQuestion {
+  id: string
+  scenario: string  // Shared scenario context
+  text: string  // The focused sub-question (2 concepts)
+  focus_area: string
+  key_concepts: string[]  // Exactly 2 concepts to address
+  topic: string
+  track_id: string
+  part_number: number  // Which part (1, 2, or 3)
+  total_parts: number  // Total parts in full scenario
+  completed: boolean
+}
+
 export interface SystemDesignDashboardSummary {
   has_active_track: boolean
   active_track?: SystemDesignTrackSummary
   next_topic?: NextTopicInfo
+  daily_questions: DashboardQuestion[]
   reviews_due_count: number
   reviews_due: SystemDesignReviewItem[]
   recent_score?: number
@@ -883,6 +925,58 @@ export interface SystemDesignDashboardSummary {
 export interface ActiveTrackResponse {
   active_track_id?: string
   track?: SystemDesignTrackSummary
+}
+
+// System Design Simplified Attempt Types
+export interface CreateAttemptRequest {
+  track_id: string
+  topic: string
+}
+
+export interface SystemDesignAttempt {
+  id: string
+  user_id: string
+  track_id?: string
+  topic: string
+  question_text: string
+  question_focus_area?: string
+  question_key_concepts: string[]
+  response_text?: string
+  word_count: number
+  score?: number
+  verdict?: 'pass' | 'fail' | 'borderline'
+  feedback?: string
+  missed_concepts: string[]
+  review_topics: string[]
+  status: 'pending' | 'graded' | 'abandoned'
+  created_at: string
+  graded_at?: string
+}
+
+export interface AttemptGrade {
+  score: number
+  verdict: 'pass' | 'fail' | 'borderline'
+  feedback: string
+  missed_concepts: string[]
+  review_topics: string[]
+}
+
+export interface AttemptHistoryItem {
+  id: string
+  topic: string
+  question_text: string
+  score?: number
+  verdict?: 'pass' | 'fail' | 'borderline'
+  status: string
+  created_at: string
+  graded_at?: string
+  track_name?: string
+}
+
+export interface AttemptHistoryResponse {
+  attempts: AttemptHistoryItem[]
+  total: number
+  has_more: boolean
 }
 
 export { ApiError }

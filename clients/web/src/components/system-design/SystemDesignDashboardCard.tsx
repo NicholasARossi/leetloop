@@ -1,20 +1,31 @@
 'use client'
 
+import { useState } from 'react'
 import { clsx } from 'clsx'
 import Link from 'next/link'
-import type { SystemDesignDashboardSummary, SystemDesignReviewItem } from '@/lib/api'
+import type { SystemDesignDashboardSummary, SystemDesignReviewItem, AttemptGrade } from '@/lib/api'
+import { DashboardQuestionCard } from './DashboardQuestionCard'
 
 interface SystemDesignDashboardCardProps {
   data: SystemDesignDashboardSummary
   onStartSession?: (trackId: string, topic: string) => void
   onStartReview?: (review: SystemDesignReviewItem) => void
+  onQuestionGraded?: (questionId: string, grade: AttemptGrade) => void
 }
 
 export function SystemDesignDashboardCard({
   data,
   onStartSession,
   onStartReview,
+  onQuestionGraded,
 }: SystemDesignDashboardCardProps) {
+  const [gradedQuestions, setGradedQuestions] = useState<Set<string>>(new Set())
+
+  const handleQuestionGraded = (questionId: string, grade: AttemptGrade) => {
+    setGradedQuestions(prev => new Set(prev).add(questionId))
+    onQuestionGraded?.(questionId, grade)
+  }
+
   const getTrackTypeLabel = (type: string) => {
     switch (type) {
       case 'mle':
@@ -74,40 +85,84 @@ export function SystemDesignDashboardCard({
         )}
       </div>
 
-      {/* Next Topic */}
+      {/* Daily Questions */}
       {data.next_topic && data.active_track && (
         <>
-          <p className="text-[13px] text-gray-600 mb-3">
-            Today&apos;s topic from your <strong>{data.active_track.name}</strong> track:
-          </p>
+          <div className="mb-3">
+            <p className="text-[13px] text-gray-600">
+              Today&apos;s practice on <strong>{data.next_topic.topic_name}</strong>:
+            </p>
+            <p className="text-[11px] text-gray-400 mt-0.5">
+              {getTrackTypeLabel(data.next_topic.track_type)} Track &bull; Topic {data.next_topic.topic_order + 1} of {data.next_topic.total_topics}
+            </p>
+          </div>
 
-          <button
-            onClick={() => onStartSession?.(data.next_topic!.track_id, data.next_topic!.topic_name)}
-            className="w-full text-left p-4 bg-white border-2 border-sky-200 hover:border-sky-400 transition-all hover:translate-x-1 mb-3"
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className={clsx(
-                  'w-2 h-2 rounded-full',
-                  'bg-amber-400'
-                )} />
-                <div>
-                  <div className="font-semibold text-sm">{data.next_topic.topic_name}</div>
-                  <div className="text-xs text-gray-500 mt-0.5">
-                    {getTrackTypeLabel(data.next_topic.track_type)} Track &bull; Topic {data.next_topic.topic_order + 1} of {data.next_topic.total_topics}
-                  </div>
-                  {data.next_topic.example_systems.length > 0 && (
-                    <div className="text-[11px] text-gray-400 mt-1">
-                      Examples: {data.next_topic.example_systems.slice(0, 3).join(', ')}
-                    </div>
-                  )}
+          {/* Show daily questions if available */}
+          {data.daily_questions && data.daily_questions.length > 0 ? (
+            <div className="mb-3">
+              {/* Scenario (shared context) - show once */}
+              {data.daily_questions[0]?.scenario && (
+                <div className="p-3 bg-gray-50 border border-gray-200 mb-3 text-xs text-gray-700">
+                  <span className="font-medium text-gray-900">Scenario: </span>
+                  {data.daily_questions[0].scenario}
+                </div>
+              )}
+
+              {/* Progress indicator */}
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-[10px] text-gray-400 uppercase tracking-wider">
+                  Part {data.daily_questions[0]?.part_number || 1}-{data.daily_questions[data.daily_questions.length - 1]?.part_number || 2} of {data.daily_questions[0]?.total_parts || 3}
+                </span>
+                <div className="flex-1 h-1 bg-gray-200 rounded">
+                  <div
+                    className="h-1 bg-sky-500 rounded"
+                    style={{
+                      width: `${((data.daily_questions.filter(q => q.completed).length + gradedQuestions.size) / (data.daily_questions[0]?.total_parts || 3)) * 100}%`
+                    }}
+                  />
                 </div>
               </div>
-              <span className="bg-sky-500 hover:bg-sky-600 text-white px-3 py-1.5 text-xs font-semibold">
-                Start Session
-              </span>
+
+              {/* Sub-questions */}
+              <div className="space-y-2">
+                {data.daily_questions.map((question, index) => (
+                  <DashboardQuestionCard
+                    key={question.id}
+                    question={question}
+                    index={index}
+                    showScenario={false}
+                    onGraded={handleQuestionGraded}
+                  />
+                ))}
+              </div>
             </div>
-          </button>
+          ) : (
+            /* Fallback: Start Session button if no questions available */
+            <button
+              onClick={() => onStartSession?.(data.next_topic!.track_id, data.next_topic!.topic_name)}
+              className="w-full text-left p-4 bg-white border-2 border-sky-200 hover:border-sky-400 transition-all hover:translate-x-1 mb-3"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className={clsx(
+                    'w-2 h-2 rounded-full',
+                    'bg-amber-400'
+                  )} />
+                  <div>
+                    <div className="font-semibold text-sm">{data.next_topic.topic_name}</div>
+                    {data.next_topic.example_systems.length > 0 && (
+                      <div className="text-[11px] text-gray-400 mt-1">
+                        Examples: {data.next_topic.example_systems.slice(0, 3).join(', ')}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <span className="bg-sky-500 hover:bg-sky-600 text-white px-3 py-1.5 text-xs font-semibold">
+                  Start Session
+                </span>
+              </div>
+            </button>
+          )}
         </>
       )}
 
@@ -143,7 +198,7 @@ export function SystemDesignDashboardCard({
       {/* Stats row */}
       {(data.recent_score !== undefined || data.sessions_this_week > 0) && (
         <div className="flex items-center gap-4 pt-3 mt-3 border-t border-sky-200 text-xs text-gray-500">
-          {data.recent_score !== undefined && (
+          {data.recent_score != null && (
             <span>Last score: <strong className="text-black">{data.recent_score.toFixed(1)}/10</strong></span>
           )}
           {data.sessions_this_week > 0 && (

@@ -12,6 +12,8 @@ from app.models.system_design_schemas import (
     GeminiGradingContext,
     GeminiGradingResponse,
     GeminiQuestionContext,
+    GeminiSimplifiedGradingResponse,
+    GeminiSingleQuestionResponse,
     QuestionGrade,
     RubricScore,
 )
@@ -392,6 +394,394 @@ Grade now:"""
             gaps=["Grading error"],
             review_topics=[],
             would_hire=None,
+        )
+
+    # ============ Dashboard Questions (Pre-generated for caching) ============
+
+    async def generate_dashboard_questions(
+        self,
+        context: GeminiQuestionContext,
+        count: int = 2,
+    ) -> dict:
+        """
+        Generate a scenario with focused sub-questions for dashboard display.
+
+        Each sub-question focuses on exactly 2 concepts, making answers more focused.
+        A full scenario has 3 sub-questions total, spread across 2 days.
+
+        Args:
+            context: Topic, track type, and user context
+            count: Number of sub-questions to generate for today (default 2)
+
+        Returns:
+            Dict with scenario and list of sub-questions
+        """
+        if not self.configured:
+            return self._fallback_dashboard_questions(context.topic, count)
+
+        prompt = self._build_dashboard_questions_prompt(context, count)
+
+        try:
+            response = self.model.generate_content(prompt)
+            return self._parse_dashboard_questions_response(response.text, context.topic, count)
+        except Exception as e:
+            print(f"Gemini dashboard question generation failed: {e}")
+            return self._fallback_dashboard_questions(context.topic, count)
+
+    def _build_dashboard_questions_prompt(self, context: GeminiQuestionContext, count: int) -> str:
+        """Build prompt for dashboard question generation with focused sub-questions."""
+        examples = ", ".join(context.example_systems) if context.example_systems else "real-world systems"
+        weak_areas_note = ""
+        if context.user_weak_areas:
+            weak_areas_note = f"\n\nThe user has shown weakness in: {', '.join(context.user_weak_areas)}. Probe these areas."
+
+        return f"""You are a senior system design interviewer. Create ONE challenging scenario about "{context.topic}" with {count} focused sub-questions.
+
+Track type: {context.track_type.upper()}
+Example systems: {examples}
+{weak_areas_note}
+
+STRUCTURE:
+1. Write a realistic scenario (2-3 sentences) with specific constraints (users, QPS, latency)
+2. Create {count} focused sub-questions, each probing exactly 2 concepts
+3. Each sub-question should be answerable in 50-100 words
+
+IMPORTANT: Each sub-question should focus on ONLY 2 specific concepts. This keeps answers focused.
+
+Format your response EXACTLY as JSON:
+{{
+  "scenario": "Your company is building a real-time collaborative document editor like Google Docs. You need to support 10M documents with 1000 concurrent editors per popular document. Changes must sync within 200ms...",
+  "sub_questions": [
+    {{
+      "text": "How would you handle conflict resolution when two users edit the same paragraph simultaneously?",
+      "focus_area": "conflict resolution",
+      "key_concepts": ["operational transformation", "CRDTs"]
+    }},
+    {{
+      "text": "Design the data model for storing document state and edit history efficiently.",
+      "focus_area": "data modeling",
+      "key_concepts": ["document versioning", "change deltas"]
+    }}
+  ]
+}}
+
+Generate now:"""
+
+    def _parse_dashboard_questions_response(
+        self,
+        text: str,
+        topic: str,
+        count: int,
+    ) -> dict:
+        """Parse Gemini's dashboard questions response."""
+        try:
+            json_match = re.search(r'\{[\s\S]*\}', text)
+            if not json_match:
+                return self._fallback_dashboard_questions(topic, count)
+
+            data = json.loads(json_match.group())
+            scenario = data.get("scenario", "")
+            sub_questions = []
+
+            for i, q in enumerate(data.get("sub_questions", [])):
+                # Ensure exactly 2 concepts per sub-question
+                concepts = q.get("key_concepts", [])[:2]
+                if len(concepts) < 2:
+                    concepts = concepts + ["implementation details", "trade-offs"][:2-len(concepts)]
+
+                sub_questions.append({
+                    "text": q.get("text", ""),
+                    "focus_area": q.get("focus_area", "general"),
+                    "key_concepts": concepts,
+                    "part_number": i + 1,
+                })
+
+            # Ensure we have the requested count
+            while len(sub_questions) < count:
+                sub_questions.append(self._fallback_sub_question(topic, len(sub_questions) + 1))
+
+            return {
+                "scenario": scenario,
+                "sub_questions": sub_questions[:count],
+                "total_parts": 3,  # Full question has 3 parts across 2 days
+            }
+        except (json.JSONDecodeError, KeyError) as e:
+            print(f"Failed to parse dashboard questions response: {e}")
+            return self._fallback_dashboard_questions(topic, count)
+
+    def _fallback_dashboard_questions(self, topic: str, count: int) -> dict:
+        """Return fallback scenario with sub-questions."""
+        return {
+            "scenario": f"Your company is building a scalable {topic} system. You need to handle 100M daily active users with sub-100ms latency. The system must be highly available (99.99% uptime) and handle 10x traffic spikes during peak hours.",
+            "sub_questions": [self._fallback_sub_question(topic, i + 1) for i in range(count)],
+            "total_parts": 3,
+        }
+
+    def _fallback_sub_question(self, topic: str, part_number: int) -> dict:
+        """Return a fallback sub-question."""
+        fallbacks = [
+            {
+                "text": "Design the data model and caching strategy for this system.",
+                "focus_area": "data modeling",
+                "key_concepts": ["schema design", "cache invalidation"],
+            },
+            {
+                "text": "How would you handle failures and ensure data consistency?",
+                "focus_area": "reliability",
+                "key_concepts": ["failover", "consistency guarantees"],
+            },
+            {
+                "text": "Describe your scaling strategy for 10x traffic growth.",
+                "focus_area": "scaling",
+                "key_concepts": ["horizontal scaling", "load balancing"],
+            },
+        ]
+        idx = (part_number - 1) % len(fallbacks)
+        return {**fallbacks[idx], "part_number": part_number}
+
+    # ============ Simplified Single-Question Methods ============
+
+    async def generate_single_question(
+        self,
+        context: GeminiQuestionContext,
+    ) -> GeminiSingleQuestionResponse:
+        """
+        Generate ONE hard, scenario-based system design question.
+
+        Args:
+            context: Topic, track type, and user context
+
+        Returns:
+            Single generated question with focus area and key concepts
+        """
+        if not self.configured:
+            return self._fallback_single_question(context.topic)
+
+        prompt = self._build_single_question_prompt(context)
+
+        try:
+            response = self.model.generate_content(prompt)
+            return self._parse_single_question_response(response.text)
+        except Exception as e:
+            print(f"Gemini single question generation failed: {e}")
+            return self._fallback_single_question(context.topic)
+
+    async def grade_attempt(
+        self,
+        topic: str,
+        track_type: str,
+        question_text: str,
+        focus_area: str,
+        key_concepts: list[str],
+        response_text: str,
+    ) -> GeminiSimplifiedGradingResponse:
+        """
+        Grade a single response with harsh, simplified feedback.
+
+        Returns:
+            - score: 1-10
+            - verdict: 'pass' (>=7) | 'borderline' (5-7) | 'fail' (<5)
+            - feedback: 2-3 harsh sentences
+            - missed_concepts: concepts not covered
+            - review_topics: topics to add to review queue
+        """
+        if not self.configured:
+            return self._fallback_attempt_grading(response_text, key_concepts, topic)
+
+        prompt = self._build_attempt_grading_prompt(
+            topic, track_type, question_text, focus_area, key_concepts, response_text
+        )
+
+        try:
+            response = self.model.generate_content(prompt)
+            return self._parse_attempt_grading_response(response.text, topic)
+        except Exception as e:
+            print(f"Gemini attempt grading failed: {e}")
+            return self._fallback_attempt_grading(response_text, key_concepts, topic)
+
+    def _build_single_question_prompt(self, context: GeminiQuestionContext) -> str:
+        """Build prompt for single question generation."""
+        examples = ", ".join(context.example_systems) if context.example_systems else "real-world systems"
+        weak_areas_note = ""
+        if context.user_weak_areas:
+            weak_areas_note = f"\n\nThe user has shown weakness in: {', '.join(context.user_weak_areas)}. Probe these areas."
+
+        return f"""You are a senior system design interviewer at a top tech company. Generate ONE HARD, scenario-based system design question about "{context.topic}".
+
+Track type: {context.track_type.upper()}
+Example systems to reference: {examples}
+{weak_areas_note}
+
+Requirements:
+1. Question must be a SPECIFIC scenario, not generic "design X"
+2. Include concrete constraints (users, requests/sec, latency requirements)
+3. Require deep technical knowledge to answer well
+4. Probe edge cases, failure modes, and scaling challenges
+
+Provide:
+- The question text (specific scenario with constraints)
+- Focus area (what aspect this tests)
+- Key concepts the answer should cover (5-8 specific things)
+
+Format your response EXACTLY as JSON:
+{{
+  "text": "Your specific scenario-based question here...",
+  "focus_area": "e.g., data modeling, scaling, failure handling",
+  "key_concepts": ["concept1", "concept2", ...]
+}}
+
+Generate the question now:"""
+
+    def _build_attempt_grading_prompt(
+        self,
+        topic: str,
+        track_type: str,
+        question_text: str,
+        focus_area: str,
+        key_concepts: list[str],
+        response_text: str,
+    ) -> str:
+        """Build prompt for simplified harsh grading."""
+        return f"""You are a harsh but fair senior system design interviewer. Grade this response critically - you're deciding whether this person could actually build systems at scale.
+
+TOPIC: {topic}
+TRACK: {track_type.upper()}
+
+QUESTION:
+{question_text}
+
+Focus area: {focus_area}
+Key concepts expected: {', '.join(key_concepts)}
+
+USER RESPONSE:
+{response_text}
+
+---
+
+GRADING RULES:
+- 7/10 = "would likely pass" - most responses should score 4-6
+- Be HARSH. Most candidates fail senior system design interviews.
+- Be SPECIFIC about what's missing. Not "needs more detail" but "didn't address cache invalidation strategy"
+- If they missed fundamental concepts, call it out directly
+
+Score guidelines:
+- 8-10: Expert level - addresses edge cases, failure modes, tradeoffs with numbers
+- 7: Solid - covers main concepts but misses some depth
+- 5-6: Borderline - basic understanding but significant gaps
+- 3-4: Weak - surface level, missing core concepts
+- 1-2: Poor - shows lack of understanding
+
+Format your response EXACTLY as JSON:
+{{
+  "score": 5.5,
+  "verdict": "borderline",
+  "feedback": "2-3 harsh but constructive sentences about what they got wrong and why it matters...",
+  "missed_concepts": ["concept1", "concept2"],
+  "review_topics": ["topic1", "topic2"]
+}}
+
+Note: verdict must be "pass" (score >= 7), "borderline" (5-7), or "fail" (< 5)
+
+Grade now:"""
+
+    def _parse_single_question_response(self, text: str) -> GeminiSingleQuestionResponse:
+        """Parse Gemini's single question response."""
+        try:
+            json_match = re.search(r'\{[\s\S]*\}', text)
+            if not json_match:
+                return self._fallback_single_question("System Design")
+
+            data = json.loads(json_match.group())
+            return GeminiSingleQuestionResponse(
+                text=data.get("text", ""),
+                focus_area=data.get("focus_area", "general"),
+                key_concepts=data.get("key_concepts", []),
+            )
+        except (json.JSONDecodeError, KeyError) as e:
+            print(f"Failed to parse single question response: {e}")
+            return self._fallback_single_question("System Design")
+
+    def _parse_attempt_grading_response(self, text: str, topic: str) -> GeminiSimplifiedGradingResponse:
+        """Parse Gemini's simplified grading response."""
+        try:
+            json_match = re.search(r'\{[\s\S]*\}', text)
+            if not json_match:
+                raise ValueError("No JSON found in response")
+
+            data = json.loads(json_match.group())
+            score = min(10, max(1, data.get("score", 5.0)))
+
+            # Determine verdict based on score if not provided
+            verdict = data.get("verdict", "")
+            if not verdict or verdict not in ["pass", "fail", "borderline"]:
+                if score >= 7:
+                    verdict = "pass"
+                elif score >= 5:
+                    verdict = "borderline"
+                else:
+                    verdict = "fail"
+
+            return GeminiSimplifiedGradingResponse(
+                score=score,
+                verdict=verdict,
+                feedback=data.get("feedback", "Unable to provide detailed feedback."),
+                missed_concepts=data.get("missed_concepts", []),
+                review_topics=data.get("review_topics", [topic]),
+            )
+        except (json.JSONDecodeError, KeyError, ValueError) as e:
+            print(f"Failed to parse attempt grading response: {e}")
+            return self._fallback_attempt_grading("", [], topic)
+
+    def _fallback_single_question(self, topic: str) -> GeminiSingleQuestionResponse:
+        """Return fallback question when Gemini is unavailable."""
+        return GeminiSingleQuestionResponse(
+            text=f"Design a scalable {topic} system that handles 100M daily active users. Focus on the data model, caching strategy, and how you would handle sudden traffic spikes. Be specific about your database choices, sharding strategy, and failover mechanisms.",
+            focus_area="architecture and scaling",
+            key_concepts=["horizontal scaling", "caching", "load balancing", "database sharding", "rate limiting", "failover"],
+        )
+
+    def _fallback_attempt_grading(
+        self,
+        response_text: str,
+        key_concepts: list[str],
+        topic: str,
+    ) -> GeminiSimplifiedGradingResponse:
+        """Return fallback grading when Gemini is unavailable."""
+        word_count = len(response_text.split()) if response_text else 0
+
+        # Basic heuristic scoring
+        base_score = 3.0
+        if word_count > 50:
+            base_score += 1.0
+        if word_count > 150:
+            base_score += 1.0
+        if word_count > 300:
+            base_score += 1.0
+
+        # Check for key concepts
+        concepts_found = 0
+        for concept in key_concepts:
+            if concept.lower() in response_text.lower():
+                concepts_found += 1
+        base_score += min(2.0, concepts_found * 0.5)
+
+        score = min(10, max(1, base_score))
+
+        if score >= 7:
+            verdict = "pass"
+        elif score >= 5:
+            verdict = "borderline"
+        else:
+            verdict = "fail"
+
+        missed = [c for c in key_concepts if c.lower() not in response_text.lower()]
+
+        return GeminiSimplifiedGradingResponse(
+            score=score,
+            verdict=verdict,
+            feedback="AI grading unavailable. Score based on response length and keyword presence. For detailed feedback, ensure the API key is configured.",
+            missed_concepts=missed,
+            review_topics=[topic] if score < 7 else [],
         )
 
 
