@@ -8,6 +8,7 @@ from uuid import UUID
 from supabase import Client
 
 from app.services.gemini_gateway import GeminiGateway
+from app.utils import parse_iso_datetime
 
 
 class MissionGenerator:
@@ -295,7 +296,7 @@ class MissionGenerator:
             last_date = streak_data.get("last_activity_date")
             if last_date:
                 try:
-                    last_date_obj = datetime.fromisoformat(last_date.replace("Z", "+00:00")).date() if isinstance(last_date, str) else last_date
+                    last_date_obj = parse_iso_datetime(last_date).date() if isinstance(last_date, str) else last_date
                     days_diff = (date.today() - last_date_obj).days
                     if days_diff <= 1:
                         context["current_streak"] = streak_data.get("current_streak", 0)
@@ -588,19 +589,29 @@ Only output the JSON, nothing else."""
                     }
 
         # Enrich problems with titles
+        # Handle both formats: "problems" array (expected) or "main_quests" (Gemini sometimes returns)
         problems = []
-        for p in gemini_response.get("problems", []):
-            problem_id = p.get("problem_id")
+        raw_problems = gemini_response.get("problems", [])
+
+        # If no "problems" key, try extracting from main_quests
+        if not raw_problems and gemini_response.get("main_quests"):
+            raw_problems = gemini_response.get("main_quests", [])
+
+        for i, p in enumerate(raw_problems):
+            # Handle both "problem_id" and "slug" field names
+            problem_id = p.get("problem_id") or p.get("slug")
+            if not problem_id:
+                continue
             details = problem_details.get(problem_id, {})
             problems.append({
                 "problem_id": problem_id,
-                "problem_title": details.get("title") or problem_id.replace("-", " ").title(),
-                "difficulty": details.get("difficulty"),
-                "source": p.get("source", "path"),
+                "problem_title": details.get("title") or p.get("title") or problem_id.replace("-", " ").title(),
+                "difficulty": details.get("difficulty") or p.get("difficulty"),
+                "source": p.get("source") or p.get("category", "path"),
                 "reasoning": p.get("reasoning", "Selected for your practice"),
-                "priority": p.get("priority", 0),
-                "skills": p.get("skills", []),
-                "estimated_difficulty": p.get("estimated_difficulty"),
+                "priority": p.get("priority") or p.get("order") or (i + 1),
+                "skills": p.get("skills", [p.get("category")] if p.get("category") else []),
+                "estimated_difficulty": p.get("estimated_difficulty") or p.get("difficulty"),
                 "completed": False,
             })
 
@@ -616,8 +627,8 @@ Only output the JSON, nothing else."""
             "pacing_status": gemini_response.get("pacing_status"),
             "pacing_note": gemini_response.get("pacing_note"),
             "problems": problems,
-            "main_quests": [],  # Legacy field
-            "side_quests": [],  # Legacy field
+            "main_quests": gemini_response.get("main_quests", []),
+            "side_quests": gemini_response.get("side_quests", []),
             "completed_main_quests": [],
             "completed_side_quests": [],
             "regenerated_count": (existing.get("regenerated_count", 0) + 1) if existing else 0,
@@ -767,7 +778,7 @@ Only output the JSON, nothing else."""
             last_date = streak_data.get("last_activity_date")
             if last_date:
                 try:
-                    last_date_obj = datetime.fromisoformat(last_date.replace("Z", "+00:00")).date() if isinstance(last_date, str) else last_date
+                    last_date_obj = parse_iso_datetime(last_date).date() if isinstance(last_date, str) else last_date
                     days_diff = (date.today() - last_date_obj).days
                     if days_diff <= 1:
                         streak = streak_data.get("current_streak", 0)

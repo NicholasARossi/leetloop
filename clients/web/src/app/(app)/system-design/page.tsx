@@ -1,32 +1,51 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import {
   leetloopApi,
   type SystemDesignTrackSummary,
   type SystemDesignTrack,
-  type SessionHistoryItem,
+  type SystemDesignAttempt,
+  type AttemptGrade,
+  type AttemptHistoryItem,
   type UserTrackProgressData,
 } from '@/lib/api'
 import { TrackCard } from '@/components/system-design'
 import { clsx } from 'clsx'
 
+type FlowState = 'select' | 'question' | 'grading' | 'result'
+
 export default function SystemDesignPage() {
   const { userId } = useAuth()
-  const router = useRouter()
+
+  // Data state
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [tracks, setTracks] = useState<SystemDesignTrackSummary[]>([])
   const [trackProgress, setTrackProgress] = useState<Record<string, UserTrackProgressData>>({})
-  const [history, setHistory] = useState<SessionHistoryItem[]>([])
+  const [history, setHistory] = useState<AttemptHistoryItem[]>([])
+  const [activeTrackId, setActiveTrackId] = useState<string | null>(null)
+
+  // Flow state
+  const [flowState, setFlowState] = useState<FlowState>('select')
   const [selectedTrack, setSelectedTrack] = useState<SystemDesignTrack | null>(null)
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
-  const [starting, setStarting] = useState(false)
-  const [activeTrackId, setActiveTrackId] = useState<string | null>(null)
-  const [settingActive, setSettingActive] = useState(false)
 
+  // Attempt state
+  const [currentAttempt, setCurrentAttempt] = useState<SystemDesignAttempt | null>(null)
+  const [response, setResponse] = useState('')
+  const [wordCount, setWordCount] = useState(0)
+  const [grade, setGrade] = useState<AttemptGrade | null>(null)
+
+  // UI state
+  const [settingActive, setSettingActive] = useState(false)
+  const [generating, setGenerating] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [showHistory, setShowHistory] = useState(false)
+  const [showQuestion, setShowQuestion] = useState(true)
+
+  // Load initial data
   useEffect(() => {
     async function loadData() {
       if (!userId) return
@@ -35,15 +54,14 @@ export default function SystemDesignPage() {
       setError(null)
 
       try {
-        // Load tracks, history, and active track in parallel
         const [tracksData, historyData, activeTrackData] = await Promise.all([
           leetloopApi.getSystemDesignTracks(),
-          leetloopApi.getSystemDesignHistory(userId, 10),
+          leetloopApi.getSystemDesignAttemptHistory(userId, 10),
           leetloopApi.getActiveSystemDesignTrack(userId).catch(() => null),
         ])
 
         setTracks(tracksData)
-        setHistory(historyData.sessions)
+        setHistory(historyData.attempts)
         setActiveTrackId(activeTrackData?.active_track_id || null)
 
         // Load progress for each track
@@ -55,12 +73,12 @@ export default function SystemDesignPage() {
               progressMap[track.id] = progress.progress
             }
           } catch {
-            // Ignore errors for individual track progress
+            // Ignore
           }
         }
         setTrackProgress(progressMap)
       } catch (err) {
-        console.error('Failed to load system design data:', err)
+        console.error('Failed to load data:', err)
         setError('Failed to load data. Make sure the backend is running.')
       } finally {
         setLoading(false)
@@ -69,6 +87,12 @@ export default function SystemDesignPage() {
 
     loadData()
   }, [userId])
+
+  // Update word count
+  useEffect(() => {
+    const words = response.trim().split(/\s+/).filter(w => w.length > 0)
+    setWordCount(words.length)
+  }, [response])
 
   async function handleTrackSelect(track: SystemDesignTrackSummary) {
     try {
@@ -81,22 +105,66 @@ export default function SystemDesignPage() {
     }
   }
 
-  async function handleStartSession() {
+  async function handleGetQuestion() {
     if (!userId || !selectedTrack || !selectedTopic) return
 
-    setStarting(true)
+    setGenerating(true)
+    setError(null)
+
     try {
-      const session = await leetloopApi.createSystemDesignSession(userId, {
+      const attempt = await leetloopApi.createSystemDesignAttempt(userId, {
         track_id: selectedTrack.id,
         topic: selectedTopic,
-        session_type: 'track',
       })
-      router.push(`/system-design/session/${session.id}`)
+      setCurrentAttempt(attempt)
+      setResponse('')
+      setGrade(null)
+      setFlowState('question')
+      setShowQuestion(true)
     } catch (err) {
-      console.error('Failed to start session:', err)
-      setError('Failed to start session. Please try again.')
-      setStarting(false)
+      console.error('Failed to generate question:', err)
+      setError('Failed to generate question. Please try again.')
+    } finally {
+      setGenerating(false)
     }
+  }
+
+  async function handleSubmit() {
+    if (!currentAttempt || submitting || wordCount < 20) return
+
+    setSubmitting(true)
+    setFlowState('grading')
+    setError(null)
+
+    try {
+      const gradeResult = await leetloopApi.submitSystemDesignAttempt(
+        currentAttempt.id,
+        response
+      )
+      setGrade(gradeResult)
+      setFlowState('result')
+      setShowQuestion(false)
+
+      // Refresh history
+      if (userId) {
+        const historyData = await leetloopApi.getSystemDesignAttemptHistory(userId, 10)
+        setHistory(historyData.attempts)
+      }
+    } catch (err) {
+      console.error('Failed to submit:', err)
+      setError('Failed to submit response. Please try again.')
+      setFlowState('question')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  function handleTryAnother() {
+    setCurrentAttempt(null)
+    setResponse('')
+    setGrade(null)
+    setFlowState('select')
+    setShowQuestion(true)
   }
 
   function handleCloseModal() {
@@ -119,6 +187,39 @@ export default function SystemDesignPage() {
     }
   }
 
+  const getWordCountColor = () => {
+    if (wordCount < 50) return 'text-coral'
+    if (wordCount < 150) return 'text-gray-500'
+    return 'text-green-600'
+  }
+
+  const getWordCountHint = () => {
+    if (wordCount < 20) return 'Min 20 words to submit'
+    if (wordCount < 50) return 'Need more detail'
+    if (wordCount < 150) return 'Good start'
+    if (wordCount < 300) return 'Solid response'
+    return 'Comprehensive'
+  }
+
+  const getScoreColor = (score: number) => {
+    if (score >= 7) return 'text-green-600'
+    if (score >= 5) return 'text-yellow-600'
+    return 'text-coral'
+  }
+
+  const getVerdictBadge = (verdict: string) => {
+    switch (verdict) {
+      case 'pass':
+        return <span className="tag bg-green-100 text-green-700 border-green-300">PASS</span>
+      case 'borderline':
+        return <span className="tag bg-yellow-100 text-yellow-700 border-yellow-300">BORDERLINE</span>
+      case 'fail':
+        return <span className="tag bg-red-100 text-coral border-red-300">FAIL</span>
+      default:
+        return null
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -127,7 +228,7 @@ export default function SystemDesignPage() {
     )
   }
 
-  if (error) {
+  if (error && flowState === 'select') {
     return (
       <div className="card p-8 text-center">
         <p className="text-red-600 mb-4">{error}</p>
@@ -147,78 +248,268 @@ export default function SystemDesignPage() {
           <h1 className="heading-accent text-xl">SYSTEM DESIGN</h1>
         </div>
         <p className="text-sm text-gray-600">
-          Practice system design with AI-generated questions and harsh senior-level grading.
-          Each session includes 2-3 hard questions with detailed rubric-based feedback.
+          Practice system design with AI-generated questions and harsh grading.
+          Pick a topic, answer one question, get immediate feedback.
         </p>
       </div>
 
-      {/* Track Selection */}
-      <div>
-        <h2 className="section-title">Select a Track</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {tracks.map((track) => (
-            <TrackCard
-              key={track.id}
-              track={track}
-              progress={trackProgress[track.id]}
-              isActive={activeTrackId === track.id}
-              onClick={() => handleTrackSelect(track)}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Recent Sessions */}
-      {history.length > 0 && (
-        <div>
-          <h2 className="section-title">Recent Sessions</h2>
-          <div className="space-y-2">
-            {history.map((session) => (
-              <button
-                key={session.id}
-                onClick={() => router.push(
-                  session.status === 'completed'
-                    ? `/system-design/session/${session.id}/results`
-                    : `/system-design/session/${session.id}`
+      {/* Active Flow: Question + Answer + Grade */}
+      {(flowState === 'question' || flowState === 'grading' || flowState === 'result') && currentAttempt && (
+        <div className="space-y-4">
+          {/* Question Section */}
+          <div className="card">
+            <button
+              onClick={() => setShowQuestion(!showQuestion)}
+              className="w-full flex items-center justify-between mb-3"
+            >
+              <div className="flex items-center gap-3">
+                <span className="tag tag-accent">{currentAttempt.topic}</span>
+                {currentAttempt.question_focus_area && (
+                  <span className="text-xs text-gray-500 font-mono uppercase">
+                    {currentAttempt.question_focus_area}
+                  </span>
                 )}
-                className="list-item w-full text-left flex items-center justify-between"
-              >
-                <div className="flex items-center gap-3">
-                  <div className={clsx(
-                    'status-light',
-                    session.status === 'completed' ? 'status-light-active' : 'status-light-inactive'
-                  )} />
+              </div>
+              <span className="text-gray-400 text-sm">
+                {showQuestion ? 'Hide' : 'Show'} question
+              </span>
+            </button>
+
+            {showQuestion && (
+              <>
+                <div className="p-4 bg-gray-50 border-l-4 border-black mb-4">
+                  <p className="text-sm leading-relaxed">
+                    {currentAttempt.question_text}
+                  </p>
+                </div>
+
+                {currentAttempt.question_key_concepts.length > 0 && (
                   <div>
-                    <span className="font-medium text-sm">{session.topic}</span>
-                    {session.track_name && (
-                      <span className="text-xs text-gray-500 ml-2">
-                        {session.track_name}
-                      </span>
-                    )}
+                    <p className="text-xs text-gray-500 mb-2">Key concepts to address:</p>
+                    <div className="flex flex-wrap gap-1">
+                      {currentAttempt.question_key_concepts.map((concept, i) => (
+                        <span key={i} className="tag text-xs">
+                          {concept}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+
+          {/* Answer Section */}
+          {(flowState === 'question' || flowState === 'grading') && (
+            <div className="card">
+              <h3 className="text-sm font-semibold mb-3">Your Response</h3>
+              <textarea
+                value={response}
+                onChange={(e) => setResponse(e.target.value)}
+                disabled={flowState === 'grading'}
+                placeholder="Write your response here. Be specific about architecture decisions, tradeoffs, and scaling considerations..."
+                className={clsx(
+                  'w-full h-64 p-4 border-2 border-black bg-white',
+                  'text-sm leading-relaxed font-mono',
+                  'focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2',
+                  'placeholder:text-gray-400',
+                  'disabled:bg-gray-100 disabled:cursor-not-allowed',
+                  'resize-y min-h-[200px]'
+                )}
+              />
+
+              <div className="flex justify-between items-center mt-2 text-xs">
+                <span className={getWordCountColor()}>
+                  {wordCount} words - {getWordCountHint()}
+                </span>
+                <span className="text-gray-400">
+                  Aim for 200-400 words
+                </span>
+              </div>
+
+              <div className="flex justify-end mt-4">
+                <button
+                  onClick={handleSubmit}
+                  disabled={submitting || wordCount < 20}
+                  className={clsx(
+                    'btn btn-primary',
+                    (submitting || wordCount < 20) && 'opacity-50 cursor-not-allowed'
+                  )}
+                >
+                  {submitting ? 'Grading...' : 'Submit & Grade'}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Grade Section */}
+          {flowState === 'result' && grade && (
+            <div className="space-y-4">
+              {/* Score */}
+              <div className="card text-center py-6">
+                <div className="mb-2">
+                  <span className={clsx('stat-value text-5xl', getScoreColor(grade.score))}>
+                    {grade.score.toFixed(1)}
+                  </span>
+                  <span className="text-xl text-gray-400">/10</span>
+                </div>
+                {getVerdictBadge(grade.verdict)}
+              </div>
+
+              {/* Feedback */}
+              <div className="card">
+                <h3 className="font-semibold text-black mb-3">Feedback</h3>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                  {grade.feedback}
+                </p>
+              </div>
+
+              {/* Missed Concepts & Review Topics */}
+              {(grade.missed_concepts.length > 0 || grade.review_topics.length > 0) && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {grade.missed_concepts.length > 0 && (
+                    <div className="card border-l-4 border-l-coral">
+                      <h3 className="font-semibold text-black mb-3">Missed Concepts</h3>
+                      <div className="flex flex-wrap gap-1">
+                        {grade.missed_concepts.map((concept, i) => (
+                          <span key={i} className="tag text-xs bg-red-50 text-coral border-red-200">
+                            {concept}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {grade.review_topics.length > 0 && (
+                    <div className="card border-l-4 border-l-yellow-500">
+                      <h3 className="font-semibold text-black mb-3">Added to Review Queue</h3>
+                      <div className="flex flex-wrap gap-1">
+                        {grade.review_topics.map((topic, i) => (
+                          <span key={i} className="tag text-xs">
+                            {topic}
+                          </span>
+                        ))}
+                      </div>
+                      <p className="text-xs text-gray-500 mt-2">
+                        These will appear in spaced repetition.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Try Another */}
+              <div className="flex justify-center">
+                <button
+                  onClick={handleTryAnother}
+                  className="btn btn-primary"
+                >
+                  Try Another Question
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Error */}
+          {error && (
+            <div className="card border-l-4 border-l-coral">
+              <p className="text-coral text-sm">{error}</p>
+            </div>
+          )}
+
+          {/* Grading Overlay */}
+          {flowState === 'grading' && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+              <div className="card text-center p-8">
+                <div className="animate-pulse mb-4">
+                  <div className="w-16 h-16 mx-auto border-4 border-black rounded-full flex items-center justify-center">
+                    <span className="text-2xl">AI</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  {session.overall_score && (
-                    <span className={clsx(
-                      'font-mono font-bold',
-                      session.overall_score >= 7 ? 'text-green-600' :
-                      session.overall_score >= 5 ? 'text-yellow-600' : 'text-coral'
-                    )}>
-                      {session.overall_score.toFixed(1)}/10
-                    </span>
-                  )}
-                  <span className="tag text-xs">
-                    {session.status === 'completed' ? 'Completed' : 'In Progress'}
-                  </span>
-                </div>
-              </button>
-            ))}
-          </div>
+                <h2 className="heading-accent mb-2">Grading Your Response</h2>
+                <p className="text-sm text-gray-600">
+                  Our harsh senior-level AI is reviewing your answer...
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
+      {/* Track Selection (when not in active flow) */}
+      {flowState === 'select' && (
+        <>
+          <div>
+            <h2 className="section-title">Select a Track</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {tracks.map((track) => (
+                <TrackCard
+                  key={track.id}
+                  track={track}
+                  progress={trackProgress[track.id]}
+                  isActive={activeTrackId === track.id}
+                  onClick={() => handleTrackSelect(track)}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Recent Attempts */}
+          {history.length > 0 && (
+            <div>
+              <button
+                onClick={() => setShowHistory(!showHistory)}
+                className="section-title flex items-center gap-2 cursor-pointer hover:text-gray-700"
+              >
+                Recent Attempts
+                <span className="text-gray-400 text-xs font-normal">
+                  ({showHistory ? 'hide' : 'show'})
+                </span>
+              </button>
+
+              {showHistory && (
+                <div className="space-y-2">
+                  {history.map((attempt) => (
+                    <div
+                      key={attempt.id}
+                      className="list-item flex items-center justify-between"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={clsx(
+                          'status-light',
+                          attempt.status === 'graded' ? 'status-light-active' : 'status-light-inactive'
+                        )} />
+                        <div>
+                          <span className="font-medium text-sm">{attempt.topic}</span>
+                          {attempt.track_name && (
+                            <span className="text-xs text-gray-500 ml-2">
+                              {attempt.track_name}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        {attempt.score && (
+                          <span className={clsx(
+                            'font-mono font-bold',
+                            getScoreColor(attempt.score)
+                          )}>
+                            {attempt.score.toFixed(1)}/10
+                          </span>
+                        )}
+                        {attempt.verdict && getVerdictBadge(attempt.verdict)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </>
+      )}
+
       {/* Topic Selection Modal */}
-      {selectedTrack && (
+      {selectedTrack && flowState === 'select' && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="card max-w-lg w-full max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
@@ -238,7 +529,6 @@ export default function SystemDesignPage() {
               </button>
             </div>
 
-            {/* Set as Active button */}
             {activeTrackId !== selectedTrack.id && (
               <button
                 onClick={() => handleSetActiveTrack(selectedTrack.id)}
@@ -295,14 +585,14 @@ export default function SystemDesignPage() {
             </div>
 
             <button
-              onClick={handleStartSession}
-              disabled={!selectedTopic || starting}
+              onClick={handleGetQuestion}
+              disabled={!selectedTopic || generating}
               className={clsx(
                 'btn btn-primary w-full',
-                (!selectedTopic || starting) && 'opacity-50 cursor-not-allowed'
+                (!selectedTopic || generating) && 'opacity-50 cursor-not-allowed'
               )}
             >
-              {starting ? 'Starting Session...' : 'Start Session'}
+              {generating ? 'Generating Question...' : 'Get Question'}
             </button>
           </div>
         </div>

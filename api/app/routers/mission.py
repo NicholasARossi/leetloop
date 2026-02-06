@@ -16,6 +16,7 @@ from app.models.schemas import (
 )
 from app.services.mission_generator import MissionGenerator
 from app.services.gemini_gateway import GeminiGateway
+from app.utils import parse_iso_datetime
 
 router = APIRouter()
 
@@ -53,7 +54,7 @@ def _build_mission_response(mission_data: dict) -> DailyMissionResponseV2:
 
     generated_at = mission_data.get("generated_at", datetime.utcnow().isoformat())
     if isinstance(generated_at, str):
-        generated_at = datetime.fromisoformat(generated_at.replace("Z", "+00:00"))
+        generated_at = parse_iso_datetime(generated_at)
 
     return DailyMissionResponseV2(
         user_id=UUID(mission_data["user_id"]),

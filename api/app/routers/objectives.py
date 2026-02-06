@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from supabase import Client
 
 from app.db.supabase import get_supabase
+from app.utils import parse_iso_datetime
 from app.models.schemas import (
     CreateObjectiveRequest,
     MetaObjective,
@@ -32,7 +33,7 @@ def calculate_pace_status(
     today = date.today()
     started_at = objective["started_at"]
     if isinstance(started_at, str):
-        started_at = datetime.fromisoformat(started_at.replace("Z", "+00:00")).date()
+        started_at = parse_iso_datetime(started_at).date()
     elif isinstance(started_at, datetime):
         started_at = started_at.date()
 

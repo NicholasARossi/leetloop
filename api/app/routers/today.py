@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from supabase import Client
 
 from app.db.supabase import get_supabase
+from app.utils import parse_iso_datetime
 from app.models.schemas import (
     DailyFocusProblem,
     Difficulty,
@@ -48,7 +49,7 @@ async def get_todays_focus(
             last_date = streak_data.get("last_activity_date")
             if last_date:
                 # Check if streak is still valid
-                last_date_obj = datetime.fromisoformat(last_date.replace("Z", "+00:00")).date() if isinstance(last_date, str) else last_date
+                last_date_obj = parse_iso_datetime(last_date).date() if isinstance(last_date, str) else last_date
                 days_diff = (date.today() - last_date_obj).days
                 if days_diff <= 1:
                     streak = streak_data.get("current_streak", 0)
