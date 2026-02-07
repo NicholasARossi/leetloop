@@ -2,14 +2,15 @@ import { test, expect, chromium, BrowserContext, Page } from '@playwright/test';
 import path from 'path';
 import { config } from 'dotenv';
 
-config({ path: path.resolve(__dirname, '../../../.env') });
+config({ path: path.resolve(__dirname, '../.env') });
 
 const EXTENSION_PATH = path.resolve(__dirname, '../dist');
 const SUPABASE_URL = process.env.SUPABASE_URL!;
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY!;
 
 /**
- * Fetch submissions from Supabase
+ * Fetch submissions from Supabase (for test verification)
+ * Note: Extension routes through API, but tests verify data via Supabase directly
  */
 async function getSubmissions(limit = 10): Promise<any[]> {
   const response = await fetch(
@@ -65,15 +66,12 @@ test.describe('Interactive LeetLoop Test', () => {
 
     console.log(`   Extension ID: ${extensionId}`);
 
-    // Configure extension with Supabase
+    // Verify extension loaded (API URL is baked in at build time)
     if (extensionId) {
       const optionsPage = await context.newPage();
       await optionsPage.goto(`chrome-extension://${extensionId}/options/options.html`);
-      await optionsPage.fill('#supabase-url', SUPABASE_URL);
-      await optionsPage.fill('#supabase-key', SUPABASE_ANON_KEY);
-      await optionsPage.click('button[type="submit"]');
-      await optionsPage.waitForSelector('.status.success');
-      console.log('   ✅ Extension configured with Supabase');
+      await optionsPage.waitForSelector('#api-url', { timeout: 5000 });
+      console.log('   ✅ Extension loaded (API URL baked in at build time)');
       await optionsPage.close();
     }
 
@@ -106,11 +104,11 @@ test.describe('Interactive LeetLoop Test', () => {
 
     await page.pause();
 
-    // Wait for sync
-    console.log('\n⏳ Waiting for sync to Supabase...');
+    // Wait for sync (extension -> API -> Supabase)
+    console.log('\n⏳ Waiting for sync...');
     await page.waitForTimeout(5000);
 
-    // Check results
+    // Check results (verify data made it to Supabase)
     const finalSubmissions = await getSubmissions();
     console.log(`\n📊 Submissions in DB after test: ${finalSubmissions.length}`);
 
@@ -121,7 +119,7 @@ test.describe('Interactive LeetLoop Test', () => {
       console.log(`   Lang:    ${finalSubmissions[0].language}`);
       expect(true).toBe(true);
     } else {
-      console.log('\n⚠️  No new submission in Supabase yet');
+      console.log('\n⚠️  No new submission in DB yet');
       console.log('   Check browser DevTools (F12) for [LeetLoop] errors');
       console.log('\n   Pausing for debugging...');
 

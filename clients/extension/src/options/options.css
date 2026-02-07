@@ -1,4 +1,4 @@
-/* Daily accent color - set by JS */
+/* LeetLoop Options - Mech/Schematic Style */
 :root {
   --accent: #FF8888;
   --accent-light: #FF888830;
@@ -15,10 +15,15 @@
   --gray-700: #404040;
   --gray-800: #262626;
   --gray-900: #171717;
-  --black: #000000;
+  --black: #171717;
+
+  /* Chamfer sizes */
+  --chamfer-sm: 6px;
+  --chamfer-md: 10px;
+  --chamfer-lg: 12px;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
 
 * {
   margin: 0;
@@ -52,82 +57,208 @@ body {
   padding: 40px 20px;
 }
 
+/* ===========================================
+   HEADER WITH REGISTRATION MARKS
+   =========================================== */
+
 .header {
+  position: relative;
   margin-bottom: 32px;
-  padding-bottom: 16px;
-  border-bottom: 3px solid var(--black);
+  padding: 24px 0 16px;
 }
 
+/* Top-left registration mark */
+.header::before,
+.header::after {
+  content: '';
+  position: absolute;
+  background: var(--gray-400);
+}
+
+.header::before {
+  width: 16px;
+  height: 2px;
+  top: 0;
+  left: 0;
+}
+
+.header::after {
+  width: 2px;
+  height: 16px;
+  top: 0;
+  left: 0;
+}
+
+/* Title with chamfered accent background */
 .header h1 {
-  font-size: 24px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 700;
   background: var(--accent);
   color: var(--black);
   padding: 8px 16px;
   display: inline-block;
-  text-shadow:
-    -1px -1px 0 var(--black),
-    1px -1px 0 var(--black),
-    -1px 1px 0 var(--black),
-    1px 1px 0 var(--black);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  clip-path: polygon(
+    var(--chamfer-md) 0,
+    100% 0,
+    100% calc(100% - var(--chamfer-md)),
+    calc(100% - var(--chamfer-md)) 100%,
+    0 100%,
+    0 var(--chamfer-md)
+  );
 }
 
 .subtitle {
   color: var(--gray-600);
-  margin-top: 12px;
-  font-size: 12px;
+  margin-top: 16px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
+/* Dimension line under subtitle */
+.subtitle::after {
+  content: '';
+  display: block;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gray-400) 0%, var(--gray-400) 40%, transparent 40%, transparent 60%, var(--gray-400) 60%, var(--gray-400) 100%);
+  margin-top: 16px;
+}
+
+/* ===========================================
+   SECTION - STACKED LAYER CHAMFER
+   =========================================== */
+
 .section {
-  background: var(--white);
-  border: 2px solid var(--black);
-  padding: 24px;
+  position: relative;
+  background: var(--black);
   margin-bottom: 24px;
+  clip-path: polygon(
+    var(--chamfer-lg) 0,
+    100% 0,
+    100% calc(100% - var(--chamfer-lg)),
+    calc(100% - var(--chamfer-lg)) 100%,
+    0 100%,
+    0 var(--chamfer-lg)
+  );
   box-shadow: 6px 6px 0 var(--gray-700);
 }
 
+.section::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  background: var(--white);
+  clip-path: polygon(
+    calc(var(--chamfer-lg) - 2px) 0,
+    100% 0,
+    100% calc(100% - var(--chamfer-lg) + 2px),
+    calc(100% - var(--chamfer-lg) + 2px) 100%,
+    0 100%,
+    0 calc(var(--chamfer-lg) - 2px)
+  );
+  z-index: 0;
+}
+
+.section > * {
+  position: relative;
+  z-index: 1;
+}
+
+.section > *:first-child {
+  padding: 24px 24px 0;
+}
+
+.section > *:last-child {
+  padding-bottom: 24px;
+}
+
+.section > h2 {
+  padding: 24px 24px 0;
+}
+
+.section > .description {
+  padding: 0 24px;
+}
+
+.section > .form-group {
+  padding: 0 24px;
+}
+
+/* Section identifier tag */
 .section h2 {
-  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 2px;
   margin-bottom: 8px;
-  padding-bottom: 8px;
-  border-bottom: 2px solid var(--gray-300);
+  padding-top: 24px;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.section h2::before {
+  content: '§';
+  font-weight: bold;
+  color: var(--gray-400);
+  font-size: 13px;
 }
 
 .description {
   color: var(--gray-600);
   margin-bottom: 20px;
-  font-size: 12px;
+  font-size: 11px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--gray-400);
 }
+
+/* ===========================================
+   FORM ELEMENTS
+   =========================================== */
 
 .form-group {
   margin-bottom: 20px;
+  padding: 0 24px;
 }
 
 .form-group:last-child {
   margin-bottom: 0;
+  padding-bottom: 24px;
 }
 
 label {
   display: block;
-  font-weight: 500;
+  font-weight: 600;
   margin-bottom: 6px;
-  font-size: 12px;
+  font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 1px;
   color: var(--gray-600);
 }
 
+/* Input - stacked layer chamfer */
 input {
+  position: relative;
   width: 100%;
-  padding: 10px 12px;
-  border: 2px solid var(--black);
-  background: var(--white);
-  font-size: 13px;
+  padding: 12px 14px;
+  border: none;
+  background: var(--black);
+  font-size: 12px;
   font-family: inherit;
+  color: var(--gray-900);
   transition: all 0.1s;
+  clip-path: polygon(
+    var(--chamfer-sm) 0,
+    100% 0,
+    100% calc(100% - var(--chamfer-sm)),
+    calc(100% - var(--chamfer-sm)) 100%,
+    0 100%,
+    0 var(--chamfer-sm)
+  );
   box-shadow: 3px 3px 0 var(--gray-600);
 }
 
@@ -137,43 +268,83 @@ input:focus {
 }
 
 input[readonly] {
-  background: var(--gray-100);
-  color: var(--gray-600);
+  background: var(--gray-600);
+  color: var(--gray-300);
+  box-shadow: none;
 }
 
 .hint {
   display: block;
-  font-size: 11px;
+  font-size: 10px;
   color: var(--gray-500);
   margin-top: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
+
+/* ===========================================
+   BUTTONS - STACKED LAYER CHAMFER
+   =========================================== */
 
 .actions {
   display: flex;
   gap: 12px;
   margin-bottom: 16px;
+  padding: 0 24px;
 }
 
 button {
+  position: relative;
   padding: 12px 24px;
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
   font-family: inherit;
   cursor: pointer;
   transition: all 0.1s;
-  border: 2px solid var(--black);
+  border: none;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 1px;
+  background: var(--black);
+  color: var(--black);
+  clip-path: polygon(
+    var(--chamfer-sm) 0,
+    100% 0,
+    100% calc(100% - var(--chamfer-sm)),
+    calc(100% - var(--chamfer-sm)) 100%,
+    0 100%,
+    0 var(--chamfer-sm)
+  );
+}
+
+button::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  clip-path: polygon(
+    calc(var(--chamfer-sm) - 2px) 0,
+    100% 0,
+    100% calc(100% - var(--chamfer-sm) + 2px),
+    calc(100% - var(--chamfer-sm) + 2px) 100%,
+    0 100%,
+    0 calc(var(--chamfer-sm) - 2px)
+  );
+  z-index: -1;
+  transition: background 0.1s;
 }
 
 .btn-primary {
+  box-shadow: 3px 3px 0 var(--gray-700);
+}
+
+.btn-primary::before {
+  background: var(--accent);
+}
+
+.btn-primary:hover::before {
   background: var(--white);
-  color: var(--black);
-  box-shadow: 3px 3px 0 var(--gray-600);
 }
 
 .btn-primary:hover {
-  background: var(--accent);
   box-shadow: 3px 3px 0 var(--black);
 }
 
@@ -183,61 +354,139 @@ button {
 }
 
 .btn-secondary {
+  box-shadow: 2px 2px 0 var(--gray-600);
+}
+
+.btn-secondary::before {
+  background: var(--white);
+}
+
+.btn-secondary:hover::before {
   background: var(--gray-100);
-  color: var(--gray-700);
-  border-color: var(--gray-600);
-  box-shadow: none;
 }
 
 .btn-secondary:hover {
-  background: var(--gray-200);
-  border-color: var(--black);
+  box-shadow: 2px 2px 0 var(--black);
 }
 
+.btn-secondary:active {
+  box-shadow: 1px 1px 0 var(--black);
+  transform: translate(1px, 1px);
+}
+
+/* ===========================================
+   STATUS MESSAGES - STACKED LAYER CHAMFER
+   =========================================== */
+
 .status {
+  position: relative;
   padding: 12px 16px;
-  font-size: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   display: none;
-  border: 2px solid;
+  margin: 0 24px;
+  clip-path: polygon(
+    var(--chamfer-sm) 0,
+    100% 0,
+    100% calc(100% - var(--chamfer-sm)),
+    calc(100% - var(--chamfer-sm)) 100%,
+    0 100%,
+    0 var(--chamfer-sm)
+  );
 }
 
 .status.success {
   display: block;
-  background: var(--accent-light);
-  border-color: var(--accent);
+  background: var(--accent);
   color: var(--black);
+}
+
+.status.success::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  background: var(--accent-light);
+  clip-path: polygon(
+    calc(var(--chamfer-sm) - 2px) 0,
+    100% 0,
+    100% calc(100% - var(--chamfer-sm) + 2px),
+    calc(100% - var(--chamfer-sm) + 2px) 100%,
+    0 100%,
+    0 calc(var(--chamfer-sm) - 2px)
+  );
+  z-index: -1;
 }
 
 .status.error {
   display: block;
-  background: #fee2e2;
-  border-color: #ef4444;
+  background: #ef4444;
   color: #991b1b;
 }
 
+.status.error::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  background: #fee2e2;
+  clip-path: polygon(
+    calc(var(--chamfer-sm) - 2px) 0,
+    100% 0,
+    100% calc(100% - var(--chamfer-sm) + 2px),
+    calc(100% - var(--chamfer-sm) + 2px) 100%,
+    0 100%,
+    0 calc(var(--chamfer-sm) - 2px)
+  );
+  z-index: -1;
+}
+
+/* ===========================================
+   INSTRUCTIONS
+   =========================================== */
+
 .instructions {
-  margin-left: 20px;
-  font-size: 12px;
+  margin-left: 24px;
+  padding: 0 24px 24px;
+  font-size: 11px;
   color: var(--gray-600);
+  counter-reset: step;
+  list-style: none;
 }
 
 .instructions li {
-  margin-bottom: 8px;
+  position: relative;
+  margin-bottom: 12px;
+  padding-left: 8px;
+  counter-increment: step;
+}
+
+.instructions li::before {
+  content: counter(step, decimal-leading-zero);
+  position: absolute;
+  left: -28px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--gray-400);
+  letter-spacing: 1px;
 }
 
 .instructions a {
   color: var(--black);
-  text-decoration: underline;
+  text-decoration: none;
+  border-bottom: 1px solid var(--accent);
+  transition: all 0.1s;
 }
 
 .instructions a:hover {
   color: var(--accent);
+  border-bottom-color: var(--black);
 }
 
 .instructions code {
   background: var(--gray-100);
-  padding: 2px 6px;
+  padding: 2px 8px;
   border: 1px solid var(--gray-400);
   font-family: inherit;
-  font-size: 12px;
+  font-size: 11px;
 }

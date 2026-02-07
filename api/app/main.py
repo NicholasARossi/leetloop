@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
-from app.routers import coaching, health, mastery, mission, objectives, onboarding, paths, progress, recommendations, reviews, submissions, system_design, today
+from app.routers import auth, coaching, health, mastery, mission, objectives, onboarding, paths, progress, recommendations, reviews, submissions, system_design, today
 
 
 @asynccontextmanager
@@ -44,6 +44,7 @@ def create_app() -> FastAPI:
 
     # Include routers
     app.include_router(health.router)
+    app.include_router(auth.router, prefix="/api", tags=["auth"])
     app.include_router(recommendations.router, prefix="/api", tags=["recommendations"])
     app.include_router(progress.router, prefix="/api", tags=["progress"])
     app.include_router(reviews.router, prefix="/api", tags=["reviews"])

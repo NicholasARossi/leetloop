@@ -7,6 +7,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query
 from supabase import Client
 
+from app.auth import AuthenticatedUser, get_current_user
 from app.db.supabase import get_supabase
 from app.models.schemas import (
     ProgressTrend,
@@ -17,6 +18,16 @@ from app.models.schemas import (
 )
 
 router = APIRouter()
+
+
+@router.get("/progress/me/stats", response_model=UserStats)
+async def get_my_stats(
+    user: AuthenticatedUser = Depends(get_current_user),
+    supabase: Annotated[Client, Depends(get_supabase)] = None,
+):
+    """Get stats for the authenticated user (from JWT)."""
+    user_id = UUID(user.id)
+    return await get_user_stats(user_id, supabase)
 
 
 @router.get("/progress/{user_id}", response_model=UserProgress)

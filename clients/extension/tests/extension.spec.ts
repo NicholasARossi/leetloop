@@ -2,18 +2,16 @@ import { test, expect, chromium, BrowserContext } from '@playwright/test';
 import path from 'path';
 import { config } from 'dotenv';
 
-// Load environment variables from root .env
-config({ path: path.resolve(__dirname, '../../../.env') });
+// Load environment variables from extension .env
+config({ path: path.resolve(__dirname, '../.env') });
 
 const EXTENSION_PATH = path.resolve(__dirname, '../dist');
 const SUPABASE_URL = process.env.SUPABASE_URL!;
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY!;
 
-// Store auth state for reuse
-const AUTH_STATE_PATH = path.resolve(__dirname, '.auth-state.json');
-
 /**
- * Helper to fetch submissions from Supabase
+ * Helper to fetch submissions from Supabase (for test verification)
+ * Note: Extension routes through API, but tests verify data via Supabase directly
  */
 async function getSubmissions(limit = 10): Promise<any[]> {
   const response = await fetch(
@@ -51,23 +49,17 @@ async function launchBrowserWithExtension(): Promise<BrowserContext> {
 }
 
 /**
- * Configure extension with Supabase credentials
+ * Verify extension is configured (API URL is baked in at build time)
  */
-async function configureExtension(context: BrowserContext): Promise<void> {
-  // Find extension ID by looking at service workers
+async function verifyExtensionConfigured(context: BrowserContext): Promise<void> {
   const extensionId = await getExtensionId(context);
 
-  // Open extension options page
+  // Open extension options page to verify it loads
   const optionsPage = await context.newPage();
   await optionsPage.goto(`chrome-extension://${extensionId}/options/options.html`);
 
-  // Fill in Supabase credentials
-  await optionsPage.fill('#supabase-url', SUPABASE_URL);
-  await optionsPage.fill('#supabase-key', SUPABASE_ANON_KEY);
-  await optionsPage.click('button[type="submit"]');
-
-  // Wait for save confirmation
-  await optionsPage.waitForSelector('.status.success', { timeout: 5000 });
+  // Verify the page loaded and has the expected elements
+  await optionsPage.waitForSelector('#api-url', { timeout: 5000 });
 
   await optionsPage.close();
 }
@@ -151,7 +143,7 @@ test.describe('LeetLoop Extension', () => {
 
   test('should capture accepted submission', async () => {
     // Configure extension with Supabase
-    await configureExtension(context);
+    await verifyExtensionConfigured(context);
 
     // Get initial submission count
     const initialCount = await getSubmissionCount();
@@ -196,7 +188,7 @@ test.describe('LeetLoop Extension', () => {
   });
 
   test('should capture failed submission (TLE/Wrong Answer)', async () => {
-    await configureExtension(context);
+    await verifyExtensionConfigured(context);
 
     const initialCount = await getSubmissionCount();
 

@@ -5,8 +5,6 @@
 import { getAuthUserId } from './auth';
 
 export interface Config {
-  supabaseUrl: string;
-  supabaseAnonKey: string;
   apiUrl: string;
   userId: string;
   guestUserId: string;
@@ -14,8 +12,6 @@ export interface Config {
 }
 
 const DEFAULT_CONFIG: Config = {
-  supabaseUrl: '',
-  supabaseAnonKey: '',
   apiUrl: '',
   userId: '',
   guestUserId: '',
@@ -104,11 +100,4 @@ export async function saveConfig(config: Partial<Config>): Promise<void> {
   await chrome.storage.local.set({
     config: { ...current, ...config },
   });
-}
-
-/**
- * Check if Supabase is configured
- */
-export function isSupabaseConfigured(config: Config): boolean {
-  return !!(config.supabaseUrl && config.supabaseAnonKey);
 }
