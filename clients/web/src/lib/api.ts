@@ -283,6 +283,103 @@ export const leetloopApi = {
   // Mission v2 (with reasoning)
   getDailyMissionV2: (userId: string) =>
     api<MissionResponseV2>(`/api/mission/${userId}`),
+
+  // System Design
+  getSystemDesignTracks: () =>
+    api<SystemDesignTrackSummary[]>('/api/system-design/tracks'),
+
+  getSystemDesignTrack: (trackId: string) =>
+    api<SystemDesignTrack>(`/api/system-design/tracks/${trackId}`),
+
+  getTrackProgress: (trackId: string, userId: string) =>
+    api<TrackProgressResponse>(`/api/system-design/tracks/${trackId}/progress/${userId}`),
+
+  createSystemDesignSession: (userId: string, data: CreateSessionRequest) =>
+    api<SystemDesignSession>(`/api/system-design/${userId}/sessions`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  getSystemDesignSession: (sessionId: string) =>
+    api<SystemDesignSession>(`/api/system-design/sessions/${sessionId}`),
+
+  submitSystemDesignResponse: (sessionId: string, questionId: number, responseText: string) =>
+    api<{ success: boolean; question_id: number; word_count: number }>(
+      `/api/system-design/sessions/${sessionId}/response`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ question_id: questionId, response_text: responseText }),
+      }
+    ),
+
+  completeSystemDesignSession: (sessionId: string) =>
+    api<SystemDesignGrade>(`/api/system-design/sessions/${sessionId}/complete`, {
+      method: 'POST',
+    }),
+
+  getSystemDesignGrade: (sessionId: string) =>
+    api<SystemDesignGrade>(`/api/system-design/sessions/${sessionId}/grade`),
+
+  getSystemDesignReviews: (userId: string, limit = 10) =>
+    api<SystemDesignReviewItem[]>(`/api/system-design/${userId}/reviews?limit=${limit}`),
+
+  completeSystemDesignReview: (reviewId: string, success: boolean) =>
+    api<{ id: string; next_review: string; new_interval_days: number }>(
+      `/api/system-design/reviews/${reviewId}/complete`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ success }),
+      }
+    ),
+
+  getSystemDesignHistory: (userId: string, limit = 20, offset = 0) =>
+    api<SessionHistoryResponse>(
+      `/api/system-design/${userId}/history?limit=${limit}&offset=${offset}`
+    ),
+
+  // System Design Dashboard
+  getSystemDesignDashboard: (userId: string) =>
+    api<SystemDesignDashboardSummary>(`/api/system-design/${userId}/dashboard`),
+
+  setActiveSystemDesignTrack: (userId: string, trackId: string | null) =>
+    api<{ success: boolean; active_track_id?: string }>(
+      `/api/system-design/${userId}/active-track`,
+      {
+        method: 'PUT',
+        body: JSON.stringify({ track_id: trackId }),
+      }
+    ),
+
+  getActiveSystemDesignTrack: (userId: string) =>
+    api<ActiveTrackResponse>(`/api/system-design/${userId}/active-track`),
+
+  // System Design Attempts (Simplified Single-Question Flow)
+  createSystemDesignAttempt: (userId: string, data: CreateAttemptRequest) =>
+    api<SystemDesignAttempt>(`/api/system-design/${userId}/attempt`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  submitSystemDesignAttempt: (attemptId: string, responseText: string) =>
+    api<AttemptGrade>(`/api/system-design/attempts/${attemptId}/submit`, {
+      method: 'POST',
+      body: JSON.stringify({ response_text: responseText }),
+    }),
+
+  getSystemDesignAttempt: (attemptId: string) =>
+    api<SystemDesignAttempt>(`/api/system-design/attempts/${attemptId}`),
+
+  getSystemDesignAttemptHistory: (userId: string, limit = 20, offset = 0) =>
+    api<AttemptHistoryResponse>(
+      `/api/system-design/${userId}/attempts?limit=${limit}&offset=${offset}`
+    ),
+
+  // Submit answer for a dashboard question
+  submitDashboardQuestion: (questionId: string, responseText: string) =>
+    api<AttemptGrade>(`/api/system-design/daily-questions/${questionId}/submit`, {
+      method: 'POST',
+      body: JSON.stringify({ response_text: responseText }),
+    }),
 }
 
 // Types (matching backend schemas)
@@ -653,6 +750,233 @@ export interface MissionResponseV2 {
   objective?: DailyObjective
   main_quests?: MainQuest[]
   side_quests?: SideQuest[]
+}
+
+// System Design Types
+export interface SystemDesignTrackSummary {
+  id: string
+  name: string
+  description?: string
+  track_type: string
+  total_topics: number
+}
+
+export interface TopicInfo {
+  name: string
+  order: number
+  difficulty: string
+  example_systems: string[]
+}
+
+export interface RubricWeights {
+  depth: number
+  tradeoffs: number
+  clarity: number
+  scalability: number
+}
+
+export interface SystemDesignTrack extends SystemDesignTrackSummary {
+  topics: TopicInfo[]
+  rubric: RubricWeights
+  created_at?: string
+}
+
+export interface UserTrackProgressData {
+  id: string
+  user_id: string
+  track_id: string
+  completed_topics: string[]
+  sessions_completed: number
+  average_score: number
+  started_at: string
+  last_activity_at: string
+}
+
+export interface TrackProgressResponse {
+  track: SystemDesignTrack
+  progress?: UserTrackProgressData
+  completion_percentage: number
+  next_topic?: string
+}
+
+export interface CreateSessionRequest {
+  track_id: string
+  topic: string
+  session_type?: string
+}
+
+export interface SessionQuestion {
+  id: number
+  text: string
+  focus_area: string
+  key_concepts: string[]
+  response?: string
+  word_count?: number
+}
+
+export interface SystemDesignSession {
+  id: string
+  user_id: string
+  track_id?: string
+  topic: string
+  questions: SessionQuestion[]
+  session_type?: string
+  status: string
+  started_at: string
+  completed_at?: string
+}
+
+export interface RubricScore {
+  dimension: string
+  score: number
+  feedback: string
+}
+
+export interface QuestionGrade {
+  question_id: number
+  score: number
+  feedback: string
+  rubric_scores: RubricScore[]
+  missed_concepts: string[]
+}
+
+export interface SystemDesignGrade {
+  id: string
+  session_id: string
+  overall_score: number
+  overall_feedback: string
+  question_grades: QuestionGrade[]
+  strengths: string[]
+  gaps: string[]
+  review_topics: string[]
+  would_hire?: boolean
+  graded_at: string
+}
+
+export interface SystemDesignReviewItem {
+  id: string
+  user_id: string
+  track_id?: string
+  topic: string
+  reason?: string
+  priority: number
+  next_review: string
+  interval_days: number
+  review_count: number
+  last_reviewed?: string
+  source_session_id?: string
+  created_at: string
+}
+
+export interface SessionHistoryItem {
+  id: string
+  track_name?: string
+  topic: string
+  session_type?: string
+  status: string
+  overall_score?: number
+  started_at: string
+  completed_at?: string
+}
+
+export interface SessionHistoryResponse {
+  sessions: SessionHistoryItem[]
+  total: number
+  has_more: boolean
+}
+
+// System Design Dashboard Types
+export interface NextTopicInfo {
+  track_id: string
+  track_name: string
+  track_type: string
+  topic_name: string
+  topic_order: number
+  topic_difficulty: string
+  example_systems: string[]
+  topics_completed: number
+  total_topics: number
+}
+
+export interface DashboardQuestion {
+  id: string
+  scenario: string  // Shared scenario context
+  text: string  // The focused sub-question (2 concepts)
+  focus_area: string
+  key_concepts: string[]  // Exactly 2 concepts to address
+  topic: string
+  track_id: string
+  part_number: number  // Which part (1, 2, or 3)
+  total_parts: number  // Total parts in full scenario
+  completed: boolean
+}
+
+export interface SystemDesignDashboardSummary {
+  has_active_track: boolean
+  active_track?: SystemDesignTrackSummary
+  next_topic?: NextTopicInfo
+  daily_questions: DashboardQuestion[]
+  reviews_due_count: number
+  reviews_due: SystemDesignReviewItem[]
+  recent_score?: number
+  sessions_this_week: number
+}
+
+export interface ActiveTrackResponse {
+  active_track_id?: string
+  track?: SystemDesignTrackSummary
+}
+
+// System Design Simplified Attempt Types
+export interface CreateAttemptRequest {
+  track_id: string
+  topic: string
+}
+
+export interface SystemDesignAttempt {
+  id: string
+  user_id: string
+  track_id?: string
+  topic: string
+  question_text: string
+  question_focus_area?: string
+  question_key_concepts: string[]
+  response_text?: string
+  word_count: number
+  score?: number
+  verdict?: 'pass' | 'fail' | 'borderline'
+  feedback?: string
+  missed_concepts: string[]
+  review_topics: string[]
+  status: 'pending' | 'graded' | 'abandoned'
+  created_at: string
+  graded_at?: string
+}
+
+export interface AttemptGrade {
+  score: number
+  verdict: 'pass' | 'fail' | 'borderline'
+  feedback: string
+  missed_concepts: string[]
+  review_topics: string[]
+}
+
+export interface AttemptHistoryItem {
+  id: string
+  topic: string
+  question_text: string
+  score?: number
+  verdict?: 'pass' | 'fail' | 'borderline'
+  status: string
+  created_at: string
+  graded_at?: string
+  track_name?: string
+}
+
+export interface AttemptHistoryResponse {
+  attempts: AttemptHistoryItem[]
+  total: number
+  has_more: boolean
 }
 
 export { ApiError }

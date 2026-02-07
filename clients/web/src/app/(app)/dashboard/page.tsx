@@ -3,12 +3,14 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
-import { leetloopApi, type MissionResponseV2, type OnboardingStatus } from '@/lib/api'
+import { leetloopApi, type MissionResponseV2, type SystemDesignDashboardSummary, type SystemDesignReviewItem } from '@/lib/api'
 import {
   MissionProblemCard,
   MissionSkeleton,
   PacingIndicator,
+  SideQuestColumn,
 } from '@/components/mission'
+import { SystemDesignDashboardCard } from '@/components/system-design/SystemDesignDashboardCard'
 import { format } from 'date-fns'
 import { clsx } from 'clsx'
 
@@ -19,6 +21,7 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null)
   const [mission, setMission] = useState<MissionResponseV2 | null>(null)
   const [isRegenerating, setIsRegenerating] = useState(false)
+  const [systemDesignData, setSystemDesignData] = useState<SystemDesignDashboardSummary | null>(null)
 
   const loadMission = useCallback(async () => {
     if (!userId) return
@@ -36,8 +39,14 @@ export default function DashboardPage() {
         return
       }
 
-      const data = await leetloopApi.getDailyMissionV2(userId)
-      setMission(data)
+      // Load mission and system design data in parallel
+      const [missionData, sdData] = await Promise.all([
+        leetloopApi.getDailyMissionV2(userId),
+        leetloopApi.getSystemDesignDashboard(userId).catch(() => null),
+      ])
+
+      setMission(missionData)
+      setSystemDesignData(sdData)
     } catch (err) {
       console.error('Failed to load mission:', err)
       setError('Failed to load mission. Make sure the backend is running.')
@@ -64,9 +73,17 @@ export default function DashboardPage() {
     }
   }
 
+  const handleStartSystemDesignSession = (trackId: string, topic: string) => {
+    router.push(`/system-design/session/new?track=${trackId}&topic=${encodeURIComponent(topic)}`)
+  }
+
+  const handleStartSystemDesignReview = (review: SystemDesignReviewItem) => {
+    router.push(`/system-design/session/new?track=${review.track_id}&topic=${encodeURIComponent(review.topic)}&type=review`)
+  }
+
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <MissionSkeleton />
       </div>
     )
@@ -74,7 +91,7 @@ export default function DashboardPage() {
 
   if (error) {
     return (
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <div className="card text-center">
           <p className="text-red-600 mb-4">{error}</p>
           <p className="text-sm text-gray-500 mb-4">
@@ -96,7 +113,7 @@ export default function DashboardPage() {
 
   if (!mission) {
     return (
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <div className="card text-center">
           <p className="text-gray-500">No mission data available.</p>
         </div>
@@ -111,7 +128,7 @@ export default function DashboardPage() {
   const progressPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-6xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
@@ -128,14 +145,6 @@ export default function DashboardPage() {
               status={mission.pacing_status}
               note={mission.pacing_note}
             />
-          )}
-
-          {/* Streak badge */}
-          {mission.streak > 0 && (
-            <div className="card-sm flex items-center gap-2 py-2 px-3">
-              <span className="stat-value text-lg">{mission.streak}</span>
-              <span className="text-xs text-gray-500">day streak</span>
-            </div>
           )}
         </div>
       </div>
@@ -196,37 +205,60 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Problems List */}
-      {mission.problems && mission.problems.length > 0 && (
-        <div className="card">
-          <h3 className="section-title mb-4">
-            Problems for Today
-          </h3>
-          <div className="space-y-2">
-            {mission.problems.map((problem, index) => (
-              <MissionProblemCard
-                key={problem.problem_id}
-                problem={problem}
-                index={index}
-              />
-            ))}
-          </div>
-        </div>
-      )}
+      {/* Two Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+        {/* Left Column: Problems + System Design */}
+        <div className="lg:col-span-3 space-y-6">
+          {/* Problems List */}
+          {mission.problems && mission.problems.length > 0 && (
+            <div className="card">
+              <h3 className="section-title mb-4">
+                Problems for Today
+              </h3>
+              <div className="space-y-2">
+                {mission.problems.map((problem, index) => (
+                  <MissionProblemCard
+                    key={problem.problem_id}
+                    problem={problem}
+                    index={index}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
 
-      {/* Pacing Note */}
-      {mission.pacing_note && (
-        <div className="card-sm bg-gray-50">
-          <p className="text-sm text-gray-600">
-            <strong>Pacing:</strong> {mission.pacing_note}
-          </p>
+          {/* System Design Section */}
+          {systemDesignData && (
+            <SystemDesignDashboardCard
+              data={systemDesignData}
+              onStartSession={handleStartSystemDesignSession}
+              onStartReview={handleStartSystemDesignReview}
+            />
+          )}
+
+          {/* Pacing Note */}
+          {mission.pacing_note && (
+            <div className="card-sm bg-gray-50">
+              <p className="text-sm text-gray-600">
+                <strong>Pacing:</strong> {mission.pacing_note}
+              </p>
+            </div>
+          )}
         </div>
-      )}
+
+        {/* Right Column: Side Quests + Stats */}
+        <div className="lg:col-span-2">
+          <SideQuestColumn
+            quests={mission.side_quests || []}
+            streak={mission.streak}
+          />
+        </div>
+      </div>
 
       {/* AI Transparency */}
       <div className="text-center text-xs text-gray-400 pt-4">
         <p>
-          Mission generated by Gemini AI based on your goals, path progress, and skill gaps.
+          Mission generated by Gemini AI based on your goals, path progress, skill gaps, and system design track.
         </p>
       </div>
     </div>
