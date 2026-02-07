@@ -39,3 +39,6 @@ __pycache__/
 *.pyc
 .venv/
 venv/
+
+# Binary/large files
+*.pdf

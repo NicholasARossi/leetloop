@@ -57,6 +57,16 @@ class MissionGenerator:
         existing = await self._get_existing_mission(user_id, mission_date)
 
         if existing and not force_regenerate:
+            if not existing.get("problems"):
+                # Auto-heal: regenerate without penalizing regen count
+                original_regen_count = existing.get("regenerated_count", 0)
+                context = await self._build_gemini_context(user_id)
+                gemini_response = await self._call_gemini(context)
+                mission_data = await self._build_mission_data(
+                    user_id, mission_date, gemini_response, context, existing
+                )
+                mission_data["regenerated_count"] = original_regen_count
+                return await self._enrich_mission(mission_data, user_id)
             return await self._enrich_mission(existing, user_id)
 
         if existing and force_regenerate:
@@ -667,8 +677,7 @@ Only output the JSON, nothing else."""
                 .execute()
             )
 
-            if problems_response.data:
-                mission["problems"] = problems_response.data
+            mission["problems"] = problems_response.data or []
 
             return mission
 
@@ -861,7 +870,7 @@ Only output the JSON, nothing else."""
         for user_id in user_ids:
             try:
                 existing = await self._get_existing_mission(UUID(user_id), date.today())
-                if existing:
+                if existing and existing.get("problems"):
                     skipped += 1
                     continue
 
