@@ -63,13 +63,13 @@ export const leetloopApi = {
   health: () => api<{ status: string }>('/health'),
 
   // Progress
-  getProgress: (userId: string) =>
+  getProgress: (userId: string, days?: number) =>
     api<{
       stats: UserStats
       skill_scores: SkillScore[]
       trends: ProgressTrend[]
       recent_submissions: Submission[]
-    }>(`/api/progress/${userId}`),
+    }>(`/api/progress/${userId}${days ? `?days=${days}` : ''}`),
 
   getStats: (userId: string) =>
     api<UserStats>(`/api/progress/${userId}/stats`),
@@ -204,7 +204,7 @@ export const leetloopApi = {
     api<MissionResponse>(`/api/mission/${userId}`),
 
   regenerateMission: (userId: string) =>
-    api<MissionResponse>(`/api/mission/${userId}/regenerate`, {
+    api<MissionResponseV2>(`/api/mission/${userId}/regenerate`, {
       method: 'POST',
     }),
 

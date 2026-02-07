@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
-import { leetloopApi, type MissionResponseV2, type SystemDesignDashboardSummary, type SystemDesignReviewItem } from '@/lib/api'
+import { leetloopApi, type MissionResponseV2, type SystemDesignDashboardSummary, type SystemDesignReviewItem, type ProgressTrend, type UserStats } from '@/lib/api'
 import {
   MissionProblemCard,
   MissionSkeleton,
@@ -22,6 +22,8 @@ export default function DashboardPage() {
   const [mission, setMission] = useState<MissionResponseV2 | null>(null)
   const [isRegenerating, setIsRegenerating] = useState(false)
   const [systemDesignData, setSystemDesignData] = useState<SystemDesignDashboardSummary | null>(null)
+  const [trends, setTrends] = useState<ProgressTrend[]>([])
+  const [userStats, setUserStats] = useState<UserStats | null>(null)
 
   const loadMission = useCallback(async () => {
     if (!userId) return
@@ -39,14 +41,19 @@ export default function DashboardPage() {
         return
       }
 
-      // Load mission and system design data in parallel
-      const [missionData, sdData] = await Promise.all([
+      // Load mission, system design, and progress data in parallel
+      const [missionData, sdData, progressData] = await Promise.all([
         leetloopApi.getDailyMissionV2(userId),
         leetloopApi.getSystemDesignDashboard(userId).catch(() => null),
+        leetloopApi.getProgress(userId, 91).catch(() => null),
       ])
 
       setMission(missionData)
       setSystemDesignData(sdData)
+      if (progressData) {
+        setTrends(progressData.trends)
+        setUserStats(progressData.stats)
+      }
     } catch (err) {
       console.error('Failed to load mission:', err)
       setError('Failed to load mission. Make sure the backend is running.')
@@ -64,7 +71,7 @@ export default function DashboardPage() {
 
     setIsRegenerating(true)
     try {
-      const data = await leetloopApi.regenerateMission(userId) as MissionResponseV2
+      const data = await leetloopApi.regenerateMission(userId)
       setMission(data)
     } catch (err) {
       console.error('Failed to regenerate mission:', err)
@@ -206,11 +213,11 @@ export default function DashboardPage() {
       </div>
 
       {/* Two Column Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-        {/* Left Column: Problems + System Design */}
-        <div className="lg:col-span-3 space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Left Column: Problems + Pacing */}
+        <div className="space-y-6">
           {/* Problems List */}
-          {mission.problems && mission.problems.length > 0 && (
+          {mission.problems && mission.problems.length > 0 ? (
             <div className="card">
               <h3 className="section-title mb-4">
                 Problems for Today
@@ -225,15 +232,37 @@ export default function DashboardPage() {
                 ))}
               </div>
             </div>
-          )}
-
-          {/* System Design Section */}
-          {systemDesignData && (
-            <SystemDesignDashboardCard
-              data={systemDesignData}
-              onStartSession={handleStartSystemDesignSession}
-              onStartReview={handleStartSystemDesignReview}
-            />
+          ) : (
+            <div className="card text-center py-8">
+              <h3 className="section-title mb-2">Problems for Today</h3>
+              <p className="text-gray-500 text-sm mb-4">
+                {mission.can_regenerate
+                  ? 'No problems were generated for today. Click below to generate your practice set.'
+                  : 'No problems available. Regeneration limit reached for today.'}
+              </p>
+              {mission.can_regenerate && (
+                <button
+                  onClick={handleRegenerate}
+                  disabled={isRegenerating}
+                  className="btn-primary text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <svg
+                    className={clsx('w-4 h-4 inline mr-1', isRegenerating && 'animate-spin')}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                    />
+                  </svg>
+                  Generate Problems
+                </button>
+              )}
+            </div>
           )}
 
           {/* Pacing Note */}
@@ -246,12 +275,23 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* Right Column: Side Quests + Stats */}
-        <div className="lg:col-span-2">
+        {/* Right Column: Side Quests + System Design */}
+        <div className="space-y-6">
           <SideQuestColumn
             quests={mission.side_quests || []}
             streak={mission.streak}
+            trends={trends}
+            stats={userStats}
           />
+
+          {/* System Design Section */}
+          {systemDesignData && (
+            <SystemDesignDashboardCard
+              data={systemDesignData}
+              onStartSession={handleStartSystemDesignSession}
+              onStartReview={handleStartSystemDesignReview}
+            />
+          )}
         </div>
       </div>
 
