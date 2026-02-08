@@ -1,5 +1,6 @@
 """Mission Control API endpoints - Daily mission generation and tracking."""
 
+import time
 from datetime import datetime
 from typing import Annotated
 from uuid import UUID
@@ -19,6 +20,10 @@ from app.services.gemini_gateway import GeminiGateway
 from app.utils import parse_iso_datetime
 
 router = APIRouter()
+
+# In-memory TTL cache for missions: {user_id_str: (expiry_timestamp, response)}
+_mission_cache: dict[str, tuple[float, DailyMissionResponseV2]] = {}
+_MISSION_CACHE_TTL = 300  # 5 minutes
 
 
 def _parse_difficulty(diff: str | None) -> Difficulty | None:
@@ -84,12 +89,19 @@ async def get_daily_mission(
     Returns:
         DailyMissionResponseV2 with problems and Gemini reasoning
     """
+    cache_key = str(user_id)
+    cached = _mission_cache.get(cache_key)
+    if cached and cached[0] > time.monotonic():
+        return cached[1]
+
     try:
         gemini = GeminiGateway()
         generator = MissionGenerator(supabase, gemini)
 
         mission_data = await generator.generate_mission(user_id)
-        return _build_mission_response(mission_data)
+        response = _build_mission_response(mission_data)
+        _mission_cache[cache_key] = (time.monotonic() + _MISSION_CACHE_TTL, response)
+        return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get mission: {str(e)}")
 
@@ -107,12 +119,17 @@ async def regenerate_mission(
     Returns:
         DailyMissionResponseV2 with new problems and reasoning
     """
+    cache_key = str(user_id)
+    _mission_cache.pop(cache_key, None)
+
     try:
         gemini = GeminiGateway()
         generator = MissionGenerator(supabase, gemini)
 
         mission_data = await generator.generate_mission(user_id, force_regenerate=True)
-        return _build_mission_response(mission_data)
+        response = _build_mission_response(mission_data)
+        _mission_cache[cache_key] = (time.monotonic() + _MISSION_CACHE_TTL, response)
+        return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to regenerate mission: {str(e)}")
 
@@ -127,6 +144,8 @@ async def reset_daily_mission(
 
     Useful when a mission is in a bad state.
     """
+    _mission_cache.pop(str(user_id), None)
+
     try:
         # Use RPC function to bypass RLS
         result = supabase.rpc(

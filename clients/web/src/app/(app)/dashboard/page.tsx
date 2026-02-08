@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { leetloopApi, type MissionResponseV2, type SystemDesignDashboardSummary, type SystemDesignReviewItem, type ProgressTrend, type UserStats } from '@/lib/api'
@@ -62,9 +62,13 @@ export default function DashboardPage() {
     }
   }, [userId, router])
 
+  const loadedUserRef = useRef<string | null>(null)
+
   useEffect(() => {
+    if (!userId || loadedUserRef.current === userId) return
+    loadedUserRef.current = userId
     loadMission()
-  }, [loadMission])
+  }, [loadMission, userId])
 
   const handleRegenerate = async () => {
     if (!userId || isRegenerating || !mission?.can_regenerate) return
@@ -100,7 +104,7 @@ export default function DashboardPage() {
     return (
       <div className="max-w-6xl mx-auto">
         <div className="card text-center">
-          <p className="text-red-600 mb-4">{error}</p>
+          <p className="text-coral mb-4">{error}</p>
           <p className="text-sm text-gray-500 mb-4">
             Make sure the backend API is running at{' '}
             <code className="bg-gray-100 px-2 py-1">

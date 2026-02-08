@@ -1,5 +1,6 @@
 """Book ingestion service for extracting structure and content from PDFs."""
 
+import asyncio
 import json
 import re
 from pathlib import Path
@@ -253,7 +254,7 @@ Only include NEWLY discovered chapters (not repeats). Return empty lists if noth
 """
 
         try:
-            response = self.model.generate_content(prompt)
+            response = await asyncio.to_thread(self.model.generate_content, prompt)
             return self._parse_structure_response(response.text)
         except Exception as e:
             print(f"Structure discovery failed for pages {chunk.start_page}-{chunk.end_page}: {e}")
@@ -399,7 +400,7 @@ Focus on content relevant to:
 """
 
         try:
-            response = self.model.generate_content(prompt)
+            response = await asyncio.to_thread(self.model.generate_content, prompt)
             return self._parse_content_response(response.text, chapter_title)
         except Exception as e:
             print(f"Content extraction failed for '{chapter_title}': {e}")

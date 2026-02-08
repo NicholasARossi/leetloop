@@ -204,7 +204,7 @@ export function ObjectiveSetupWizard({ userId, onComplete }: ObjectiveSetupWizar
 
       {/* Error */}
       {error && (
-        <div className="card bg-red-50 border-l-4 border-l-coral mb-6">
+        <div className="card bg-gray-100 border-l-4 border-l-coral mb-6">
           <p className="text-coral">{error}</p>
         </div>
       )}

@@ -1,5 +1,6 @@
 """System Design Review endpoints."""
 
+import time
 from datetime import datetime
 from typing import Annotated
 from uuid import UUID
@@ -42,6 +43,10 @@ from app.models.system_design_schemas import (
 from app.services.system_design_service import BookContentContext, get_system_design_service
 
 router = APIRouter()
+
+# In-memory TTL cache for system-design dashboard: {user_id_str: (expiry_timestamp, response)}
+_sd_dashboard_cache: dict[str, tuple[float, SystemDesignDashboardSummary]] = {}
+_SD_DASHBOARD_CACHE_TTL = 300  # 5 minutes
 
 
 # ============ Tracks ============
@@ -1250,6 +1255,11 @@ async def get_dashboard_summary(
     """Get system design summary for dashboard display."""
     from datetime import timedelta
 
+    cache_key = str(user_id)
+    cached = _sd_dashboard_cache.get(cache_key)
+    if cached and cached[0] > time.monotonic():
+        return cached[1]
+
     try:
         # Get user settings
         settings_response = (
@@ -1370,7 +1380,7 @@ async def get_dashboard_summary(
             if session_check.data:
                 recent_score = grade["overall_score"]
 
-        return SystemDesignDashboardSummary(
+        response = SystemDesignDashboardSummary(
             has_active_track=has_active_track,
             active_track=active_track,
             next_topic=next_topic,
@@ -1380,6 +1390,8 @@ async def get_dashboard_summary(
             recent_score=recent_score,
             sessions_this_week=sessions_this_week,
         )
+        _sd_dashboard_cache[cache_key] = (time.monotonic() + _SD_DASHBOARD_CACHE_TTL, response)
+        return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get dashboard summary: {str(e)}")
 

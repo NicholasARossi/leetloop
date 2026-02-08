@@ -1,5 +1,6 @@
 """System Design service for question generation and grading via Gemini."""
 
+import asyncio
 import json
 import re
 from typing import Optional
@@ -76,7 +77,7 @@ class SystemDesignService:
         prompt = self._build_question_prompt(context, book_content)
 
         try:
-            response = self.model.generate_content(prompt)
+            response = await asyncio.to_thread(self.model.generate_content, prompt)
             return self._parse_questions_response(response.text)
         except Exception as e:
             print(f"Gemini question generation failed: {e}")
@@ -107,7 +108,7 @@ class SystemDesignService:
         prompt = self._build_grading_prompt(context)
 
         try:
-            response = self.model.generate_content(prompt)
+            response = await asyncio.to_thread(self.model.generate_content, prompt)
             return self._parse_grading_response(response.text)
         except Exception as e:
             print(f"Gemini grading failed: {e}")
@@ -422,7 +423,7 @@ Grade now:"""
         prompt = self._build_dashboard_questions_prompt(context, count)
 
         try:
-            response = self.model.generate_content(prompt)
+            response = await asyncio.to_thread(self.model.generate_content, prompt)
             return self._parse_dashboard_questions_response(response.text, context.topic, count)
         except Exception as e:
             print(f"Gemini dashboard question generation failed: {e}")
@@ -560,7 +561,7 @@ Generate now:"""
         prompt = self._build_single_question_prompt(context)
 
         try:
-            response = self.model.generate_content(prompt)
+            response = await asyncio.to_thread(self.model.generate_content, prompt)
             return self._parse_single_question_response(response.text)
         except Exception as e:
             print(f"Gemini single question generation failed: {e}")
@@ -593,7 +594,7 @@ Generate now:"""
         )
 
         try:
-            response = self.model.generate_content(prompt)
+            response = await asyncio.to_thread(self.model.generate_content, prompt)
             return self._parse_attempt_grading_response(response.text, topic)
         except Exception as e:
             print(f"Gemini attempt grading failed: {e}")

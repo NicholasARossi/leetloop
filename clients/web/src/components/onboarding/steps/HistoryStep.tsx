@@ -47,8 +47,8 @@ export function HistoryStep({ status, onImport, onSkip }: HistoryStepProps) {
       <div className="space-y-6">
         {/* Status Check */}
         {!hasExtension && (
-          <div className="p-4 bg-yellow-50 border-[2px] border-yellow-400">
-            <p className="text-sm text-yellow-800">
+          <div className="p-4 bg-gray-100 border-[2px] border-gray-400">
+            <p className="text-sm text-gray-700">
               <strong>Note:</strong> Without the extension installed, we can only import history
               if you&apos;ve previously synced your LeetCode account with LeetLoop.
             </p>
@@ -60,25 +60,25 @@ export function HistoryStep({ status, onImport, onSkip }: HistoryStepProps) {
           <h3 className="font-bold mb-3">What gets imported:</h3>
           <ul className="space-y-2 text-sm">
             <li className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-4 h-4 text-coral" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
               All your solved problems (marked as completed)
             </li>
             <li className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-4 h-4 text-coral" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
               Submission timestamps and patterns
             </li>
             <li className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-4 h-4 text-coral" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
               Initial skill scores based on what you&apos;ve solved
             </li>
             <li className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-4 h-4 text-coral" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
               Failed problems for your review queue
@@ -90,7 +90,7 @@ export function HistoryStep({ status, onImport, onSkip }: HistoryStepProps) {
         {importedCount > 0 && (
           <div className={clsx(
             'p-4 border-[2px]',
-            imported ? 'border-green-500 bg-green-50' : 'border-accent bg-accent/5'
+            imported ? 'border-coral bg-coral-light' : 'border-accent bg-accent/5'
           )}>
             <p className="font-bold">
               {imported ? 'Import Complete!' : 'Existing Data Found'}

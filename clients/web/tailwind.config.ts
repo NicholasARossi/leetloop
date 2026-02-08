@@ -27,8 +27,9 @@ const config: Config = {
           900: '#171717',
         },
         // Coral accent (changes daily via CSS variable)
-        coral: 'var(--accent-color)',
-        'coral-light': 'var(--accent-color-light)',
+        coral: 'rgb(var(--accent-rgb) / <alpha-value>)',
+        'coral-light': 'rgb(var(--accent-rgb) / 0.19)',
+        'coral-dark': 'rgb(var(--accent-dark-rgb) / <alpha-value>)',
       },
       boxShadow: {
         'hard-sm': '3px 3px 0 var(--shadow-color, #525252)',

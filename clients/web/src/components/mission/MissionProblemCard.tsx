@@ -9,19 +9,19 @@ interface MissionProblemCardProps {
 }
 
 const sourceLabels: Record<string, { label: string; color: string }> = {
-  path: { label: 'PATH', color: 'bg-blue-100 text-blue-700' },
-  gap_fill: { label: 'GAP FILL', color: 'bg-orange-100 text-orange-700' },
-  review: { label: 'REVIEW', color: 'bg-purple-100 text-purple-700' },
-  reinforcement: { label: 'REINFORCE', color: 'bg-green-100 text-green-700' },
+  path: { label: 'PATH', color: 'bg-gray-100 text-gray-700' },
+  gap_fill: { label: 'GAP FILL', color: 'bg-gray-200 text-gray-700' },
+  review: { label: 'REVIEW', color: 'bg-gray-300 text-gray-800' },
+  reinforcement: { label: 'REINFORCE', color: 'bg-gray-100 text-gray-600' },
 }
 
 const difficultyColors: Record<string, string> = {
-  Easy: 'text-green-600',
-  easy: 'text-green-600',
-  Medium: 'text-yellow-600',
-  medium: 'text-yellow-600',
-  Hard: 'text-red-600',
-  hard: 'text-red-600',
+  Easy: 'text-gray-500',
+  easy: 'text-gray-500',
+  Medium: 'text-coral',
+  medium: 'text-coral',
+  Hard: 'text-black font-bold',
+  hard: 'text-black font-bold',
 }
 
 export function MissionProblemCard({ problem, index }: MissionProblemCardProps) {

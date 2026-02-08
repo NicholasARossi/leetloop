@@ -11,30 +11,30 @@ interface PaceIndicatorProps {
 const statusConfig = {
   ahead: {
     label: 'AHEAD',
-    color: 'bg-green-500',
-    textColor: 'text-green-600',
-    bgLight: 'bg-green-50',
+    color: 'bg-coral',
+    textColor: 'text-coral',
+    bgLight: 'bg-coral-light',
     message: 'Great work! You\'re ahead of schedule.',
   },
   on_track: {
     label: 'ON TRACK',
-    color: 'bg-blue-500',
-    textColor: 'text-blue-600',
-    bgLight: 'bg-blue-50',
+    color: 'bg-gray-500',
+    textColor: 'text-gray-600',
+    bgLight: 'bg-gray-50',
     message: 'Keep going! You\'re on track to meet your goal.',
   },
   behind: {
     label: 'BEHIND',
-    color: 'bg-yellow-500',
-    textColor: 'text-yellow-600',
-    bgLight: 'bg-yellow-50',
+    color: 'bg-gray-700',
+    textColor: 'text-gray-700',
+    bgLight: 'bg-gray-100',
     message: 'You\'re falling behind. Time to push harder.',
   },
   critical: {
     label: 'CRITICAL',
-    color: 'bg-coral',
-    textColor: 'text-coral',
-    bgLight: 'bg-red-50',
+    color: 'bg-black',
+    textColor: 'text-black',
+    bgLight: 'bg-gray-200',
     message: 'Urgent: You need to significantly increase your pace.',
   },
 }
@@ -56,7 +56,7 @@ export function PaceIndicator({ pace, compact = false }: PaceIndicatorProps) {
   }
 
   return (
-    <div className={clsx('card', config.bgLight, 'border-l-4', `border-l-${pace.status === 'critical' ? 'coral' : config.color.replace('bg-', '')}`)}>
+    <div className={clsx('card', config.bgLight, 'border-l-4', pace.status === 'ahead' ? 'border-l-coral' : pace.status === 'critical' ? 'border-l-black' : 'border-l-gray-500')}>
       <div className="flex items-start justify-between mb-4">
         <div>
           <div className={clsx('text-lg font-bold', config.textColor)}>
@@ -83,7 +83,7 @@ export function PaceIndicator({ pace, compact = false }: PaceIndicatorProps) {
         </div>
         <div>
           <div className="text-gray-500">Behind By</div>
-          <div className={clsx('font-mono font-bold', pace.problems_behind > 0 ? 'text-coral' : 'text-green-600')}>
+          <div className={clsx('font-mono font-bold', pace.problems_behind > 0 ? 'text-black' : 'text-coral')}>
             {pace.problems_behind > 0 ? `${pace.problems_behind} problems` : 'None'}
           </div>
         </div>
