@@ -140,7 +140,52 @@ def create_track_from_book(supabase, book_structure: dict, track_name: str, dry_
     return track_id
 
 
-def save_book_content(supabase, book_structure: dict, track_id: str, dry_run: bool = False):
+def create_language_track_from_book(
+    supabase, book_structure: dict, track_name: str,
+    language: str, level: str, dry_run: bool = False,
+) -> str:
+    """Create a language learning track from extracted book content."""
+    topics = []
+    for chapter in book_structure.get("chapters", []):
+        topics.append({
+            "name": chapter.get("title", f"Chapter {chapter.get('chapter_number', '?')}"),
+            "order": chapter.get("chapter_number", 0),
+            "difficulty": "medium",
+            "key_concepts": chapter.get("key_concepts", [])[:10],
+        })
+
+    track_data = {
+        "name": track_name,
+        "description": f"{language.capitalize()} {level.upper()} course from '{book_structure.get('title', 'textbook')}'",
+        "language": language,
+        "level": level,
+        "topics": topics,
+        "total_topics": len(topics),
+        "rubric": {
+            "accuracy": 3,
+            "grammar": 3,
+            "vocabulary": 2,
+            "naturalness": 2,
+        },
+        "source_book": book_structure.get("title"),
+    }
+
+    if dry_run:
+        print("\n[DRY RUN] Would create language track:")
+        print(json.dumps(track_data, indent=2))
+        return "dry-run-track-id"
+
+    result = supabase.table("language_tracks").upsert(
+        track_data,
+        on_conflict="name",
+    ).execute()
+
+    track_id = result.data[0]["id"] if result.data else None
+    print(f"\nCreated/updated language track: {track_name} (ID: {track_id})")
+    return track_id
+
+
+def save_book_content(supabase, book_structure: dict, track_id: str, dry_run: bool = False, language_track_id: str = None):
     """Save extracted book content to database."""
     book_title = book_structure.get("title", "Reliable Machine Learning")
 
@@ -155,7 +200,8 @@ def save_book_content(supabase, book_structure: dict, track_id: str, dry_run: bo
             "summary": chapter.get("summary"),
             "page_start": chapter.get("page_start"),
             "page_end": chapter.get("page_end"),
-            "track_id": track_id if track_id != "dry-run-track-id" else None,
+            "track_id": track_id if track_id != "dry-run-track-id" and not language_track_id else None,
+            "language_track_id": language_track_id if language_track_id and language_track_id != "dry-run-track-id" else None,
         }
 
         if dry_run:
@@ -194,6 +240,22 @@ async def main():
         "--output-json",
         help="Output extracted structure to JSON file",
     )
+    parser.add_argument(
+        "--book-type",
+        choices=["system-design", "language"],
+        default="system-design",
+        help="Type of book: system-design or language (default: system-design)",
+    )
+    parser.add_argument(
+        "--language",
+        choices=["french", "chinese", "spanish", "german", "japanese", "italian", "portuguese", "korean"],
+        help="Target language (required for --book-type language)",
+    )
+    parser.add_argument(
+        "--level",
+        choices=["a1", "a2", "b1", "b2", "c1", "c2"],
+        help="CEFR level (required for --book-type language)",
+    )
 
     args = parser.parse_args()
 
@@ -208,6 +270,15 @@ async def main():
 
     pdf_path = pdf_path.resolve()
     print(f"PDF path: {pdf_path}")
+
+    # Validate language args
+    if args.book_type == "language":
+        if not args.language:
+            print("Error: --language is required for --book-type language")
+            sys.exit(1)
+        if not args.level:
+            print("Error: --level is required for --book-type language")
+            sys.exit(1)
 
     # Check for Google API key
     if not os.getenv("GOOGLE_API_KEY"):
@@ -280,8 +351,16 @@ async def main():
     # Create track and save to database
     supabase = create_supabase_client()
 
-    track_id = create_track_from_book(supabase, book_dict, args.track_name, args.dry_run)
-    save_book_content(supabase, book_dict, track_id, args.dry_run)
+    if args.book_type == "language":
+        track_id = create_language_track_from_book(
+            supabase, book_dict, args.track_name,
+            args.language, args.level, args.dry_run,
+        )
+        save_book_content(supabase, book_dict, track_id, args.dry_run,
+                          language_track_id=track_id)
+    else:
+        track_id = create_track_from_book(supabase, book_dict, args.track_name, args.dry_run)
+        save_book_content(supabase, book_dict, track_id, args.dry_run)
 
     print("\nIngestion complete!")
     if not args.dry_run:
