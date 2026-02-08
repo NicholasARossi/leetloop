@@ -1,5 +1,6 @@
 """Centralized gateway for Google Gemini AI calls."""
 
+import asyncio
 from typing import AsyncGenerator, Optional
 
 import google.generativeai as genai
@@ -54,7 +55,7 @@ class GeminiGateway:
         messages = self._build_messages(history, message, system_prompt)
 
         try:
-            response = self.model.generate_content(messages)
+            response = await asyncio.to_thread(self.model.generate_content, messages)
             return response.text
         except Exception as e:
             return f"I apologize, but I encountered an error: {str(e)}"
@@ -79,7 +80,7 @@ class GeminiGateway:
         messages = self._build_messages(history, message, system_prompt)
 
         try:
-            response = self.model.generate_content(messages, stream=True)
+            response = await asyncio.to_thread(lambda: self.model.generate_content(messages, stream=True))
             for chunk in response:
                 if chunk.text:
                     yield chunk.text
@@ -136,7 +137,7 @@ SPACE_COMPLEXITY: O(...)
 """
 
         try:
-            response = self.model.generate_content(prompt)
+            response = await asyncio.to_thread(self.model.generate_content, prompt)
             return self._parse_analysis_response(response.text)
         except Exception as e:
             return {
@@ -177,7 +178,7 @@ Provide tips that are:
 Format as a numbered list."""
 
         try:
-            response = self.model.generate_content(prompt)
+            response = await asyncio.to_thread(self.model.generate_content, prompt)
             return self._parse_tips_response(response.text)
         except Exception as e:
             return [f"Unable to generate tips: {str(e)}"]

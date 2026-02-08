@@ -1,5 +1,6 @@
 """Mission Generator Service - Gemini-driven daily mission generation."""
 
+import asyncio
 import json
 from datetime import datetime, date, timedelta
 from typing import Optional
@@ -383,7 +384,7 @@ class MissionGenerator:
             return self._fallback_mission(context, available_problems, review_problems)
 
         try:
-            response = self.gemini.model.generate_content(prompt)
+            response = await asyncio.to_thread(self.gemini.model.generate_content, prompt)
             text = response.text.strip()
 
             # Extract JSON from response

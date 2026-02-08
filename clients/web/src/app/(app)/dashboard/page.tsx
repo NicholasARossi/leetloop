@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { leetloopApi, type MissionResponseV2, type SystemDesignDashboardSummary, type SystemDesignReviewItem, type ProgressTrend, type UserStats } from '@/lib/api'
@@ -62,9 +62,13 @@ export default function DashboardPage() {
     }
   }, [userId, router])
 
+  const loadedUserRef = useRef<string | null>(null)
+
   useEffect(() => {
+    if (!userId || loadedUserRef.current === userId) return
+    loadedUserRef.current = userId
     loadMission()
-  }, [loadMission])
+  }, [loadMission, userId])
 
   const handleRegenerate = async () => {
     if (!userId || isRegenerating || !mission?.can_regenerate) return
