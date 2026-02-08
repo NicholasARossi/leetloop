@@ -77,10 +77,10 @@ export function ActivityHeatmap({ trends }: ActivityHeatmapProps) {
     if (count === 0) return '#e5e7eb'
     if (maxCount <= 1) return 'var(--accent-color)'
     const ratio = count / maxCount
-    if (ratio <= 0.25) return '#ffcccc'
-    if (ratio <= 0.5) return '#FFB8B8'
-    if (ratio <= 0.75) return '#FF8888'
-    return '#d05050'
+    if (ratio <= 0.25) return 'var(--accent-color-20)'
+    if (ratio <= 0.5) return 'var(--accent-color-40)'
+    if (ratio <= 0.75) return 'var(--accent-color-60)'
+    return 'var(--accent-color)'
   }
 
   const cellSize = 11

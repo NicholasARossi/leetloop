@@ -10,6 +10,7 @@ import {
   Tooltip,
 } from 'recharts'
 import { SkillScore } from '@/lib/api'
+import { useAccentColors } from '@/hooks/useAccentColors'
 
 interface SkillRadarProps {
   skills: SkillScore[]
@@ -17,6 +18,8 @@ interface SkillRadarProps {
 }
 
 export function SkillRadar({ skills, className }: SkillRadarProps) {
+  const { accent } = useAccentColors()
+
   // Take top 8 skills for the radar chart
   const chartData = skills
     .sort((a, b) => b.total_attempts - a.total_attempts)
@@ -30,7 +33,7 @@ export function SkillRadar({ skills, className }: SkillRadarProps) {
   if (chartData.length === 0) {
     return (
       <div className={className}>
-        <div className="flex items-center justify-center h-64 text-slate-500">
+        <div className="flex items-center justify-center h-64 text-gray-500">
           No skill data yet. Start solving problems!
         </div>
       </div>
@@ -41,30 +44,30 @@ export function SkillRadar({ skills, className }: SkillRadarProps) {
     <div className={className}>
       <ResponsiveContainer width="100%" height={300}>
         <RadarChart cx="50%" cy="50%" outerRadius="80%" data={chartData}>
-          <PolarGrid stroke="#e2e8f0" />
+          <PolarGrid stroke="#e5e5e5" />
           <PolarAngleAxis
             dataKey="tag"
-            tick={{ fill: '#64748b', fontSize: 11 }}
+            tick={{ fill: '#737373', fontSize: 11 }}
           />
           <PolarRadiusAxis
             angle={30}
             domain={[0, 100]}
-            tick={{ fill: '#94a3b8', fontSize: 10 }}
+            tick={{ fill: '#a3a3a3', fontSize: 10 }}
           />
           <Radar
             name="Skill Score"
             dataKey="score"
-            stroke="#0ea5e9"
-            fill="#0ea5e9"
+            stroke={accent}
+            fill={accent}
             fillOpacity={0.3}
           />
           <Tooltip
             formatter={(value: number) => [`${value}/100`, 'Score']}
             contentStyle={{
-              backgroundColor: '#1e293b',
+              backgroundColor: '#262626',
               border: 'none',
               borderRadius: '8px',
-              color: '#f8fafc',
+              color: '#fafafa',
             }}
           />
         </RadarChart>

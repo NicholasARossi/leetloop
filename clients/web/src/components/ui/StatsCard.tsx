@@ -43,8 +43,8 @@ export function StatsCard({
             <div
               className={clsx(
                 'flex items-center gap-1 mt-2 text-sm font-medium',
-                trend === 'up' && 'text-green-600',
-                trend === 'down' && 'text-red-600',
+                trend === 'up' && 'text-coral',
+                trend === 'down' && 'text-black',
                 trend === 'neutral' && 'text-gray-500'
               )}
             >

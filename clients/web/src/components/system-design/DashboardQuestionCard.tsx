@@ -66,31 +66,31 @@ export function DashboardQuestionCard({
   const getVerdictColor = (verdict: string) => {
     switch (verdict) {
       case 'pass':
-        return 'bg-green-100 text-green-800 border-green-300'
+        return 'bg-coral-light text-black border-coral'
       case 'borderline':
-        return 'bg-amber-100 text-amber-800 border-amber-300'
+        return 'bg-gray-100 text-gray-700 border-gray-400'
       case 'fail':
-        return 'bg-red-100 text-red-800 border-red-300'
+        return 'bg-gray-200 text-black border-black'
       default:
         return 'bg-gray-100 text-gray-800 border-gray-300'
     }
   }
 
   const getScoreColor = (score: number) => {
-    if (score >= 7) return 'text-green-600'
-    if (score >= 5) return 'text-amber-600'
-    return 'text-red-600'
+    if (score >= 7) return 'text-coral'
+    if (score >= 5) return 'text-gray-600'
+    return 'text-black'
   }
 
   return (
     <div
       className={clsx(
-        'border-2 transition-all',
-        state === 'collapsed' && !question.completed && 'bg-white border-sky-200 hover:border-sky-400 cursor-pointer',
-        state === 'collapsed' && question.completed && 'bg-gray-50 border-gray-200',
-        state === 'expanded' && 'bg-white border-sky-400',
-        state === 'submitting' && 'bg-white border-sky-300 opacity-75',
-        state === 'graded' && grade && 'bg-white border-sky-200'
+        'border-2 border-l-4 transition-all',
+        state === 'collapsed' && !question.completed && 'bg-white border-gray-200 border-l-coral hover:border-coral cursor-pointer',
+        state === 'collapsed' && question.completed && 'bg-gray-50 border-gray-200 border-l-gray-400',
+        state === 'expanded' && 'bg-white border-coral border-l-coral shadow-sm',
+        state === 'submitting' && 'bg-white border-gray-300 border-l-gray-400 opacity-75',
+        state === 'graded' && grade && 'bg-white border-gray-200 border-l-coral'
       )}
     >
       {/* Header */}
@@ -105,10 +105,10 @@ export function DashboardQuestionCard({
           <span className={clsx(
             'flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold mt-0.5',
             question.completed || state === 'graded'
-              ? 'bg-green-500 text-white'
-              : 'bg-sky-500 text-white'
+              ? 'bg-coral text-white'
+              : 'bg-gray-300 text-gray-600'
           )}>
-            {question.completed || state === 'graded' ? '✓' : question.part_number}
+            {question.completed || state === 'graded' ? '✓' : '·'}
           </span>
           <div className="flex-1 min-w-0">
             {/* Sub-question text */}
@@ -124,7 +124,7 @@ export function DashboardQuestionCard({
             <div className="flex items-center gap-2 mt-1.5 flex-wrap">
               <span className="text-[10px] text-gray-400">Address:</span>
               {question.key_concepts.map((concept, i) => (
-                <span key={i} className="text-[10px] px-1.5 py-0.5 bg-sky-100 text-sky-700 rounded">
+                <span key={i} className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded">
                   {concept}
                 </span>
               ))}
@@ -157,7 +157,7 @@ export function DashboardQuestionCard({
               value={answerText}
               onChange={(e) => setAnswerText(e.target.value)}
               placeholder={`Focus on: ${question.key_concepts.join(' and ')}. Aim for 50-100 words.`}
-              className="w-full h-24 p-3 border border-gray-300 rounded text-sm resize-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 outline-none"
+              className="w-full h-24 p-3 border border-gray-300 rounded text-sm resize-none focus:border-coral focus:ring-1 focus:ring-coral outline-none"
               disabled={state === 'submitting'}
             />
             <div className="flex items-center justify-between mt-2">
@@ -167,7 +167,7 @@ export function DashboardQuestionCard({
               </span>
               <div className="flex items-center gap-2">
                 {error && (
-                  <span className="text-[11px] text-red-600">{error}</span>
+                  <span className="text-[11px] text-coral">{error}</span>
                 )}
                 <button
                   onClick={handleSubmit}
@@ -176,7 +176,7 @@ export function DashboardQuestionCard({
                     'px-3 py-1.5 text-xs font-semibold text-white transition-colors',
                     state === 'submitting'
                       ? 'bg-gray-400 cursor-not-allowed'
-                      : 'bg-sky-500 hover:bg-sky-600'
+                      : 'bg-black hover:bg-gray-800'
                   )}
                 >
                   {state === 'submitting' ? 'Grading...' : 'Submit'}
@@ -200,9 +200,9 @@ export function DashboardQuestionCard({
                 <p className="text-xs text-gray-700">{grade.feedback}</p>
                 {grade.missed_concepts.length > 0 && (
                   <div className="flex items-center gap-1 mt-1.5 flex-wrap">
-                    <span className="text-[10px] text-red-500">Missed:</span>
+                    <span className="text-[10px] text-gray-500">Missed:</span>
                     {grade.missed_concepts.map((concept, i) => (
-                      <span key={i} className="text-[10px] px-1 py-0.5 bg-red-50 text-red-700 rounded">
+                      <span key={i} className="text-[10px] px-1 py-0.5 bg-gray-100 text-gray-600 rounded">
                         {concept}
                       </span>
                     ))}

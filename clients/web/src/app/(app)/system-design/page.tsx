@@ -190,7 +190,7 @@ export default function SystemDesignPage() {
   const getWordCountColor = () => {
     if (wordCount < 50) return 'text-coral'
     if (wordCount < 150) return 'text-gray-500'
-    return 'text-green-600'
+    return 'text-coral'
   }
 
   const getWordCountHint = () => {
@@ -202,19 +202,19 @@ export default function SystemDesignPage() {
   }
 
   const getScoreColor = (score: number) => {
-    if (score >= 7) return 'text-green-600'
-    if (score >= 5) return 'text-yellow-600'
-    return 'text-coral'
+    if (score >= 7) return 'text-coral'
+    if (score >= 5) return 'text-gray-600'
+    return 'text-black'
   }
 
   const getVerdictBadge = (verdict: string) => {
     switch (verdict) {
       case 'pass':
-        return <span className="tag bg-green-100 text-green-700 border-green-300">PASS</span>
+        return <span className="tag bg-coral-light text-coral border-coral">PASS</span>
       case 'borderline':
-        return <span className="tag bg-yellow-100 text-yellow-700 border-yellow-300">BORDERLINE</span>
+        return <span className="tag bg-gray-100 text-gray-700 border-gray-300">BORDERLINE</span>
       case 'fail':
-        return <span className="tag bg-red-100 text-coral border-red-300">FAIL</span>
+        return <span className="tag bg-gray-200 text-black border-gray-400">FAIL</span>
       default:
         return null
     }
@@ -231,7 +231,7 @@ export default function SystemDesignPage() {
   if (error && flowState === 'select') {
     return (
       <div className="card p-8 text-center">
-        <p className="text-red-600 mb-4">{error}</p>
+        <p className="text-coral mb-4">{error}</p>
         <p className="text-sm text-gray-500">
           Make sure the backend API is running.
         </p>
@@ -372,7 +372,7 @@ export default function SystemDesignPage() {
                       <h3 className="font-semibold text-black mb-3">Missed Concepts</h3>
                       <div className="flex flex-wrap gap-1">
                         {grade.missed_concepts.map((concept, i) => (
-                          <span key={i} className="tag text-xs bg-red-50 text-coral border-red-200">
+                          <span key={i} className="tag text-xs bg-gray-100 text-black border-gray-300">
                             {concept}
                           </span>
                         ))}
@@ -381,7 +381,7 @@ export default function SystemDesignPage() {
                   )}
 
                   {grade.review_topics.length > 0 && (
-                    <div className="card border-l-4 border-l-yellow-500">
+                    <div className="card border-l-4 border-l-gray-400">
                       <h3 className="font-semibold text-black mb-3">Added to Review Queue</h3>
                       <div className="flex flex-wrap gap-1">
                         {grade.review_topics.map((topic, i) => (
@@ -516,7 +516,7 @@ export default function SystemDesignPage() {
               <div className="flex items-center gap-2">
                 <h2 className="heading-accent">{selectedTrack.name}</h2>
                 {activeTrackId === selectedTrack.id && (
-                  <span className="bg-sky-100 text-sky-700 text-[10px] font-semibold px-2 py-0.5 border border-sky-300">
+                  <span className="bg-coral-light text-coral text-[10px] font-semibold px-2 py-0.5 border border-coral">
                     ACTIVE
                   </span>
                 )}
@@ -533,7 +533,7 @@ export default function SystemDesignPage() {
               <button
                 onClick={() => handleSetActiveTrack(selectedTrack.id)}
                 disabled={settingActive}
-                className="w-full mb-4 py-2 px-4 border-2 border-sky-500 text-sky-700 text-sm font-medium hover:bg-sky-50 transition-colors disabled:opacity-50"
+                className="w-full mb-4 py-2 px-4 border-2 border-coral text-coral text-sm font-medium hover:bg-coral-light transition-colors disabled:opacity-50"
               >
                 {settingActive ? 'Setting...' : 'Set as Active Track for Dashboard'}
               </button>
@@ -563,7 +563,7 @@ export default function SystemDesignPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         {isCompleted && (
-                          <span className="text-green-500 text-sm">completed</span>
+                          <span className="text-coral text-sm">completed</span>
                         )}
                         <span className="font-medium text-sm">{topic.name}</span>
                       </div>

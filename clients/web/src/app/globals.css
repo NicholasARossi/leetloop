@@ -18,7 +18,12 @@
 :root {
   /* Daily accent color - set by JS, default coral */
   --accent-color: #FF8888;
-  --accent-color-light: #FF888830;
+  --accent-rgb: 255 136 136;
+  --accent-color-dark: #993333;
+  --accent-dark-rgb: 153 51 51;
+  --accent-color-20: #FF888833;
+  --accent-color-40: #FF888866;
+  --accent-color-60: #FF888899;
   --shadow-color: #525252;
 
   /* Chamfer sizes for mech/schematic aesthetic */

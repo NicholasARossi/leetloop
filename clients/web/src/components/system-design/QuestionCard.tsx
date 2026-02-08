@@ -31,7 +31,7 @@ export function QuestionCard({
   const getWordCountColor = () => {
     if (wordCount < 50) return 'text-coral'
     if (wordCount < 150) return 'text-gray-500'
-    return 'text-green-600'
+    return 'text-coral'
   }
 
   const getWordCountHint = () => {

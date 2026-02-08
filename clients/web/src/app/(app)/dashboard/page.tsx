@@ -100,7 +100,7 @@ export default function DashboardPage() {
     return (
       <div className="max-w-6xl mx-auto">
         <div className="card text-center">
-          <p className="text-red-600 mb-4">{error}</p>
+          <p className="text-coral mb-4">{error}</p>
           <p className="text-sm text-gray-500 mb-4">
             Make sure the backend API is running at{' '}
             <code className="bg-gray-100 px-2 py-1">

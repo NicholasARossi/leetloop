@@ -54,7 +54,7 @@ export default function LoginPage() {
           <Link href="/" className="text-2xl font-bold text-brand-600">
             LeetLoop
           </Link>
-          <p className="text-slate-500 mt-2">
+          <p className="text-gray-500 mt-2">
             {isSignUp ? 'Create an account' : 'Sign in to your account'}
           </p>
         </div>
@@ -62,7 +62,7 @@ export default function LoginPage() {
         <button
           onClick={handleGoogleSignIn}
           disabled={googleLoading}
-          className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path
@@ -82,17 +82,17 @@ export default function LoginPage() {
               d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
             />
           </svg>
-          <span className="text-slate-700 dark:text-slate-200 font-medium">
+          <span className="text-gray-700 dark:text-gray-200 font-medium">
             {googleLoading ? 'Redirecting...' : 'Continue with Google'}
           </span>
         </button>
 
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-slate-200 dark:border-slate-700" />
+            <div className="w-full border-t border-gray-200 dark:border-gray-700" />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white dark:bg-slate-800 text-slate-500">
+            <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">
               or continue with email
             </span>
           </div>
@@ -102,7 +102,7 @@ export default function LoginPage() {
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
             >
               Email
             </label>
@@ -120,7 +120,7 @@ export default function LoginPage() {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
             >
               Password
             </label>
@@ -137,13 +137,7 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <p
-              className={`text-sm ${
-                error.includes('Check your email')
-                  ? 'text-green-600'
-                  : 'text-red-600'
-              }`}
-            >
+            <p className="text-sm text-coral">
               {error}
             </p>
           )}
@@ -168,10 +162,10 @@ export default function LoginPage() {
           </button>
         </div>
 
-        <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
+        <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
           <Link
             href="/dashboard"
-            className="block text-center text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+            className="block text-center text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
           >
             Continue as guest
           </Link>

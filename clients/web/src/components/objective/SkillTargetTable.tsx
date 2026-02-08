@@ -14,10 +14,10 @@ function getStatusLabel(score: number): string {
 }
 
 function getStatusColor(score: number): string {
-  if (score >= 85) return 'text-green-600'
-  if (score >= 70) return 'text-blue-600'
-  if (score >= 50) return 'text-yellow-600'
-  return 'text-coral'
+  if (score >= 85) return 'text-coral'
+  if (score >= 70) return 'text-gray-600'
+  if (score >= 50) return 'text-gray-700'
+  return 'text-black'
 }
 
 export function SkillTargetTable({ skills, editable = false, onChange }: SkillTargetTableProps) {

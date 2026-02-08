@@ -153,7 +153,7 @@ export function OnboardingWizard({ userId, initialStatus }: OnboardingWizardProp
   if (error && !status) {
     return (
       <div className="card p-6 text-center">
-        <p className="text-red-600 mb-4">{error}</p>
+        <p className="text-coral mb-4">{error}</p>
         <button onClick={loadData} className="btn-primary">
           Retry
         </button>
@@ -185,7 +185,7 @@ export function OnboardingWizard({ userId, initialStatus }: OnboardingWizardProp
               <div
                 className={clsx(
                   'w-10 h-10 rounded-full border-[2px] border-black flex items-center justify-center text-sm font-bold transition-colors',
-                  idx < currentStepIndex && 'bg-accent text-white',
+                  idx < currentStepIndex && 'bg-coral text-white',
                   idx === currentStepIndex && 'bg-black text-white',
                   idx > currentStepIndex && 'bg-white text-black'
                 )}
@@ -201,7 +201,7 @@ export function OnboardingWizard({ userId, initialStatus }: OnboardingWizardProp
               {idx < steps.length - 1 && (
                 <div className={clsx(
                   'flex-1 h-[2px] mx-2',
-                  idx < currentStepIndex ? 'bg-accent' : 'bg-gray-300'
+                  idx < currentStepIndex ? 'bg-coral' : 'bg-gray-300'
                 )} />
               )}
             </div>
@@ -226,8 +226,8 @@ export function OnboardingWizard({ userId, initialStatus }: OnboardingWizardProp
 
       {/* Error */}
       {error && (
-        <div className="card-sm bg-red-50 border-l-4 border-l-red-500 mb-6">
-          <p className="text-red-600">{error}</p>
+        <div className="card-sm bg-gray-100 border-l-4 border-l-coral mb-6">
+          <p className="text-coral">{error}</p>
         </div>
       )}
 

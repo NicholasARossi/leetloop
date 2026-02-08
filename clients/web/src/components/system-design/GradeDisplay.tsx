@@ -9,9 +9,9 @@ interface GradeDisplayProps {
 
 export function GradeDisplay({ grade }: GradeDisplayProps) {
   const getScoreColor = (score: number) => {
-    if (score >= 7) return 'text-green-600'
-    if (score >= 5) return 'text-yellow-600'
-    return 'text-coral'
+    if (score >= 7) return 'text-coral'
+    if (score >= 5) return 'text-gray-600'
+    return 'text-black'
   }
 
   const getScoreLabel = (score: number) => {
@@ -72,12 +72,12 @@ export function GradeDisplay({ grade }: GradeDisplayProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Strengths */}
         {grade.strengths.length > 0 && (
-          <div className="card border-l-4 border-l-green-500">
+          <div className="card border-l-4 border-l-coral">
             <h3 className="font-semibold text-black mb-3">Strengths</h3>
             <ul className="space-y-2">
               {grade.strengths.map((strength, i) => (
                 <li key={i} className="flex items-start gap-2 text-sm">
-                  <span className="text-green-500 mt-0.5">+</span>
+                  <span className="text-coral mt-0.5">+</span>
                   <span className="text-gray-700">{strength}</span>
                 </li>
               ))}
@@ -87,12 +87,12 @@ export function GradeDisplay({ grade }: GradeDisplayProps) {
 
         {/* Gaps */}
         {grade.gaps.length > 0 && (
-          <div className="card border-l-4 border-l-coral">
+          <div className="card border-l-4 border-l-black">
             <h3 className="font-semibold text-black mb-3">Gaps</h3>
             <ul className="space-y-2">
               {grade.gaps.map((gap, i) => (
                 <li key={i} className="flex items-start gap-2 text-sm">
-                  <span className="text-coral mt-0.5">-</span>
+                  <span className="text-black mt-0.5">-</span>
                   <span className="text-gray-700">{gap}</span>
                 </li>
               ))}

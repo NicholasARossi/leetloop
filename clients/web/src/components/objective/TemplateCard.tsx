@@ -3,15 +3,6 @@
 import { clsx } from 'clsx'
 import type { ObjectiveTemplateSummary } from '@/lib/api'
 
-// Company logos/colors
-const companyColors: Record<string, string> = {
-  Google: 'border-l-[#4285F4]',
-  Meta: 'border-l-[#0081FB]',
-  Amazon: 'border-l-[#FF9900]',
-  Apple: 'border-l-[#555555]',
-  Microsoft: 'border-l-[#00A4EF]',
-}
-
 interface TemplateCardProps {
   template: ObjectiveTemplateSummary
   selected: boolean
@@ -19,15 +10,13 @@ interface TemplateCardProps {
 }
 
 export function TemplateCard({ template, selected, onClick }: TemplateCardProps) {
-  const borderColor = companyColors[template.company] || 'border-l-accent'
-
   return (
     <button
       type="button"
       onClick={onClick}
       className={clsx(
         'card text-left w-full transition-all border-l-4',
-        borderColor,
+        'border-l-gray-400',
         selected && 'ring-2 ring-accent ring-offset-2',
         !selected && 'hover:translate-y-[-2px]'
       )}

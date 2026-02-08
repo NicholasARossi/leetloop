@@ -38,7 +38,7 @@ export function TrackCard({ track, progress, isActive, onClick }: TrackCardProps
       onClick={onClick}
       className={clsx(
         'list-item w-full text-left reg-corners',
-        isActive && 'border-sky-500 bg-sky-50/50'
+        isActive && 'border-coral bg-coral-light'
       )}
     >
       <div className="flex items-start justify-between mb-2">
@@ -51,7 +51,7 @@ export function TrackCard({ track, progress, isActive, onClick }: TrackCardProps
             {track.name}
           </h3>
           {isActive && (
-            <span className="bg-sky-100 text-sky-700 text-[10px] font-semibold px-1.5 py-0.5 border border-sky-300">
+            <span className="bg-coral-light text-black text-[10px] font-semibold px-1.5 py-0.5 border border-coral">
               ACTIVE
             </span>
           )}

@@ -64,7 +64,7 @@ export default function ObjectivePage() {
   if (error) {
     return (
       <div className="card p-8 text-center">
-        <p className="text-red-600 mb-4">{error}</p>
+        <p className="text-coral mb-4">{error}</p>
         <p className="text-sm text-gray-500">
           Make sure the backend API is running.
         </p>

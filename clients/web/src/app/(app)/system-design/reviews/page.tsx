@@ -162,7 +162,7 @@ export default function SystemDesignReviewsPage() {
                     onClick={() => handleComplete(review.id, true)}
                     disabled={completing === review.id}
                     className={clsx(
-                      'btn text-sm bg-green-50 border-green-500 text-green-700',
+                      'btn text-sm bg-coral-light border-coral text-coral',
                       completing === review.id && 'opacity-50'
                     )}
                   >
@@ -172,7 +172,7 @@ export default function SystemDesignReviewsPage() {
                     onClick={() => handleComplete(review.id, false)}
                     disabled={completing === review.id}
                     className={clsx(
-                      'btn text-sm bg-red-50 border-coral text-coral',
+                      'btn text-sm bg-gray-100 border-gray-400 text-black',
                       completing === review.id && 'opacity-50'
                     )}
                   >
@@ -240,7 +240,7 @@ export default function SystemDesignReviewsPage() {
         </h3>
         <div className="grid grid-cols-2 gap-4 text-xs text-gray-600">
           <div>
-            <span className="font-medium text-green-600">Mark Passed</span>
+            <span className="font-medium text-coral">Mark Passed</span>
             <p>Interval doubles (max 30 days)</p>
           </div>
           <div>
