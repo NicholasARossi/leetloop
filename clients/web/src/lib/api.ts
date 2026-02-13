@@ -380,6 +380,60 @@ export const leetloopApi = {
       method: 'POST',
       body: JSON.stringify({ response_text: responseText }),
     }),
+
+  // Language Learning
+  getLanguageTracks: () =>
+    api<LanguageTrackSummary[]>('/api/language/tracks'),
+
+  getLanguageTrack: (trackId: string) =>
+    api<LanguageTrack>(`/api/language/tracks/${trackId}`),
+
+  getLanguageTrackProgress: (trackId: string, userId: string) =>
+    api<LanguageTrackProgressResponse>(`/api/language/tracks/${trackId}/progress/${userId}`),
+
+  createLanguageAttempt: (userId: string, data: CreateLanguageAttemptRequest) =>
+    api<LanguageAttempt>(`/api/language/${userId}/attempt`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  submitLanguageAttempt: (attemptId: string, responseText: string) =>
+    api<LanguageAttemptGrade>(`/api/language/attempts/${attemptId}/submit`, {
+      method: 'POST',
+      body: JSON.stringify({ response_text: responseText }),
+    }),
+
+  getLanguageAttempt: (attemptId: string) =>
+    api<LanguageAttempt>(`/api/language/attempts/${attemptId}`),
+
+  getLanguageAttemptHistory: (userId: string, limit = 20, offset = 0) =>
+    api<LanguageAttemptHistoryResponse>(
+      `/api/language/${userId}/attempts?limit=${limit}&offset=${offset}`
+    ),
+
+  getLanguageReviews: (userId: string, limit = 10) =>
+    api<LanguageReviewItem[]>(`/api/language/${userId}/reviews?limit=${limit}`),
+
+  completeLanguageReview: (reviewId: string, success: boolean) =>
+    api<{ id: string; next_review: string; new_interval_days: number }>(
+      `/api/language/reviews/${reviewId}/complete`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ success }),
+      }
+    ),
+
+  getLanguageDashboard: (userId: string) =>
+    api<LanguageDashboardSummary>(`/api/language/${userId}/dashboard`),
+
+  setActiveLanguageTrack: (userId: string, trackId: string | null) =>
+    api<{ success: boolean; active_track_id?: string }>(
+      `/api/language/${userId}/active-track`,
+      {
+        method: 'PUT',
+        body: JSON.stringify({ track_id: trackId }),
+      }
+    ),
 }
 
 // Types (matching backend schemas)
@@ -977,6 +1031,158 @@ export interface AttemptHistoryResponse {
   attempts: AttemptHistoryItem[]
   total: number
   has_more: boolean
+}
+
+// Language Learning Types
+export interface LanguageTrackSummary {
+  id: string
+  name: string
+  description?: string
+  language: string
+  level: string
+  total_topics: number
+}
+
+export interface LanguageTopicInfo {
+  name: string
+  order: number
+  difficulty: string
+  key_concepts: string[]
+}
+
+export interface LanguageRubricWeights {
+  accuracy: number
+  grammar: number
+  vocabulary: number
+  naturalness: number
+}
+
+export interface LanguageTrack extends LanguageTrackSummary {
+  topics: LanguageTopicInfo[]
+  rubric: LanguageRubricWeights
+  source_book?: string
+  created_at?: string
+}
+
+export interface LanguageTrackProgressData {
+  id: string
+  user_id: string
+  track_id: string
+  completed_topics: string[]
+  sessions_completed: number
+  average_score: number
+  started_at: string
+  last_activity_at: string
+}
+
+export interface LanguageTrackProgressResponse {
+  track: LanguageTrack
+  progress?: LanguageTrackProgressData
+  completion_percentage: number
+  next_topic?: string
+}
+
+export interface CreateLanguageAttemptRequest {
+  track_id: string
+  topic: string
+  exercise_type?: string
+}
+
+export interface LanguageAttempt {
+  id: string
+  user_id: string
+  track_id?: string
+  topic: string
+  exercise_type: string
+  question_text: string
+  expected_answer?: string
+  question_focus_area?: string
+  question_key_concepts: string[]
+  response_text?: string
+  word_count: number
+  score?: number
+  verdict?: 'pass' | 'fail' | 'borderline'
+  feedback?: string
+  corrections?: string
+  missed_concepts: string[]
+  status: 'pending' | 'graded' | 'abandoned'
+  created_at: string
+  graded_at?: string
+}
+
+export interface LanguageAttemptGrade {
+  score: number
+  verdict: 'pass' | 'fail' | 'borderline'
+  feedback: string
+  corrections?: string
+  missed_concepts: string[]
+}
+
+export interface LanguageAttemptHistoryItem {
+  id: string
+  topic: string
+  exercise_type: string
+  question_text: string
+  score?: number
+  verdict?: 'pass' | 'fail' | 'borderline'
+  status: string
+  created_at: string
+  graded_at?: string
+  track_name?: string
+}
+
+export interface LanguageAttemptHistoryResponse {
+  attempts: LanguageAttemptHistoryItem[]
+  total: number
+  has_more: boolean
+}
+
+export interface LanguageReviewItem {
+  id: string
+  user_id: string
+  track_id?: string
+  topic: string
+  reason?: string
+  priority: number
+  next_review: string
+  interval_days: number
+  review_count: number
+  last_reviewed?: string
+  source_attempt_id?: string
+  created_at: string
+}
+
+export interface LanguageNextTopicInfo {
+  track_id: string
+  track_name: string
+  language: string
+  level: string
+  topic_name: string
+  topic_order: number
+  topic_difficulty: string
+  key_concepts: string[]
+  topics_completed: number
+  total_topics: number
+}
+
+export interface LanguageDashboardExercise {
+  id: string
+  exercise_type: string
+  question_text: string
+  topic: string
+  track_id: string
+  completed: boolean
+}
+
+export interface LanguageDashboardSummary {
+  has_active_track: boolean
+  active_track?: LanguageTrackSummary
+  next_topic?: LanguageNextTopicInfo
+  daily_exercise?: LanguageDashboardExercise
+  reviews_due_count: number
+  reviews_due: LanguageReviewItem[]
+  recent_score?: number
+  exercises_this_week: number
 }
 
 export { ApiError }

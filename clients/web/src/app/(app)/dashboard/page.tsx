@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
-import { leetloopApi, type MissionResponseV2, type SystemDesignDashboardSummary, type SystemDesignReviewItem, type ProgressTrend, type UserStats } from '@/lib/api'
+import { leetloopApi, type MissionResponseV2, type SystemDesignDashboardSummary, type SystemDesignReviewItem, type LanguageDashboardSummary, type LanguageReviewItem, type ProgressTrend, type UserStats } from '@/lib/api'
 import {
   MissionProblemCard,
   MissionSkeleton,
@@ -11,6 +11,7 @@ import {
   SideQuestColumn,
 } from '@/components/mission'
 import { SystemDesignDashboardCard } from '@/components/system-design/SystemDesignDashboardCard'
+import { LanguageDashboardCard } from '@/components/language/LanguageDashboardCard'
 import { format } from 'date-fns'
 import { clsx } from 'clsx'
 
@@ -22,6 +23,7 @@ export default function DashboardPage() {
   const [mission, setMission] = useState<MissionResponseV2 | null>(null)
   const [isRegenerating, setIsRegenerating] = useState(false)
   const [systemDesignData, setSystemDesignData] = useState<SystemDesignDashboardSummary | null>(null)
+  const [languageData, setLanguageData] = useState<LanguageDashboardSummary | null>(null)
   const [trends, setTrends] = useState<ProgressTrend[]>([])
   const [userStats, setUserStats] = useState<UserStats | null>(null)
 
@@ -41,15 +43,17 @@ export default function DashboardPage() {
         return
       }
 
-      // Load mission, system design, and progress data in parallel
-      const [missionData, sdData, progressData] = await Promise.all([
+      // Load mission, system design, language, and progress data in parallel
+      const [missionData, sdData, langData, progressData] = await Promise.all([
         leetloopApi.getDailyMissionV2(userId),
         leetloopApi.getSystemDesignDashboard(userId).catch(() => null),
+        leetloopApi.getLanguageDashboard(userId).catch(() => null),
         leetloopApi.getProgress(userId, 91).catch(() => null),
       ])
 
       setMission(missionData)
       setSystemDesignData(sdData)
+      setLanguageData(langData)
       if (progressData) {
         setTrends(progressData.trends)
         setUserStats(progressData.stats)
@@ -90,6 +94,14 @@ export default function DashboardPage() {
 
   const handleStartSystemDesignReview = (review: SystemDesignReviewItem) => {
     router.push(`/system-design/session/new?track=${review.track_id}&topic=${encodeURIComponent(review.topic)}&type=review`)
+  }
+
+  const handleStartLanguageExercise = (trackId: string, topic: string) => {
+    router.push(`/language`)
+  }
+
+  const handleStartLanguageReview = (review: LanguageReviewItem) => {
+    router.push(`/language/reviews`)
   }
 
   if (loading) {
@@ -294,6 +306,15 @@ export default function DashboardPage() {
               data={systemDesignData}
               onStartSession={handleStartSystemDesignSession}
               onStartReview={handleStartSystemDesignReview}
+            />
+          )}
+
+          {/* Language Learning Section */}
+          {languageData && (
+            <LanguageDashboardCard
+              data={languageData}
+              onStartExercise={handleStartLanguageExercise}
+              onStartReview={handleStartLanguageReview}
             />
           )}
         </div>
