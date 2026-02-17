@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
 """
-Book ingestion script for extracting content from PDFs into the system design review system.
+Book ingestion script for extracting content from PDFs and EPUBs into the review system.
 
 Usage:
     python scripts/ingest_book.py reliable.pdf
     python scripts/ingest_book.py reliable.pdf --track-name "Reliable ML"
     python scripts/ingest_book.py reliable.pdf --dry-run
     python scripts/ingest_book.py reliable.pdf --structure-only
+    python scripts/ingest_book.py "french_verbs.epub" --book-type language --language french --level b1 --track-name "French Verbs"
 
 Features:
-- Two-pass chunked processing for large PDFs
+- Supports PDF and EPUB formats (auto-detected from file extension)
+- Two-pass chunked processing for large books
 - Pass 1: Discover chapters and sections
 - Pass 2: Extract key concepts and case studies
-- Creates a new system design track from book content
+- Creates a new system design or language track from book content
 - Idempotent - can re-run without duplicating data
 """
 
@@ -87,7 +89,10 @@ def print_structure(book_structure: dict):
         if chapter.get("case_studies"):
             print(f"  Case Studies: {len(chapter['case_studies'])}")
             for cs in chapter["case_studies"][:2]:
-                print(f"    - {cs.get('name', 'Unnamed')}: {cs.get('systems', [])}")
+                if isinstance(cs, dict):
+                    print(f"    - {cs.get('name', 'Unnamed')}: {cs.get('systems', [])}")
+                else:
+                    print(f"    - {cs}")
 
 
 def create_track_from_book(supabase, book_structure: dict, track_name: str, dry_run: bool = False) -> str:
@@ -218,9 +223,9 @@ def save_book_content(supabase, book_structure: dict, track_id: str, dry_run: bo
 
 async def main():
     parser = argparse.ArgumentParser(
-        description="Ingest a PDF book into the system design review system"
+        description="Ingest a PDF or EPUB book into the review system"
     )
-    parser.add_argument("pdf_path", help="Path to the PDF file")
+    parser.add_argument("book_path", help="Path to the PDF or EPUB file")
     parser.add_argument(
         "--track-name",
         default="Reliable ML",
@@ -259,17 +264,24 @@ async def main():
 
     args = parser.parse_args()
 
-    # Validate PDF path
-    pdf_path = Path(args.pdf_path)
-    if not pdf_path.exists():
+    # Validate book path
+    book_path = Path(args.book_path)
+    if not book_path.exists():
         # Try relative to monorepo root
-        pdf_path = Path(__file__).parent.parent.parent / args.pdf_path
-        if not pdf_path.exists():
-            print(f"Error: PDF not found: {args.pdf_path}")
+        book_path = Path(__file__).parent.parent.parent / args.book_path
+        if not book_path.exists():
+            print(f"Error: File not found: {args.book_path}")
             sys.exit(1)
 
-    pdf_path = pdf_path.resolve()
-    print(f"PDF path: {pdf_path}")
+    book_path = book_path.resolve()
+    file_ext = book_path.suffix.lower()
+
+    if file_ext not in (".pdf", ".epub"):
+        print(f"Error: Unsupported file format '{file_ext}'. Use .pdf or .epub")
+        sys.exit(1)
+
+    is_epub = file_ext == ".epub"
+    print(f"{'EPUB' if is_epub else 'PDF'} path: {book_path}")
 
     # Validate language args
     if args.book_type == "language":
@@ -285,59 +297,92 @@ async def main():
         print("Error: GOOGLE_API_KEY must be set for Gemini integration")
         sys.exit(1)
 
-    # Import the service (after env vars are loaded)
-    from app.services.book_ingestion_service import BookIngestionService
+    if is_epub:
+        from app.services.epub_ingestion_service import EpubIngestionService
 
-    service = BookIngestionService()
+        service = EpubIngestionService()
 
-    if not service.configured:
-        print("Error: Gemini API not configured")
-        sys.exit(1)
+        if not service.configured:
+            print("Error: Gemini API not configured")
+            sys.exit(1)
 
-    total_pages = service.get_total_pages(str(pdf_path))
-    print(f"PDF has {total_pages} pages")
+        if args.structure_only:
+            print("\nRunning structure extraction...")
+            chapters_info = service.extract_chapters(str(book_path))
 
-    if args.structure_only:
-        # Pass 1 only: Structure discovery
-        print("\nRunning Pass 1: Structure Discovery...")
-        chapters_info = await service.discover_structure(str(pdf_path), print_progress)
+            print(f"\nDiscovered {len(chapters_info)} chapters:")
+            for ch in chapters_info:
+                print(f"  Chapter {ch.get('chapter_number')}: {ch.get('title', 'Untitled')}")
+                for sub in ch.get("subsections", [])[:3]:
+                    print(f"    - {sub.get('title')}")
 
-        print(f"\nDiscovered {len(chapters_info)} chapters:")
-        for ch in chapters_info:
-            print(f"  {ch.get('title', 'Untitled')} (pages {ch.get('page_start')}-{ch.get('page_end')})")
-            if ch.get("sections"):
-                for sec in ch["sections"][:3]:
-                    print(f"    - {sec.get('title')}")
+            if args.output_json:
+                # Strip text before writing (can be very large)
+                for ch in chapters_info:
+                    ch.pop("text", None)
+                with open(args.output_json, "w") as f:
+                    json.dump({"chapters": chapters_info}, f, indent=2)
+                print(f"\nStructure saved to: {args.output_json}")
 
-        if args.output_json:
-            with open(args.output_json, "w") as f:
-                json.dump({"chapters": chapters_info}, f, indent=2)
-            print(f"\nStructure saved to: {args.output_json}")
+            return
 
-        return
+        # Full epub ingestion - returns a dict directly
+        print("\nStarting full epub ingestion...")
+        book_dict = await service.ingest_book(str(book_path), print_progress)
 
-    # Full ingestion
-    print("\nStarting full book ingestion...")
-    book_structure = await service.ingest_book(str(pdf_path), print_progress)
+    else:
+        # PDF ingestion
+        from app.services.book_ingestion_service import BookIngestionService
 
-    # Convert to dict for processing
-    book_dict = {
-        "title": book_structure.title,
-        "chapters": [
-            {
-                "chapter_number": ch.chapter_number,
-                "title": ch.title,
-                "summary": ch.summary,
-                "sections": [s.model_dump() for s in ch.sections],
-                "key_concepts": ch.key_concepts,
-                "case_studies": [cs.model_dump() for cs in ch.case_studies],
-                "page_start": ch.page_start,
-                "page_end": ch.page_end,
-            }
-            for ch in book_structure.chapters
-        ],
-        "total_pages": book_structure.total_pages,
-    }
+        service = BookIngestionService()
+
+        if not service.configured:
+            print("Error: Gemini API not configured")
+            sys.exit(1)
+
+        total_pages = service.get_total_pages(str(book_path))
+        print(f"PDF has {total_pages} pages")
+
+        if args.structure_only:
+            print("\nRunning Pass 1: Structure Discovery...")
+            chapters_info = await service.discover_structure(str(book_path), print_progress)
+
+            print(f"\nDiscovered {len(chapters_info)} chapters:")
+            for ch in chapters_info:
+                print(f"  {ch.get('title', 'Untitled')} (pages {ch.get('page_start')}-{ch.get('page_end')})")
+                if ch.get("sections"):
+                    for sec in ch["sections"][:3]:
+                        print(f"    - {sec.get('title')}")
+
+            if args.output_json:
+                with open(args.output_json, "w") as f:
+                    json.dump({"chapters": chapters_info}, f, indent=2)
+                print(f"\nStructure saved to: {args.output_json}")
+
+            return
+
+        # Full PDF ingestion
+        print("\nStarting full book ingestion...")
+        book_structure = await service.ingest_book(str(book_path), print_progress)
+
+        # Convert Pydantic models to dict for processing
+        book_dict = {
+            "title": book_structure.title,
+            "chapters": [
+                {
+                    "chapter_number": ch.chapter_number,
+                    "title": ch.title,
+                    "summary": ch.summary,
+                    "sections": [s.model_dump() for s in ch.sections],
+                    "key_concepts": ch.key_concepts,
+                    "case_studies": [cs.model_dump() for cs in ch.case_studies],
+                    "page_start": ch.page_start,
+                    "page_end": ch.page_end,
+                }
+                for ch in book_structure.chapters
+            ],
+            "total_pages": book_structure.total_pages,
+        }
 
     # Print extracted structure
     print_structure(book_dict)
