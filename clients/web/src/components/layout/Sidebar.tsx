@@ -3,33 +3,49 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { clsx } from 'clsx'
+import { getMegaviewFromPath, type Megaview } from './MegaviewTabs'
 
-const navigation = [
+type NavItem = {
+  name: string
+  href: string
+  icon: (props: { className?: string }) => React.ReactNode
+}
+
+const leetcodeNav: NavItem[] = [
   { name: 'Dashboard', href: '/dashboard', icon: DashboardIcon },
   { name: 'Objective', href: '/objective', icon: ObjectiveIcon },
   { name: 'Path Progress', href: '/path', icon: PathIcon },
   { name: 'Mastery', href: '/mastery', icon: MasteryIcon },
-  { name: 'System Design', href: '/system-design', icon: SystemDesignIcon },
-  { name: 'Languages', href: '/language', icon: LanguageIcon },
+  { name: 'System Design', href: '/system-design', icon: SystemDesignDashboardIcon },
   { name: 'Reviews', href: '/reviews', icon: ReviewsIcon },
   { name: 'Submissions', href: '/submissions', icon: SubmissionsIcon },
   { name: 'Coach', href: '/coach', icon: CoachIcon },
 ]
 
+const languageNav: NavItem[] = [
+  { name: 'Dashboard', href: '/language', icon: LanguageDashboardIcon },
+  { name: 'Reviews', href: '/language/reviews', icon: ReviewsIcon },
+]
+
+const navByMegaview: Record<Megaview, { label: string; items: NavItem[] }> = {
+  'leetcode': { label: 'LeetCode', items: leetcodeNav },
+  'languages': { label: 'Languages', items: languageNav },
+}
+
 export function Sidebar() {
   const pathname = usePathname()
+  const megaview = getMegaviewFromPath(pathname)
+  const { label, items } = navByMegaview[megaview]
 
   return (
-    <aside className="w-60 bg-white border-r-[3px] border-black min-h-screen flex flex-col">
-      <div className="p-5 pb-8">
-        <Link href="/dashboard">
-          <span className="heading-accent text-xl">LEETLOOP</span>
-        </Link>
+    <aside className="w-60 bg-white border-r-[3px] border-black min-h-0 flex flex-col">
+      <div className="px-5 pt-5 pb-3">
+        <span className="section-title !border-0 !mb-0 !pb-0">{label}</span>
       </div>
 
       <nav className="flex-1">
         <ul className="space-y-1">
-          {navigation.map((item) => {
+          {items.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)
             return (
               <li key={item.name}>
@@ -109,7 +125,7 @@ function ObjectiveIcon({ className }: { className?: string }) {
   )
 }
 
-function LanguageIcon({ className }: { className?: string }) {
+function LanguageDashboardIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
@@ -117,7 +133,7 @@ function LanguageIcon({ className }: { className?: string }) {
   )
 }
 
-function SystemDesignIcon({ className }: { className?: string }) {
+function SystemDesignDashboardIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
