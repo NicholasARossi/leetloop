@@ -98,14 +98,11 @@ class MissionGenerator:
         """
         Build comprehensive context for Gemini mission generation.
 
-        Gathers:
-        - User's career goal (from meta_objectives)
-        - Current learning path + progress
-        - Skill scores by domain
-        - Review queue items
-        - Recent submission patterns
+        Gathers all user data in parallel using asyncio.gather to minimize
+        total query time (2 parallel batches instead of 12 sequential calls).
         """
         user_id_str = str(user_id)
+        seven_days_ago = (datetime.utcnow() - timedelta(days=7)).isoformat()
         context = {
             "target_company": None,
             "target_role": None,
@@ -123,16 +120,75 @@ class MissionGenerator:
             "solved_problems": [],
         }
 
-        # Get user's objective (goal)
-        objective_response = (
-            self.supabase.table("meta_objectives")
-            .select("*")
-            .eq("user_id", user_id_str)
-            .eq("status", "active")
-            .limit(1)
-            .execute()
+        # --- Batch 1: All independent queries in parallel ---
+        def _q_objectives():
+            return self.supabase.table("meta_objectives").select("*").eq("user_id", user_id_str).eq("status", "active").limit(1).execute()
+
+        def _q_settings():
+            return self.supabase.table("user_settings").select("current_path_id").eq("user_id", user_id_str).execute()
+
+        def _q_accepted():
+            return self.supabase.table("submissions").select("problem_slug").eq("user_id", user_id_str).eq("status", "Accepted").execute()
+
+        def _q_skills():
+            return self.supabase.table("skill_scores").select("tag, score, total_attempts, avg_time_seconds").eq("user_id", user_id_str).order("score").execute()
+
+        def _q_reviews():
+            return self.supabase.table("review_queue").select("problem_slug, reason, next_review, interval_days, last_reviewed").eq("user_id", user_id_str).lte("next_review", datetime.utcnow().isoformat()).order("priority", desc=True).limit(5).execute()
+
+        def _q_stats():
+            return self.supabase.table("submissions").select("id, status", count="exact").eq("user_id", user_id_str).execute()
+
+        def _q_streaks():
+            return self.supabase.table("user_streaks").select("current_streak, last_activity_date").eq("user_id", user_id_str).execute()
+
+        def _q_failures():
+            return self.supabase.table("submissions").select("tags").eq("user_id", user_id_str).neq("status", "Accepted").gte("submitted_at", seven_days_ago).execute()
+
+        def _q_slow():
+            return self.supabase.table("problem_attempt_stats").select("problem_slug").eq("user_id", user_id_str).eq("is_slow_solve", True).order("last_attempt_at", desc=True).limit(5).execute()
+
+        (
+            objective_response,
+            settings_response,
+            accepted_response,
+            skills_response,
+            reviews_response,
+            stats_response,
+            streak_response,
+            failures_response,
+            slow_response,
+        ) = await asyncio.gather(
+            asyncio.to_thread(_q_objectives),
+            asyncio.to_thread(_q_settings),
+            asyncio.to_thread(_q_accepted),
+            asyncio.to_thread(_q_skills),
+            asyncio.to_thread(_q_reviews),
+            asyncio.to_thread(_q_stats),
+            asyncio.to_thread(_q_streaks),
+            asyncio.to_thread(_q_failures),
+            asyncio.to_thread(_q_slow),
         )
 
+        # --- Batch 2: Path queries (depend on settings result) ---
+        current_path_id = "11111111-1111-1111-1111-111111111150"  # Default NeetCode 150
+        if settings_response.data and settings_response.data[0].get("current_path_id"):
+            current_path_id = settings_response.data[0]["current_path_id"]
+
+        def _q_path():
+            return self.supabase.table("learning_paths").select("id, name, categories").eq("id", current_path_id).single().execute()
+
+        def _q_progress():
+            return self.supabase.table("user_path_progress").select("completed_problems, current_category").eq("user_id", user_id_str).eq("path_id", current_path_id).execute()
+
+        path_response, progress_response = await asyncio.gather(
+            asyncio.to_thread(_q_path),
+            asyncio.to_thread(_q_progress),
+        )
+
+        # --- Process results ---
+
+        # Objectives
         if objective_response.data:
             obj = objective_response.data[0]
             context["target_company"] = obj.get("target_company")
@@ -146,50 +202,13 @@ class MissionGenerator:
                 context["target_deadline"] = deadline.isoformat()
                 context["days_until_deadline"] = (deadline - date.today()).days
 
-        # Get current path
-        settings_response = (
-            self.supabase.table("user_settings")
-            .select("current_path_id")
-            .eq("user_id", user_id_str)
-            .execute()
-        )
-
-        current_path_id = "11111111-1111-1111-1111-111111111150"  # Default NeetCode 150
-        if settings_response.data and settings_response.data[0].get("current_path_id"):
-            current_path_id = settings_response.data[0]["current_path_id"]
-
-        # Get path details
-        path_response = (
-            self.supabase.table("learning_paths")
-            .select("id, name, categories")
-            .eq("id", current_path_id)
-            .single()
-            .execute()
-        )
-
-        # Get path progress
-        progress_response = (
-            self.supabase.table("user_path_progress")
-            .select("completed_problems, current_category")
-            .eq("user_id", user_id_str)
-            .eq("path_id", current_path_id)
-            .execute()
-        )
-
+        # Path progress + accepted submissions (consolidated)
         completed_problems = []
         current_category = None
         if progress_response.data:
             completed_problems = progress_response.data[0].get("completed_problems", []) or []
             current_category = progress_response.data[0].get("current_category")
 
-        # Also get solved from submissions
-        accepted_response = (
-            self.supabase.table("submissions")
-            .select("problem_slug")
-            .eq("user_id", user_id_str)
-            .eq("status", "Accepted")
-            .execute()
-        )
         if accepted_response.data:
             solved_slugs = {s["problem_slug"] for s in accepted_response.data}
             completed_problems = list(set(completed_problems) | solved_slugs)
@@ -200,7 +219,6 @@ class MissionGenerator:
             categories = path_response.data.get("categories", [])
             total_problems = sum(len(cat.get("problems", [])) for cat in categories)
 
-            # Find next uncompleted problem index
             solved_set = set(completed_problems)
             next_index = 0
             for cat in sorted(categories, key=lambda x: x.get("order", 0)):
@@ -219,18 +237,10 @@ class MissionGenerator:
                 "completed_count": len(completed_problems),
                 "next_uncompleted_index": next_index,
                 "current_category": current_category,
-                "categories": categories,  # Include for problem selection
+                "categories": categories,
             }
 
-        # Get skill scores
-        skills_response = (
-            self.supabase.table("skill_scores")
-            .select("tag, score, total_attempts, avg_time_seconds")
-            .eq("user_id", user_id_str)
-            .order("score")
-            .execute()
-        )
-
+        # Skill scores
         if skills_response.data:
             for skill in skills_response.data:
                 score = skill.get("score", 0)
@@ -247,21 +257,11 @@ class MissionGenerator:
                     "domain": skill["tag"],
                     "score": score,
                     "status": status,
-                    "recent_failures": 0,  # TODO: calculate
+                    "recent_failures": 0,
                     "average_solve_time": skill.get("avg_time_seconds"),
                 })
 
-        # Get review queue
-        reviews_response = (
-            self.supabase.table("review_queue")
-            .select("problem_slug, reason, next_review, interval_days, last_reviewed")
-            .eq("user_id", user_id_str)
-            .lte("next_review", datetime.utcnow().isoformat())
-            .order("priority", desc=True)
-            .limit(5)
-            .execute()
-        )
-
+        # Review queue
         if reviews_response.data:
             for review in reviews_response.data:
                 last_attempt = review.get("last_reviewed") or review.get("next_review")
@@ -272,36 +272,14 @@ class MissionGenerator:
                     "interval": review.get("interval_days", 1),
                 })
 
-        # Get submission counts
-        stats_response = (
-            self.supabase.table("submissions")
-            .select("id, status", count="exact")
-            .eq("user_id", user_id_str)
-            .execute()
-        )
-
+        # Submission stats (reuse accepted_response instead of duplicate query)
         if stats_response.count:
             context["problems_attempted_total"] = stats_response.count
 
-        solved_response = (
-            self.supabase.table("submissions")
-            .select("problem_slug")
-            .eq("user_id", user_id_str)
-            .eq("status", "Accepted")
-            .execute()
-        )
+        if accepted_response.data:
+            context["problems_solved_total"] = len(set(s["problem_slug"] for s in accepted_response.data))
 
-        if solved_response.data:
-            context["problems_solved_total"] = len(set(s["problem_slug"] for s in solved_response.data))
-
-        # Get streak
-        streak_response = (
-            self.supabase.table("user_streaks")
-            .select("current_streak, last_activity_date")
-            .eq("user_id", user_id_str)
-            .execute()
-        )
-
+        # Streak
         if streak_response.data:
             streak_data = streak_response.data[0]
             last_date = streak_data.get("last_activity_date")
@@ -314,37 +292,16 @@ class MissionGenerator:
                 except Exception:
                     pass
 
-        # Get recent failure patterns
-        seven_days_ago = (datetime.utcnow() - timedelta(days=7)).isoformat()
-        failures_response = (
-            self.supabase.table("submissions")
-            .select("tags")
-            .eq("user_id", user_id_str)
-            .neq("status", "Accepted")
-            .gte("submitted_at", seven_days_ago)
-            .execute()
-        )
-
+        # Failure patterns
         if failures_response.data:
             tag_counts = {}
             for f in failures_response.data:
                 for tag in (f.get("tags") or []):
                     tag_counts[tag] = tag_counts.get(tag, 0) + 1
-            # Top 5 failure patterns
             sorted_tags = sorted(tag_counts.items(), key=lambda x: -x[1])[:5]
             context["recent_failure_patterns"] = [tag for tag, _ in sorted_tags]
 
-        # Get slow solves
-        slow_response = (
-            self.supabase.table("problem_attempt_stats")
-            .select("problem_slug")
-            .eq("user_id", user_id_str)
-            .eq("is_slow_solve", True)
-            .order("last_attempt_at", desc=True)
-            .limit(5)
-            .execute()
-        )
-
+        # Slow solves
         if slow_response.data:
             context["recent_slow_solves"] = [s["problem_slug"] for s in slow_response.data]
 
@@ -774,15 +731,21 @@ Only output the JSON, nothing else."""
         Enrich mission data with computed fields for the response.
         """
         user_id_str = str(user_id) if isinstance(user_id, UUID) else mission_data.get("user_id")
+        today = date.today().isoformat()
 
-        # Get streak
-        streak = 0
-        streak_response = (
-            self.supabase.table("user_streaks")
-            .select("current_streak, last_activity_date")
-            .eq("user_id", user_id_str)
-            .execute()
+        # Run both queries in parallel
+        def _q_streak():
+            return self.supabase.table("user_streaks").select("current_streak, last_activity_date").eq("user_id", user_id_str).execute()
+
+        def _q_completed_today():
+            return self.supabase.table("submissions").select("problem_slug").eq("user_id", user_id_str).eq("status", "Accepted").gte("submitted_at", f"{today}T00:00:00").execute()
+
+        streak_response, completed_today_response = await asyncio.gather(
+            asyncio.to_thread(_q_streak),
+            asyncio.to_thread(_q_completed_today),
         )
+
+        streak = 0
         if streak_response.data:
             streak_data = streak_response.data[0]
             last_date = streak_data.get("last_activity_date")
@@ -794,17 +757,6 @@ Only output the JSON, nothing else."""
                         streak = streak_data.get("current_streak", 0)
                 except Exception:
                     pass
-
-        # Get today's completed problems
-        today = date.today().isoformat()
-        completed_today_response = (
-            self.supabase.table("submissions")
-            .select("problem_slug")
-            .eq("user_id", user_id_str)
-            .eq("status", "Accepted")
-            .gte("submitted_at", f"{today}T00:00:00")
-            .execute()
-        )
         completed_today_slugs = set()
         if completed_today_response.data:
             completed_today_slugs = {s["problem_slug"] for s in completed_today_response.data}

@@ -27,13 +27,19 @@ CREATE INDEX IF NOT EXISTS idx_book_content_track_id ON book_content(track_id);
 ALTER TABLE book_content ENABLE ROW LEVEL SECURITY;
 
 -- Book content is read-only for users, write only by system
-CREATE POLICY "Anyone can view book content"
-  ON book_content FOR SELECT
-  USING (true);
+DO $$ BEGIN
+  CREATE POLICY "Anyone can view book content"
+    ON book_content FOR SELECT
+    USING (true);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- ============ Anon Access ============
 
 -- Allow anonymous users to read book content (matches pattern from other anon policies)
-CREATE POLICY "anon_book_content_select"
-  ON book_content FOR SELECT TO anon
-  USING (true);
+DO $$ BEGIN
+  CREATE POLICY "anon_book_content_select"
+    ON book_content FOR SELECT TO anon
+    USING (true);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;

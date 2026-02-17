@@ -34,22 +34,20 @@ export default function DashboardPage() {
     setError(null)
 
     try {
-      // Check onboarding status first
-      const onboardingStatus = await leetloopApi.getOnboardingStatus(userId).catch(() => null)
+      // Load all data in parallel including onboarding check
+      const [onboardingStatus, missionData, sdData, langData, progressData] = await Promise.all([
+        leetloopApi.getOnboardingStatus(userId).catch(() => null),
+        leetloopApi.getDailyMissionV2(userId),
+        leetloopApi.getSystemDesignDashboard(userId).catch(() => null),
+        leetloopApi.getLanguageDashboard(userId).catch(() => null),
+        leetloopApi.getProgress(userId, 91).catch(() => null),
+      ])
 
       // If not onboarded, redirect to onboarding
       if (onboardingStatus && !onboardingStatus.onboarding_complete) {
         router.push('/onboarding')
         return
       }
-
-      // Load mission, system design, language, and progress data in parallel
-      const [missionData, sdData, langData, progressData] = await Promise.all([
-        leetloopApi.getDailyMissionV2(userId),
-        leetloopApi.getSystemDesignDashboard(userId).catch(() => null),
-        leetloopApi.getLanguageDashboard(userId).catch(() => null),
-        leetloopApi.getProgress(userId, 91).catch(() => null),
-      ])
 
       setMission(missionData)
       setSystemDesignData(sdData)

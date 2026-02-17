@@ -46,7 +46,7 @@ RUN adduser --system --uid 1001 nextjs
 # Copy built assets from web client (standalone preserves monorepo structure)
 COPY --from=builder --chown=nextjs:nodejs /app/clients/web/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/clients/web/.next/static ./clients/web/.next/static
-COPY --from=builder /app/clients/web/public ./clients/web/public
+COPY --from=builder --chown=nextjs:nodejs /app/clients/web/public ./clients/web/public
 
 USER nextjs
 

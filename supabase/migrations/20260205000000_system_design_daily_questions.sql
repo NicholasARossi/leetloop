@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS system_design_daily_questions (
 
 -- Index for efficient lookups
 CREATE INDEX idx_daily_questions_user_topic ON system_design_daily_questions(user_id, track_id, topic);
-CREATE INDEX idx_daily_questions_valid ON system_design_daily_questions(valid_until);
+CREATE INDEX idx_daily_questions_serve_date ON system_design_daily_questions(user_id, serve_date);
 
 -- Enable RLS
 ALTER TABLE system_design_daily_questions ENABLE ROW LEVEL SECURITY;
