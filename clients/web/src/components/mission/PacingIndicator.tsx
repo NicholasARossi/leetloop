@@ -19,8 +19,8 @@ const statusConfig: Record<string, StatusStyle> = {
     label: 'Ahead',
     className: 'text-white',
     style: {
-      backgroundColor: 'var(--accent-color-dark)',
-      borderColor: 'var(--accent-color-dark)',
+      backgroundColor: 'var(--accent-color)',
+      borderColor: 'var(--accent-color)',
     },
     icon: 'M5 10l7-7m0 0l7 7m-7-7v18',
   },
