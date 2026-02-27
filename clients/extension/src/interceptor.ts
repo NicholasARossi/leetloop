@@ -60,6 +60,11 @@ function handleSubmissionResult(
     language: submissionData?.language ?? '',
     problemSlug: getProblemSlug(),
     timestamp: new Date().toISOString(),
+    codeOutput: result.code_output,
+    expectedOutput: result.expected_output,
+    statusMsg: result.status_msg,
+    totalCorrect: result.total_correct,
+    totalTestcases: result.total_testcases,
   };
 
   // Send to content script via postMessage

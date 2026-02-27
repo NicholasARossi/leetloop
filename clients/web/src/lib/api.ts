@@ -144,7 +144,14 @@ export const leetloopApi = {
     code: string,
     language: string,
     problemSlug: string,
-    status: string
+    status: string,
+    errorContext?: {
+      code_output?: string
+      expected_output?: string
+      status_msg?: string
+      total_correct?: number
+      total_testcases?: number
+    }
   ) =>
     api<CodeAnalysis>('/api/coaching/analyze', {
       method: 'POST',
@@ -155,11 +162,15 @@ export const leetloopApi = {
         language,
         problem_slug: problemSlug,
         status,
+        ...errorContext,
       }),
     }),
 
   getTips: (userId: string) =>
     api<{ tips: string[] }>(`/api/coaching/tips/${userId}`),
+
+  getPatterns: (userId: string) =>
+    api<UserPatterns>(`/api/patterns/${userId}`),
 
   // Learning Paths
   getPaths: () =>
@@ -434,6 +445,25 @@ export const leetloopApi = {
         body: JSON.stringify({ track_id: trackId }),
       }
     ),
+
+  // Daily Exercises
+  getDailyExercises: (userId: string) =>
+    api<DailyExerciseBatch>(`/api/language/${userId}/daily-exercises`),
+
+  submitDailyExercise: (exerciseId: string, responseText: string) =>
+    api<DailyExerciseGrade>(`/api/language/daily-exercises/${exerciseId}/submit`, {
+      method: 'POST',
+      body: JSON.stringify({ response_text: responseText }),
+    }),
+
+  regenerateDailyExercises: (userId: string) =>
+    api<DailyExerciseBatch>(`/api/language/${userId}/daily-exercises/regenerate`, {
+      method: 'POST',
+    }),
+
+  // Book Progress
+  getBookProgress: (trackId: string, userId: string) =>
+    api<BookProgressResponse>(`/api/language/tracks/${trackId}/book-progress/${userId}`),
 }
 
 // Types (matching backend schemas)
@@ -524,6 +554,26 @@ export interface CodeAnalysis {
   suggestions: string[]
   time_complexity?: string
   space_complexity?: string
+  root_cause?: string
+  the_fix?: string
+  pattern_type?: string
+  concept_gap?: string
+}
+
+export interface PatternInsight {
+  pattern: string
+  frequency: number
+  example_problems: string[]
+}
+
+export interface UserPatterns {
+  recurring_mistakes: PatternInsight[]
+  error_distribution: Record<string, number>
+  learning_velocity: string
+  velocity_details: string
+  blind_spots: string[]
+  strategic_recommendations: string[]
+  analyzed_at: string
 }
 
 // Learning Path Types
@@ -1183,6 +1233,82 @@ export interface LanguageDashboardSummary {
   reviews_due: LanguageReviewItem[]
   recent_score?: number
   exercises_this_week: number
+  book_total_chapters: number
+  book_completed_chapters: number
+  book_completion_percentage: number
+}
+
+// Daily Exercise Types
+export interface DailyExercise {
+  id: string
+  topic: string
+  exercise_type: string
+  question_text: string
+  expected_answer?: string
+  focus_area?: string
+  key_concepts: string[]
+  is_review: boolean
+  review_topic_reason?: string
+  status: 'pending' | 'completed' | 'skipped'
+  sort_order: number
+  response_format: 'single_line' | 'short_text' | 'long_text' | 'free_form'
+  word_target: number
+  response_text?: string
+  score?: number
+  verdict?: string
+  feedback?: string
+  corrections?: string
+  missed_concepts: string[]
+  completed_at?: string
+}
+
+export interface DailyExerciseBatch {
+  generated_date: string
+  track_id?: string
+  exercises: DailyExercise[]
+  completed_count: number
+  total_count: number
+  average_score: number | null
+}
+
+export interface DailyExerciseGrade {
+  score: number
+  verdict: string
+  feedback: string
+  corrections?: string
+  missed_concepts: string[]
+}
+
+// Book Progress Types
+export interface BookContentSection {
+  title: string
+  summary: string
+  key_points: string[]
+}
+
+export interface ChapterProgressItem {
+  name: string
+  order: number
+  difficulty: string
+  key_concepts: string[]
+  is_completed: boolean
+  is_current: boolean
+  has_review_due: boolean
+  review_reason?: string
+  book_summary?: string
+  book_sections: BookContentSection[]
+}
+
+export interface BookProgressResponse {
+  track_name: string
+  language: string
+  level: string
+  source_book?: string
+  total_chapters: number
+  completed_chapters: number
+  completion_percentage: number
+  average_score: number
+  chapters: ChapterProgressItem[]
 }
 
 export { ApiError }

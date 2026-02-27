@@ -21,6 +21,12 @@ class CodeAnalyzer:
         language: str,
         problem_slug: str,
         status: str,
+        code_output: str = None,
+        expected_output: str = None,
+        status_msg: str = None,
+        total_correct: int = None,
+        total_testcases: int = None,
+        previous_attempts: list = None,
     ) -> CodeAnalysisResponse:
         """
         Analyze submitted code and return structured feedback.
@@ -30,6 +36,12 @@ class CodeAnalyzer:
             language: Programming language (e.g., "python3", "javascript")
             problem_slug: The LeetCode problem slug
             status: Submission status (e.g., "Wrong Answer", "Time Limit Exceeded")
+            code_output: What the code actually produced
+            expected_output: What the code should have produced
+            status_msg: Detailed error message from LeetCode
+            total_correct: Number of test cases passed
+            total_testcases: Total number of test cases
+            previous_attempts: List of previous attempt dicts for this problem
 
         Returns:
             CodeAnalysisResponse with analysis results
@@ -41,6 +53,12 @@ class CodeAnalyzer:
                 language=language,
                 problem_slug=problem_slug,
                 status=status,
+                code_output=code_output,
+                expected_output=expected_output,
+                status_msg=status_msg,
+                total_correct=total_correct,
+                total_testcases=total_testcases,
+                previous_attempts=previous_attempts,
             )
             return CodeAnalysisResponse(**analysis)
 

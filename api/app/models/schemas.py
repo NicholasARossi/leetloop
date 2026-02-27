@@ -198,6 +198,11 @@ class CodeAnalysisRequest(BaseModel):
     language: str
     problem_slug: str
     status: SubmissionStatus
+    code_output: Optional[str] = None
+    expected_output: Optional[str] = None
+    status_msg: Optional[str] = None
+    total_correct: Optional[int] = None
+    total_testcases: Optional[int] = None
 
 
 class CodeAnalysisResponse(BaseModel):
@@ -208,6 +213,10 @@ class CodeAnalysisResponse(BaseModel):
     suggestions: list[str] = []
     time_complexity: Optional[str] = None
     space_complexity: Optional[str] = None
+    root_cause: Optional[str] = None
+    the_fix: Optional[str] = None
+    pattern_type: Optional[str] = None
+    concept_gap: Optional[str] = None
 
 
 # ============ Learning Path Models ============
@@ -688,3 +697,26 @@ class DailyMissionResponseV2(BaseModel):
     total_completed_today: int = 0
     can_regenerate: bool = True
     generated_at: datetime
+
+
+# ============ Pattern Analysis Models ============
+
+
+class PatternInsight(BaseModel):
+    """A recurring mistake pattern detected across submissions."""
+
+    pattern: str
+    frequency: int
+    example_problems: list[str] = []
+
+
+class UserPatterns(BaseModel):
+    """Result of analyzing a user's submission patterns."""
+
+    recurring_mistakes: list[PatternInsight] = []
+    error_distribution: dict[str, float] = {}
+    learning_velocity: str = "unknown"  # improving | plateauing | regressing
+    velocity_details: str = ""
+    blind_spots: list[str] = []
+    strategic_recommendations: list[str] = []
+    analyzed_at: datetime

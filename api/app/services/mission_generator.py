@@ -9,6 +9,7 @@ from uuid import UUID
 from supabase import Client
 
 from app.services.gemini_gateway import GeminiGateway
+from app.services.pattern_analyzer import PatternAnalyzer
 from app.utils import parse_iso_datetime
 
 
@@ -305,6 +306,42 @@ class MissionGenerator:
         if slow_response.data:
             context["recent_slow_solves"] = [s["problem_slug"] for s in slow_response.data]
 
+        # Pattern analysis (from cache table)
+        try:
+            pattern_resp = await asyncio.to_thread(
+                lambda: self.supabase.table("user_pattern_analysis")
+                .select("patterns")
+                .eq("user_id", user_id_str)
+                .limit(1)
+                .execute()
+            )
+            if pattern_resp.data and pattern_resp.data[0].get("patterns"):
+                patterns = pattern_resp.data[0]["patterns"]
+                context["recurring_mistakes"] = patterns.get("recurring_mistakes", [])
+                context["learning_velocity"] = patterns.get("learning_velocity", "unknown")
+                context["velocity_details"] = patterns.get("velocity_details", "")
+                context["blind_spots"] = patterns.get("blind_spots", [])
+                context["strategic_recommendations"] = patterns.get("strategic_recommendations", [])
+        except Exception:
+            pass  # Pattern data is optional — don't block mission generation
+
+        # Recent failure details (with error context for richer prompt)
+        try:
+            recent_failures_resp = await asyncio.to_thread(
+                lambda: self.supabase.table("submissions")
+                .select("problem_slug, status, status_msg, code_output, expected_output, total_correct, total_testcases, tags")
+                .eq("user_id", user_id_str)
+                .neq("status", "Accepted")
+                .gte("submitted_at", seven_days_ago)
+                .order("submitted_at", desc=True)
+                .limit(10)
+                .execute()
+            )
+            if recent_failures_resp.data:
+                context["recent_failure_details"] = recent_failures_resp.data
+        except Exception:
+            pass
+
         return context
 
     async def _call_gemini(self, context: dict) -> dict:
@@ -427,6 +464,44 @@ class MissionGenerator:
         patterns_section += f"Current streak: {context.get('current_streak', 0)} days\n"
         patterns_section += f"Total solved: {context.get('problems_solved_total', 0)} problems\n"
 
+        # Pattern analysis section (from cached analysis)
+        pattern_analysis_section = ""
+        if context.get("recurring_mistakes") or context.get("learning_velocity"):
+            pattern_analysis_section = "## Pattern Analysis (from recent submissions)\n"
+            if context.get("recurring_mistakes"):
+                pattern_analysis_section += "Recurring mistakes:\n"
+                for m in context["recurring_mistakes"][:5]:
+                    freq = m.get("frequency", "?")
+                    examples = ", ".join(m.get("example_problems", [])[:3])
+                    pattern_analysis_section += f"  - {m.get('pattern', '')} (freq: {freq}, e.g.: {examples})\n"
+            if context.get("learning_velocity"):
+                pattern_analysis_section += f"Learning velocity: {context['learning_velocity']}"
+                if context.get("velocity_details"):
+                    pattern_analysis_section += f" — {context['velocity_details']}"
+                pattern_analysis_section += "\n"
+            if context.get("blind_spots"):
+                pattern_analysis_section += f"Blind spots: {', '.join(context['blind_spots'][:5])}\n"
+            if context.get("strategic_recommendations"):
+                pattern_analysis_section += "Strategic recommendations:\n"
+                for r in context["strategic_recommendations"][:3]:
+                    pattern_analysis_section += f"  - {r}\n"
+
+        # Recent failure details section
+        failure_details_section = ""
+        if context.get("recent_failure_details"):
+            failure_details_section = "## Recent Failure Details\n"
+            for f in context["recent_failure_details"][:8]:
+                line = f"- {f.get('problem_slug', '?')}: {f.get('status', '?')}"
+                if f.get("status_msg"):
+                    line += f" — {f['status_msg'][:60]}"
+                if f.get("total_correct") is not None and f.get("total_testcases") is not None:
+                    line += f" ({f['total_correct']}/{f['total_testcases']} tests)"
+                if f.get("code_output") and f.get("expected_output"):
+                    line += f" [got: {f['code_output'][:30]} expected: {f['expected_output'][:30]}]"
+                if f.get("tags"):
+                    line += f" tags: {', '.join(f['tags'][:3])}"
+                failure_details_section += line + "\n"
+
         prompt = f"""You are a LeetCode practice coach. Generate a personalized daily mission based on all user data.
 
 {goal_section}
@@ -439,16 +514,24 @@ class MissionGenerator:
 
 {patterns_section}
 
+{pattern_analysis_section}
+
+{failure_details_section}
+
 {problems_section}
 
 ## Instructions
-Generate an optimal daily practice session (4-6 problems):
+Generate an optimal daily practice session (4-6 problems) plus 2-3 side quests:
 1. PRIORITIZE review items if any are due (spaced repetition is critical)
 2. Include problems from the learning path to maintain progress
 3. Mix in gap-filling problems to address weak skills
 4. You MAY reorder path problems if it helps hit multiple learning objectives
 5. Always explain WHY each problem was chosen
 6. Consider deadline pacing - are they ahead or behind?
+7. Address identified blind spots — pick problems that force confrontation with weak patterns
+8. If velocity is "regressing", reduce difficulty and reinforce fundamentals
+9. If "plateauing", introduce challenge problems that break comfort zone
+10. Generate 2-3 SIDE QUESTS: related problems that reinforce today's concepts from a different angle, or target blind spots
 
 ## Output Format (JSON only)
 {{
@@ -461,6 +544,16 @@ Generate an optimal daily practice session (4-6 problems):
       "priority": 1,
       "skills": ["skill1", "skill2"],
       "estimated_difficulty": "easy|medium|hard"
+    }}
+  ],
+  "side_quests": [
+    {{
+      "slug": "problem-slug",
+      "title": "Problem Title",
+      "difficulty": "Easy|Medium|Hard",
+      "reason": "Why this side quest — what weakness it targets",
+      "target_weakness": "The skill or pattern being reinforced",
+      "quest_type": "review_due|skill_gap|blind_spot"
     }}
   ],
   "balance_explanation": "Today is X% path, Y% gap-filling because...",

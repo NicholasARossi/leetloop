@@ -128,6 +128,11 @@ function handleSubmission(message: InterceptorMessage) {
     code_length: payload.code.length,
     session_id: session.id,
     submitted_at: payload.timestamp,
+    code_output: payload.codeOutput,
+    expected_output: payload.expectedOutput,
+    status_msg: payload.statusMsg,
+    total_correct: payload.totalCorrect,
+    total_testcases: payload.totalTestcases,
   };
 
   // Send to background service worker

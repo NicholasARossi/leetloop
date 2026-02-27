@@ -29,6 +29,11 @@ export interface InterceptorPayload {
   language: string;
   problemSlug: string;
   timestamp: string;
+  codeOutput?: string;
+  expectedOutput?: string;
+  statusMsg?: string;
+  totalCorrect?: number;
+  totalTestcases?: number;
 }
 
 /**
@@ -71,6 +76,11 @@ export interface SubmissionPayload {
   code_length: number;
   session_id: string;
   submitted_at: string;
+  code_output?: string;
+  expected_output?: string;
+  status_msg?: string;
+  total_correct?: number;
+  total_testcases?: number;
 }
 
 /**

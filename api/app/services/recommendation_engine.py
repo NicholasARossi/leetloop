@@ -43,7 +43,16 @@ class RecommendationEngine:
                 )
             )
 
-        # 2. Get weak skill recommendations
+        # 2. Get insight-driven recommendations (recurring pattern types)
+        if len(recommendations) < limit:
+            insight_problems = await self._get_insight_recommendations(
+                user_id,
+                limit=limit - len(recommendations),
+                exclude=[r.problem_slug for r in recommendations],
+            )
+            recommendations.extend(insight_problems)
+
+        # 3. Get weak skill recommendations
         if len(recommendations) < limit:
             weak_problems = await self._get_weak_skill_problems(
                 user_id,
@@ -51,7 +60,7 @@ class RecommendationEngine:
             )
             recommendations.extend(weak_problems)
 
-        # 3. Fill with progression problems if needed
+        # 4. Fill with progression problems if needed
         if len(recommendations) < limit:
             progression = await self._get_progression_problems(
                 user_id,
@@ -62,6 +71,90 @@ class RecommendationEngine:
         # Sort by priority and return top N
         recommendations.sort(key=lambda x: x.priority, reverse=True)
         return recommendations[:limit]
+
+    async def _get_insight_recommendations(
+        self,
+        user_id: UUID,
+        limit: int = 2,
+        exclude: list[str] = None,
+    ) -> list[RecommendedProblem]:
+        """Get recommendations based on recurring pattern types from submission insights."""
+        try:
+            insights = (
+                self.supabase.table("submission_insights")
+                .select("pattern_type, concept_gap, submission_id")
+                .eq("user_id", str(user_id))
+                .order("created_at", desc=True)
+                .limit(20)
+                .execute()
+            )
+        except Exception:
+            return []
+
+        if not insights.data:
+            return []
+
+        # Count pattern types
+        pattern_counts = {}
+        concept_gaps = {}
+        for insight in insights.data:
+            pt = insight.get("pattern_type")
+            cg = insight.get("concept_gap")
+            if pt:
+                pattern_counts[pt] = pattern_counts.get(pt, 0) + 1
+            if cg:
+                concept_gaps[cg] = concept_gaps.get(cg, 0) + 1
+
+        if not pattern_counts:
+            return []
+
+        # Find the most common pattern type and recommend easier problems on that concept
+        top_pattern = max(pattern_counts, key=pattern_counts.get)
+        top_count = pattern_counts[top_pattern]
+
+        # Only surface if pattern repeats 2+ times
+        if top_count < 2:
+            return []
+
+        # Find unsolved problems related to the top concept gap
+        top_concept = max(concept_gaps, key=concept_gaps.get) if concept_gaps else top_pattern
+
+        # Look for failed problems with tags matching the concept
+        exclude = exclude or []
+        failed = (
+            self.supabase.table("submissions")
+            .select("problem_slug, problem_title, difficulty, tags")
+            .eq("user_id", str(user_id))
+            .neq("status", "Accepted")
+            .order("submitted_at", desc=True)
+            .limit(10)
+            .execute()
+        )
+
+        recommendations = []
+        seen = set(exclude)
+        for problem in (failed.data or []):
+            slug = problem["problem_slug"]
+            if slug in seen:
+                continue
+            seen.add(slug)
+
+            recommendations.append(
+                RecommendedProblem(
+                    problem_slug=slug,
+                    problem_title=problem.get("problem_title"),
+                    difficulty=problem.get("difficulty"),
+                    tags=problem.get("tags", []),
+                    reason=f"Recurring pattern: {top_pattern} ({top_count}x) — strengthen {top_concept}",
+                    priority=85.0,  # Between reviews (100) and weak skills (70)
+                    source="insight",
+                )
+            )
+
+            if len(recommendations) >= limit:
+                break
+
+        return recommendations
 
     async def get_weak_areas(self, user_id: UUID) -> list[str]:
         """Get list of user's weakest skill areas."""
