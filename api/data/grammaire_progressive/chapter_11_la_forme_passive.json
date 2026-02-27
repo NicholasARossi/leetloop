@@ -1,0 +1,242 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 11,
+  "chapter_title": "LA FORME PASSIVE",
+  "book_pages": [84, 85, 86, 87],
+  "sections": [
+    {
+      "section_title": "CONSTRUCTION et CONTRAINTES D'UTILISATION",
+      "subtitle": null,
+      "book_pages": [84, 85],
+      "intro_examples": [
+        "La police a arrêté trois suspects.",
+        "Trois suspects ont été arrêtés par la police."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "La forme passive est une transformation qui permet de mettre en valeur le complément d'objet du verbe à la forme active.",
+          "examples": [
+            "Forme active : Les étudiants organisent une fête chaque année.",
+            "Forme passive : Une fête est organisée par les étudiants chaque année."
+          ],
+          "categories": [],
+          "notes": [
+            "Le complément de la forme passive est introduit par la préposition « par »."
+          ]
+        },
+        {
+          "rule": "« Être » intervient dans la transformation ; il est conjugué au temps du verbe à la forme active et il est suivi du participe passé de ce verbe ; il s'accorde toujours avec le sujet.",
+          "examples": [
+            "Les enfants feront les décorations. → Les décorations seront faites par les enfants."
+          ],
+          "categories": [],
+          "notes": [
+            "Avec les verbes « devoir », « pouvoir », « sembler », « paraître », la transformation est faite sur l'infinitif : Ils devront présenter leur projet bientôt. → Leur projet devra être présenté bientôt."
+          ]
+        },
+        {
+          "rule": "Dans de nombreux cas, les phrases passives n'ont pas de complément ; cela est courant dans la langue des journaux, la langue juridique et administrative.",
+          "examples": [
+            "Il a été élu en 1995. – Dix personnes ont été blessées dans l'accident."
+          ],
+          "categories": [],
+          "notes": [
+            "On n'utilise en général pas de pronom personnel après « par » : Ce roman a été écrit par lui. → Il a écrit ce roman. / C'est lui qui a écrit ce roman."
+          ]
+        },
+        {
+          "rule": "Seuls les verbes qui ont un complément d'objet direct peuvent être transformés.",
+          "examples": [
+            "La tour Eiffel a été construite à la fin du XIXe siècle. [construire quelque chose]"
+          ],
+          "categories": [],
+          "notes": [
+            "Dans le cas d'un verbe ayant un complément d'objet indirect, la forme passive est impossible ; on utilise alors la forme active avec « on » pour sujet : On a offert un cadeau à Mathilde pour ses vingt ans. [offrir à quelqu'un]"
+          ]
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 85,
+          "instruction": "Mettez ce texte à la forme passive.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Les autonomistes corses ont placé une bombe à la mairie de Bordeaux. Immédiatement le Premier ministre a pris des mesures de sécurité. Le ministre de l'Intérieur a mobilisé plusieurs services pour faire la chasse aux terroristes. L'opinion publique attendait ces mesures depuis longtemps. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 85,
+          "instruction": "Mettez les phrases de ce texte à la forme active.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Une solution a été trouvée par le gouvernement à la crise qui l'oppose au monde paysan. Des subventions seront versées rapidement aux éleveurs par l'Union européenne et par le gouvernement français. Des mesures seront prises par les services des douanes pour empêcher les importations illégales. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 85,
+          "instruction": "Développez ces gros titres de journaux comme dans l'exemple.",
+          "type": "transformation",
+          "context": "Élection hier du Président : 250 voix contre 198 → Le Président a été élu hier avec 250 voix contre 198.",
+          "items": [
+            { "number": 1, "text": "Arrêt ce matin de trois suspects en plein centre-ville. _____", "blanks": 1 },
+            { "number": 2, "text": "Possibilité de mise au point d'un vaccin avant l'an 2000. _____", "blanks": 1 },
+            { "number": 3, "text": "Organisation d'une conférence au sommet avant la fin de l'année. _____", "blanks": 1 },
+            { "number": 4, "text": "Sampras bat Agassi : 2 sets à 1. _____", "blanks": 1 },
+            { "number": 5, "text": "Abrogation de la loi en 1985. _____", "blanks": 1 },
+            { "number": 6, "text": "Abolition de la peine de mort en 1981. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 85,
+          "instruction": "Transformez à la forme passive quand c'est possible.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Quatre grands fleuves arrosent la France. _____", "blanks": 1 },
+            { "number": 2, "text": "L'opinion publique prend ses mesures au sérieux. _____", "blanks": 1 },
+            { "number": 3, "text": "Le nouveau locataire a constaté une fuite d'eau. _____", "blanks": 1 },
+            { "number": 4, "text": "Toute la ville a parlé de l'incident. _____", "blanks": 1 },
+            { "number": 5, "text": "La presse locale a exagéré les détails de l'incident. _____", "blanks": 1 },
+            { "number": 6, "text": "L'opinion publique croit à ces mesures. _____", "blanks": 1 },
+            { "number": 7, "text": "Tout le monde aimait ce garçon. _____", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "EMPLOIS",
+      "subtitle": null,
+      "book_pages": [86, 87],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "La forme passive est utilisée pour mettre en valeur le sujet en tête de phrase.",
+          "examples": [
+            "Deux toiles ont été volées au musée d'Amsterdam."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Elle est utilisée dans les descriptions.",
+          "examples": [
+            "La maison a été entièrement repeinte en blanc."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Elle est utilisée pour remplacer le pronom indéfini « on » quand on ne connaît pas l'auteur de l'action.",
+          "examples": [
+            "L'appartement a été cambriolé entre 3 heures et 15 heures."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Elle est utilisée avec certains verbes ; « par » est alors remplacé par « de ».",
+          "examples": [
+            "Il est apprécié de tout le monde.",
+            "Elle était connue de tout le quartier.",
+            "Le panier était rempli de fruits."
+          ],
+          "categories": [
+            {
+              "category": "Verbes utilisant « de » au lieu de « par »",
+              "items": [
+                "des verbes qui expriment un sentiment ou une attitude : aimer, détester, haïr, adorer, estimer, respecter, admirer, etc.",
+                "avec les verbes connaître, oublier, ignorer",
+                "avec certains verbes qui servent à décrire : être orné, être décoré, être rempli, être couvert, composé, etc."
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "rule": "Il existe une forme pronominale ayant le sens d'une forme passive ; le sujet est en général un inanimé.",
+          "examples": [
+            "Cette langue se lit et s'écrit de droite à gauche. = Cette langue est lue et écrite de droite à gauche.",
+            "Ce médicament doit se prendre régulièrement. = Ce médicament doit être pris régulièrement.",
+            "C'est un vin qui se boit très frais. = Ce vin doit être bu très frais."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Se faire, se laisser + infinitif ont le sens d'une forme passive ; le sujet est un animé.",
+          "examples": [
+            "Je me suis fait vacciner contre la grippe. = J'ai été vacciné contre la grippe.",
+            "Elle s'est laissé insulter sans rien dire. = Elle a été insultée et elle n'a rien dit."
+          ],
+          "categories": [],
+          "notes": [
+            "« Se laisser » + infinitif exprime que le sujet subit l'action."
+          ]
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 87,
+          "instruction": "Remplacez « on » par la forme passive.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": null, "text": "On a cambriolé le musée de la ville. On a volé des toiles et divers objets. On constate depuis ces derniers mois une augmentation des vols. Mais on ne note pas proportionnellement une augmentation des succès de la police. On enregistre plutôt une campagne de calomnies dans une certaine presse. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 87,
+          "instruction": "Mettez les phrases de ce texte à la forme passive.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Tout le monde le connaissait et tous l'appréciaient. Il ouvrait sa maison à tout le monde. Des livres dans toutes les langues composaient sa bibliothèque. Des peintures anciennes et modernes couvraient les murs. Des objets exotiques remplissaient les coins laissés libres par les livres et les tableaux. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 87,
+          "instruction": "Remplacez « on » par la forme pronominale de sens passif.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "On rencontre souvent cette situation. _____", "blanks": 1 },
+            { "number": 2, "text": "On emploie de moins en moins cette expression. _____", "blanks": 1 },
+            { "number": 3, "text": "On utilise de plus en plus la violence. _____", "blanks": 1 },
+            { "number": 4, "text": "On ne publie pas beaucoup ce type de livres. _____", "blanks": 1 },
+            { "number": 5, "text": "On voit souvent ce genre de phénomène. _____", "blanks": 1 },
+            { "number": 6, "text": "On doit laver ce pull à l'eau froide. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 87,
+          "instruction": "Utilisez « se faire » ou « se laisser » + infinitif à la place de la forme passive.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Elle a été renversée par une voiture. _____", "blanks": 1 },
+            { "number": 2, "text": "Il a été agressé dans la rue et n'a pas réagi. _____", "blanks": 1 },
+            { "number": 3, "text": "Ils ont été punis par le maître. _____", "blanks": 1 },
+            { "number": 4, "text": "Il a été séduit par son sourire. _____", "blanks": 1 },
+            { "number": 5, "text": "Vous avez été battu et vous ne vous êtes pas défendu ? _____", "blanks": 1 },
+            { "number": 6, "text": "Elle a été entraînée dans une histoire bizarre. _____", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [84, 85, 86, 87],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": null,
+  "chapter_title": "BILAN n°3",
+  "book_pages": [72, 73],
+  "sections": [
+    {
+      "section_title": "BILAN n°3",
+      "subtitle": "Le Subjonctif et le Conditionnel",
+      "book_pages": [72, 73],
+      "intro_examples": [],
+      "grammar_rules": [],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 72,
+          "instruction": "Répondez en utilisant la forme verbale qui convient à l'intention notée entre parenthèses.",
+          "type": "bilan",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "– Qu'est-ce qu'on va offrir à papa et maman pour leurs cinquante ans de mariage ?\n(suggestion) – _____", "blanks": 1 },
+            { "number": 2, "text": "– Tu as eu une réponse pour ta demande d'emploi ?\n(prévision) – Non, mais _____", "blanks": 1 },
+            { "number": 3, "text": "– Je prendrai la voiture et je ferai le voyage de nuit.\n(conseil) – À ta place _____", "blanks": 1 },
+            { "number": 4, "text": "– Je ne vous ai pas fait trop mal ?\n(reproche) – _____", "blanks": 1 },
+            { "number": 5, "text": "– Je ne connais pas grand-chose à ce problème.\n(nécessité) – _____", "blanks": 1 },
+            { "number": 6, "text": "– Elle me semble en mauvaise santé.\n(l'obligation) – Oui, _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 72,
+          "instruction": "Quand on vous a recruté on vous avait promis une augmentation de salaire, un appartement de fonction confortable, des missions à l'étranger, les congés scolaires et vous n'avez rien eu de tout cela. Vous racontez à un(e) ami(e) votre déception.",
+          "type": "bilan",
+          "context": null,
+          "items": [
+            { "number": null, "text": "On m'avait promis que _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 72,
+          "instruction": "Utilisez le conditionnel présent ou passé.",
+          "type": "bilan",
+          "context": null,
+          "items": [
+            { "number": null, "text": "a. Vous téléphonez à un(e) ami(e) pour lui donner les conseils importants avant qu'il(elle) ne parte en voyage dans un pays subsaharien.\n_____", "blanks": 1 },
+            { "number": null, "text": "b. Vous écrivez une lettre de reproches à votre fils qui a dépensé toute sa bourse et qui a raté ses examens.\n_____", "blanks": 1 },
+            { "number": null, "text": "c. Vous téléphonez à un(e) ami(e) pour lui proposer de vous accompagner pour le week-end. Vous lui proposez aussi un programme.\n_____", "blanks": 1 },
+            { "number": null, "text": "d. Vous êtes journaliste. Vous rédigez un court article relatif à un événement mais vous n'êtes pas certain de vos informations.\n_____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 73,
+          "instruction": "Complétez par l'indicatif ou le subjonctif.",
+          "type": "bilan",
+          "context": "Chère Amie",
+          "items": [
+            { "number": null, "text": "Je crois que Paul et Virginie (vouloir se marier) _____ le mois prochain. Je serais heureux que vous (venir) _____ au mariage. Je suis sûr que votre présence leur (faire) _____ le plus grand plaisir. Et je ne doute pas que cela vous (faire) _____ également plaisir. Je serais également très heureuse que vos parents (pouvoir) _____ vous accompagner ; de plus ce serait une excellente occasion pour que nous (pouvoir) _____ enfin nous revoir. À moins qu'ils (avoir) _____ un engagement à cette date, auquel cas je (comprendre) _____ leur absence. Je compte sur vous et sur eux. Amitiés, Claude.", "blanks": 8 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 73,
+          "instruction": "Complétez par l'indicatif ou le subjonctif.",
+          "type": "bilan",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "J'espère que tu (m'écrire) _____ souvent.", "blanks": 1 },
+            { "number": 2, "text": "Elle a jugé qu'il (être) _____ trop tard.", "blanks": 1 },
+            { "number": 3, "text": "Ils ont jugé bon que nous (se réunir) _____ dès demain.", "blanks": 1 },
+            { "number": 4, "text": "Pensez-vous qu'il (falloir s'inquiéter) _____ ?", "blanks": 1 },
+            { "number": 5, "text": "Il a dit qu'il (revenir) _____ demain.", "blanks": 1 },
+            { "number": 6, "text": "Les autorités demandent que nous (avoir) _____ un visa pour trois mois.", "blanks": 1 },
+            { "number": 7, "text": "J'ai l'impression qu'il (pleuvoir) _____.", "blanks": 1 },
+            { "number": 8, "text": "Je ne pense pas qu'il (pleuvoir) _____.", "blanks": 1 },
+            { "number": 9, "text": "Il est grand temps que nous (partir) _____ ; il est tard.", "blanks": 1 },
+            { "number": 10, "text": "Le mieux est que tu lui (dire) _____ ce qui s'est passé.", "blanks": 1 },
+            { "number": 11, "text": "Il suffit que vous lui (téléphoner) _____ rapidement.", "blanks": 1 },
+            { "number": 12, "text": "J'imagine que vous (ne pas aller) _____ le voir.", "blanks": 1 },
+            { "number": 13, "text": "Imaginons que vous (aller) _____ le voir.", "blanks": 1 },
+            { "number": 14, "text": "Elle prétend qu'il (être) _____ l'ami du Président.", "blanks": 1 },
+            { "number": 15, "text": "Il n'est pas impossible qu'il (être) _____ l'ami du Président.", "blanks": 1 },
+            { "number": 16, "text": "Il me semble qu'il (aller + neiger) _____.", "blanks": 1 },
+            { "number": 17, "text": "Il semble qu'il (être venu) _____ en notre absence.", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [72, 73],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

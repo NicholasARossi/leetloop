@@ -1,0 +1,486 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "authors": "Michèle Boularès, Jean-Louis Frérot",
+  "publisher": "CLE International",
+  "year": 1997,
+  "level": "b2",
+  "language": "french",
+  "total_pdf_pages": 192,
+  "page_offset": 2,
+  "page_offset_note": "book_page = pdf_1indexed_page + 1. Cover is PDF page 1 with no book page number. So pdf_0indexed = book_page - 2.",
+  "chapters": [
+    {
+      "number": 1,
+      "title": "L'ARTICLE",
+      "page_start": 8,
+      "page_end": 23,
+      "subtopics": [
+        { "title": "L'article défini", "page": 8 },
+        { "title": "L'article indéfini", "page": 12 },
+        { "title": "L'article partitif", "page": 14 },
+        { "title": "L'absence d'article", "page": 16 },
+        { "title": "Valeur sémantique des trois types d'articles", "page": 22 }
+      ],
+      "status": "complete",
+      "pages_done": [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+      "file": "chapter_01_l_article.json"
+    },
+    {
+      "number": 2,
+      "title": "L'ADJECTIF",
+      "page_start": 24,
+      "page_end": 29,
+      "subtopics": [
+        { "title": "Les adjectifs numéraux", "page": 24 },
+        { "title": "L'adjectif indéfini", "page": 26 },
+        { "title": "La place de l'adjectif", "page": 28 }
+      ],
+      "status": "complete",
+      "pages_done": [24, 25, 26, 27, 28, 29],
+      "file": "chapter_02_l_adjectif.json"
+    },
+    {
+      "number": 3,
+      "title": "LES NÉGATIONS PARTICULIÈRES",
+      "page_start": 30,
+      "page_end": 33,
+      "subtopics": [
+        { "title": "«Ne... plus», «ne... nulle part», «ne... pas encore», «Ne... aucun», «ne... guère», «sans»", "page": 30 },
+        { "title": "«Pas du tout», «plus ... du tout», «pas un seul», «plus un seul», «sans aucun»", "page": 30 },
+        { "title": "«Ne ... ni ... ni ...»", "page": 32 }
+      ],
+      "status": "complete",
+      "pages_done": [30, 31, 32, 33],
+      "file": "chapter_03_les_negations_particulieres.json"
+    },
+    {
+      "number": null,
+      "title": "BILAN n°1",
+      "page_start": 34,
+      "page_end": 37,
+      "subtopics": [],
+      "status": "complete",
+      "pages_done": [34, 35, 36, 37],
+      "file": "bilan_01.json"
+    },
+    {
+      "number": 4,
+      "title": "LES TEMPS de L'INDICATIF",
+      "page_start": 38,
+      "page_end": 53,
+      "subtopics": [
+        { "title": "Le présent", "page": 38 },
+        { "title": "Les passés", "page": 40 },
+        { "title": "L'imparfait", "page": 42 },
+        { "title": "Le passé composé", "page": 44 },
+        { "title": "Le passé simple", "page": 46 },
+        { "title": "Le futur", "page": 48 },
+        { "title": "L'antériorité", "page": 50 },
+        { "title": "La postériorité", "page": 52 }
+      ],
+      "status": "complete",
+      "pages_done": [38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53],
+      "file": "chapter_04_les_temps_de_l_indicatif.json"
+    },
+    {
+      "number": null,
+      "title": "BILAN n°2",
+      "page_start": 54,
+      "page_end": 55,
+      "subtopics": [],
+      "status": "complete",
+      "pages_done": [54, 55],
+      "file": "bilan_02.json"
+    },
+    {
+      "number": 5,
+      "title": "LE SUBJONCTIF",
+      "page_start": 56,
+      "page_end": 65,
+      "subtopics": [
+        { "title": "Formation et caractéristiques", "page": 56 },
+        { "title": "Emploi du subjonctif", "page": 58 },
+        { "title": "Les temps du subjonctif", "page": 60 },
+        { "title": "Subjonctif ou indicatif?", "page": 62 }
+      ],
+      "status": "complete",
+      "pages_done": [56, 57, 58, 59, 60, 61, 62, 63, 64, 65],
+      "file": "chapter_05_le_subjonctif.json"
+    },
+    {
+      "number": 6,
+      "title": "LE CONDITIONNEL",
+      "page_start": 66,
+      "page_end": 71,
+      "subtopics": [
+        { "title": "Formation et caractéristiques", "page": 66 },
+        { "title": "Les emplois du conditionnel", "page": 68 }
+      ],
+      "status": "complete",
+      "pages_done": [66, 67, 68, 69, 70, 71],
+      "file": "chapter_06_le_conditionnel.json"
+    },
+    {
+      "number": null,
+      "title": "BILAN n°3",
+      "page_start": 72,
+      "page_end": 73,
+      "subtopics": [],
+      "status": "complete",
+      "pages_done": [72, 73],
+      "file": "bilan_03.json"
+    },
+    {
+      "number": 7,
+      "title": "L'INFINITIF",
+      "page_start": 74,
+      "page_end": 77,
+      "subtopics": [
+        { "title": "Caractéristiques", "page": 74 },
+        { "title": "Emplois", "page": 76 },
+        { "title": "Contraintes d'utilisation", "page": 76 }
+      ],
+      "status": "complete",
+      "pages_done": [74, 75, 76, 77],
+      "file": "chapter_07_l_infinitif.json"
+    },
+    {
+      "number": 8,
+      "title": "LE PARTICIPE PRÉSENT",
+      "page_start": 78,
+      "page_end": 79,
+      "subtopics": [
+        { "title": "Formation et caractéristiques", "page": 78 },
+        { "title": "Emplois", "page": 78 }
+      ],
+      "status": "complete",
+      "pages_done": [78, 79],
+      "file": "chapter_08_le_participe_present.json"
+    },
+    {
+      "number": 9,
+      "title": "LE GÉRONDIF",
+      "page_start": 80,
+      "page_end": 81,
+      "subtopics": [
+        { "title": "Formation", "page": 80 },
+        { "title": "Emplois", "page": 80 }
+      ],
+      "status": "complete",
+      "pages_done": [80, 81],
+      "file": "chapter_09_le_gerondif.json"
+    },
+    {
+      "number": 10,
+      "title": "L'ADJECTIF VERBAL",
+      "page_start": 82,
+      "page_end": 83,
+      "subtopics": [
+        { "title": "Formation", "page": 82 }
+      ],
+      "status": "complete",
+      "pages_done": [82, 83],
+      "file": "chapter_10_l_adjectif_verbal.json"
+    },
+    {
+      "number": 11,
+      "title": "LA FORME PASSIVE",
+      "page_start": 84,
+      "page_end": 87,
+      "subtopics": [
+        { "title": "Construction et contraintes d'utilisation", "page": 84 },
+        { "title": "Emplois", "page": 86 }
+      ],
+      "status": "complete",
+      "pages_done": [84, 85, 86, 87],
+      "file": "chapter_11_la_forme_passive.json"
+    },
+    {
+      "number": 12,
+      "title": "LA FORME PRONOMINALE",
+      "page_start": 88,
+      "page_end": 89,
+      "subtopics": [],
+      "status": "complete",
+      "pages_done": [88, 89],
+      "file": "chapter_12_la_forme_pronominale.json"
+    },
+    {
+      "number": 13,
+      "title": "LA FORME IMPERSONNELLE",
+      "page_start": 90,
+      "page_end": 91,
+      "subtopics": [],
+      "status": "complete",
+      "pages_done": [90, 91],
+      "file": "chapter_13_la_forme_impersonnelle.json"
+    },
+    {
+      "number": null,
+      "title": "BILAN n°4",
+      "page_start": 92,
+      "page_end": 93,
+      "subtopics": [],
+      "status": "complete",
+      "pages_done": [92, 93],
+      "file": "bilan_04.json"
+    },
+    {
+      "number": 14,
+      "title": "LE DISCOURS INDIRECT",
+      "page_start": 94,
+      "page_end": 99,
+      "subtopics": [
+        { "title": "L'interrogation indirecte", "page": 94 },
+        { "title": "Le discours indirect", "page": 94 },
+        { "title": "La concordance des temps", "page": 96 },
+        { "title": "Les expressions de temps", "page": 98 },
+        { "title": "Le discours indirect libre", "page": 98 }
+      ],
+      "status": "complete",
+      "pages_done": [94, 95, 96, 97, 98, 99],
+      "file": "chapter_14_le_discours_indirect.json"
+    },
+    {
+      "number": 15,
+      "title": "L'ADVERBE",
+      "page_start": 100,
+      "page_end": 107,
+      "subtopics": [
+        { "title": "Caractéristiques", "page": 100 },
+        { "title": "Les adverbes de modalité", "page": 102 },
+        { "title": "Les adverbes en «-ment»", "page": 104 },
+        { "title": "Adverbes particuliers", "page": 104 },
+        { "title": "La place de l'adverbe", "page": 106 }
+      ],
+      "status": "complete",
+      "pages_done": [100, 101, 102, 103, 104, 105, 106, 107],
+      "file": "chapter_15_l_adverbe.json"
+    },
+    {
+      "number": 16,
+      "title": "LES PRÉPOSITIONS",
+      "page_start": 108,
+      "page_end": 115,
+      "subtopics": [
+        { "title": "La préposition «à»", "page": 108 },
+        { "title": "La préposition «de»", "page": 110 },
+        { "title": "La préposition «en»", "page": 112 },
+        { "title": "La préposition «par»", "page": 114 },
+        { "title": "La préposition «pour»", "page": 114 }
+      ],
+      "status": "complete",
+      "pages_done": [108, 109, 110, 111, 112, 113, 114, 115],
+      "file": "chapter_16_les_prepositions.json"
+    },
+    {
+      "number": null,
+      "title": "BILAN n°5",
+      "page_start": 116,
+      "page_end": 117,
+      "subtopics": [],
+      "status": "complete",
+      "pages_done": [116, 117],
+      "file": "bilan_05.json"
+    },
+    {
+      "number": 17,
+      "title": "LES PRONOMS RELATIFS",
+      "page_start": 118,
+      "page_end": 125,
+      "subtopics": [
+        { "title": "Le pronom relatif simple", "page": 118 },
+        { "title": "Les pronoms relatifs composés", "page": 122 }
+      ],
+      "status": "complete",
+      "pages_done": [118, 119, 120, 121, 122, 123, 124, 125],
+      "file": "chapter_17_les_pronoms_relatifs.json"
+    },
+    {
+      "number": 18,
+      "title": "LES PRONOMS PERSONNELS COMPLÉMENTS",
+      "page_start": 126,
+      "page_end": 129,
+      "subtopics": [
+        { "title": "Place", "page": 126 },
+        { "title": "Les pronoms «le», «en», «y»", "page": 128 }
+      ],
+      "status": "complete",
+      "pages_done": [126, 127, 128, 129],
+      "file": "chapter_18_les_pronoms_personnels_complements.json"
+    },
+    {
+      "number": 19,
+      "title": "LES PRONOMS INDÉFINIS",
+      "page_start": 130,
+      "page_end": 131,
+      "subtopics": [],
+      "status": "complete",
+      "pages_done": [130, 131],
+      "file": "chapter_19_les_pronoms_indefinis.json"
+    },
+    {
+      "number": null,
+      "title": "BILAN n°6",
+      "page_start": 132,
+      "page_end": 133,
+      "subtopics": [],
+      "status": "complete",
+      "pages_done": [132, 133],
+      "file": "bilan_06.json"
+    },
+    {
+      "number": 20,
+      "title": "LA SITUATION dans LE TEMPS",
+      "page_start": 134,
+      "page_end": 137,
+      "subtopics": [
+        { "title": "Se situer, situer un événement", "page": 134 },
+        { "title": "L'expression de la durée", "page": 136 }
+      ],
+      "status": "complete",
+      "pages_done": [134, 135, 136, 137],
+      "file": "chapter_20_la_situation_dans_le_temps.json"
+    },
+    {
+      "number": 21,
+      "title": "L'EXPRESSION de LA CAUSE",
+      "page_start": 138,
+      "page_end": 141,
+      "subtopics": [
+        { "title": "La cause introduite par des conjonctions", "page": 138 },
+        { "title": "La cause introduite par des propositions", "page": 140 },
+        { "title": "La cause introduite par des mots de liaison", "page": 140 }
+      ],
+      "status": "complete",
+      "pages_done": [138, 139, 140, 141],
+      "file": "chapter_21_l_expression_de_la_cause.json"
+    },
+    {
+      "number": 22,
+      "title": "L'EXPRESSION de LA CONSÉQUENCE",
+      "page_start": 142,
+      "page_end": 145,
+      "subtopics": [
+        { "title": "La conséquence introduite par des conjonctions", "page": 142 },
+        { "title": "La conséquence introduite par des mots de liaison", "page": 144 }
+      ],
+      "status": "complete",
+      "pages_done": [142, 143, 144, 145],
+      "file": "chapter_22_l_expression_de_la_consequence.json"
+    },
+    {
+      "number": 23,
+      "title": "L'EXPRESSION de LA COMPARAISON",
+      "page_start": 146,
+      "page_end": 147,
+      "subtopics": [],
+      "status": "complete",
+      "pages_done": [146, 147],
+      "file": "chapter_23_l_expression_de_la_comparaison.json"
+    },
+    {
+      "number": null,
+      "title": "BILAN n°7",
+      "page_start": 148,
+      "page_end": 149,
+      "subtopics": [],
+      "status": "complete",
+      "pages_done": [148, 149],
+      "file": "bilan_07.json"
+    },
+    {
+      "number": 24,
+      "title": "L'EXPRESSION DE L'OPPOSITION et de LA CONCESSION",
+      "page_start": 150,
+      "page_end": 153,
+      "subtopics": [
+        { "title": "L'opposition", "page": 150 },
+        { "title": "La concession", "page": 152 }
+      ],
+      "status": "complete",
+      "pages_done": [150, 151, 152, 153],
+      "file": "chapter_24_l_expression_de_l_opposition_et_de_la_concession.json"
+    },
+    {
+      "number": 25,
+      "title": "L'EXPRESSION DU BUT",
+      "page_start": 154,
+      "page_end": 155,
+      "subtopics": [],
+      "status": "complete",
+      "pages_done": [154, 155],
+      "file": "chapter_25_l_expression_du_but.json"
+    },
+    {
+      "number": 26,
+      "title": "L'EXPRESSION de LA CONDITION DE L'HYPOTHÈSE",
+      "page_start": 156,
+      "page_end": 157,
+      "subtopics": [
+        { "title": "La condition et sa conséquence", "page": 156 },
+        { "title": "L'hypothèse introduite par des conjonctions", "page": 156 }
+      ],
+      "status": "complete",
+      "pages_done": [156, 157],
+      "file": "chapter_26_l_expression_de_la_condition_et_de_l_hypothese.json"
+    },
+    {
+      "number": 27,
+      "title": "LA MODALISATION",
+      "page_start": 158,
+      "page_end": 167,
+      "subtopics": [],
+      "status": "complete",
+      "pages_done": [158, 159, 160, 161, 162, 163, 164, 165, 166, 167],
+      "file": "chapter_27_la_modalisation.json"
+    },
+    {
+      "number": null,
+      "title": "BILAN n°8",
+      "page_start": 168,
+      "page_end": 169,
+      "subtopics": [],
+      "status": "complete",
+      "pages_done": [168, 169],
+      "file": "bilan_08.json"
+    },
+    {
+      "number": null,
+      "title": "ANNEXES",
+      "page_start": 170,
+      "page_end": 189,
+      "subtopics": [
+        { "title": "La concordance des temps", "page": 170 },
+        { "title": "La construction des verbes", "page": 178 },
+        { "title": "Tableaux des conjugaisons", "page": 186 }
+      ],
+      "status": "complete",
+      "pages_done": [170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189],
+      "file": "annexes.json"
+    },
+    {
+      "number": null,
+      "title": "INDEX",
+      "page_start": 190,
+      "page_end": 192,
+      "subtopics": [],
+      "status": "complete",
+      "pages_done": [190, 191, 192],
+      "file": "index.json"
+    }
+  ],
+  "progress": {
+    "total_chapters": 27,
+    "total_bilans": 8,
+    "total_annexes": 1,
+    "total_index": 1,
+    "entries_complete": 37,
+    "entries_partial": 0,
+    "entries_pending": 0,
+    "content_pages": 185,
+    "pages_ingested": 185,
+    "percent_complete": 100,
+    "last_updated": "2026-02-27"
+  }
+}

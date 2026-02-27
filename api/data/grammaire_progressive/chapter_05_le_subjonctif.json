@@ -1,0 +1,564 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 5,
+  "chapter_title": "LE SUBJONCTIF",
+  "book_pages": [56, 57, 58, 59, 60, 61, 62, 63, 64, 65],
+  "sections": [
+    {
+      "section_title": "FORMATION et CARACTÉRISTIQUES",
+      "subtitle": null,
+      "book_pages": [56, 57],
+      "intro_examples": [
+        "Je suis en retard, il faut absolument que j'y aille.",
+        "Il est nécessaire que vous preniez des chèques de voyage."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "Le subjonctif est formé à partir de la 3e personne du pluriel du présent de l'indicatif suivi de: e – es – e – ions – iez – ent.",
+          "examples": [
+            "ils/elles partent → Il faut que je parte, que tu partes, qu'il/qu'elle/qu'on parte, que nous partions, que vous partiez, qu'ils/qu'elles partent"
+          ],
+          "categories": [],
+          "notes": [
+            "Voir tableau de conjugaison à la fin du livre."
+          ]
+        },
+        {
+          "rule": "Contraintes d'utilisation : les deux sujets doivent être différents.",
+          "examples": [
+            "J'aimerais qu'il vienne. (sujets différents)",
+            "J'aimerais que je vienne → J'aimerais venir. (mêmes sujets → infinitif)"
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le subjonctif par rapport à l'indicatif : le subjonctif exprime la possibilité, l'indicatif exprime la certitude.",
+          "examples": [
+            "Je voudrais qu'il vienne. / Je pense qu'il viendra.",
+            "Je ne crois pas qu'il le sache. / Je crois qu'il le sait.",
+            "Croyez-vous qu'il soit prêt ? / Je crois qu'il est prêt."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le subjonctif exprime une action dont la réalisation n'est pas sûre ; elle est possible : «j'aimerais» exprime un souhait et le subjonctif «vienne» exprime que l'action est possible.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "La négation du verbe «croire» transforme la certitude exprimée par l'indicatif en possibilité exprimée par le subjonctif. L'interrogation du verbe «croire» transforme aussi la certitude en possibilité.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "L'indicatif exprime que l'action est probable ou sûre.",
+          "examples": [
+            "Je pense qu'il viendra. Il est probable qu'il le sait."
+          ],
+          "categories": [
+            { "label": "Possibilité", "examples": ["Il est possible qu'il vienne."] },
+            { "label": "Probabilité", "examples": ["Il est probable qu'il viendra."] },
+            { "label": "Certitude", "examples": ["Il est certain qu'il viendra."] }
+          ],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 57,
+          "instruction": "Réécrivez selon le modèle.",
+          "type": "transformation",
+          "context": "Fais ça maintenant ! → C'est vrai, il faut que je fasse ça.",
+          "items": [
+            { "number": 1, "text": "Apprends à conduire ! → Tu as raison, il faut que _____", "blanks": 1 },
+            { "number": 2, "text": "Ne sortez pas, il pleut ! → Mais si, il faut que _____", "blanks": 1 },
+            { "number": 3, "text": "Ne pars pas, attends-moi ! → Si, il faut que _____", "blanks": 1 },
+            { "number": 4, "text": "N'allez pas la voir aujourd'hui ! → On a promis, il faut que _____", "blanks": 1 },
+            { "number": 5, "text": "Faites des réservations dès demain ! → C'est vrai, il faut que _____", "blanks": 1 },
+            { "number": 6, "text": "Écris-lui tout de suite ! → Tu as raison, il faut que _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 57,
+          "instruction": "Faites le portrait de l'homme ou la femme de votre vie en utilisant le subjonctif.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": null, "text": "J'aimerais qu'il (elle) soit grand(e), qu'(avoir) _____ des cheveux longs/courts, bruns/blonds, que ses yeux (être) _____ clairs/foncés et qu'ils (pétiller) _____ de malice et d'intelligence, que de sa bouche (sortir) _____ des paroles aimables, qu'(savoir) _____ faire la cuisine, qu'(faire) _____ beaucoup de sport mais pas seulement ça et qu'(me dire) _____ des petits mots gentils en toute occasion.", "blanks": 7 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 57,
+          "instruction": "Utilisez le subjonctif comme dans le modèle.",
+          "type": "transformation",
+          "context": "Je pense qu'il viendra. → Moi, je ne pense pas qu'il vienne.",
+          "items": [
+            { "number": 1, "text": "Je crois qu'il le fera. → Moi, _____", "blanks": 1 },
+            { "number": 2, "text": "Je crois qu'il le dira. → Moi, _____", "blanks": 1 },
+            { "number": 3, "text": "Je pense qu'il la suivra. → Moi, _____", "blanks": 1 },
+            { "number": 4, "text": "Je pense qu'il partira bientôt. → Moi, _____", "blanks": 1 },
+            { "number": 5, "text": "Je crois qu'il guérira vite. → Moi, _____", "blanks": 1 },
+            { "number": 6, "text": "Je crois qu'elle ira en Afrique. → Moi, _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 57,
+          "instruction": "Complétez avec le subjonctif.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Avant de faire un long voyage en voiture, il est nécessaire que vous (vérifier) _____ la pression des pneus, que vous (faire) _____ le plein d'essence, que vous (remplir) _____ le radiateur d'eau, que vous (compléter) _____ le liquide des freins, que vous (nettoyer) _____ le pare-brise, que vous vous (assurer) _____ que vous avez des outils dans le coffre.", "blanks": 6 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "EMPLOIS DU SUBJONCTIF",
+      "subtitle": null,
+      "book_pages": [58, 59, 60],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "Le subjonctif est employé après des constructions exprimant l'obligation, la nécessité.",
+          "examples": [
+            "Il faut que j'y aille.",
+            "Il est nécessaire que tu dormes.",
+            "Il est indispensable que cette lettre parte avant 18 heures."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le subjonctif est employé après des mots exprimant un sentiment, une appréciation, une attitude particulière de l'esprit (joie, regret, chagrin, honte, étonnement, crainte, souhait, désir, ordre, prière, permission, défense, etc.).",
+          "examples": [
+            "Elle est fâchée que je ne sois pas d'accord avec elle.",
+            "Je comprends que tu veuilles y aller.",
+            "C'est bien que tu lui écrives.",
+            "On préfère qu'il fasse chaud.",
+            "Elle voudrait que tu ailles l'attendre."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le subjonctif peut être employé après un pronom relatif quand on n'est pas sûr de l'existence réelle de la chose ou de la personne dont on parle.",
+          "examples": [
+            "Je cherche un traducteur qui connaisse l'anglais, le français et le japonais. [Je ne suis pas certain que ce traducteur existe.]",
+            "J'aimerais trouver un assistant sur qui je puisse compter. [Je ne suis pas certain que cet assistant existe.]"
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le subjonctif peut être employé après certaines conjonctions exprimant le temps.",
+          "examples": [
+            "On attendra jusqu'à ce que tu reviennes.",
+            "Il a préféré leur dire la vérité avant qu'ils (ne) l'apprennent par quelqu'un d'autre."
+          ],
+          "categories": [
+            { "label": "Le temps", "examples": ["avant que", "jusqu'à ce que", "en attendant que"] }
+          ],
+          "notes": [
+            "«Avant que» peut être suivi de «ne» explétif (voir p. 32)."
+          ]
+        },
+        {
+          "rule": "Le subjonctif est employé après des conjonctions exprimant le but.",
+          "examples": [
+            "Nous lui avons donné des adresses pour qu'il puisse trouver un hôtel facilement.",
+            "J'ai allumé le chauffage de peur qu'ils (n') aient froid."
+          ],
+          "categories": [
+            { "label": "Le but", "examples": ["pour que", "afin que", "de peur que", "de crainte que"] }
+          ],
+          "notes": [
+            "«De peur que, de crainte que» peuvent être suivis de «ne» explétif (voir p. 32)."
+          ]
+        },
+        {
+          "rule": "Le subjonctif est employé après des conjonctions exprimant la condition.",
+          "examples": [
+            "Nous partirons à condition qu'il y ait de la place dans l'avion.",
+            "Je te prête mon dictionnaire pourvu que tu me le rapportes rapidement."
+          ],
+          "categories": [
+            { "label": "La condition", "examples": ["à condition que", "pourvu que"] }
+          ],
+          "notes": []
+        },
+        {
+          "rule": "Le subjonctif est employé après des conjonctions exprimant la concession.",
+          "examples": [
+            "C'est mon ami bien qu'il ait beaucoup de défauts.",
+            "Ils sont sortis sans que leurs parents le sachent.",
+            "Quoi que tu dises, quoi que tu fasses, il ne sera pas content.",
+            "Je n'irai pas, à moins que tu (ne) viennes me chercher en voiture."
+          ],
+          "categories": [
+            { "label": "La concession", "examples": ["bien que", "quoique", "sans que", "à moins que", "où que", "qui que", "quoi que"] }
+          ],
+          "notes": [
+            "«À moins que» peut être suivi de «ne» explétif (voir p. 32).",
+            "Après certaines conjonctions – bien que, à condition que, pourvu que... –, les sujets peuvent être les mêmes: Je viendrai à condition que je sois en forme."
+          ]
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 59,
+          "instruction": "Répondez en utilisant le subjonctif selon le modèle.",
+          "type": "transformation",
+          "context": "aider les autres → C'est bien que tu aides les autres.",
+          "items": [
+            { "number": 1, "text": "dire des mensonges → C'est agaçant que _____", "blanks": 1 },
+            { "number": 2, "text": "aller au cinéma ou au théâtre → J'aimerais mieux que _____", "blanks": 1 },
+            { "number": 3, "text": "faire chaud ou froid → Ça m'est égal que _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 59,
+          "instruction": "Mettez le verbe au subjonctif et terminez le texte.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Je cherche une secrétaire qui (connaître) _____ trois langues, qui (savoir) _____ taper à la machine, qui (pouvoir) _____ prendre en sténo, qui (avoir) _____ l'expérience du traitement de texte, et qui (être) _____ toujours souriante.", "blanks": 5 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 59,
+          "instruction": "Mettez les verbes proposés au subjonctif et complétez le texte.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Cher Dominique,\nAvant que tu (partir) _____, j'aimerais que tu me (faire) _____, que tu me (dire) _____, que tu me (donner) _____. En attendant que tu (revenir) _____, _____.\nÀ bientôt, Claude.", "blanks": 6 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 59,
+          "instruction": "Complétez avec les verbes et expressions de votre choix.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Nous formulons des vœux pour que Simon _____, pour que Marie _____, pour que grand-père _____ et que grand-mère _____. Bonne année à tous !", "blanks": 4 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 59,
+          "instruction": "Réécrivez ces phrases en utilisant «à condition que» ou «pourvu que» selon le modèle.",
+          "type": "transformation",
+          "context": "Si vous avez de l'argent, tout ira bien. → Pourvu que vous ayez de l'argent, tout ira bien.",
+          "items": [
+            { "number": 1, "text": "Vous passerez la frontière sans ennuis si vous avez un visa. _____", "blanks": 1 },
+            { "number": 2, "text": "Si vous avez une invitation, on vous laissera rentrer. _____", "blanks": 1 },
+            { "number": 3, "text": "Vous pouvez participer à notre fête si vous êtes déguisés. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 6,
+          "book_page": 59,
+          "instruction": "Transformez ces phrases en utilisant «bien que», «sans que», «où que», «quoi que» comme dans le modèle.",
+          "type": "transformation",
+          "context": "Il est malheureux et pourtant il est riche. → Il est malheureux bien qu'il soit riche.",
+          "items": [
+            { "number": 1, "text": "Il est le meilleur et pourtant il perd souvent. _____", "blanks": 1 },
+            { "number": 2, "text": "Tu as beau faire et beau dire, il ne comprend rien. _____", "blanks": 1 },
+            { "number": 3, "text": "Ici ou là, pour moi c'est toujours la même chose. _____", "blanks": 1 },
+            { "number": 4, "text": "Il m'est arrivé une histoire peu agréable et je ne savais pas pourquoi. _____", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "LES TEMPS DU SUBJONCTIF",
+      "subtitle": null,
+      "book_pages": [60, 61],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "Le subjonctif présent indique que l'action est simultanée à l'action exprimée par le verbe précédent.",
+          "examples": [
+            "Je suis désolée qu'il ne soit pas là."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le subjonctif présent indique que l'action est postérieure à l'action exprimée par le verbe précédent.",
+          "examples": [
+            "Il aimerait que tu ailles le voir [tout à l'heure, demain, dans huit jours...]."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le subjonctif passé est formé avec «avoir» ou «être» au subjonctif suivi du participe passé du verbe.",
+          "examples": [
+            "Il faut que j'aie fini avant midi.",
+            "C'est dommage que tu ne sois pas venu hier."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le subjonctif passé indique que l'action est antérieure à l'action exprimée par le verbe précédent.",
+          "examples": [
+            "Elle est déçue que nous ne lui ayons pas répondu."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le subjonctif passé indique une action accomplie avant un moment indiqué par une expression de temps.",
+          "examples": [
+            "Elle voudrait qu'on ait rendu ce dossier avant la fin du mois.",
+            "Il faut que vous soyez rentrés avant minuit."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 61,
+          "instruction": "Dites si l'action exprimée par le subjonctif est simultanée S à l'autre action ou postérieure P.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "J'aimerais que vous fermiez la fenêtre. ( _____ )", "blanks": 1 },
+            { "number": 2, "text": "Je doute qu'il ait raison. ( _____ )", "blanks": 1 },
+            { "number": 3, "text": "Elle a peur qu'il arrive tard. ( _____ )", "blanks": 1 },
+            { "number": 4, "text": "Je regrette qu'elle soit fâchée. ( _____ )", "blanks": 1 },
+            { "number": 5, "text": "Il faut que tu partes maintenant. ( _____ )", "blanks": 1 },
+            { "number": 6, "text": "Nous souhaitons que vous ayez du beau temps. ( _____ )", "blanks": 1 },
+            { "number": 7, "text": "C'est dommage que ça ne marche pas. ( _____ )", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 61,
+          "instruction": "Reliez les deux phrases selon le modèle.",
+          "type": "transformation",
+          "context": "Ils ont dû perdre notre adresse. – J'en ai bien peur. → J'ai bien peur qu'ils aient perdu notre adresse.",
+          "items": [
+            { "number": 1, "text": "La lettre s'est peut-être perdue. – Elle le craint.\nElle craint _____", "blanks": 1 },
+            { "number": 2, "text": "Il a répondu aussitôt. – C'est possible.\nC'est possible _____", "blanks": 1 },
+            { "number": 3, "text": "On doit envoyer cette fiche. – Le ministère l'exige.\nLe ministère exige _____", "blanks": 1 },
+            { "number": 4, "text": "Il a perdu son appareil photo. – Elle en est navrée.\nElle _____", "blanks": 1 },
+            { "number": 5, "text": "Nous avons beaucoup pensé à elle. – Elle en est émue.\nElle _____", "blanks": 1 },
+            { "number": 6, "text": "Vous lui avez menti. – Il est déçu.\nIl _____", "blanks": 1 },
+            { "number": 7, "text": "Elle ne l'a pas attendue. – Elle est triste.\nElle _____", "blanks": 1 },
+            { "number": 8, "text": "Il a fait preuve de courage. – Je ne le nie pas.\nJe _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 61,
+          "instruction": "Réécrivez ce texte en commençant par «Il faut que» et en utilisant le subjonctif passé.",
+          "type": "transformation",
+          "context": "Il faut avoir fini le travail avant le déjeuner, avoir tout nettoyé, être allé jeter les ordures, avoir mis les outils dans la camionnette, être propre et bien habillé pour pouvoir vous présenter au déjeuner.",
+          "items": [
+            { "number": null, "text": "Il faut que vous _____", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "SUBJONCTIF ou INDICATIF ?",
+      "subtitle": null,
+      "book_pages": [62, 63, 64, 65],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "Le choix du mode dépend du verbe introducteur qui signale la façon dont le locuteur voit la réalisation de l'action subordonnée. Lorsque le locuteur envisage la réalisation effective, l'indicatif est utilisé. Lorsque le locuteur envisage une réalisation possible, le subjonctif est utilisé.",
+          "examples": [
+            "Il est probable qu'il viendra. – Il est possible qu'il vienne."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le cas des verbes : certains verbes introducteurs impliquent que le locuteur envisage l'action dans sa réalisation effective ; ils sont alors suivis de l'indicatif.",
+          "examples": [
+            "Je crois qu'ils viendront.",
+            "Je sais que la réunion est annulée.",
+            "Il a déclaré que les salaires augmenteraient.",
+            "Il paraît qu'il est malade."
+          ],
+          "categories": [
+            { "label": "opinion, constat, savoir", "examples": ["penser que, croire que, trouver que, avoir l'impression que, être certain/sûr que, savoir que, ignorer que, s'apercevoir que, voir que, constater que, comprendre que, apprendre que, observer que, etc."] },
+            { "label": "nuances de «dire»", "examples": ["dire que, affirmer que, déclarer que, assurer que, répéter que, répondre que, prétendre que, etc."] },
+            { "label": "évidence ou forte probabilité", "examples": ["il est probable que, il paraît que, il est évident que, il est sûr/certain que, etc."] }
+          ],
+          "notes": [
+            "Les verbes introducteurs utilisés à la forme négative transforment en général la réalisation effective en réalisation possible: Je ne crois pas qu'ils viennent. – Il n'est pas sûr que la réunion ait lieu."
+          ]
+        },
+        {
+          "rule": "Certains verbes impliquent que le locuteur envisage la réalisation de l'action comme possible ; ils sont alors suivis du subjonctif.",
+          "examples": [
+            "Il a refusé qu'on y aille.",
+            "Elle demande que nous soyons prêts à 8 heures.",
+            "Je trouve curieux qu'il ne soit pas venu.",
+            "Je voudrais qu'il me le dise.",
+            "Il est possible que nous n'y allions pas."
+          ],
+          "categories": [
+            { "label": "ordre, refus, acceptation, demande", "examples": ["ordonner que, interdire que, accepter que, autoriser que, demander que, etc."] },
+            { "label": "appréciation ou sentiments", "examples": ["avoir peur que, regretter que, trouver bien/mal, normal que, etc."] },
+            { "label": "désir, obligation", "examples": ["il faut que, vouloir que, désirer que, souhaiter que, etc."] },
+            { "label": "possibilité, doute", "examples": ["il est peu probable que, il est possible que, douter que, etc."] }
+          ],
+          "notes": []
+        },
+        {
+          "rule": "Le cas des conjonctions : certaines conjonctions sont suivies de l'indicatif (réalisation effective) ; d'autres sont suivies du subjonctif (réalisation possible).",
+          "examples": [],
+          "categories": [
+            { "label": "Indicatif: simultanéité", "examples": ["quand, lorsque, pendant que, tant que, tandis que, alors que, au moment où, etc."] },
+            { "label": "Indicatif: postériorité", "examples": ["après que, dès que, aussitôt que, etc."] },
+            { "label": "Indicatif: cause, conséquence", "examples": ["parce que, puisque, étant donné que, si bien que, etc."] },
+            { "label": "Indicatif: hypothèse", "examples": ["si, même si, comme si, etc."] },
+            { "label": "Subjonctif: antériorité, anticipation", "examples": ["avant que, en attendant que, jusqu'à ce que, etc."] },
+            { "label": "Subjonctif: restriction, condition", "examples": ["à moins que, bien que, quoique, à condition que, pourvu que, etc."] },
+            { "label": "Subjonctif: but", "examples": ["pour que, afin que, de sorte que, etc."] }
+          ],
+          "notes": []
+        },
+        {
+          "rule": "L'alternance subjonctif/indicatif : certains verbes peuvent être suivis du subjonctif ou de l'indicatif selon leur sens : dire, admettre, comprendre, supposer, demander, etc.",
+          "examples": [
+            "J'admets qu'il a tort. [= manière de «dire»] / J'admets qu'il ait envie de changer de vie. [= acceptation]",
+            "Il a demandé si tu allais bien. [= manière de «dire»] / Il demande que tu lui écrives. [= exigence]",
+            "Nous supposons qu'il sera là à 20 heures. [= opinion] / Supposons qu'il ne vienne pas. [= supposition]"
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 63,
+          "instruction": "Mettez le verbe proposé au mode et au temps qui conviennent.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Je pense que le train (avoir du retard) _____", "blanks": 1 },
+            { "number": 2, "text": "Je ne pense pas que le train (avoir du retard) _____", "blanks": 1 },
+            { "number": 3, "text": "Elle trouve que la pièce (être réussie) _____", "blanks": 1 },
+            { "number": 4, "text": "Elle ne trouve pas que la pièce (être réussie) _____", "blanks": 1 },
+            { "number": 5, "text": "Ils croient que nous (faire un bon choix) _____", "blanks": 1 },
+            { "number": 6, "text": "Ils ne croient pas que nous (faire un bon choix) _____", "blanks": 1 },
+            { "number": 7, "text": "Nous avons l'impression qu'il (aller mieux) _____", "blanks": 1 },
+            { "number": 8, "text": "Nous n'avons pas l'impression qu'il (aller mieux) _____", "blanks": 1 },
+            { "number": 9, "text": "Je dis que (être) _____ son plus mauvais film", "blanks": 1 },
+            { "number": 10, "text": "Je ne dis pas que (être) _____ son plus mauvais film", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 63,
+          "instruction": "Même exercice.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il est possible qu'ils (venir) _____ avec nous.", "blanks": 1 },
+            { "number": 2, "text": "Il est peu probable qu'ils (venir) _____ avec nous.", "blanks": 1 },
+            { "number": 3, "text": "Il est certain que nous (finir) _____ avant la nuit.", "blanks": 1 },
+            { "number": 4, "text": "Il n'est pas certain que nous (finir) _____ avant la nuit.", "blanks": 1 },
+            { "number": 5, "text": "Il est évident qu'elle (vouloir) _____ se marier maintenant.", "blanks": 1 },
+            { "number": 6, "text": "Il n'est pas évident qu'elle (vouloir) _____ se marier maintenant.", "blanks": 1 },
+            { "number": 7, "text": "Il n'est pas sûr que nous (être invités) _____.", "blanks": 1 },
+            { "number": 8, "text": "Il est possible que nous (être invités) _____.", "blanks": 1 },
+            { "number": 9, "text": "Il est très probable que nous (être invités) _____.", "blanks": 1 },
+            { "number": 10, "text": "Il paraît que nous (être invités) _____.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 63,
+          "instruction": "Mettez le verbe proposé au mode et au temps qui conviennent en respectant la concordance des temps.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Je ne savais pas qu'ils (quitter) _____ la France il y a un mois.", "blanks": 1 },
+            { "number": 2, "text": "Nous regrettons qu'ils (ne plus être) _____ à Paris.", "blanks": 1 },
+            { "number": 3, "text": "Le Premier ministre a annoncé que les impôts (diminuer) _____.", "blanks": 1 },
+            { "number": 4, "text": "Les ouvriers demandent que les conditions de travail (être meilleures) _____.", "blanks": 1 },
+            { "number": 5, "text": "Je trouve que tu (avoir l'air fatigué) _____.", "blanks": 1 },
+            { "number": 6, "text": "Nous trouvons anormal que tu (faire) _____ tout le travail seule.", "blanks": 1 },
+            { "number": 7, "text": "Elle croit que tout (s'arranger) _____ dès qu'ils seront partis.", "blanks": 1 },
+            { "number": 8, "text": "Il a cru bon que nous (aller) _____ lui rendre visite.", "blanks": 1 },
+            { "number": 9, "text": "Elle répète qu'elle (réussir) _____ sans difficultés.", "blanks": 1 },
+            { "number": 10, "text": "Sa famille doute qu'elle (réussir) _____.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 65,
+          "instruction": "Mettez le verbe proposé au mode et au temps qui conviennent.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il se lève toujours avant qu'il (faire jour) _____.", "blanks": 1 },
+            { "number": 2, "text": "Nous irons les remercier après que les invités (partir) _____.", "blanks": 1 },
+            { "number": 3, "text": "Nous attendrons jusqu'à ce qu'il (ne plus pleuvoir) _____.", "blanks": 1 },
+            { "number": 4, "text": "Je ne partirai pas tant que la pluie (ne pas s'arrêter) _____.", "blanks": 1 },
+            { "number": 5, "text": "Ils bavardaient pendant qu'elle (regarder) _____ la télévision.", "blanks": 1 },
+            { "number": 6, "text": "Ils parlaient à voix basse pour qu'elle (pouvoir dormir) _____.", "blanks": 1 },
+            { "number": 7, "text": "Je ne lui pardonnerai pas même s'il me le (demander) _____ à genoux.", "blanks": 1 },
+            { "number": 8, "text": "Elle ne lui a pas pardonné bien qu'il (s'être excusé) _____ plusieurs fois.", "blanks": 1 },
+            { "number": 9, "text": "S'il (faire beau) _____ on ira se promener dans la forêt.", "blanks": 1 },
+            { "number": 10, "text": "Nous ne sommes pas sortis quoiqu'il (faire beau) _____.", "blanks": 1 },
+            { "number": 11, "text": "On pourra skier pourvu qu'il y (avoir) _____ de la neige.", "blanks": 1 },
+            { "number": 12, "text": "Ils ont pu skier parce qu'il (neiger) _____ la veille.", "blanks": 1 },
+            { "number": 13, "text": "Commençons de dîner en attendant qu'il (revenir) _____.", "blanks": 1 },
+            { "number": 14, "text": "On commencera de dîner dès qu'ils (arriver) _____.", "blanks": 1 },
+            { "number": 15, "text": "Il était en colère si bien que tout le monde (partir) _____.", "blanks": 1 },
+            { "number": 16, "text": "Nous sommes restés bien que l'ambiance (ne pas être) _____ bonne.", "blanks": 1 },
+            { "number": 17, "text": "La fête sera agréable s'il (ne pas pleuvoir) _____.", "blanks": 1 },
+            { "number": 18, "text": "La fête sera agréable pourvu qu'il (ne pas pleuvoir) _____.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 65,
+          "instruction": "Mettez le verbe au subjonctif ou à l'indicatif selon le sens qu'il exprime.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Nous avons compris qu'il (vouloir) _____ nous parler de ses projets.", "blanks": 1 },
+            { "number": 2, "text": "Je comprends très bien que tu (vouloir) _____ changer de travail.", "blanks": 1 },
+            { "number": 3, "text": "J'admets que je (faire une erreur) _____.", "blanks": 1 },
+            { "number": 4, "text": "Mes parents n'admettent pas que je (sortir) _____ tous les soirs.", "blanks": 1 },
+            { "number": 5, "text": "Il nous a dit qu'il (venir) _____ nous chercher avant 6 heures.", "blanks": 1 },
+            { "number": 6, "text": "Le professeur a dit que nous (faire) _____ ces exercices pour demain.", "blanks": 1 },
+            { "number": 7, "text": "Je suppose que vous (être fatigués) _____ ; reposez-vous un peu !", "blanks": 1 },
+            { "number": 8, "text": "En supposant que nous (trouver) _____ des places dans l'avion, il faudrait également trouver un hôtel.", "blanks": 1 },
+            { "number": 9, "text": "Elle s'imagine que les magasins (être ouverts) _____.", "blanks": 1 },
+            { "number": 10, "text": "Imaginons que l'organisation (obtenir) _____ des subventions, elle pourra créer plusieurs bureaux.", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [56, 57, 58, 59, 60, 61, 62, 63, 64, 65],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

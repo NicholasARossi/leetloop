@@ -1,0 +1,257 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 3,
+  "chapter_title": "LES NÉGATIONS PARTICULIÈRES",
+  "book_pages": [30, 31, 32, 33],
+  "sections": [
+    {
+      "section_title": "«NE … PLUS», «NE … NULLE PART», «NE … PAS ENCORE», «NE … AUCUN», «NE … GUÈRE», «SANS»",
+      "subtitle": null,
+      "book_pages": [30, 31],
+      "intro_examples": [
+        "Je ne l'ai trouvé nulle part.",
+        "Nous n'avons reçu ni lettre, ni appel téléphonique.",
+        "Elle ne rêve que de voyages.",
+        "Nous ne pouvons vous donner une réponse dans l'immédiat."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "«Ne … plus», «ne … nulle part», «ne … pas encore», «ne … aucun», «ne … guère», «sans» sont des négations particulières.",
+          "examples": [
+            "Vous l'avez vu quelque part ? – Non, je ne l'ai vu nulle part.",
+            "Tu passes toujours tes vacances en Bretagne ? – Non, je n'y vais plus.",
+            "Est-ce qu'il y a encore des gens dans la salle ? – Non, il n'y en a plus.",
+            "Vous avez déjà vu l'exposition Picasso ? – Non, je ne l'ai pas encore vue.",
+            "Ils ont des preuves ? – Non, ils n'en ont aucune.",
+            "Vous prenez du sucre ? – Non, je bois mon café sans sucre.",
+            "Il a dit ça en riant ? – Non, il l'a dit sans rire.",
+            "Vous voyez souvent les Morin ? – Non, on ne les voit guère."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "«Pas encore» est la négation de «déjà» et exprime que le sujet a l'intention de faire l'action. «Déjà» peut avoir pour négation «jamais».",
+          "examples": [
+            "Vous avez déjà subi une opération ? – Non, jamais."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "«Aucun» exprime la négation absolue.",
+          "examples": [
+            "Tu as reçu des appels téléphoniques ? – Non, aucun. [pas un seul]"
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "«Sans» peut être suivi de l'infinitif ou d'un nom sans article en général.",
+          "examples": [
+            "Elle a répondu sans hésitation."
+          ],
+          "categories": [],
+          "notes": [
+            "«Sans» peut être suivi d'un nom précédé de l'article indéfini ; dans ce cas la négation est renforcée: Elle a répondu sans une hésitation [= sans aucune hésitation]."
+          ]
+        },
+        {
+          "rule": "«Ne … guère» signifie «pas beaucoup» et «pas souvent».",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 31,
+          "instruction": "Terminez les phrases avec la négation qui convient (variez les négations).",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Quand nous habitions à la campagne, nous avions un chat ; aujourd'hui, nous habitons en ville et _____", "blanks": 1 },
+            { "number": 2, "text": "Autrefois j'allais souvent au théâtre, maintenant _____", "blanks": 1 },
+            { "number": 3, "text": "Tous mes amis sont déjà allés voir le dernier film avec Depardieu ; moi _____", "blanks": 1 },
+            { "number": 4, "text": "Elle a lu beaucoup de livres de Balzac ; moi, au contraire, _____", "blanks": 1 },
+            { "number": 5, "text": "Petite, elle quittait toujours sa famille en pleurant ; maintenant elle part seule en vacances _____", "blanks": 1 },
+            { "number": 6, "text": "J'ai cherché la clef dans toute la maison, mais _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 31,
+          "instruction": "Renforcez la négation comme dans l'exemple.",
+          "type": "transformation",
+          "context": "Il n'y a pas de pain. → Il n'y en a pas du tout.",
+          "items": [
+            { "number": 1, "text": "Il ne reste plus de places. _____", "blanks": 1 },
+            { "number": 2, "text": "Je n'ai pas vu de film de ce réalisateur. _____", "blanks": 1 },
+            { "number": 3, "text": "Il est parti sans bagages. _____", "blanks": 1 },
+            { "number": 4, "text": "Il ne reste plus de baguettes. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 31,
+          "instruction": "Complétez le dialogue qui suit avec des négations différentes.",
+          "type": "dialogue",
+          "context": "Au commissariat de police",
+          "items": [
+            { "number": null, "text": "- Avez-vous revu le suspect après l'accident ?\n- Non, _____\n- Êtes-vous parti depuis le meurtre ?\n- Non, _____\n- Aviez-vous l'habitude de rencontrer la femme du suspect ?\n- Non, _____\n- Avez-vous déjà fait une déposition à la police ?\n- Non, _____\n- Avez-vous quelques détails à ajouter ?\n- Non, _____", "blanks": 5 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 31,
+          "instruction": "Complétez ce texte avec les éléments donnés en utilisant des négations différentes.",
+          "type": "fill_blank",
+          "context": "parler du chômage – dire un mot de mon divorce – évoquer nos soucis quotidiens – se plaindre des voisins",
+          "items": [
+            { "number": null, "text": "Sortons ce soir tous les deux à condition de ne pas du tout _____", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "«PAS DU TOUT», «PLUS DU TOUT», «PAS UN SEUL», «PLUS UN SEUL», «SANS AUCUN»",
+      "subtitle": "Renforcements de la négation",
+      "book_pages": [30],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "«Pas du tout», «plus du tout», «pas un seul», «plus un seul», «sans aucun» sont des renforcements de la négation.",
+          "examples": [
+            "Vous connaissez la poésie de Mallarmé ? – Non, je ne la connais pas du tout, je n'ai pas lu un seul poème de lui.",
+            "Est-ce qu'il reste des fruits ? – Il n'en reste plus du tout, plus un seul.",
+            "Il a pris son passeport ? – Non, il est parti sans aucun papier d'identité."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": []
+    },
+    {
+      "section_title": "PLUSIEURS MOTS NÉGATIFS, «NE … NI … NI …»",
+      "subtitle": null,
+      "book_pages": [32, 33],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "Plusieurs mots négatifs peuvent être utilisés dans la même phrase ; dans ce cas «pas» n'est pas employé.",
+          "examples": [
+            "Je n'ai jamais vu personne dans cette boutique.",
+            "Sans mes lunettes, je ne vois plus rien.",
+            "Elle travaille beaucoup sans jamais se plaindre.",
+            "Il est parti sans rien dire.",
+            "Elle a traversé la salle sans saluer personne."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "La négation «ne … ni … ni …» est la négation de deux ou plusieurs éléments.",
+          "examples": [
+            "Je ne prendrai ni fromage ni dessert (ni café).",
+            "Vous avez vu Martine et Céline ? – Ni l'une, ni l'autre.",
+            "Ni lui, ni sa sœur n'avaient envie de faire ce voyage."
+          ],
+          "categories": [],
+          "notes": [
+            "On peut dire: je ne prendrai pas de fromage, ni de dessert."
+          ]
+        },
+        {
+          "rule": "«NE» peut être employé seul et ne pas être une négation. Son emploi n'est pas obligatoire.",
+          "examples": [],
+          "categories": [
+            { "label": "après certains verbes qui expriment la crainte, à la forme affirmative", "examples": ["Je crains qu'il ne tombe malade."] },
+            { "label": "après des verbes qui expriment le doute et la négation, à la forme négative", "examples": ["Je ne doute pas que vous n'ayez raison.", "On ne peut nier qu'il ne soit intelligent."] },
+            { "label": "après «plus», «moins», «pire», «autre», «meilleur» pour exprimer une comparaison d'inégalité", "examples": ["Elle est plus aimable qu'elle ne paraît."] },
+            { "label": "après certaines conjonctions: à moins que, avant que...", "examples": ["Il est sorti avant qu'elle ne puisse répondre."] }
+          ],
+          "notes": [
+            "Cet emploi de «ne» dit «explétif» se trouve dans la langue écrite, dans un niveau de langue soutenu."
+          ]
+        },
+        {
+          "rule": "«NE» peut être employé sans «PAS» ni un autre élément négatif.",
+          "examples": [],
+          "categories": [
+            { "label": "avec les verbes pouvoir, savoir, oser, cesser", "examples": ["Il n'a cessé de pleuvoir toute la journée.", "Elle n'osa répondre ; elle ne sut que faire.", "Nous ne pourrons accueillir les élèves, l'établissement sera fermé."] },
+            { "label": "avec «il y a … que», «depuis … que»; dans ce cas, le verbe qui suit est à un temps composé", "examples": ["Il y a plusieurs mois que nous ne l'avons vu.", "Il y avait longtemps que nous n'y étions allés."] }
+          ],
+          "notes": [
+            "Cet emploi de «ne» se trouve en langue écrite, dans un niveau de langue soutenu."
+          ]
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 33,
+          "instruction": "Faites des phrases négatives avec les éléments suivants comme dans l'exemple.",
+          "type": "transformation",
+          "context": "ne – jamais – rien → Elle ne m'a jamais rien dit à ce sujet.",
+          "items": [
+            { "number": 1, "text": "ne – jamais – personne _____", "blanks": 1 },
+            { "number": 2, "text": "ne – plus – personne _____", "blanks": 1 },
+            { "number": 3, "text": "ne – plus – rien _____", "blanks": 1 },
+            { "number": 4, "text": "sans – rien _____", "blanks": 1 },
+            { "number": 5, "text": "sans – jamais _____", "blanks": 1 },
+            { "number": 6, "text": "sans – personne _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 33,
+          "instruction": "Transformez les phrases négatives suivantes en introduisant «ne … ni … ni …».",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "La télévision et le cinéma ne l'intéressent pas. _____", "blanks": 1 },
+            { "number": 2, "text": "Dans le jardin, il n'y a pas de pommes, pas de poires, pas de raisins. _____", "blanks": 1 },
+            { "number": 3, "text": "Nous n'avons reçu aucune lettre, aucun fax, aucun appel téléphonique. _____", "blanks": 1 },
+            { "number": 4, "text": "Il n'était pas présent à la réception, le directeur, non plus. _____", "blanks": 1 },
+            { "number": 5, "text": "Ce n'est pas autorisé, ce n'est pas toléré non plus. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 33,
+          "instruction": "Dites dans les exemples suivants si «ne» est explétif ou s'il est négatif.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "La grève risque de continuer à moins que le gouvernement ne fasse des concessions. ( _____ )", "blanks": 1 },
+            { "number": 2, "text": "Ils n'ont cessé pendant la réunion de répéter les mêmes arguments. ( _____ )", "blanks": 1 },
+            { "number": 3, "text": "Nous ne pouvons pour le moment donner une réponse favorable à votre demande. ( _____ )", "blanks": 1 },
+            { "number": 4, "text": "Ils étaient tellement étonnés qu'ils ne savaient que répondre. ( _____ )", "blanks": 1 },
+            { "number": 5, "text": "Ils avaient quitté l'auberge avant que le jour ne se lève. ( _____ )", "blanks": 1 },
+            { "number": 6, "text": "Nous ne doutons pas que vous ne puissiez nous aider. ( _____ )", "blanks": 1 },
+            { "number": 7, "text": "Ils pleuraient de joie : il y avait si longtemps qu'ils ne s'étaient vus. ( _____ )", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 33,
+          "instruction": "Passez d'un niveau de langue soutenu à un niveau de langue plus parlé.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il a peur qu'il ne fasse des bêtises. _____", "blanks": 1 },
+            { "number": 2, "text": "Dépêchez-vous avant qu'il ne soit trop tard. _____", "blanks": 1 },
+            { "number": 3, "text": "Il y a des mois que nous ne sommes sortis. _____", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [30, 31, 32, 33],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

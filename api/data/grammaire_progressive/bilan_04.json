@@ -1,0 +1,130 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": null,
+  "chapter_title": "BILAN n°4",
+  "book_pages": [92, 93],
+  "sections": [
+    {
+      "section_title": "BILAN n°4",
+      "subtitle": "L'Infinitif, Le Participe Présent, Le Gérondif, L'Adjectif Verbal, La Forme Passive, La Forme Pronominale, La Forme Impersonnelle",
+      "book_pages": [92, 93],
+      "intro_examples": [],
+      "grammar_rules": [],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 92,
+          "instruction": "Utilisez l'infinitif quand c'est possible.",
+          "type": "bilan",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "J'espère qu'il pourra arriver avant 17 heures. _____", "blanks": 1 },
+            { "number": 2, "text": "Nous pensons que nous accepterons leur offre. _____", "blanks": 1 },
+            { "number": 3, "text": "Il croit toujours qu'il a raison. _____", "blanks": 1 },
+            { "number": 4, "text": "Elle a l'impression qu'ils se sont trompés. _____", "blanks": 1 },
+            { "number": 5, "text": "Il espère qu'il pourra régler le problème. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 92,
+          "instruction": "Utilisez l'infinitif passé.",
+          "type": "bilan",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Après (voir) _____ le film, j'aimerais lire le roman.", "blanks": 1 },
+            { "number": 2, "text": "Il a quitté le pays sans nous (dire) _____ au revoir.", "blanks": 1 },
+            { "number": 3, "text": "Ils se sont séparés après (s'expliquer) _____", "blanks": 1 },
+            { "number": 4, "text": "J'ai peur de (oublier) _____ mes clés au bureau.", "blanks": 1 },
+            { "number": 5, "text": "Elle ne se souvient plus (venir) _____ déjà dans cette région.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 92,
+          "instruction": "Participe présent, gérondif ou adjectif verbal ?",
+          "type": "bilan",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Dans mon quartier, les vendeuses ne sont pas (sourire) _____.", "blanks": 1 },
+            { "number": 2, "text": "(Dormir) _____ 3 heures par nuit tu finiras par tomber malade.", "blanks": 1 },
+            { "number": 3, "text": "Les élèves (arriver) _____ plusieurs fois par mois en retard devront venir à l'école le samedi.", "blanks": 1 },
+            { "number": 4, "text": "C'est un employé (négliger) _____ ; il oublie toujours de faire quelque chose.", "blanks": 1 },
+            { "number": 5, "text": "La journée (précéder) _____ Noël est une journée de grande excitation.", "blanks": 1 },
+            { "number": 6, "text": "Elle l'a fait, (savoir) _____ très bien qu'elle ne devait pas le faire.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 92,
+          "instruction": "Donnez le participe présent, puis l'adjectif verbal correspondant aux verbes ci-dessous. Faites ensuite une phrase avec chacun de ces éléments.",
+          "type": "bilan",
+          "context": "pouvoir – savoir – fatiguer – communiquer – exceller",
+          "items": [
+            { "number": 1, "text": "_____", "blanks": 1 },
+            { "number": 2, "text": "_____", "blanks": 1 },
+            { "number": 3, "text": "_____", "blanks": 1 },
+            { "number": 4, "text": "_____", "blanks": 1 },
+            { "number": 5, "text": "_____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 93,
+          "instruction": "Réécrivez ce texte en le mettant à la forme active.",
+          "type": "bilan",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Le musée a été cambriolé. Des toiles ainsi que divers objets ont été volés. Depuis ces derniers mois une augmentation des vols a été constatée. Mais parallèlement une augmentation des succès de la police et une amélioration de son image n'ont pas été remarquées. Une campagne de calomnies a même été constatée dans une certaine presse. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 6,
+          "book_page": 93,
+          "instruction": "Mettez ces verbes pronominaux au temps qui convient et faites les accords nécessaires.",
+          "type": "bilan",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Hier, quand elle (s'arrêter) _____ devant le théâtre, elle (s'apercevoir) _____ qu'elle avait oublié les billets. Elle (se diriger) _____ vers le guichet et elle (se renseigner) _____ sur les places disponibles. Elle a aperçu ses amis dans le hall et elle (s'approcher) _____ d'eux. Elle leur a tout expliqué ; ils (se parler) _____ pour prendre une décision... Soudain en mettant les mains dans ses poches, elle (se rendre compte) _____ que les billets étaient dans l'une d'elles...", "blanks": 7 }
+          ]
+        },
+        {
+          "exercise_number": 7,
+          "book_page": 93,
+          "instruction": "Faites correspondre les éléments de la colonne de gauche à ceux de la colonne de droite et mettez l'ensemble dans un contexte.",
+          "type": "matching",
+          "context": "Exemple : 6. A. Il vaut mieux partir tout de suite, nous sommes en retard.",
+          "items": [
+            { "number": 1, "text": "Il est arrivé / A. partir tout de suite.", "blanks": 1 },
+            { "number": 2, "text": "Il ne reste / B. deux chaises.", "blanks": 1 },
+            { "number": 3, "text": "Il se passe / C. un drame chez les voisins.", "blanks": 1 },
+            { "number": 4, "text": "Il s'est produit / D. qu'une demi-baguette.", "blanks": 1 },
+            { "number": 5, "text": "Il manque / E. toujours des incidents le jour de cette manifestation.", "blanks": 1 },
+            { "number": 6, "text": "Il vaut mieux / F. un accident sur l'autoroute de l'Ouest.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 8,
+          "book_page": 93,
+          "instruction": "Complétez ces phrases à votre choix.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il est impensable que _____", "blanks": 1 },
+            { "number": 2, "text": "Il est clair que _____", "blanks": 1 },
+            { "number": 3, "text": "Il est important _____", "blanks": 1 },
+            { "number": 4, "text": "Il est normal que _____", "blanks": 1 },
+            { "number": 5, "text": "Il est juste que _____", "blanks": 1 },
+            { "number": 6, "text": "Il a été décidé que _____", "blanks": 1 },
+            { "number": 7, "text": "Il a été convenu que _____", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [92, 93],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

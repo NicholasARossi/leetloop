@@ -1,0 +1,308 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 6,
+  "chapter_title": "LE CONDITIONNEL",
+  "book_pages": [66, 67, 68, 69, 70, 71],
+  "sections": [
+    {
+      "section_title": "FORMATIONS et CARACTÉRISTIQUES",
+      "subtitle": null,
+      "book_pages": [66, 67],
+      "intro_examples": [
+        "Ils partent en voyage au Mexique : j'aimerais tellement partir avec eux ! Emma pourrait partir aussi.",
+        "Elle aurait aimé être actrice mais ses parents n'ont pas voulu."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "Le conditionnel présent est formé du radical du futur suivi des terminaisons de l'imparfait.",
+          "examples": [
+            "Aimer → J'aimer-ai → J'aimer-ais",
+            "Venir → Il viendr-a → Il viendr-ait",
+            "Avoir → Nous aur-ons → Nous aur-ions"
+          ],
+          "categories": [],
+          "notes": [
+            "Voir conjugaisons page 186."
+          ]
+        },
+        {
+          "rule": "Le conditionnel passé est formé avec «avoir» ou «être» au conditionnel suivi du participe passé.",
+          "examples": [
+            "elle aurait aimé",
+            "nous serions venus",
+            "je me serais baigné"
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le conditionnel exprime un fait dont la réalisation est éventuelle.",
+          "examples": [
+            "On pourrait aller à la piscine."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le conditionnel est différent de l'indicatif qui exprime que la réalisation de l'action est certaine ou probable.",
+          "examples": [
+            "Rentrons, il pleut ! [Rentrons, il va pleuvoir !]",
+            "Le ciel est encore gris : il pourrait pleuvoir cette nuit."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le conditionnel se distingue du subjonctif qui exprime que la réalisation de l'action n'est pas certaine, elle est possible.",
+          "examples": [
+            "Il fait beau mais il se peut qu'il pleuve demain. Le temps change très vite !",
+            "Il a plu toute la nuit ; le ciel est encore gris ; il pourrait pleuvoir dans la journée."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le conditionnel présent remplace le futur dans le discours indirect quand le premier verbe est au passé. Le conditionnel passé remplace le futur antérieur.",
+          "examples": [
+            "Il dit qu'il téléphonera de l'aéroport. → Il a dit qu'il téléphonerait de l'aéroport.",
+            "Il promet qu'il écrira dès qu'il sera arrivé. → Il avait promis qu'il écrirait dès qu'il serait arrivé."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 67,
+          "instruction": "Réécrivez ce dialogue en mettant les verbes soulignés au conditionnel pour renforcer l'éventualité.",
+          "type": "transformation",
+          "context": "- Allons faire du bateau ?\n- Le vent peut se lever.\n- Le temps peut changer rapidement, mais tout de même !\n- Je connais bien la mer ici et il peut y avoir du vent au moment de la marée.",
+          "items": [
+            { "number": null, "text": "_____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 67,
+          "instruction": "Réécrivez ce texte en mettant les verbes au conditionnel passé.",
+          "type": "transformation",
+          "context": "Nous viendrions vous voir bien volontiers, mais il faudrait que la voiture soit en état de marche. Il faudrait que nous puissions trouver quelqu'un pour s'occuper des animaux et de la maison. Et puis pour la santé de Marine, il faudrait que le temps soit au beau fixe.",
+          "items": [
+            { "number": null, "text": "_____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 67,
+          "instruction": "Réécrivez ce dialogue en commençant par «Qu'est-ce qu'il a dit ?».",
+          "type": "transformation",
+          "context": "- Qu'est-ce qu'il dit ?\n- Il dit qu'il téléphonera quand il arrivera à la gare.\n- Qu'est-ce qu'il dit encore ?\n- Il dit qu'il faudra aller le chercher parce qu'il sera chargé.\n- C'est tout ce qu'il dit ?\n- Non, il dit qu'il nous attendra le temps qu'il faudra.\n- Il ne dit rien d'autre ?\n- Si, il dit qu'il restera un bon mois avec nous.",
+          "items": [
+            { "number": null, "text": "_____", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "LES EMPLOIS DU CONDITIONNEL",
+      "subtitle": null,
+      "book_pages": [68, 69, 70, 71],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "Le conditionnel peut exprimer des faits fictifs, une vie imaginaire.",
+          "examples": [
+            "On vivrait au bord de la mer. On irait à l'école le matin. L'après-midi on se baignerait, on pêcherait."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le conditionnel peut exprimer le souhait, le désir.",
+          "examples": [
+            "Ça me ferait plaisir de te revoir.",
+            "Je voudrais tellement être en vacances.",
+            "Ce serait si agréable de passer une journée ensemble !"
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le conditionnel passé sert à exprimer le regret, le reproche.",
+          "examples": [
+            "Elle aurait voulu être médecin mais ses résultats en mathématiques n'étaient pas bons. [regret]",
+            "Tu aurais pu me laisser les clés chez le voisin ! [reproche]",
+            "On aurait préféré que tu nous mettes au courant ! [reproche]",
+            "J'aurais apprécié que tu m'envoies un petit mot d'encouragement. [reproche]"
+          ],
+          "categories": [],
+          "notes": [
+            "Les modaux «pouvoir», «devoir» et «falloir» sont employés pour exprimer le reproche: Vous auriez dû nous le dire plus tôt: maintenant, c'est trop tard ! [= Il aurait fallu nous le dire...]",
+            "Tu aurais dû me prévenir, j'aurais pu t'aider."
+          ]
+        },
+        {
+          "rule": "Le conditionnel sert à annoncer des informations dont on n'est pas sûr.",
+          "examples": [
+            "Violentes inondations dans le Sud : il y aurait des dizaines de maisons détruites.",
+            "Selon notre dernier sondage, le nombre de célibataires aurait augmenté de 20 % en dix ans.",
+            "Le chef de service aurait des ennuis avec la direction ; il aurait donné sa démission."
+          ],
+          "categories": [],
+          "notes": [
+            "Dans cet exemple, le conditionnel exprime la rumeur.",
+            "Ce conditionnel est beaucoup utilisé dans le style journalistique pour présenter des informations qui n'ont pas encore été vérifiées et qu'on annonce avec prudence."
+          ]
+        },
+        {
+          "rule": "Le conditionnel sert à «atténuer», «adoucir» une demande, à exprimer un conseil ou une suggestion.",
+          "examples": [
+            "J'aimerais connaître les heures de départ pour New York le dimanche, s'il vous plaît ? [demande polie]",
+            "J'aurais voulu un billet pour samedi prochain. [demande polie]",
+            "Tu devrais mettre un manteau, il fait froid ! [conseil]",
+            "Vous pourriez lui envoyer une lettre pour l'inviter. [suggestion]"
+          ],
+          "categories": [],
+          "notes": [
+            "«Pouvoir» au conditionnel présent est en général employé pour exprimer la suggestion: Tu pourrais l'emmener au cinéma ; il serait content.",
+            "«Devoir», «tu ferais mieux de» + infinitif et «il vaudrait mieux» + infinitif ou «il vaudrait mieux que» + subjonctif sont employés pour exprimer le conseil: Vous devriez passer par Florence, c'est superbe ! / Tu ferais mieux de lui demander son avis. / Il vaudrait mieux aller consulter un spécialiste. / Il vaudrait mieux que nous partions un peu plus tôt."
+          ]
+        },
+        {
+          "rule": "Le conditionnel peut exprimer la probabilité avec «devoir».",
+          "examples": [
+            "Son avion devrait arriver à 17 heures.",
+            "Ils ont quitté Paris à midi ; ils devraient être à Lyon vers 18 heures.",
+            "Sa lettre aurait dû arriver aujourd'hui. [mais elle n'est pas arrivée]"
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le conditionnel est employé avec «si» + imparfait pour exprimer un souhait qui n'est pas réalisable.",
+          "examples": [
+            "Si j'avais de l'argent, je t'en prêterais. [je voudrais avoir de l'argent pour t'en prêter]"
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Avec «si» + plus-que-parfait, le conditionnel présent et le conditionnel passé peuvent être utilisés.",
+          "examples": [
+            "S'il avait vu cette pièce, il l'aurait aimée.",
+            "Si tu avais assisté à la présentation de son livre, tu comprendrais mieux les idées qu'il contient."
+          ],
+          "categories": [],
+          "notes": [
+            "Voir chapitre 26, l'expression de la condition et de l'hypothèse.",
+            "Pour formuler des hypothèses, on peut également dire: J'aurais 15 euros, je vous les donnerais avec plaisir. [= Si j'avais 15 euros] / Vous auriez pris l'avion, vous seriez arrivés plus tôt. [= Si vous aviez pris l'avion...]"
+          ]
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 69,
+          "instruction": "Imaginez que vous vivez avec des amis dans une île de rêve. Racontez ce que serait votre vie : votre habitation, vos activités, votre nourriture, etc.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": null, "text": "_____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 69,
+          "instruction": "En utilisant les expressions : «j'aimerais tellement», «ça me ferait plaisir de», «ce serait agréable de», «ce serait sympathique de», «je voudrais bien», exprimez les souhaits suivants.",
+          "type": "free_response",
+          "context": "revoir des amis de lycée – pouvoir discuter avec eux – faire de longues promenades au bord de la mer – se retrouver avec eux à la terrasse d'un café – écouter de la musique pendant des heures",
+          "items": [
+            { "number": null, "text": "_____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 69,
+          "instruction": "En utilisant : «pu», «voulu», «aimé», «apprécié», «préféré», exprimez les regrets d'un homme et justifiez ces regrets comme dans l'exemple.",
+          "type": "free_response",
+          "context": "être marin – courir les mers et les océans – affronter le vent, la pluie, la tempête – faire la fête en rentrant au port – rencontrer d'autres gens – découvrir d'autres pays.\n→ J'aurais voulu être acteur mais mes parents s'y sont opposés.",
+          "items": [
+            { "number": null, "text": "_____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 69,
+          "instruction": "Utilisez le conditionnel passé pour exprimer le reproche.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il fallait nous prévenir tout de suite ou prévenir les pompiers. _____", "blanks": 1 },
+            { "number": 2, "text": "Vous deviez vérifier les extincteurs tous les mois ; vous ne l'avez pas fait. _____", "blanks": 1 },
+            { "number": 3, "text": "Tu devais me laisser ton adresse mais tu as oublié de le faire. _____", "blanks": 1 },
+            { "number": 4, "text": "Elle pouvait nous dire où elle était : on s'est inquiétés. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 69,
+          "instruction": "Réécrivez des informations de façon à exprimer qu'elles ne sont pas sûres.",
+          "type": "transformation",
+          "context": "Le numéro 1 du parti de l'opposition est accusé de trafic d'argent. Une grande compagnie, pour obtenir un marché important, a donné à ce dirigeant de grosses sommes d'argent pour son parti. L'accusation est faite, selon l'opposition, par le ministre de la Justice. Il s'agit de déstabiliser le parti avant les élections, toujours selon l'opposition. Son parti a même, à ce qu'on dit, demandé sa démission.",
+          "items": [
+            { "number": null, "text": "_____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 6,
+          "book_page": 71,
+          "instruction": "Utilisez le conditionnel pour transformer les ordres comme il est indiqué.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Donnez-moi un billet de 2e classe pour Nantes. [demande polie] _____", "blanks": 1 },
+            { "number": 2, "text": "Mets ton manteau, il fait froid. [conseil] _____", "blanks": 1 },
+            { "number": 3, "text": "Téléphone-lui et invite-le à venir passer le week-end avec nous. [suggestion] _____", "blanks": 1 },
+            { "number": 4, "text": "Écris-lui pour la remercier de son cadeau. [conseil] _____", "blanks": 1 },
+            { "number": 5, "text": "Tu n'es pas bien, va voir le médecin. [conseil] _____", "blanks": 1 },
+            { "number": 6, "text": "Ton état ne s'améliore pas, il faut aller à l'hôpital. [conseil] _____", "blanks": 1 },
+            { "number": 7, "text": "Prêtons-leur un peu d'argent, ils en ont besoin. [suggestion] _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 7,
+          "book_page": 71,
+          "instruction": "Réécrivez ce texte en utilisant le conditionnel pour exprimer la probabilité.",
+          "type": "transformation",
+          "context": "Son avion doit arriver à 20 heures. Supposons qu'il attende ses bagages une demi-heure. Il doit sortir de l'aéroport vers 20 h 30. Supposons qu'il fasse la queue aux taxis un quart d'heure. Il doit mettre une heure pour arriver à Paris, donc il doit être à son hôtel vers 21 h 45. Nous serons là et nous verrons bien.",
+          "items": [
+            { "number": null, "text": "_____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 8,
+          "book_page": 71,
+          "instruction": "Utilisez «si» + imparfait et le conditionnel pour exprimer des souhaits non réalisables avec les éléments proposés.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Si j'avais plus de temps libre _____", "blanks": 1 },
+            { "number": 2, "text": "Si Paris était au bord de la mer _____", "blanks": 1 },
+            { "number": 3, "text": "Si elle m'aimait _____", "blanks": 1 },
+            { "number": 4, "text": "Si tu me comprenais _____", "blanks": 1 },
+            { "number": 5, "text": "Si tu parlais le russe _____", "blanks": 1 },
+            { "number": 6, "text": "Si on savait danser _____", "blanks": 1 },
+            { "number": 7, "text": "Si j'avais beaucoup d'argent _____", "blanks": 1 },
+            { "number": 8, "text": "Si la situation était moins tendue _____", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [66, 67, 68, 69, 70, 71],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

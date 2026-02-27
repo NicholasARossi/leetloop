@@ -1,0 +1,368 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 17,
+  "chapter_title": "LES PRONOMS RELATIFS",
+  "book_pages": [118, 119, 120, 121, 122, 123, 124, 125],
+  "sections": [
+    {
+      "section_title": "LE PRONOM RELATIF SIMPLE",
+      "subtitle": null,
+      "book_pages": [118, 119, 120, 121],
+      "intro_examples": [
+        "Tu te rappelles ma cousine qui habite à Genève ?",
+        "Je lis le livre que tu m'as prêté.",
+        "Elle habite le quartier où se trouve la mairie."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "Le pronom relatif simple relie deux phrases et évite la répétition d'un mot.",
+          "examples": [
+            "J'attends une lettre ; ma sœur doit m'envoyer cette lettre. → J'attends une lettre que ma sœur doit m'envoyer."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« QUI » remplace un mot (personne ou chose) placé avant lui ; il est sujet du verbe qui suit.",
+          "examples": [
+            "Valérie est ma cousine qui habite à Genève."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« QUE » remplace un mot (personne ou chose) placé avant lui ; il est complément d'objet direct du verbe qui suit.",
+          "examples": [
+            "Il m'a rendu le livre que je lui avais prêté."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« OÙ » remplace un mot placé avant lui et indiquant un complément de lieu ou de temps.",
+          "examples": [
+            "J'ai visité le quartier où se trouve le nouveau musée.",
+            "C'est l'année où elle s'est mariée."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« D'OÙ », « PAR OÙ », « LÀ OÙ », « PARTOUT OÙ » remplacent un mot qui indique un complément de lieu.",
+          "examples": [
+            "C'est un monument d'où on peut voir tout Paris.",
+            "Il connaît bien les routes par où il faut passer pour éviter les problèmes de circulation.",
+            "On se retrouvera à 8 heures là où on s'est rencontrés hier.",
+            "Elle a cherché partout où elle était allée mais elle n'a rien trouvé."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« QUOI » est toujours neutre. Il est introduit par une préposition.",
+          "examples": [
+            "C'est quelque chose à quoi elle n'a jamais pensé.",
+            "Voici par quoi je vais commencer."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« DONT » remplace un mot (personne ou chose) placé avant lui ; il peut être complément d'un verbe construit avec « de », complément d'un adjectif suivi de « de », complément d'un nom suivi de « de ».",
+          "examples": [
+            "Catherine est mon amie. – Je vous ai souvent parlé de mon amie. → Catherine est l'amie dont je vous ai souvent parlé.",
+            "C'est un travail dont ils ne sont pas contents. [ils ne sont pas contents de ce travail]",
+            "C'est un jeune comédien dont j'ai oublié le nom. [le nom de ce comédien]"
+          ],
+          "categories": [],
+          "notes": [
+            "Dites : C'est la façon dont il peint, la manière dont il parle. [il parle de cette façon-là]"
+          ]
+        },
+        {
+          "rule": "« dont » peut être lié à la quantité et s'utilise à la place de « parmi lesquels » ou « parmi lesquelles ».",
+          "examples": [
+            "Ils ont trois grands enfants dont deux sont médecins. [= Ils ont trois grands enfants parmi lesquels deux sont médecins.]"
+          ],
+          "categories": [],
+          "notes": [
+            "On peut sous-entendre « être » : J'ai acheté des pulls dont deux (sont) en laine."
+          ]
+        },
+        {
+          "rule": "« CE QUI », « CE QUE », « CE DONT » (ce = cela) : « Ce qui », « ce que », « ce dont » peuvent remplacer toute une phrase ou reprendre une idée.",
+          "examples": [
+            "Je sais ce qui lui fera plaisir pour son anniversaire.",
+            "Elle ne sait pas ce qu'elle veut.",
+            "C'est exactement ce dont j'avais besoin.",
+            "Ses parents lui ont offert un voyage à Florence ; cela lui a fait plaisir. → Ses parents lui ont offert un voyage à Florence ; ce qui lui a fait plaisir.",
+            "Il a été nommé directeur ; tout le personnel est content de cela. → Il a été nommé directeur ; ce dont tout le personnel est content."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« CE À QUOI », « CE POUR QUOI », « CE CONTRE QUOI », « CE SUR QUOI » etc., peuvent remplacer toute une phrase ; « ce » (= cela) reprend alors une idée.",
+          "examples": [
+            "Retourner dans son pays, revoir la mer, retrouver sa famille et ses amis, c'était ce à quoi il pensait sans cesse. [= il pensait à cela sans cesse]"
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 119,
+          "instruction": "Reliez les phrases avec « qui », « que », « où » comme dans l'exemple.",
+          "type": "transformation",
+          "context": "Hier nous avons vu un film ; ce film a été tourné en Colombie. → Hier nous avons vu un film qui a été tourné en Colombie.",
+          "items": [
+            { "number": 1, "text": "Elle vit dans une petite ville de province ; dans cette petite ville elle s'ennuie. _____", "blanks": 1 },
+            { "number": 2, "text": "J'ai rencontré par hasard un ami ; je n'avais pas vu cet ami depuis trois ans. _____", "blanks": 1 },
+            { "number": 3, "text": "Ils ont loué une maison ; elle se trouve près de celle de leurs parents. _____", "blanks": 1 },
+            { "number": 4, "text": "C'est une boutique d'antiquités ; on y trouve surtout des objets du XIXe siècle. _____", "blanks": 1 },
+            { "number": 5, "text": "J'ai lu un livre magnifique ; tous les jeunes devraient l'avoir lu. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 119,
+          "instruction": "Complétez le texte avec « qui », « que » et « où ».",
+          "type": "fill_blank",
+          "context": "Le film que nous avons aimé",
+          "items": [
+            { "number": null, "text": "Le film _____ nous avons vu hier à la télévision se passe en Australie. C'est l'histoire d'une jeune femme peintre _____ quitte l'Angleterre _____ elle fait ses études pour aller vivre en Australie. La vie _____ elle mène là-bas n'est pas aussi rose qu'elle pensait. En effet, elle rencontre des difficultés _____ l'empêchent de peindre comme elle le voudrait. Après une année difficile ... elle travaille beaucoup, elle connaît enfin le succès _____ elle attendait et devient célèbre.", "blanks": 6 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 119,
+          "instruction": "Complétez les phrases avec « d'où », « là où », « par où » ou « partout où ».",
+          "type": "fill_blank",
+          "context": "J'ai choisi une chambre d'où on voit la mer.",
+          "items": [
+            { "number": 1, "text": "On passait des heures sur la terrasse _____ on apercevait le port.", "blanks": 1 },
+            { "number": 2, "text": "En revenant dans ce quartier, j'ai reconnu _____ j'avais passé mon bac.", "blanks": 1 },
+            { "number": 3, "text": "Nous avons fait un très beau voyage grâce à Alexis qui nous avait donné un itinéraire _____ nous devions passer pour faire un circuit intéressant.", "blanks": 1 },
+            { "number": 4, "text": "C'est un chanteur très populaire ; les journalistes le suivent _____ il va pour avoir une interview.", "blanks": 1 },
+            { "number": 5, "text": "Le professeur nous a aidés _____ nous n'avions pas compris.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 119,
+          "instruction": "Complétez avec « quoi » et la préposition qui convient.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "C'est quelque chose _____ je n'ai jamais réfléchi.", "blanks": 1 },
+            { "number": 2, "text": "Voici _____ le concert a commencé.", "blanks": 1 },
+            { "number": 3, "text": "C'est quelque chose _____ il a insisté.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 1,
+          "book_page": 121,
+          "instruction": "Reliez les phrases avec « dont » comme dans l'exemple.",
+          "type": "transformation",
+          "context": "Je viens de recevoir un cadeau ; je rêvais de ce cadeau depuis longtemps ; → Je viens de recevoir un cadeau dont je rêvais depuis longtemps.",
+          "items": [
+            { "number": 1, "text": "Elle m'a donné cette table ; elle n'avait plus besoin de cette table. _____", "blanks": 1 },
+            { "number": 2, "text": "Ils travaillent avec un nouveau directeur ; ils se plaignent beaucoup de ce directeur. _____", "blanks": 1 },
+            { "number": 3, "text": "Claire suit un cours intensif d'espagnol ; elle est contente de ce cours. _____", "blanks": 1 },
+            { "number": 4, "text": "J'ai lu son dernier roman ; je n'ai pas bien compris le sens de ce roman. _____", "blanks": 1 },
+            { "number": 5, "text": "Il y a eu un accident sur l'autoroute. Il y a cinq blessés, parmi ces blessés trois sont dans un état grave. _____", "blanks": 1 },
+            { "number": 6, "text": "Il habite dans une famille française ; la mère de cette famille est alsacienne. _____", "blanks": 1 },
+            { "number": 7, "text": "Le chômage est un problème grave ; tous les journaux parlent de ce problème. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 121,
+          "instruction": "Complétez les phrases par « ce qui », « ce que », « ce dont ».",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Le professeur nous a dit de lire _____ nous voulions : roman ou poésie.", "blanks": 1 },
+            { "number": 2, "text": "Elle a l'habitude de faire _____ lui plaît : elle n'aime pas les contraintes.", "blanks": 1 },
+            { "number": 3, "text": "Prenez seulement _____ vous aurez besoin pour une semaine !", "blanks": 1 },
+            { "number": 4, "text": "Je ne comprends pas _____ vous dites, parlez plus fort !", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 121,
+          "instruction": "Utilisez « ce qui », « ce que », « ce dont », « ce à quoi », « ce pour quoi », « ce sur quoi » pour reprendre l'idée contenue dans la première phrase.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Cette foire regroupe tous les ans des artistes du monde entier ; _____ attire un grand public.", "blanks": 1 },
+            { "number": 2, "text": "Une autoroute passera tout près de la ville, un quartier sera démoli ; _____ tous les gens de la ville sont mécontents.", "blanks": 1 },
+            { "number": 3, "text": "Il a neigé au mois de mai ; _____ personne dans la région n'avait jamais vu.", "blanks": 1 },
+            { "number": 4, "text": "Partir vivre dans une île loin du bruit de la ville : c'était _____ elle rêvait.", "blanks": 1 },
+            { "number": 5, "text": "Il allait dynamiser le département, offrir des chances de promotion ; c'était _____ ils comptaient tous.", "blanks": 1 },
+            { "number": 6, "text": "Ils voulaient un monde libre et tolérant ; c'était _____ ils combattaient.", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "LES PRONOMS RELATIFS COMPOSÉS",
+      "subtitle": null,
+      "book_pages": [122, 123, 124, 125],
+      "intro_examples": [
+        "C'est la raison pour laquelle je suis ici.",
+        "La conférence à laquelle nous avons assisté était faite en anglais.",
+        "Elle habite une maison près de laquelle il y a un bois."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "« LEQUEL », « LESQUELS », « LAQUELLE », « LESQUELLES » sont des relatifs composés ; ils remplacent des choses et sont utilisés après une préposition : sur, pour, par, avec, en, dans, etc.",
+          "examples": [
+            "Elle travaille sur un sujet passionnant. → Le sujet sur lequel elle travaille est passionnant."
+          ],
+          "categories": [],
+          "notes": [
+            "Quand le pronom relatif composé remplace une ou plusieurs personnes, on utilise en général « qui » : C'est quelqu'un en qui j'ai confiance.",
+            "Ne dites pas : « parmi qui ». Dites « parmi lesquels » ou « lesquelles ».",
+            "Les pronoms utilisés pour les choses sont souvent utilisés pour les personnes surtout quand ils représentent des personnes en général : Les gens avec lesquels (= avec qui) j'habite sont sympathiques."
+          ]
+        },
+        {
+          "rule": "« AUQUEL », « AUXQUELS », « À LAQUELLE », « AUXQUELLES » sont des pronoms relatifs composés contractés avec la préposition « à ».",
+          "examples": [
+            "Je pense au film de Claude Berri. (penser à) → Le film auquel je pense est de Claude Berri.",
+            "Il s'intéresse à la littérature du XIXe siècle. (s'intéresser à) → La littérature à laquelle il s'intéresse est celle du XIXe siècle."
+          ],
+          "categories": [],
+          "notes": [
+            "Quand le pronom remplace une ou plusieurs personnes, on utilise « qui » ; il n'y a pas de contraction : Le peintre à qui il a fait allusion est mort l'année dernière.",
+            "On peut également dire : Le peintre auquel il fait allusion."
+          ]
+        },
+        {
+          "rule": "« DUQUEL », « DESQUELS », « DE LAQUELLE », « DESQUELLES » sont des relatifs contractés avec des locutions contenant « de » : « près de », « à cause de », « à la fin de », etc.",
+          "examples": [
+            "Tu te souviens de ce dîner à la fin duquel on est allés danser ?"
+          ],
+          "categories": [],
+          "notes": [
+            "Quand le pronom représente une personne, on utilise « qui » ; il n'y a pas de contraction : C'est la femme à côté de qui il est assis."
+          ]
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 123,
+          "instruction": "Complétez les phrases avec les relatifs composés. Choisissez parmi les prépositions proposées.",
+          "type": "fill_blank",
+          "context": "pour – sans – avec – pendant – sur – sous – dans – d'après – selon – parmi\n→ C'est un magazine pour lequel il a travaillé pendant cinq ans.",
+          "items": [
+            { "number": 1, "text": "Tu vois ce chêne au fond du jardin ? C'est l'arbre _____ on fait des pique-niques en été.", "blanks": 1 },
+            { "number": 2, "text": "– Qu'est-ce que tu fais ? – Je cherche la boîte _____ tu as mis les dés.", "blanks": 1 },
+            { "number": 3, "text": "Là, on va fixer des étagères _____ on mettra des épices. Comme ça, ce sera plus pratique pour cuisiner !", "blanks": 1 },
+            { "number": 4, "text": "Voilà les différentes couleurs _____ vous pouvez choisir.", "blanks": 1 },
+            { "number": 5, "text": "Cette revue vient de publier un article _____ il pourrait y avoir un deuxième Big Bang.", "blanks": 1 },
+            { "number": 6, "text": "C'est un stylo _____ je ne peux pas écrire.", "blanks": 1 },
+            { "number": 7, "text": "Elle vient de contacter une société _____ elle aimerait travailler. Elle n'a pas encore reçu de réponse.", "blanks": 1 },
+            { "number": 8, "text": "Est-ce que tu retrouveras le chemin _____ nous sommes passés la semaine dernière ?", "blanks": 1 },
+            { "number": 9, "text": "Ce sont bien les vacances _____ on s'est le plus amusés !", "blanks": 1 },
+            { "number": 10, "text": "On présente souvent l'argument _____ la protection de l'environnement passe par l'éducation des jeunes citoyens.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 123,
+          "instruction": "Reliez les deux phrases par le pronom « qui » précédé de la préposition qui convient, comme dans l'exemple.",
+          "type": "transformation",
+          "context": "Simon est un ami sûr ; je lui confie tous mes secrets. → Simon est un ami sûr à qui je confie tous mes secrets.",
+          "items": [
+            { "number": 1, "text": "C'est un médecin compétent. On peut avoir confiance en lui. _____", "blanks": 1 },
+            { "number": 2, "text": "Je te présente mon amie Maud ; j'allais au lycée avec elle. _____", "blanks": 1 },
+            { "number": 3, "text": "Il a une grande admiration pour cet homme ; sans lui il n'aurait pas réussi. _____", "blanks": 1 },
+            { "number": 4, "text": "Nous avons revu Christian et Caroline. Nous avons dîné chez eux il y a quelques jours. _____", "blanks": 1 },
+            { "number": 5, "text": "J'ai deux très bons amis ; je peux compter sur eux à n'importe quel moment. _____", "blanks": 1 },
+            { "number": 6, "text": "J'ai retrouvé mes amis de lycée ; je me sens bien parmi eux. _____", "blanks": 1 },
+            { "number": 7, "text": "C'est une amie de longue date ; je lui ai proposé de partir en vacances avec nous. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 1,
+          "book_page": 124,
+          "instruction": "Complétez les phrases avec le pronom composé « auquel », « auxquels », « à laquelle » ou « auxquelles » comme dans l'exemple.",
+          "type": "fill_blank",
+          "context": "Vous serez présent à cette réunion ? → Oui, c'est une réunion à laquelle je serai présent.",
+          "items": [
+            { "number": 1, "text": "– Tu t'intéresses à la musique indienne ?\n– Oui, _____", "blanks": 1 },
+            { "number": 2, "text": "– Elle tient beaucoup à cet objet ?\n– Oui, _____", "blanks": 1 },
+            { "number": 3, "text": "– Faut-il donner de l'importance à ces détails ?\n– Non, _____", "blanks": 1 },
+            { "number": 4, "text": "– Il pourra venir à cette heure-là ?\n– Oui, _____", "blanks": 1 },
+            { "number": 5, "text": "– Tu as déjà assisté à ce cours ?\n– Non, _____", "blanks": 1 },
+            { "number": 6, "text": "– Vous participez à ces activités ?\n– Oui, _____", "blanks": 1 },
+            { "number": 7, "text": "– Vous continuez de travailler à ce projet ?\n– Oui, _____", "blanks": 1 },
+            { "number": 8, "text": "– Il pense toujours à cette solution ?\n– Oui, _____", "blanks": 1 },
+            { "number": 9, "text": "– Tu crois toujours à ces choses-là ?\n– Non, _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 124,
+          "instruction": "Complétez en utilisant la locution prépositionnelle manquante comme dans l'exemple.",
+          "type": "fill_blank",
+          "context": "→ C'est un festival de cinéma à la fin duquel une palme d'or est attribuée au meilleur film. (à la fin de)",
+          "items": [
+            { "number": 1, "text": "On lui a envoyé une carte postale _____ on a tous signé. (au bas de)", "blanks": 1 },
+            { "number": 2, "text": "C'est une organisation _____ nous avons trouvé de l'aide. (auprès de)", "blanks": 1 },
+            { "number": 3, "text": "Il y a deux grandes fêtes pendant l'année _____ la famille est réunie. (à l'occasion de)", "blanks": 1 },
+            { "number": 4, "text": "Ce sont des immeubles modernes _____ on a construit un centre sportif. (près de)", "blanks": 1 },
+            { "number": 5, "text": "Il y a une date _____ on ne peut plus s'inscrire. (au delà)", "blanks": 1 },
+            { "number": 6, "text": "C'est un sujet _____ ils se disputent toujours. (à propos de)", "blanks": 1 },
+            { "number": 7, "text": "Il a fait une allocution à la télévision _____ il a annoncé des mesures économiques nouvelles. (au cours de)", "blanks": 1 },
+            { "number": 8, "text": "Il y a eu des élections _____ il a changé de Premier ministre. (à la suite de)", "blanks": 1 },
+            { "number": 9, "text": "J'ai retrouvé des vieux livres _____ il y avait des fleurs séchées. (à l'intérieur de)", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 125,
+          "instruction": "Transformez la phrase avec le pronom « qui » précédé de la locution avec « de » comme dans l'exemple.",
+          "type": "transformation",
+          "context": "Au concert, j'étais assis à côté d'une femme qui portait un grand chapeau. C'était très gênant ! → Au concert, la femme près de qui j'étais assis portait un grand chapeau. C'était très gênant !",
+          "items": [
+            { "number": 1, "text": "En été nous avons passé des vacances près d'amis qui avaient un voilier. C'était très agréable ! _____", "blanks": 1 },
+            { "number": 2, "text": "Pendant son séjour en Angleterre, il vivait auprès d'un couple qui avait cinq enfants. Comme c'était bruyant ! _____", "blanks": 1 },
+            { "number": 3, "text": "Au lycée on avait une grande admiration à l'égard du professeur de philosophie qui nous racontait des anecdotes passionnantes. _____", "blanks": 1 },
+            { "number": 4, "text": "Tous les voisins racontent des histoires invraisemblables à propos d'un homme qui est en fait un vieux comédien talentueux. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 125,
+          "instruction": "Complétez le texte avec les pronoms relatifs manquants. Inventez ensuite une fin à cette histoire.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "C'est un roman que tout le monde a lu et _____ nous a fait rêver quand nous étions enfants. C'est l'histoire d'un homme _____ le destin est semé d'aventures. Ce livre, au début _____ le héros voyage dans des contrées exotiques, dépeint des paysages au milieu _____ vit une quantité d'animaux. _____ frappe le lecteur, c'est la magie des descriptions. La façon _____ lutte le héros nous donne des leçons de courage. C'est un personnage _____ nous avons tous voulu nous identifier.", "blanks": 7 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 125,
+          "instruction": "Sur le modèle de l'exercice 4, racontez un de vos films préférés en utilisant des pronoms relatifs.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": null, "text": "C'est un film _____", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [118, 119, 120, 121, 122, 123, 124, 125],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

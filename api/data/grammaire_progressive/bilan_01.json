@@ -1,0 +1,159 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": null,
+  "chapter_title": "BILAN n°1",
+  "book_pages": [34, 35, 36, 37],
+  "sections": [
+    {
+      "section_title": "BILAN n°1",
+      "subtitle": "Articles, Adjectifs, Négations",
+      "book_pages": [34, 35, 36, 37],
+      "intro_examples": [],
+      "grammar_rules": [],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 34,
+          "instruction": "Complétez avec l'article défini ou indéfini selon le modèle.",
+          "type": "bilan",
+          "context": "Modèle: Madame, pourriez-vous me conseiller ? Grand-mère voudrait une écharpe. – Les personnes âgées aiment bien les écharpes légères et chaudes.\n\nAchats de cadeaux dans un magasin à Noël.",
+          "items": [
+            { "number": 1, "text": "- Grand-père a besoin _____ gants.\n- _____ grands-pères aiment _____.", "blanks": 3 },
+            { "number": 2, "text": "- Maman n'a pas assez _____ pulls.\n- _____ mamans préfèrent _____.", "blanks": 3 },
+            { "number": 3, "text": "- Papa a envie _____ bon disque de jazz.\n- _____ papas apprécient _____.", "blanks": 3 },
+            { "number": 4, "text": "- Ma sœur rêve de _____ sac.\n- _____ jeunes filles aiment _____.", "blanks": 3 },
+            { "number": 5, "text": "- Mon jeune frère voudrait _____ jeux pour sa console.\n- _____ jeunes garçons _____.", "blanks": 3 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 34,
+          "instruction": "Utilisez cette liste rédigée rapidement pour demander à un de vos enfants d'aller faire des courses ; employez les articles et adjectifs numéraux qui conviennent.",
+          "type": "bilan",
+          "context": "poisson – fromage : 1 camembert – fruits : raisins, pommes – légumes : haricots verts, chou-fleur, salade – huile : 1 litre – lait : 3 litres – eau minérale : 4 bouteilles – café : 2 paquets – sucre : 1 kilo – beurre : 1/2 livre.",
+          "items": [
+            { "number": null, "text": "Allô Cyril ? Tu peux aller au supermarché faire des courses ? Tu achèteras du poisson, _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 34,
+          "instruction": "Partitif, défini, indéfini : complétez avec l'article qui convient.",
+          "type": "bilan",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "- Vous voulez _____ fromage ?\n- Non merci, je n'aime pas _____ fromage.\n- Quel dommage, rien de meilleur que _____ bon fromage de chèvre avec _____ bon pain de campagne !", "blanks": 4 },
+            { "number": 2, "text": "- Vous faites _____ sport ?\n- Non, je déteste _____ sport.\n- C'est dommage, pour être en forme rien de mieux que _____ bonne partie _____ tennis entre amis ou que _____ bon jogging.", "blanks": 5 },
+            { "number": 3, "text": "- Vous ne prenez pas _____ gâteaux ?\n- Non, quel dommage, quoi de meilleur que _____ bonne tarte _____ pommes ou que _____ charlotte à _____ framboise à _____ fin de _____ bon repas.", "blanks": 7 },
+            { "number": 4, "text": "- Vous ne mangez jamais _____ viande ?\n- Non, je suis végétarien. _____ viande me fait mal à _____ estomac.\n- Oh, vous savez, _____ bon gigot de _____ agneau avec _____ pommes _____ terre boulangères n'ont jamais fait _____ mal à personne.", "blanks": 8 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 35,
+          "instruction": "À partir des éléments ci-dessous, écrivez l'état de la Bourse de Paris et des marchés de province.",
+          "type": "bilan",
+          "context": "Bourse de Paris et Province :\n• Thomson perd 3 % en matinée / 3e jour de baisse.\n• AGF termine en hausse de 1 % / 1re fois en un mois.\n• Club Méditerranée perd 2 %.\n• Sud-Ouest : bœufs et vaches perdent 1/3 de leur valeur.",
+          "items": [
+            { "number": null, "text": "L'action Thomson perd 3 % en matinée. C'est le troisième jour de baisse. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 35,
+          "instruction": "Complétez avec l'adjectif indéfini qui convient en choisissant dans la liste proposée.",
+          "type": "bilan",
+          "context": "chaque – tout – même – autre – quelconque – quelques – aucun – tel – différent",
+          "items": [
+            { "number": 1, "text": "Le spectacle d'aujourd'hui étant complet, il y aura une _____ représentation samedi prochain.", "blanks": 1 },
+            { "number": 2, "text": "Son travail de mise en scène est inégal. Sa première mise en scène était remarquable, la dernière était _____.", "blanks": 1 },
+            { "number": 3, "text": "Il y avait très peu de monde à son vernissage. _____ amis et _____ parents.", "blanks": 2 },
+            { "number": 4, "text": "Nous n'avons plus jamais entendu parler de lui : _____ nouvelle, _____ lettre, _____ message. Pas de nouvelles, bonnes nouvelles !", "blanks": 3 },
+            { "number": 5, "text": "Attention ! Pendant les jours fériés, _____ les magasins, _____ les banques, _____ les musées sont fermés.", "blanks": 3 },
+            { "number": 6, "text": "Voici les consignes avant le départ : _____ enfant aura un seul sac ; _____ sac devra porter une étiquette au nom de l'enfant ; _____ voyageur aura son passeport en règle.", "blanks": 3 },
+            { "number": 7, "text": "Il y avait des milliers de manifestants ; on n'avait pas vu une _____ manifestation depuis longtemps.", "blanks": 1 },
+            { "number": 8, "text": "Elle raconte toujours les _____ bêtises, c'est agaçant !", "blanks": 1 },
+            { "number": 9, "text": "Elles sont jumelles mais elles ont des caractères _____.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 6,
+          "book_page": 36,
+          "instruction": "Composez des publicités en utilisant les adjectifs proposés à la place qui convient.",
+          "type": "bilan",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "noir – magnifique – haut – long\nOffrez-lui ces _____ sandales à talons _____ avec de _____ lanières en velours _____.", "blanks": 4 },
+            { "number": 2, "text": "simple – imbattable – chaleureux – raffiné – beau – séduisant\nVenez dans notre magasin. Vous y trouverez de _____ cadeaux _____ ou _____ dans une ambiance _____ et _____ ; et tout cela à des prix _____.", "blanks": 6 },
+            { "number": 3, "text": "ravissant – argenté – sophistiqué – bleu nuit\nC'est un homme _____. Il aimera donc cette chemise _____ en satin _____ avec des boutons de manchettes _____.", "blanks": 4 },
+            { "number": 4, "text": "anglais – naturel – grand\nElle sera sensible à ces _____ bottes _____ en cuir _____.", "blanks": 3 },
+            { "number": 5, "text": "arrondi – envoûtant – absolu – luxueux\nOffre-lui cet _____ parfum présenté dans un flacon _____ aux formes _____ : un plaisir _____.", "blanks": 4 }
+          ]
+        },
+        {
+          "exercise_number": 7,
+          "book_page": 36,
+          "instruction": "Mettez les phrases suivantes à la forme négative.",
+          "type": "bilan",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Nous avons déjà les résultats. _____", "blanks": 1 },
+            { "number": 2, "text": "Le film est déjà passé deux fois sur la 3e chaîne. _____", "blanks": 1 },
+            { "number": 3, "text": "Ma grand-mère fait encore son pain. _____", "blanks": 1 },
+            { "number": 4, "text": "J'ai vu cette affiche quelque part. _____", "blanks": 1 },
+            { "number": 5, "text": "Ils vont encore à la campagne le samedi. _____", "blanks": 1 },
+            { "number": 6, "text": "Il t'a dit ça en plaisantant ou non ? _____", "blanks": 1 },
+            { "number": 7, "text": "Dans notre région il neige souvent. _____", "blanks": 1 },
+            { "number": 8, "text": "Ils ont rencontré quelques problèmes. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 8,
+          "book_page": 37,
+          "instruction": "Renforcez la négation selon le modèle.",
+          "type": "bilan",
+          "context": "Elle a répondu sans hésiter, sans aucune hésitation, pas une seule hésitation.",
+          "items": [
+            { "number": 1, "text": "Ils sont partis sans s'excuser, _____, _____.", "blanks": 2 },
+            { "number": 2, "text": "Elle est sortie sur la pointe des pieds sans faire de bruit, _____, _____.", "blanks": 2 },
+            { "number": 3, "text": "Ils se sont quittés sans s'expliquer, _____, _____.", "blanks": 2 },
+            { "number": 4, "text": "Il a très bien réussi dans la vie sans avoir de diplômes, _____, _____.", "blanks": 2 }
+          ]
+        },
+        {
+          "exercise_number": 9,
+          "book_page": 37,
+          "instruction": "Ajoutez «pas» partout où c'est possible.",
+          "type": "bilan",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Il quitta l'auberge avant que le jour ne se lève. Il n'osa prendre une douche de peur que les autres voyageurs ne se réveillent. Il y avait longtemps qu'il ne s'était réveillé si tôt. À travers les fenêtres du couloir il crut voir le soleil se lever. Quand il fut dehors il s'aperçut qu'il faisait moins beau qu'il ne lui avait paru. Il craignit même qu'il n'y ait un épais brouillard de l'autre côté de la vallée. Il comprit qu'il ne pourrait franchir la frontière avant la nuit.", "blanks": 0 }
+          ]
+        },
+        {
+          "exercise_number": 10,
+          "book_page": 37,
+          "instruction": "Dites le contraire.",
+          "type": "bilan",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "J'ai toujours vu quelqu'un dans cette boutique. _____", "blanks": 1 },
+            { "number": 2, "text": "Avec ces lunettes je vois absolument tout. _____", "blanks": 1 },
+            { "number": 3, "text": "Elle est sortie en disant n'importe quoi. _____", "blanks": 1 },
+            { "number": 4, "text": "Il est entré en saluant tout le monde. _____", "blanks": 1 },
+            { "number": 5, "text": "J'ai rencontré Marie et Arnaud. _____", "blanks": 1 },
+            { "number": 6, "text": "Lui et moi sommes sensibles à la peinture moderne. _____", "blanks": 1 },
+            { "number": 7, "text": "Il fume vraiment beaucoup. _____", "blanks": 1 },
+            { "number": 8, "text": "Elle y allait soit le matin soit le soir. _____", "blanks": 1 },
+            { "number": 9, "text": "Nous les voyons toujours de temps en temps. _____", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [34, 35, 36, 37],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

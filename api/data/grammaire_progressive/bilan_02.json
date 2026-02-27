@@ -1,0 +1,98 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": null,
+  "chapter_title": "BILAN n°2",
+  "book_pages": [54, 55],
+  "sections": [
+    {
+      "section_title": "BILAN n°2",
+      "subtitle": "Les Temps de l'Indicatif",
+      "book_pages": [54, 55],
+      "intro_examples": [],
+      "grammar_rules": [],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 54,
+          "instruction": "Passé composé, imparfait ou plus-que-parfait ? Complétez comme il convient, puis inventez une suite à cette histoire.",
+          "type": "bilan",
+          "context": "Une nuit particulière",
+          "items": [
+            { "number": null, "text": "Ce (être) _____ pendant un week-end du mois de mai. Nous (décider) _____ de passer deux jours à Paris où nous (encore jamais aller) _____. Deux mois avant, nous (réserver) _____ une chambre dans un hôtel du centre de la ville. Nous (arriver) _____ le samedi matin à l'aéroport. Il (faire beau) _____ et même un peu chaud. Un taxi nous (conduire) _____ à notre hôtel. Une dame nous (accueillir) _____ nous (montrer) _____ notre chambre. Nous (défaire) _____ nos bagages. Nous (être) _____ fous de joie à la perspective de découvrir la Ville lumière ! Sans perdre de temps nous (sortir) _____ à la découverte de la ville. Le week-end (s'annoncer) _____ bien et pourtant la nuit (aller être) _____ très particulière _____", "blanks": 14 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 54,
+          "instruction": "Imparfait, plus-que-parfait ou passé simple ? Complétez comme il convient.",
+          "type": "bilan",
+          "context": "Voltaire, L'Ingénu (chapitre II)",
+          "items": [
+            { "number": null, "text": "L'Ingénu, selon sa coutume, (s'éveiller) _____ avec le soleil au chant du coq. Il (faire) _____ deux ou trois lieues, il (tirer) _____ trente pièces de gibier à balle seule, lorsqu'en rentrant, il (trouver) _____ monsieur le prieur de Notre-Dame de la Montagne et sa discrète sœur se promenaient en bonnet de nuit dans leur petit jardin. Il leur (présenter) _____ toute sa chasse, et, en tirant de sa chemise une espèce de petit talisman qu'il (porter) _____ toujours à son cou, il les (prier) _____ de l'accepter en reconnaissance de leur bonne réception.\nLe prieur et mademoiselle (sourire) _____ avec attendrissement de la naïveté de l'Ingénu. Le présent (consister) _____ en deux petits portraits assez mal faits, attachés ensemble avec une courroie fort grasse.", "blanks": 9 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 54,
+          "instruction": "Complétez avec le futur pour découvrir votre horoscope pour la semaine qui vient.",
+          "type": "bilan",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Cela (bouger) _____ dans votre vie. Vous (sortir) _____ de vos réserves les mains et la tête pleines de projets. Une semaine de passion (commencer) _____ pour vous et (accélérer) _____ vos décisions. Il (falloir) _____ compter votre temps pour ne rien sacrifier de votre vie privée. Ce qui (ne pas être) _____ une petite affaire. Quoi qu'il en soit, il (souffler) _____ sur tout ce qui vous (toucher) _____ un vent plein d'espoir. À vous de jouer si le cœur vous en dit, l'amour (être) _____ de la partie. Profitez-en !", "blanks": 9 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 55,
+          "instruction": "Complétez les phrases pour exprimer la postériorité en utilisant le temps qui convient.",
+          "type": "bilan",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Aujourd'hui je me repose, demain _____", "blanks": 1 },
+            { "number": 2, "text": "Ce mois-ci, nous avons économisé 152 €, le mois prochain _____", "blanks": 1 },
+            { "number": 3, "text": "Cette semaine, j'ai fait du jogging, la semaine prochaine _____", "blanks": 1 },
+            { "number": 4, "text": "Il venait de se marier ; bientôt il _____", "blanks": 1 },
+            { "number": 5, "text": "L'année dernière, elle étudiait à Florence, cette année elle _____ à Paris, et le semestre prochain, elle _____ à Londres.", "blanks": 2 },
+            { "number": 6, "text": "Dans sa dernière lettre, il nous a promis qu'il _____ avant la fin du mois.", "blanks": 1 },
+            { "number": 7, "text": "Les dernières informations signalent qu'il y aurait trois villages ensevelis sous la neige mais que tous les habitants _____ avant la nuit.", "blanks": 1 },
+            { "number": 8, "text": "Il n'est pas là pour le moment mais vous pouvez l'attendre ; il _____ d'une minute à l'autre.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 55,
+          "instruction": "Futur ou futur proche ? Complétez comme il convient.",
+          "type": "bilan",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Nous (décoller) _____ à 10 heures de l'aéroport de Roissy et (arriver) _____ à Athènes à 14 heures.", "blanks": 2 },
+            { "number": 2, "text": "Prépare-toi à démarrer, le feu (passer) _____ au vert.", "blanks": 1 },
+            { "number": 3, "text": "N'oublie pas ton parapluie, il (pleuvoir) _____.", "blanks": 1 },
+            { "number": 4, "text": "Nous (se retrouver) _____ à 20 heures dans le hall.", "blanks": 1 },
+            { "number": 5, "text": "Attendons un peu, elle (arriver) _____ d'une minute à l'autre.", "blanks": 1 },
+            { "number": 6, "text": "Regarde bien : il (descendre) _____ de sa voiture et (rentrer) _____ à la boulangerie...", "blanks": 2 }
+          ]
+        },
+        {
+          "exercise_number": 6,
+          "book_page": 55,
+          "instruction": "Complétez les phrases pour exprimer l'antériorité.",
+          "type": "bilan",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Nous pourrons lui poser des questions dès que _____", "blanks": 1 },
+            { "number": 2, "text": "Elle partira travailler quand _____", "blanks": 1 },
+            { "number": 3, "text": "Il descendait déjeuner une fois que _____", "blanks": 1 },
+            { "number": 4, "text": "Je prendrai une décision lorsque _____", "blanks": 1 },
+            { "number": 5, "text": "Elle irait les voir aussitôt que _____", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [54, 55],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

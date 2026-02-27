@@ -1,0 +1,479 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 16,
+  "chapter_title": "LES PRÉPOSITIONS",
+  "book_pages": [108, 109, 110, 111, 112, 113, 114, 115],
+  "sections": [
+    {
+      "section_title": "LA PRÉPOSITION « À »",
+      "subtitle": null,
+      "book_pages": [108, 109],
+      "intro_examples": [
+        "Elle habite à Amsterdam, aux Pays-Bas, au centre de la ville.",
+        "Elle s'intéresse beaucoup à la peinture flamande et va souvent au musée."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "« À » introduit un complément de lieu.",
+          "examples": [
+            "à la maison, à l'école, au (= à + le) bureau, au cinéma, à la piscine...",
+            "à Paris, à Boston, à Pékin, à Brest, à Grenoble...",
+            "les noms de pays masculins qui commencent par une consonne et les noms de pays pluriels : au Portugal, au Danemark, aux États-Unis...",
+            "les noms d'îles sans article : à Madagascar, à Chypre."
+          ],
+          "categories": [],
+          "notes": [
+            "Certaines locutions avec « à » ont un rapport avec le lieu : à côté, au milieu, au centre, à la surface, au fond, au bord, à l'intérieur."
+          ]
+        },
+        {
+          "rule": "« À » introduit le complément des verbes qui expriment l'idée d'enlèvement, une tendance vers quelque chose ou quelqu'un, ou la réalisation d'un but.",
+          "examples": [
+            "arracher, enlever, voler, prendre quelque chose à quelqu'un : J'ai emprunté ce livre à Julien, je dois le lui rendre demain.",
+            "penser à, s'intéresser à, s'adresser à quelqu'un / penser à, s'intéresser à, aspirer à quelque chose : Il s'intéresse à la philosophie, surtout à Descartes et à Platon.",
+            "arriver à, réussir à, parvenir à quelque chose : Elle est arrivée à obtenir une mention à l'examen."
+          ],
+          "categories": [],
+          "notes": [
+            "Il faut répéter la préposition « à » lorsqu'il y a plusieurs compléments."
+          ]
+        },
+        {
+          "rule": "« À » introduit le complément d'un adjectif pour exprimer un comportement ou une tendance, une comparaison.",
+          "examples": [
+            "un comportement ou une tendance : prêt à, hostile à, favorable à, opposé à...",
+            "une comparaison : supérieur à, inférieur à, semblable à, comparable à..."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« À » fait partie de locutions qui expriment la manière, la gradation, le moyen de se déplacer, d'acheter ou de vendre, de faire.",
+          "examples": [
+            "la manière : à voix basse, à pas lents, à reculons, à gros sanglots...",
+            "la gradation : petit à petit, au fur et à mesure, peu à peu, goutte à goutte...",
+            "le moyen de se déplacer : à pied, à vélo ; d'acheter ou de vendre : au kilo ; de faire : à la main, à la machine..."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« À » introduit un complément de nom et exprime l'usage approprié ou la composition.",
+          "examples": [
+            "l'usage approprié : une tasse à thé, une brosse à cheveux...",
+            "la composition : une tarte aux fraises, un chou à la crème..."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 109,
+          "instruction": "Complétez ces textes avec la préposition « à » ; faites la contraction si nécessaire.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "A. – Tu voyages toujours autant ?\n– Plus que jamais. En un mois je suis allé _____ Portugal, _____ Maroc, _____ Rome, _____ Athènes, _____ Madrid.\n– Et les îles, tu y vas toujours ?\n– _____ La Réunion, _____ Madagascar, je n'y vais plus.\nJe le regrette beaucoup. _____ fond je préfère les pays du soleil. Ils sont _____ centre de mes intérêts.\n\nB. J'ai pris ce livre _____ bibliothèque car je m'intéresse _____ Égypte ancienne et _____ fouilles archéologiques. J'ai réussi _____ obtenir une bourse pour continuer mes recherches. Mon directeur de thèse est opposé _____ certains collègues sur un thème _____ je tiens beaucoup et qui est comparable _____ celui que vous avez développé récemment. J'aspire de plus en plus _____ diriger mes recherches vers l'Orient. Mon directeur de thèse est également favorable _____ projet que je lui ai présenté dernièrement.", "blanks": 18 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 109,
+          "instruction": "Trouvez l'expression équivalente contenant la préposition « à » et utilisez-la dans une phrase de votre choix comme dans le modèle.",
+          "type": "transformation",
+          "context": "Parler fort = parler à haute voix. → Dans la classe il ne fallait pas parler à haute voix.",
+          "items": [
+            { "number": 1, "text": "Marcher lentement = _____", "blanks": 1 },
+            { "number": 2, "text": "Parler doucement = _____", "blanks": 1 },
+            { "number": 3, "text": "Se déplacer avec une bicyclette = _____", "blanks": 1 },
+            { "number": 4, "text": "Marcher en reculant = _____", "blanks": 1 },
+            { "number": 5, "text": "Avancer en tâtonnant = _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 109,
+          "instruction": "Reliez les éléments de la colonne de gauche à ceux de la colonne de droite en ajoutant la préposition « à ». Faites la contraction si nécessaire puis employez les expressions dans des phrases.",
+          "type": "matching",
+          "context": null,
+          "items": [
+            { "number": null, "text": "A:\n1. Les huîtres se vendent a. _____ mètre\n2. La lettre est écrite b. _____ main\n3. Le tissu s'achète c. _____ litre\n4. Le sucre se vend d. _____ douzaine\n5. Le message a été écrit e. _____ kilo\n6. L'huile se vend f. _____ machine\n\nB:\n1. un sac a. _____ glace\n2. une flûte b. _____ repasser\n3. des chaussures c. _____ talons hauts\n4. un seau d. _____ bec\n5. un fer e. _____ main\n6. un chou f. _____ crème\n\nEn général, les huîtres se vendent à la douzaine.", "blanks": 12 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "LA PRÉPOSITION « DE »",
+      "subtitle": null,
+      "book_pages": [110, 111],
+      "intro_examples": [
+        "Je l'ai rencontré dans un club de jazz près de chez moi. On a parlé de tout ; il a toujours quelque chose d'intéressant à dire."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "« De » introduit un complément de lieu exprimant la provenance, le point de départ, l'emplacement.",
+          "examples": [
+            "la provenance : arriver de France, du Portugal, d'Espagne, des États-Unis...",
+            "le point de départ : de la maison à la mairie, du parc à la gare...",
+            "l'emplacement : loin de, en face de, au-dessus de, en bas de, près de...",
+            "Ils sont arrivés du Portugal ce matin. Nous habitons loin de l'aéroport ; ils ont pris un taxi de l'aéroport à chez nous."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« De » introduit le complément de beaucoup de verbes : parler de, se soucier de, se moquer de, jouer de, dépendre de...",
+          "examples": [
+            "Les enfants parlent souvent de lui et de sa bonne humeur."
+          ],
+          "categories": [],
+          "notes": [
+            "Il faut répéter la préposition « de » quand il y a plusieurs compléments."
+          ]
+        },
+        {
+          "rule": "« De » introduit le complément d'un adjectif : être fier de, content de, sûr de, responsable de, satisfait de...",
+          "examples": [
+            "Ils sont contents de leur nouvel appartement."
+          ],
+          "categories": [],
+          "notes": [
+            "« De » introduit le complément de certains adjectifs utilisés avec une construction impersonnelle : il est important de, il est nécessaire de, il est possible de..."
+          ]
+        },
+        {
+          "rule": "« De » est très souvent utilisé pour établir un lien entre deux noms et exprimer la possession ou la catégorie.",
+          "examples": [
+            "la possession : la veste de ma sœur, le vélo de Julie...",
+            "la catégorie : une table de cuisine, une lampe de bureau, un chien de chasse..."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« De » introduit différents compléments pour exprimer la cause, la manière, la quantité, la mesure de différence.",
+          "examples": [
+            "la cause : mourir de faim, trembler de peur, danser de joie, crier de douleur...",
+            "la manière : répondre d'un ton sec, écouter d'un air moqueur...",
+            "la quantité : une centaine de personnes, un kilo de fruits, une tasse de café...",
+            "la mesure de différence : il a vieilli de dix ans, ma montre avance de 5 minutes..."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« De » peut introduire le complément de certains pronoms.",
+          "examples": [
+            "C'est quelqu'un de sérieux. – Il n'y a rien de grave. – J'ai vu quelque chose d'intéressant.",
+            "Il n'y a personne de responsable ici ?"
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 111,
+          "instruction": "Complétez ce texte avec la préposition « de » en faisant la contraction si nécessaire.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Je me souviens bien _____ lui. Il était arrivé _____ gare, un matin _____ hiver. Il venait _____ province, _____ Nîmes exactement. On disait qu'il s'était échappé _____ prison. Il habitait en face _____ poste à côté _____ café. Il refusait _____ nous parler. Il semblait se moquer _____ tout et _____ tout le monde. C'était quelqu'un _____ bizarre.", "blanks": 12 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 111,
+          "instruction": "Complétez les phrases avec une expression contenant un adjectif + « de » : content de, fier de, satisfait de, sûr de, responsable de, etc.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il a obtenu le Premier Prix du Conservatoire, il _____ son succès.", "blanks": 1 },
+            { "number": 2, "text": "Elle a changé d'emploi ; elle _____ sa nouvelle situation.", "blanks": 1 },
+            { "number": 3, "text": "J'ai enfin reçu une réponse positive ; je _____ partir.", "blanks": 1 },
+            { "number": 4, "text": "Il vient d'être nommé directeur ; il _____ tout le service.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 111,
+          "instruction": "Construisez une phrase avec chacune de ces expressions.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il est important de _____", "blanks": 1 },
+            { "number": 2, "text": "Il est facile de _____", "blanks": 1 },
+            { "number": 3, "text": "Il est nécessaire de _____", "blanks": 1 },
+            { "number": 4, "text": "Il est impossible de _____", "blanks": 1 },
+            { "number": 5, "text": "Il est difficile de _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 111,
+          "instruction": "Expliquez dans une paraphrase les expressions suivantes selon le modèle.",
+          "type": "transformation",
+          "context": "Ils étaient morts de rire. → Ils riaient beaucoup au point d'en mourir.",
+          "items": [
+            { "number": 1, "text": "Elle mourait de faim : _____", "blanks": 1 },
+            { "number": 2, "text": "Il pleurait de joie : _____", "blanks": 1 },
+            { "number": 3, "text": "J'étais rouge de honte : _____", "blanks": 1 },
+            { "number": 4, "text": "Nous tremblions de peur : _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 111,
+          "instruction": "Donnez l'expression équivalente contenant la préposition « de » selon le modèle.",
+          "type": "transformation",
+          "context": "répondre sèchement (ton) → répondre d'un ton sec",
+          "items": [
+            { "number": 1, "text": "regarder bizarrement (air) : _____", "blanks": 1 },
+            { "number": 2, "text": "rire avec moquerie (air) : _____", "blanks": 1 },
+            { "number": 3, "text": "marcher avec légèreté (pas) : _____", "blanks": 1 },
+            { "number": 4, "text": "travailler régulièrement (façon) : _____", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "LA PRÉPOSITION « EN »",
+      "subtitle": null,
+      "book_pages": [112, 113],
+      "intro_examples": [
+        "Quand je voyage en avion, ce n'est pas en toute tranquillité ; en quelques mots : je suis morte de peur."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "« En » introduit un complément de lieu.",
+          "examples": [
+            "les noms de pays féminins et masculins commençant par une voyelle : en France, en Suède, en Iran, en Angola...",
+            "les noms de régions féminins ou masculins commençant par une voyelle : en Normandie, en Provence, en Anjou...",
+            "les noms d'îles avec articles : en Corse (la Corse), en Sicile (la Sicile)..."
+          ],
+          "categories": [],
+          "notes": [
+            "Certaines locutions avec « en » ont un rapport avec le lieu : en haut, en bas, en face, en travers."
+          ]
+        },
+        {
+          "rule": "« En » est utilisé dans beaucoup d'expressions pour introduire le moyen de transport, la matière, la façon de s'habiller, la manière de diviser, la disposition dans l'espace, un état physique ou psychologique, une manière de s'exprimer, une durée fermée.",
+          "examples": [
+            "le moyen de transport : en avion, en train, en bus, en métro...",
+            "la matière dont un objet est fait : une bague en or, un pot en terre...",
+            "la façon de s'habiller : en pantalon, en robe, en jupe, en noir, en blanc...",
+            "la manière de diviser un objet : diviser en petits morceaux, couper en tranches, plier en deux, un roman en trois volumes...",
+            "la disposition dans l'espace : s'asseoir en rond, se ranger en ligne, mettre en tas, marcher en zigzag...",
+            "un état physique ou psychologique : en larmes, en colère, en forme, en bonne santé/en mauvaise santé, en paix...",
+            "une manière de s'exprimer : parler en chinois, dire en quelques mots, s'exprimer en vers...",
+            "une durée fermée : Je vais au bureau en dix minutes. [Il me faut dix minutes pour aller au bureau.]"
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« En » est utilisé avec certains types de verbes : verbes exprimant la confiance (espérer en, croire en, avoir confiance en) et verbes exprimant un changement (changer en, transformer en, traduire en).",
+          "examples": [
+            "Nous avons confiance en lui. Nous avons confiance dans son programme."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« En » et « dans » : La préposition « en » introduit une généralité alors que la préposition « dans » introduit une spécificité.",
+          "examples": [
+            "Il vit en banlieue, dans une banlieue calme."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 113,
+          "instruction": "Complétez avec la préposition « en » et apprenez ces expressions.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Je voyage _____ train plutôt que _____ voiture.", "blanks": 2 },
+            { "number": 2, "text": "Ils habitent _____ France, _____ Alsace précisément.", "blanks": 2 },
+            { "number": 3, "text": "Elle passe ses vacances soit _____ Corse, soit _____ Sardaigne.", "blanks": 2 },
+            { "number": 4, "text": "Il se met souvent _____ colère.", "blanks": 1 },
+            { "number": 5, "text": "Nous l'avons trouvé _____ meilleure forme.", "blanks": 1 },
+            { "number": 6, "text": "Nous avons passé les fêtes entre amis, _____ toute tranquillité.", "blanks": 1 },
+            { "number": 7, "text": "Le texte a été traduit _____ plusieurs langues.", "blanks": 1 },
+            { "number": 8, "text": "Il dort toujours _____ travers du lit.", "blanks": 1 },
+            { "number": 9, "text": "N'oubliez pas de signer _____ bas de la page.", "blanks": 1 },
+            { "number": 10, "text": "Elle était toujours vêtue _____ noir et portait une bague _____ diamant.", "blanks": 2 },
+            { "number": 11, "text": "On leur avait demandé de s'habiller _____ pantalon et _____ veste.", "blanks": 2 },
+            { "number": 12, "text": "Il est resté _____ exil pendant trois ans.", "blanks": 1 },
+            { "number": 13, "text": "Le moniteur leur disait de se mettre _____ rangs, de s'asseoir _____ tailleur, de courir _____ zigzag.", "blanks": 3 },
+            { "number": 14, "text": "Son œuvre a été publiée _____ trois volumes.", "blanks": 1 },
+            { "number": 15, "text": "Il disait qu'il ne croyait plus _____ rien ni _____ personne.", "blanks": 2 },
+            { "number": 16, "text": "J'ai fait le trajet _____ cinq heures.", "blanks": 1 },
+            { "number": 17, "text": "Elle nous a expliqué ce qui s'était passé _____ quelques mots.", "blanks": 1 },
+            { "number": 18, "text": "Ils aiment partir _____ vacances _____ groupes.", "blanks": 2 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 113,
+          "instruction": "Complétez avec les prépositions « en » ou « dans » et apprenez ces expressions.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Nous avons célébré le mariage _____ famille _____ la plus stricte intimité car nous étions _____ deuil.", "blanks": 3 },
+            { "number": 2, "text": "L'institutrice exigeait des élèves qu'ils rentrent _____ la classe _____ silence.", "blanks": 2 },
+            { "number": 3, "text": "Ils habitent _____ Norvège _____ une petite ville du nord du pays.", "blanks": 2 },
+            { "number": 4, "text": "Ils se sont réfugiés _____ la montagne où il vivent _____ pleine nature.", "blanks": 2 },
+            { "number": 5, "text": "J'ai voyagé _____ première classe _____ un wagon non fumeurs.", "blanks": 2 },
+            { "number": 6, "text": "Nous étions _____ classe, _____ la salle située _____ face du laboratoire.", "blanks": 3 },
+            { "number": 7, "text": "L'orage nous a surpris _____ chemin _____ un petit village près de Rennes.", "blanks": 2 },
+            { "number": 8, "text": "Ils se sont déguisés _____ extraterrestres et ils sont apparus _____ des costumes extravagants.", "blanks": 2 },
+            { "number": 9, "text": "Elle était _____ forme, _____ une forme incroyable.", "blanks": 2 },
+            { "number": 10, "text": "Ils aspirent à vivre _____ paix, _____ une paix durable.", "blanks": 2 },
+            { "number": 11, "text": "Elle était habillée _____ bleu, _____ un bleu azur magnifique.", "blanks": 2 },
+            { "number": 12, "text": "Pendant mon séjour _____ France, j'ai vécu _____ famille, _____ une famille très accueillante où il y avait quatre enfants.", "blanks": 3 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "LA PRÉPOSITION « PAR »",
+      "subtitle": null,
+      "book_pages": [114, 115],
+      "intro_examples": [
+        "J'ai dû passer par la fenêtre pour sortir.",
+        "On l'a envoyé par avion pour ne pas perdre de temps."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "« Par » introduit un complément exprimant un rapport avec le lieu.",
+          "examples": [
+            "passer par la porte, sortir par la fenêtre, regarder par le trou de la serrure.",
+            "La porte était bloquée ; nous sommes sortis par la fenêtre."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Par » peut exprimer plusieurs sens : le moyen, la cause, la distribution.",
+          "examples": [
+            "le moyen : envoyer par avion, prendre par la taille, appeler par son nom... J'ai envoyé le paquet par avion.",
+            "la cause : par courtoisie, par amour, par jalousie, par intérêt... Elle l'a aidé par gentillesse.",
+            "la distribution : une fois par semaine, trois fois par an... Il fait du sport deux fois par semaine."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Par » fait partie de certaines locutions : par hasard, par conséquent, par bonheur, par malheur, par exemple...",
+          "examples": [
+            "Je les ai rencontrés par hasard au supermarché ; je ne les avais pas vus depuis longtemps."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Par » introduit le complément d'agent de la voix passive.",
+          "examples": [
+            "Ce tableau a été peint par mon père."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Par » est utilisé avec les verbes qui expriment le début ou la fin d'une action : commencer par, débuter par, finir par, terminer par...",
+          "examples": [
+            "Le concert a commencé par une sonate."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 115,
+          "instruction": "Complétez en utilisant la préposition « par » et apprenez ces expressions.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Aujourd'hui on dispose de beaucoup de moyens pour envoyer une information. On peut l'envoyer _____, _____, ou _____.", "blanks": 3 },
+            { "number": 2, "text": "Il y a plusieurs explications possibles à sa conduite. Elle a pu agir _____, _____, ou _____.", "blanks": 3 },
+            { "number": 3, "text": "Nous les avons connus tout à fait _____ au cours d'un voyage.", "blanks": 1 },
+            { "number": 4, "text": "On ignore jusqu'à maintenant l'auteur de cette œuvre. Elle a peut-être été écrite _____, ou _____.", "blanks": 2 },
+            { "number": 5, "text": "On regarde régulièrement cette émission : elle a lieu _____.", "blanks": 1 },
+            { "number": 6, "text": "Le spectacle a commencé _____ et a fini _____.", "blanks": 2 },
+            { "number": 7, "text": "Ils avaient oublié la clef, ils ont dû passer _____.", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "LA PRÉPOSITION « POUR »",
+      "subtitle": null,
+      "book_pages": [114, 115],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "« Pour » exprime plusieurs sens : la destination, le but, la cause, la durée prévue.",
+          "examples": [
+            "la destination : il est parti pour New York, voilà une lettre pour vous...",
+            "le but : elle ne veut pas travailler pour rien, je le dis pour ton bien... On s'est vus pour parler des vacances. – J'ai bu un café pour ne pas dormir.",
+            "la cause : le magasin est fermé pour congés annuels ; l'hôtel est fermé pour travaux ; il a été condamné pour un vol à main armée ; il est apprécié pour sa gentillesse ; Flaubert est admiré pour son style...",
+            "la durée prévue : il s'est absenté pour une heure ; elle est partie pour deux semaines ; le médecin m'a donné un traitement pour un mois."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 2,
+          "book_page": 115,
+          "instruction": "Répondez aux questions suivantes en utilisant la préposition « pour » comme dans le modèle.",
+          "type": "transformation",
+          "context": "Où sont-il partis ? → Ils sont partis pour le Mexique.",
+          "items": [
+            { "number": 1, "text": "À qui est adressé ce message ? _____", "blanks": 1 },
+            { "number": 2, "text": "Pourquoi a-t-il dit ça ? _____", "blanks": 1 },
+            { "number": 3, "text": "Pour quelle raison le magasin est-il fermé ? _____", "blanks": 1 },
+            { "number": 4, "text": "Pourquoi est-il si aimé de ses amis ? _____", "blanks": 1 },
+            { "number": 5, "text": "Elle s'est absentée pour longtemps ? _____", "blanks": 1 },
+            { "number": 6, "text": "Pourquoi le musée est-il fermé ? _____", "blanks": 1 },
+            { "number": 7, "text": "Pourquoi ont-ils été arrêtés par la police ? _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 115,
+          "instruction": "Complétez par « par » ou « pour ».",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Elle s'absente _____ un mois _____ cause de maladie.", "blanks": 2 },
+            { "number": 2, "text": "Il a fini _____ accepter notre proposition.", "blanks": 1 },
+            { "number": 3, "text": "J'ai été arrêté _____ excès de vitesse.", "blanks": 1 },
+            { "number": 4, "text": "Il a tout abandonné _____ peur d'échouer.", "blanks": 1 },
+            { "number": 5, "text": "Elle s'est mariée _____ amour et non _____ intérêt.", "blanks": 2 },
+            { "number": 6, "text": "Il a fini _____ avouer son erreur.", "blanks": 1 },
+            { "number": 7, "text": "L'avion vient de décoller _____ Londres.", "blanks": 1 },
+            { "number": 8, "text": "On est partis _____ Lyon à 3 heures et on a été arrêtés _____ un orage violent peu de temps après.", "blanks": 2 },
+            { "number": 9, "text": "Il a eu une contravention _____ avoir oublié de composter son billet.", "blanks": 1 },
+            { "number": 10, "text": "Elle a cité plusieurs philosophes, _____ exemple Spinoza.", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [108, 109, 110, 111, 112, 113, 114, 115],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

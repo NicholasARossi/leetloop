@@ -1,0 +1,281 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 21,
+  "chapter_title": "L'EXPRESSION de LA CAUSE",
+  "book_pages": [138, 139, 140, 141],
+  "sections": [
+    {
+      "section_title": "LA CAUSE introduite par des conjonctions",
+      "subtitle": null,
+      "book_pages": [138, 139],
+      "intro_examples": [
+        "Comme je n'avais pas ton adresse, je n'ai pas pu t'écrire.",
+        "L'autoroute a été fermée en raison du verglas.",
+        "C'est grâce à lui que l'équipe a gagné."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "« Parce que », « comme », « puisque » sont les conjonctions les plus courantes.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Parce que » répond à la question « pourquoi ? ». La cause est considérée comme banale. « Parce que » n'est pas, en général, en tête de phrase.",
+          "examples": [
+            "Il est allé voir le médecin parce qu'il avait de la fièvre depuis plusieurs jours."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Comme » se place en tête de phrase et met la cause en valeur.",
+          "examples": [
+            "Comme il n'a pas plu depuis un mois, on est obligés d'arroser le jardin tous les jours."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Puisque » introduit une cause évidente pour celui qui parle et en général connue de l'interlocuteur.",
+          "examples": [
+            "Puisqu'il fait beau, déjeunons sur la terrasse !",
+            "Tu devrais aller voir cette exposition, puisque tu aimes Picasso."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Étant donné que » et « du fait que » introduisent une cause connue de tous. Ces locutions se placent en tête de phrase ou après la conséquence.",
+          "examples": [
+            "Étant donné qu'il a 18 ans, il peut passer le permis de conduire.",
+            "Les enfants ont dû rester à la maison étant donné que les instituteurs étaient en grève.",
+            "Du fait que tout le monde était fatigué, nous avons arrêté la réunion.",
+            "Le ministre a laissé ses fonctions du fait qu'il était très malade."
+          ],
+          "categories": [],
+          "notes": [
+            "« Étant donné que » s'emploie surtout à l'écrit.",
+            "« Du fait que » est employé à l'oral et à l'écrit."
+          ]
+        },
+        {
+          "rule": "« Sous prétexte que » introduit une cause fausse.",
+          "examples": [
+            "Il n'est pas venu sous prétexte qu'il était malade. [mais je ne le crois pas]"
+          ],
+          "categories": [],
+          "notes": [
+            "Quand il y a plusieurs causes, on ne répète pas la conjonction, on la remplace par « que » : Comme il y avait du soleil et que nous avions du temps, nous avons décidé d'y aller à pied."
+          ]
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 139,
+          "instruction": "Répondez aux questions en utilisant « parce que ».",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Pourquoi est-ce que tu pars tôt ? _____", "blanks": 1 },
+            { "number": 2, "text": "Pourquoi est-ce qu'elle rentre dans son pays ? _____", "blanks": 1 },
+            { "number": 3, "text": "Pourquoi n'étiez-vous pas à la réunion hier soir ? _____", "blanks": 1 },
+            { "number": 4, "text": "Pourquoi ne lui a-t-il pas dit la vérité ? _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 139,
+          "instruction": "Mettez le verbe proposé au temps qui convient.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Comme elle (oublier) _____ ses clefs et qu'elle (ne pas vouloir) _____ réveiller ses parents, elle est restée dormir à la maison.", "blanks": 2 },
+            { "number": 2, "text": "Comme il (être) _____ seul, nous l'avons invité à dîner avec nous.", "blanks": 1 },
+            { "number": 3, "text": "Comme il (faire) _____ beau, elle va emmener les enfants jouer au parc.", "blanks": 1 },
+            { "number": 4, "text": "Comme je (avoir) _____ mal à l'estomac, je ne bois pas de jus d'orange.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 139,
+          "instruction": "Complétez avec « puisque » comme dans le modèle.",
+          "type": "fill_blank",
+          "context": "→ Puisque tu es bon en maths, explique-moi ce problème de géométrie !",
+          "items": [
+            { "number": 1, "text": "_____, partons sans lui !", "blanks": 1 },
+            { "number": 2, "text": "_____, je ne t'en reparlerai pas !", "blanks": 1 },
+            { "number": 3, "text": "_____, allons voir un autre film !", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 139,
+          "instruction": "Reliez les phrases proposées par « étant donné que » ou « du fait que » pour créer un rapport cause/conséquence.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Les loyers sont chers. / Les gens désertent les grandes villes pour aller habiter en banlieue. _____", "blanks": 1 },
+            { "number": 2, "text": "Les gens regardent beaucoup la télévision. / Le cinéma est en crise. _____", "blanks": 1 },
+            { "number": 3, "text": "Vous n'avez pas 18 ans. / Vous avez besoin d'une autorisation parentale. _____", "blanks": 1 },
+            { "number": 4, "text": "Les aiguilleurs du ciel sont en grève. / Les avions ne partiront pas. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 139,
+          "instruction": "Transformez ces phrases en utilisant « sous prétexte que ».",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Ils ne sont pas venus au cinéma avec nous parce qu'ils prétendaient qu'ils avaient vu le film. _____", "blanks": 1 },
+            { "number": 2, "text": "Ils ont détruit ce vieil immeuble parce qu'ils ont prétendu qu'il représentait un danger. _____", "blanks": 1 },
+            { "number": 3, "text": "Elle ne m'a pas écrit parce qu'elle a prétendu avoir perdu mon adresse. _____", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "LA CAUSE introduite par des prépositions",
+      "subtitle": null,
+      "book_pages": [140, 141],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "« Grâce à » introduit une cause dont la conséquence est positive. Il est suivi d'un nom ou d'un pronom.",
+          "examples": [
+            "Elle a trouvé un appartement grâce à des amis qui travaillent dans une agence."
+          ],
+          "categories": [],
+          "notes": [
+            "Quand il y a deux causes, la seconde cause est introduite par « à » : Il a pu réussir grâce à elle et à quelques amis."
+          ]
+        },
+        {
+          "rule": "« À cause de » introduit en général une cause dont la conséquence est négative ; il est suivi d'un nom ou d'un pronom.",
+          "examples": [
+            "Le match n'a pas eu lieu à cause du mauvais temps.",
+            "On est arrivés en retard au théâtre à cause de lui."
+          ],
+          "categories": [],
+          "notes": [
+            "Quand il y a deux causes, la seconde est introduite par « de » : On est arrivés en retard à cause de lui et des embouteillages."
+          ]
+        },
+        {
+          "rule": "« En raison de » introduit une cause dont la conséquence est neutre ; il est suivi d'un nom ; il est employé surtout à l'écrit.",
+          "examples": [
+            "Le magasin sera fermé en raison des fêtes de Pâques."
+          ],
+          "categories": [],
+          "notes": [
+            "Quand il y a deux causes, la seconde est introduite par « de » : La route est interdite à la circulation en raison de la neige et du verglas."
+          ]
+        },
+        {
+          "rule": "« Étant donné » et « du fait de » introduisent une cause connue de tous ; ils sont suivis d'un nom.",
+          "examples": [
+            "Étant donné la pollution dans les grandes villes, les gens préfèrent aller vivre en province.",
+            "Ils sont allés vivre en banlieue du fait de l'augmentation des loyers en ville."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 141,
+          "instruction": "Complétez avec « grâce à » ou « à cause de ».",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il a pu continuer ses études _____ une bourse du ministère.", "blanks": 1 },
+            { "number": 2, "text": "Elle a été sauvée _____ un nouveau médicament.", "blanks": 1 },
+            { "number": 3, "text": "J'ai mal aux pieds _____ mes chaussures neuves.", "blanks": 1 },
+            { "number": 4, "text": "Je me suis enrhumé _____ changement de temps et _____ l'humidité.", "blanks": 2 },
+            { "number": 5, "text": "Cette entreprise a continué de fonctionner _____ une subvention de la région.", "blanks": 1 },
+            { "number": 6, "text": "Ils sont arrivés en retard _____ d'une panne de voiture.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 141,
+          "instruction": "Terminez les phrases.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Les magasins sont illuminés en raison de _____", "blanks": 1 },
+            { "number": 2, "text": "J'ai raté mon train à cause de _____", "blanks": 1 },
+            { "number": 3, "text": "Il a réussi son examen grâce à _____", "blanks": 1 },
+            { "number": 4, "text": "Le poisson est cher en raison de _____", "blanks": 1 },
+            { "number": 5, "text": "Les banques seront fermées en raison de _____", "blanks": 1 },
+            { "number": 6, "text": "Il a raté son examen _____", "blanks": 1 },
+            { "number": 7, "text": "Ils ont pu faire ce voyage _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 141,
+          "instruction": "Transformez la phrase en utilisant « étant donné + nom » ou « du fait de + nom ».",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Nous sommes rentrés parce qu'il y avait une tempête. _____", "blanks": 1 },
+            { "number": 2, "text": "La rue est interdite à la circulation parce qu'il y a des travaux. _____", "blanks": 1 },
+            { "number": 3, "text": "La population était mécontente parce que les prix augmentaient. _____", "blanks": 1 },
+            { "number": 4, "text": "Il a dû quitter son poste parce qu'il y avait un scandale autour de sa vie privée. _____", "blanks": 1 },
+            { "number": 5, "text": "Il y aura une manifestation parce que l'Assemblée a voté une nouvelle loi. _____", "blanks": 1 },
+            { "number": 6, "text": "Ils ont changé le règlement parce qu'il y avait trop de fraudes. _____", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "LA CAUSE introduite par des mots de liaison",
+      "subtitle": null,
+      "book_pages": [140, 141],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "« Car » est employé plutôt à l'écrit ; il introduit une explication à ce qui vient d'être dit.",
+          "examples": [
+            "Ils avaient passé l'après-midi à bavarder au coin du feu car dehors il faisait très froid."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« En effet » est employé à l'écrit et à l'oral ; il introduit une explication à ce qui vient d'être dit.",
+          "examples": [
+            "Ils commencèrent à se dépêcher ; en effet le ciel s'assombrissait et annonçait un orage.",
+            "– Tu es pressé ? – En effet, je suis en retard ; j'ai un rendez-vous."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 4,
+          "book_page": 141,
+          "instruction": "Complétez comme il convient pour introduire une explication :",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il a été envoyé en exil ; en effet _____", "blanks": 1 },
+            { "number": 2, "text": "Tous ses romans ont pour toile de fond l'Indochine car _____", "blanks": 1 },
+            { "number": 3, "text": "Nous sommes invités chez France samedi prochain. En effet _____", "blanks": 1 },
+            { "number": 4, "text": "Les étudiants étrangers aiment lire L'Étranger de Camus car _____", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [138, 139, 140, 141],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

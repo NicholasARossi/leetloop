@@ -1,0 +1,510 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 27,
+  "chapter_title": "LA MODALISATION",
+  "book_pages": [158, 159, 160, 161, 162, 163, 164, 165, 166, 167],
+  "sections": [
+    {
+      "section_title": "DÉFINITION",
+      "subtitle": null,
+      "book_pages": [158],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "La modalisation est la marque par laquelle le sujet qui parle donne aux mots qu'il utilise diverses nuances. Selon l'utilisation qu'il en fait, on peut dire : qu'il adhère à ce qu'il dit (C'est tout à fait vrai), qu'il prend de la distance par rapport à ce qu'il dit (Il est possible que ce soit vrai), ou qu'il n'apparaît pas dans ce qu'il dit (C'est exact).",
+          "examples": [],
+          "categories": [],
+          "notes": [
+            "Entre ces différentes positions, plusieurs nuances peuvent exister. Par exemple, dire : « Je suis favorable à ce projet. », c'est bien sûr une façon d'exprimer son accord, mais ce n'est pas encore donner son acceptation. Dire : « C'est sans doute de la malhonnêteté. » n'est pas la même chose que dire : « C'est de la malhonnêteté. »"
+          ]
+        }
+      ],
+      "exercises": []
+    },
+    {
+      "section_title": "Cas de l'affirmation et de la négation",
+      "subtitle": null,
+      "book_pages": [158, 159],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "La réponse peut être nuancée. Pour la négation : Bien sûr que non / Certainement pas / Non / Mais pas du tout / Absolument pas / Sûrement pas. Pour l'affirmation : Bien sûr que oui / Certainement / Oui / Évidemment / Naturellement / Absolument.",
+          "examples": [
+            "– Tu ne vas pas lui répéter ce que je t'ai dit ? – Bien sûr que non. / Certainement pas. / Non. / Mais pas du tout. / Absolument pas. / Sûrement pas.",
+            "– Tu l'invites à ton anniversaire ? – Bien sûr que oui. / Certainement. / Oui. / Évidemment. / Naturellement. / Absolument."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "La nuance peut exprimer le doute, l'incertitude, le fait de ne pas savoir exactement.",
+          "examples": [
+            "– Elle vient ? – Peut-être. / C'est possible. / Ce n'est pas impossible. / C'est à voir. / On verra bien. / Je ne sais pas. / Je n'en suis pas sûr. / Ça m'étonnerait (fort). / Qui sait ? / Dieu seul le sait. / Elle hésite. / Sans doute."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 159,
+          "instruction": "À partir de ces questions, répondez de façon positive en utilisant toutes les possibilités de modalisation que vous connaissez.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "– Elle a réussi ? –", "blanks": 1 },
+            { "number": 2, "text": "– Il est guéri ? –", "blanks": 1 },
+            { "number": 3, "text": "– Elle reviendra ? –", "blanks": 1 },
+            { "number": 4, "text": "– Elle acceptera ? –", "blanks": 1 },
+            { "number": 5, "text": "– Il partira ? –", "blanks": 1 },
+            { "number": 6, "text": "– Ils vous attendront ? –", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 159,
+          "instruction": "À partir des questions suivantes, répondez de façon négative en utilisant toutes les possibilités de modalisation que vous connaissez.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "– Elle ne viendra pas ? –", "blanks": 1 },
+            { "number": 2, "text": "– Elle n'a pas téléphoné ? –", "blanks": 1 },
+            { "number": 3, "text": "– Il n'a pas avoué ? –", "blanks": 1 },
+            { "number": 4, "text": "– Il n'a pas donné signe de vie ? –", "blanks": 1 },
+            { "number": 5, "text": "– Elle ne le quittera pas ? –", "blanks": 1 },
+            { "number": 6, "text": "– Il ne lui dira rien ? –", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 159,
+          "instruction": "À partir des questions suivantes, répondez de façon à exprimer l'incertitude en utilisant tous les moyens dont vous disposez.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "– Il n'est pas guéri ? –", "blanks": 1 },
+            { "number": 2, "text": "– Elle recommencera ? –", "blanks": 1 },
+            { "number": 3, "text": "– Ils ne se quitteront pas ? –", "blanks": 1 },
+            { "number": 4, "text": "– Ils se marieront bientôt ? –", "blanks": 1 },
+            { "number": 5, "text": "– A-t-elle donné signe de vie ? –", "blanks": 1 },
+            { "number": 6, "text": "– Ils t'attendront ? –", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 159,
+          "instruction": "À partir de l'état donné (« il a de la fièvre »), exprimez les nuances intermédiaires qui vous conduiront à la négation de l'état initial (« il n'a pas de fièvre »).",
+          "type": "free_response",
+          "context": "Il a de la fièvre. → Il est probable qu'il ait de la fièvre. Il n'est pas certain qu'il ait de la fièvre. Il n'a pas de fièvre.",
+          "items": [
+            { "number": 1, "text": "– Il est fiévreux.", "blanks": 1 },
+            { "number": 2, "text": "– Il fait une dépression nerveuse.", "blanks": 1 },
+            { "number": 3, "text": "– Il fait un froid de canard.", "blanks": 1 },
+            { "number": 4, "text": "– Ce sera une bonne année pour les vins de Bordeaux.", "blanks": 1 },
+            { "number": 5, "text": "– C'est vrai.", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "Cas de ce qui « est », de ce qui « existe » (domaine de l'Être et du Réel)",
+      "subtitle": null,
+      "book_pages": [160, 161],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "À « être » et à « réel » s'opposent « ne pas être » et « irréel ». Entre ces pôles s'étend une continuité linguistique qui sert à exprimer l'incertitude, l'apparence : paraître, avoir l'air, sembler, avoir l'apparence de, ressembler à, etc.",
+          "examples": [
+            "Elle est malade. → Elle paraît/semble malade. / Il semble qu'elle soit malade. / Elle a l'air malade. / On dirait qu'elle est malade. / J'ai l'impression qu'elle est malade. → Elle a failli être malade. (mais elle ne l'a pas été) → Elle n'est pas malade. / Elle est en bonne santé."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Cas du « croire » et du « savoir » (domaine de la pensée). À « je crois » et « je sais » s'opposent « je ne crois pas » et « je ne sais pas » ou « j'ignore ». Entre ces pôles s'étend une continuité linguistique qui sert à exprimer le doute, l'incertitude.",
+          "examples": [
+            "J'ignore s'il a réussi. → Je doute qu'il ait réussi. / Je me demande s'il a réussi. / Je ne crois pas qu'il ait réussi. / Il y a peu de chances pour qu'il ait réussi. → Il se peut qu'il ait réussi. / Il doit avoir réussi. / Je crois qu'il a réussi. / Il y a des chances qu'il ait réussi. → Je sais qu'il a réussi."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Cas du « dire » et du « faire ». À « dire » et à « faire » s'opposent « ne pas dire » et « ne pas faire ». Entre les deux se trouvent toutes les nuances qui conduisent de l'un à l'autre.",
+          "examples": [],
+          "categories": [
+            {
+              "name": "Ne pas dire → Dire",
+              "description": "Se taire → Refuser de dire / Rester muet / Ne pas desserrer les dents / Refuser de parler → Ne pas oser dire / Hésiter à dire → Suggérer / Insinuer / Prétendre → Dire",
+              "examples": []
+            }
+          ],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 161,
+          "instruction": "A. Exprimez votre incertitude quant aux affirmations suivantes. B. Exprimez votre ignorance quant aux affirmations précédentes.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il a échoué dans sa tentative de record.", "blanks": 1 },
+            { "number": 2, "text": "Elle a réussi son examen de passage.", "blanks": 1 },
+            { "number": 3, "text": "Il est guéri.", "blanks": 1 },
+            { "number": 4, "text": "Elle a été retrouvée.", "blanks": 1 },
+            { "number": 5, "text": "Il est coupable.", "blanks": 1 },
+            { "number": 6, "text": "Il sera condamné.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 161,
+          "instruction": "Modalisez comme vous le voulez les phrases suivantes, mais en indiquant la nature de la nuance choisie.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il a dit qu'il avait vu un des voleurs.", "blanks": 1 },
+            { "number": 2, "text": "Elle a dit qu'elle avait été malade.", "blanks": 1 },
+            { "number": 3, "text": "Il a répondu aux accusations.", "blanks": 1 },
+            { "number": 4, "text": "Ces preuves ont permis l'arrestation des malfaiteurs.", "blanks": 1 },
+            { "number": 5, "text": "Ce film a été interdit par la censure.", "blanks": 1 },
+            { "number": 6, "text": "Je vous permets de sortir ce soir.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 161,
+          "instruction": "Modalisez les phrases suivantes de manière à exprimer que vous ne croyez pas ou que vous ne savez pas.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Je crois dans ses chances de réussite.", "blanks": 1 },
+            { "number": 2, "text": "Je crois qu'il arrivera à temps.", "blanks": 1 },
+            { "number": 3, "text": "Je crois en lui.", "blanks": 1 },
+            { "number": 4, "text": "Je sais qu'elle viendra.", "blanks": 1 },
+            { "number": 5, "text": "Cet enfant sait lire.", "blanks": 1 },
+            { "number": 6, "text": "La femme de l'ambassadeur savait recevoir.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 161,
+          "instruction": "Modalisez les phrases suivantes en exprimant votre refus de dire ou votre hésitation à dire.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il a fini par répondre aux questions du juge.", "blanks": 1 },
+            { "number": 2, "text": "Elle a dit tout ce qu'elle savait sur cette affaire.", "blanks": 1 },
+            { "number": 3, "text": "Ils ont avoué à leurs parents qu'ils avaient menti.", "blanks": 1 },
+            { "number": 4, "text": "Elle avait prétendu avoir été attaquée.", "blanks": 1 },
+            { "number": 5, "text": "Il a fait comprendre qu'il voulait réunir le personnel.", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "Cas du « vouloir », du « pouvoir » et du « devoir »",
+      "subtitle": null,
+      "book_pages": [162, 163, 164, 165],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "Avant de « faire » ou « ne pas faire », il y a tout ce qui est lié au « vouloir », au « pouvoir » et au « devoir », qui n'est lié non pas à l'action, mais au sujet : au « je ».",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "L'expression du « vouloir » peut se faire avec des verbes comme : avoir envie de, désirer, souhaiter, exiger, avoir l'intention de, etc.",
+          "examples": [
+            "J'ai envie de partir loin, loin, très loin.",
+            "J'ai l'intention de me présenter aux prochaines élections."
+          ],
+          "categories": [],
+          "notes": [
+            "Ces verbes construits avec « que » appellent le subjonctif : Je désire que vous restiez avec moi. J'exige que vous lui fassiez des excuses."
+          ]
+        },
+        {
+          "rule": "Entre « je peux » et « je ne peux pas », il existe des nuances. Je suis autorisé à... ≠ Il m'est interdit de... / J'ai le droit de... ≠ Il est défendu de... / Il m'est permis de... ≠ Il ne m'est pas permis de...",
+          "examples": [],
+          "categories": [],
+          "notes": [
+            "La possibilité de « faire » ou de « ne pas faire » ne dépend pas de moi (je). Elle m'est imposée de l'extérieur."
+          ]
+        },
+        {
+          "rule": "L'expression de l'éventualité, du « pouvoir » peut se faire avec des verbes tels que : devoir, être en mesure de, être capable de, avoir la possibilité de, il est possible de/que, il se peut que, etc.",
+          "examples": [
+            "Elle a dû manquer le dernier métro.",
+            "Je suis en mesure de vous dire qui est coupable.",
+            "Il se peut que vous ayez un virus."
+          ],
+          "categories": [],
+          "notes": [
+            "Le contraire « ne pas pouvoir » peut s'exprimer avec : avoir du mal à, avoir des difficultés à, ne pas avoir les moyens de, etc.",
+            "La possibilité appelle le subjonctif. La probabilité appelle l'indicatif. Il est possible qu'il guérisse. / Il est probable qu'il guérira."
+          ]
+        },
+        {
+          "rule": "« Devoir » est une modalisation polysémique. Il peut exprimer l'obligation personnelle (éthique) ou l'obligation imposée par l'extérieur.",
+          "examples": [
+            "Je dois aller la voir une fois par semaine. [= parce que c'est mon devoir d'y aller = obligation personnelle]",
+            "Je dois aller la voir une fois par semaine. [= parce que les circonstances extérieures me l'imposent]"
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "L'expression de l'obligation peut aussi se faire avec des tournures impersonnelles : il faut que, il est indispensable que, il est souhaitable que, il est impératif que, il vaut mieux que, etc. Comme avec « devoir » il faut utiliser le contexte pour savoir si l'obligation vient du « je » ou si elle est imposée par l'extérieur.",
+          "examples": [
+            "Il faut que je parte tôt demain matin. [= parce que c'est un but que je me suis fixé / ou = parce que les circonstances extérieures l'imposent]"
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Je m'oblige à faire/à dire quelque chose » indique clairement que l'obligation vient du « je » mais n'est pas liée à la morale mais correspond à des règles de vie que le sujet s'impose.",
+          "examples": [
+            "Je m'oblige à boire du lait tous les jours [parce qu'il contient du calcium qui est bon pour la santé]."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Je suis obligé par quelqu'un de faire ou de dire quelque chose » indique clairement que l'obligation est imposée par l'extérieur.",
+          "examples": [
+            "Il est obligé par sa société de faire un stage d'informatique tous les ans."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Devoir » peut aussi exprimer la probabilité.",
+          "examples": [
+            "Il est midi : il doit être arrivé [il est très probable qu'il est arrivé].",
+            "Il est midi : il devrait arriver sans tarder [il est très probable qu'il arrivera sans tarder]."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 163,
+          "instruction": "Exprimez votre souhait de réaliser les projets suivants.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Aller voir les Pyramides d'Égypte", "blanks": 1 },
+            { "number": 2, "text": "Descendre les gorges du Tarn en canoë", "blanks": 1 },
+            { "number": 3, "text": "Explorer les grottes de la Pierre-Saint-Martin (Pyrénées)", "blanks": 1 },
+            { "number": 4, "text": "Faire de la poterie", "blanks": 1 },
+            { "number": 5, "text": "Travailler avec Médecins sans frontières", "blanks": 1 },
+            { "number": 6, "text": "Monter sa propre entreprise", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 163,
+          "instruction": "À l'aide des verbes « pouvoir » et « devoir », faites sur ces phrases toutes les modalisations possibles.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "L'opération réussira.", "blanks": 1 },
+            { "number": 2, "text": "L'évacuation des populations sera terminée en fin de journée.", "blanks": 1 },
+            { "number": 3, "text": "L'électricien a été contaminé par de l'amiante.", "blanks": 1 },
+            { "number": 4, "text": "Les disparus n'ont pas été retrouvés.", "blanks": 1 },
+            { "number": 5, "text": "Le record de l'heure n'a pas été battu par le cycliste britannique.", "blanks": 1 },
+            { "number": 6, "text": "L'opération de récupération n'a pas réussi.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 163,
+          "instruction": "Complétez les phrases suivantes pour exprimer que l'interdiction ou l'autorisation ne vient pas de vous.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Je suis autorisé … à construire sur ce terrain.", "blanks": 1 },
+            { "number": 2, "text": "J'ai le droit de refaire du sport …", "blanks": 1 },
+            { "number": 3, "text": "Il m'est interdit d'entrer dans un casino …", "blanks": 1 },
+            { "number": 4, "text": "J'ai l'autorisation de sortir jusqu'à minuit …", "blanks": 1 },
+            { "number": 5, "text": "Fumer m'est interdit …", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 163,
+          "instruction": "Modalisez les phrases suivantes de manière à exprimer la possibilité, l'éventualité.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Elle a sauté par la fenêtre.", "blanks": 1 },
+            { "number": 2, "text": "Il a couru le 100 mètres en 9 secondes.", "blanks": 1 },
+            { "number": 3, "text": "Il a cassé le vase de Soissons.", "blanks": 1 },
+            { "number": 4, "text": "Je n'ai pas pu entrer à l'exposition.", "blanks": 1 },
+            { "number": 5, "text": "Il n'a pas pu répondre à leurs questions.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 165,
+          "instruction": "Exprimez, à partir des éléments suivants, que l'obligation vient de l'extérieur et complétez la phrase pour donner un contexte.",
+          "type": "free_response",
+          "context": "Obligation de prendre de la vitamine C tous les matins, en hiver → Je m'oblige à prendre de la vitamine C tous les matins en hiver pour éviter les rhumes.",
+          "items": [
+            { "number": 1, "text": "Passer une visite médicale.", "blanks": 1 },
+            { "number": 2, "text": "Être vacciné contre la typhoïde.", "blanks": 1 },
+            { "number": 3, "text": "Avoir un visa.", "blanks": 1 },
+            { "number": 4, "text": "S'inscrire avant le 15 juin.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 6,
+          "book_page": 165,
+          "instruction": "Exprimez, à partir des éléments suivants, que l'obligation vient du sujet « je » et complétez la phrase pour donner un contexte.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Obligation de faire du sport tous les jours.", "blanks": 1 },
+            { "number": 2, "text": "Obligation de lire avant de s'endormir.", "blanks": 1 },
+            { "number": 3, "text": "Obligation de dormir huit heures par jour.", "blanks": 1 },
+            { "number": 4, "text": "Obligation de ne pas accumuler du courrier.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 7,
+          "book_page": 165,
+          "instruction": "Exprimez, à partir des phrases suivantes, l'éventualité avec probabilité plus ou moins forte.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il est loin, à l'heure qu'il est.", "blanks": 1 },
+            { "number": 2, "text": "Il a fait très froid cette nuit.", "blanks": 1 },
+            { "number": 3, "text": "Elle est certainement belle pour être ainsi adorée.", "blanks": 1 },
+            { "number": 4, "text": "Vous avez souffert avec ce zona.", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "Cas du « faire » lié aux cinq sens et du jugement de valeur",
+      "subtitle": null,
+      "book_pages": [166, 167],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "« Faire » lié aux cinq sens : écouter, entendre, sentir, voir, regarder. Par exemple, entre « voir » et « ne pas voir » il existera des nuances.",
+          "examples": [
+            "Je n'ai pas voulu voir l'ironie insolente qu'il y avait dans sa réponse.",
+            "J'ai cru voir une lueur de haine briller dans son regard.",
+            "J'ai entrevu sa silhouette. C'était suffisant pour la reconnaître.",
+            "Je n'hésiterai pas à voir dans cette proposition de loi une manœuvre politique."
+          ],
+          "categories": [],
+          "notes": [
+            "NE PAS VOIR → Ne pas vouloir voir / J'ai failli voir / Apercevoir / Ne pas hésiter à voir → Se refuser à voir / Entrevoir → Être aveuglé par / Hésiter à voir / Croire voir / Distinguer → VOIR"
+          ]
+        },
+        {
+          "rule": "Cas du jugement de valeur, de l'appréciation.",
+          "examples": [],
+          "categories": [
+            {
+              "name": "Jugements moraux, esthétiques, intellectuels",
+              "description": "bien ≠ mal ; juste ≠ injuste ; confiance ≠ défiance ; beau ≠ laid ; correct ≠ incorrect ; normal ≠ anormal ; opportun ≠ inopportun ; utile ≠ inutile ; vrai ≠ faux",
+              "examples": [
+                "Il est injuste de faire payer les plus défavorisés.",
+                "Je trouve ce tableau laid.",
+                "Il n'est pas correct d'agir ainsi.",
+                "Il est normal de pouvoir s'exprimer.",
+                "Il sera opportun de revoir la loi.",
+                "Il est inutile de continuer les recherches.",
+                "Il est faux de dire que la réforme a été faite pour les défavorisés."
+              ]
+            },
+            {
+              "name": "Jugements sur les perceptions sensibles, les émotions, les sentiments",
+              "description": "bon ≠ mauvais ; plaisir ≠ dégoût ; amour ≠ haine ; joie ≠ tristesse ; enthousiasme ≠ abattement ; dynamisme ≠ apathie ; sympathie ≠ antipathie",
+              "examples": [
+                "C'est très bon. Pouah ! Infâme ! Très mauvais.",
+                "Un vrai plaisir ! Le dégoût absolu !",
+                "C'est l'amour de ma vie. J'ai plus que de la haine envers lui.",
+                "J'ai la très grande joie de vous annoncer que...",
+                "Après l'accident, elle était très abattue.",
+                "Elle a un dynamisme extraordinaire !",
+                "J'ai plus que de la sympathie pour elle."
+              ]
+            }
+          ],
+          "notes": [
+            "La langue est pauvre en nuances intermédiaires. Cependant il en existe comme : ce n'est ni bien, ni mal – ce n'est ni juste, ni trop injuste – c'est quelconque – c'est entre les deux. – indifférent – etc.",
+            "La modalisation peut ne pas être exprimée par des éléments linguistiques. Elle sera alors exprimée par de « l'extra-linguistique » : intonation, geste, regard, etc. Vous vous en apercevrez bientôt. Phrase non marquée linguistiquement. Selon la situation de communication cette phrase peut signifier une menace, un avertissement, une promesse, etc."
+          ]
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 167,
+          "instruction": "Nuancez les phrases suivantes.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "J'ai vu le bus s'arrêter.", "blanks": 1 },
+            { "number": 2, "text": "J'ai vu le rocher du cap Horn.", "blanks": 1 },
+            { "number": 3, "text": "Vous avez vu vos concurrents.", "blanks": 1 },
+            { "number": 4, "text": "J'ai vu l'orage arriver.", "blanks": 1 },
+            { "number": 5, "text": "Je n'ai pas vu le coup venir.", "blanks": 1 },
+            { "number": 6, "text": "J'ai été très sensible à son charme.", "blanks": 1 },
+            { "number": 7, "text": "Vous n'avez pas entendu mes conseils.", "blanks": 1 },
+            { "number": 8, "text": "J'ai écouté vos conseils.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 167,
+          "instruction": "Faites des phrases qui porteront un jugement sur :",
+          "type": "composition",
+          "context": "une cause juste – une cause injuste → Je ne veux pas défendre une cause injuste.",
+          "items": [
+            { "number": 1, "text": "une cause juste – une cause injuste", "blanks": 1 },
+            { "number": 2, "text": "un beau tableau – une (statue) sculpture laide", "blanks": 1 },
+            { "number": 3, "text": "une attitude normale – une attitude anormale", "blanks": 1 },
+            { "number": 4, "text": "un bon repas – un mauvais repas", "blanks": 1 },
+            { "number": 5, "text": "une joie – une tristesse", "blanks": 1 },
+            { "number": 6, "text": "l'amour – la haine", "blanks": 1 },
+            { "number": 7, "text": "un rapport vrai – une affirmation fausse", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 167,
+          "instruction": "Complétez les phrases suivantes.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Cette pièce est mauvaise _____", "blanks": 1 },
+            { "number": 2, "text": "J'ai la tristesse de constater que _____", "blanks": 1 },
+            { "number": 3, "text": "Il est incorrect de _____", "blanks": 1 },
+            { "number": 4, "text": "Il est anormal de _____", "blanks": 1 },
+            { "number": 5, "text": "Il est inopportun de _____", "blanks": 1 },
+            { "number": 6, "text": "Il sera utile de _____", "blanks": 1 },
+            { "number": 7, "text": "Il est vrai que _____", "blanks": 1 },
+            { "number": 8, "text": "Il se pourrait que _____", "blanks": 1 },
+            { "number": 9, "text": "Je n'apprécie pas de devoir _____", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [158, 159, 160, 161, 162, 163, 164, 165, 166, 167],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

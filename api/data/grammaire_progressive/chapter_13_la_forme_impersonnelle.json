@@ -1,0 +1,137 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 13,
+  "chapter_title": "LA FORME IMPERSONNELLE",
+  "book_pages": [90, 91],
+  "sections": [
+    {
+      "section_title": "LA FORME IMPERSONNELLE",
+      "subtitle": null,
+      "book_pages": [90, 91],
+      "intro_examples": [
+        "Il neige toujours en janvier.",
+        "Il paraît qu'elle a eu des jumeaux."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "La forme impersonnelle concerne des verbes utilisés avec le pronom sujet neutre « il ».",
+          "examples": [
+            "Depuis hier, il fait froid. – Il est possible qu'elle aille en Chine."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Il existe des verbes uniquement impersonnels. Ils peuvent exprimer des phénomènes de la nature.",
+          "examples": [
+            "Il pleut, il neige. – Il fait beau, il fait nuit, etc."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Il faut » + infinitif, « il faut que ».",
+          "examples": [
+            "Il faut y aller tout de suite. – Il faut que je lise ce livre.",
+            "Il faut beaucoup d'argent pour réaliser ce projet."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Il y a ».",
+          "examples": [
+            "Il y a quelqu'un dans le jardin."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Il s'agit de ».",
+          "examples": [
+            "Dans ce roman, il s'agit de... [= ce roman concerne...]",
+            "Pour ce genre de travail, il s'agit d'être patient. [= il faut être patient.]"
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Certains verbes ne sont pas toujours uniquement impersonnels.",
+          "examples": [],
+          "categories": [
+            {
+              "category": "Verbes à double usage",
+              "items": [
+                "Arriver : qu'est-il arrivé ? (J'arrive dans une minute.)",
+                "Être : Il était une fois... indique le début d'un conte. (Jane est américaine.)",
+                "Plaire : S'il vous plaît. (Cette robe me plaît.)",
+                "« Être » + adjectif + de/que pour marquer un jugement : il est bon ; il est juste ; il est possible ; etc.",
+                "« Paraître », « sembler » + que (elle semble jeune/elle paraît triste) : Il semble qu'il ait plu cette nuit. – Il paraît qu'il s'est marié.",
+                "« Il vaut mieux » + infinitif, « il suffit que/de » (ce livre vaut cher) (cette somme ne suffira pas) : Il vaut mieux rappeler. – Il suffit de téléphoner pour avoir les informations."
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "rule": "Les tours impersonnels sont utilisés à la forme passive quand on ne veut pas préciser le sujet de l'action.",
+          "examples": [
+            "Il est interdit de fumer dans ce taxi.",
+            "Il est défendu de marcher sur les pelouses.",
+            "Il est permis de stationner pendant deux heures.",
+            "Il a été décidé de fermer ce musée."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 91,
+          "instruction": "Dans cet article sur la météo, soulignez tous les verbes impersonnels employés pour décrire des phénomènes météorologiques et continuez l'article en vous servant de la carte.",
+          "type": "free_response",
+          "context": "a. Bretagne, Pays de Loire, Normandie :\nIl pleuvra sur toute la Bretagne en matinée puis la pluie descendra vers la Basse-Normandie.\nIl y aura beaucoup de vent sur les côtes.\nIl y aura un ciel bleu dans l'après-midi sur toute la Bretagne.\nIl y aura des nuages sur les Pays de Loire mais il ne pleuvra pas dans cette région.",
+          "items": [
+            { "number": null, "text": "b. Poitou-Charentes, Centre-Limousin _____", "blanks": 1 },
+            { "number": null, "text": "c. Méditerranée et Corse _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 91,
+          "instruction": "Complétez les phrases à votre choix.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il faut _____", "blanks": 1 },
+            { "number": 2, "text": "Il vaut mieux _____", "blanks": 1 },
+            { "number": 3, "text": "Il est juste que _____", "blanks": 1 },
+            { "number": 4, "text": "Il s'agit de _____", "blanks": 1 },
+            { "number": 5, "text": "Il est arrivé _____", "blanks": 1 },
+            { "number": 6, "text": "Il semble que _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 91,
+          "instruction": "Transformez ces phrases avec une tournure impersonnelle à la forme passive comme dans l'exemple.",
+          "type": "transformation",
+          "context": "On a dit que le magasin serait fermé le lundi. → Il a été dit que le magasin serait fermé le lundi.",
+          "items": [
+            { "number": 1, "text": "Ils ont répondu que l'affaire n'aurait pas de suite. _____", "blanks": 1 },
+            { "number": 2, "text": "Ils ont décidé que la grève serait générale. _____", "blanks": 1 },
+            { "number": 3, "text": "Il nous a permis de nous absenter. _____", "blanks": 1 },
+            { "number": 4, "text": "On a défendu de fumer ici ? _____", "blanks": 1 },
+            { "number": 5, "text": "Les autorités ont interdit que l'on pêche dans les eaux territoriales. _____", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [90, 91],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

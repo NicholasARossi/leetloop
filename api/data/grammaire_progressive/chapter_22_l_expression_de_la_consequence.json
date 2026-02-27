@@ -1,0 +1,275 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 22,
+  "chapter_title": "L'EXPRESSION de LA CONSÉQUENCE",
+  "book_pages": [142, 143, 144, 145],
+  "sections": [
+    {
+      "section_title": "LA CONSÉQUENCE introduite par des conjonctions",
+      "subtitle": null,
+      "book_pages": [142, 143],
+      "intro_examples": [
+        "J'avais oublié les clés au bureau, si bien que je n'ai pas pu rentrer.",
+        "Il était si tard que j'ai dû aller dormir à l'hôtel.",
+        "Le film contenait des éléments racistes ; c'est pourquoi il a été censuré."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "« Si bien que » n'a pas de nuance particulière ; il peut être renforcé par « tant et si bien que ».",
+          "examples": [
+            "Il ment beaucoup si bien que personne ne croit ce qu'il dit.",
+            "Il s'est opposé au gouvernement tant et si bien qu'il a dû démissionner."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« De sorte que » est une nuance de « si bien que » et introduit une conséquence certaine.",
+          "examples": [
+            "Il conduisait sans permis de sorte qu'il a été condamné à la prison."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Si », « tellement », « tant » + que expriment l'intensité.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Si » donne un caractère intensif à l'adjectif et à l'adverbe. Il est aussi employé avec certaines expressions comme avoir faim, soif, peur, envie, etc.",
+          "examples": [
+            "Elle était si généreuse que tout le monde l'aimait.",
+            "Il conduit si vite que personne ne veut monter dans sa voiture.",
+            "J'étais si en colère que je suis parti sans dire au revoir."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Tant » donne un caractère quantitatif au verbe, « tant de » au nom.",
+          "examples": [
+            "Il pleut tant que les champs sont inondés.",
+            "Ils ont fait tant de bruit que les voisins se sont plaints."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Tellement » donne un caractère intensif et quantitatif à l'adjectif, à l'adverbe, au verbe, « tellement de » au nom. Il est aussi employé avec certaines expressions comme : avoir soif, froid, chaud, etc.",
+          "examples": [
+            "Ce chien est tellement agressif qu'il aboie sans arrêt.",
+            "Ils habitent tellement loin que nous ne les voyons pas souvent.",
+            "On a tellement ri qu'on n'a pas vu qu'il était très tard.",
+            "On avait tellement chaud qu'on ne pouvait plus bouger.",
+            "J'ai tellement de travail que je ne prendrai pas de vacances."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 143,
+          "instruction": "Complétez en exprimant la conséquence.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Le bébé avait de la fièvre tant et si bien que _____", "blanks": 1 },
+            { "number": 2, "text": "La situation s'est aggravée si bien que _____", "blanks": 1 },
+            { "number": 3, "text": "Le gouvernement a pris une mesure impopulaire tant et si bien que _____", "blanks": 1 },
+            { "number": 4, "text": "Il a arrêté de prendre les médicaments si bien que _____", "blanks": 1 },
+            { "number": 5, "text": "La voiture n'avait pas été révisée si bien que _____", "blanks": 1 },
+            { "number": 6, "text": "Un malaise général envahissait le pays si bien que _____", "blanks": 1 },
+            { "number": 7, "text": "Il avait plu pendant une semaine si bien que _____", "blanks": 1 },
+            { "number": 8, "text": "Elle voyageait sans billet de sorte que _____", "blanks": 1 },
+            { "number": 9, "text": "Je n'avais pas payé ma facture de téléphone de sorte que _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 143,
+          "instruction": "Complétez avec « si » ou « tant ».",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il avait _____ peur que ses mains tremblaient.", "blanks": 1 },
+            { "number": 2, "text": "Elle l'aime _____ qu'elle ne peut pas vivre sans lui.", "blanks": 1 },
+            { "number": 3, "text": "Le soleil était _____ fort qu'ils ont la peau brûlée.", "blanks": 1 },
+            { "number": 4, "text": "L'herbe est _____ haute qu'on peut à peine marcher.", "blanks": 1 },
+            { "number": 5, "text": "Elle a _____ de soucis qu'elle ne dort plus.", "blanks": 1 },
+            { "number": 6, "text": "Nous chantions _____ fort que les voisins se sont réveillés.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 143,
+          "instruction": "Complétez avec « tellement » ou « tant ».",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "J'ai _____ chanté que je n'ai plus de voix.", "blanks": 1 },
+            { "number": 2, "text": "Ils couraient _____ vite qu'on n'a pas pu les rattraper.", "blanks": 1 },
+            { "number": 3, "text": "Elle a _____ bijoux qu'elle peut en changer tous les jours.", "blanks": 1 },
+            { "number": 4, "text": "La pièce est _____ sombre que je ne peux pas lire.", "blanks": 1 },
+            { "number": 5, "text": "Il a fait _____ de bêtises qu'il a été renvoyé du lycée.", "blanks": 1 },
+            { "number": 6, "text": "On avait _____ froid qu'on ne pouvait plus bouger les doigts.", "blanks": 1 },
+            { "number": 7, "text": "Il a _____ parlé qu'il n'a plus de voix.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 143,
+          "instruction": "Exprimez la conséquence avec les éléments donnés. Variez les expressions de la conséquence.",
+          "type": "composition",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Être très ému – Ne plus pouvoir parler", "blanks": 1 },
+            { "number": 2, "text": "Un grand choix de vêtement – Difficile de choisir", "blanks": 1 },
+            { "number": 3, "text": "Beaucoup de bruits – Ne pas entendre l'orateur", "blanks": 1 },
+            { "number": 4, "text": "Avoir très faim – Avoir mal à l'estomac", "blanks": 1 },
+            { "number": 5, "text": "Manifestations violentes – Intervention de la police", "blanks": 1 },
+            { "number": 6, "text": "Augmentation du travail des femmes – Baisse du taux des naissances", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "LA CONSÉQUENCE introduite par des mots de liaison",
+      "subtitle": null,
+      "book_pages": [144, 145],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "« Alors » et « donc » indiquent un lien logique fort entre la cause et la conséquence ; le résultat est senti comme évident.",
+          "examples": [],
+          "categories": [
+            {
+              "name": "Alors",
+              "description": "S'utilise surtout à l'oral.",
+              "examples": [
+                "Elle était en retard, alors on est partis.",
+                "On n'avait pas d'argent, alors on n'a pas pris de vacances."
+              ]
+            },
+            {
+              "name": "Donc",
+              "description": "S'utilise à l'oral et à l'écrit.",
+              "examples": [
+                "Vous avez rendu une feuille blanche à l'examen ; donc vous n'aviez pas appris votre cours.",
+                "La philosophie remet en question les idées reçues ; on peut donc dire qu'elle s'oppose aux préjugés."
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "rule": "« C'est pourquoi », « c'est pour cela que », « c'est pour ça que », « c'est la raison pour laquelle » indiquent un résultat logique en insistant sur la cause qui a été exprimée.",
+          "examples": [],
+          "categories": [
+            {
+              "name": "C'est pour cela que",
+              "description": "S'utilise à l'oral et à l'écrit.",
+              "examples": [
+                "J'étais malade, c'est pour cela que je ne suis pas venue travailler.",
+                "Leurs produits sont de moins en moins exportés. C'est pour cela qu'ils ont de gros problèmes financiers."
+              ]
+            },
+            {
+              "name": "C'est pour ça que",
+              "description": "S'utilise à l'oral seulement.",
+              "examples": ["Il pleuvait, c'est pour ça qu'on est rentrés très vite."]
+            },
+            {
+              "name": "C'est pourquoi / C'est la raison pour laquelle",
+              "description": "S'utilisent surtout à l'écrit.",
+              "examples": [
+                "Le prix du pain avait augmenté. C'est pourquoi le peuple se révoltait.",
+                "Ce film contenait des éléments racistes ; c'est la raison pour laquelle il a été censuré."
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "rule": "« Par conséquent », « en conséquence » sont surtout utilisés dans la langue administrative.",
+          "examples": [
+            "Lundi est un jour férié ; par conséquent/en conséquence notre banque sera fermée du vendredi 17 heures au mardi 9 heures."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Aussi » et « ainsi » introduisent le résultat d'un comportement (= aussi) ou d'une manière d'agir (= ainsi).",
+          "examples": [
+            "Il s'est opposé au régime, aussi a-t-il été obligé de quitter le pays. [aussi il a été...]",
+            "Il s'est enfui à l'étranger ; ainsi a-t-il échappé aux poursuites. [ainsi il a échappé...]"
+          ],
+          "categories": [],
+          "notes": [
+            "« Aussi » et « ainsi » sont surtout utilisés à l'écrit et très souvent suivis de l'inversion verbe-sujet."
+          ]
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 145,
+          "instruction": "Choisissez entre « alors » ou « donc ».",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Le restaurant était complet ; _____ on est allés dîner à la brasserie.", "blanks": 1 },
+            { "number": 2, "text": "J'ai raté le train de 15 heures ; _____ j'ai pris celui de 18 heures.", "blanks": 1 },
+            { "number": 3, "text": "La vie est de plus en plus chère ; _____ la population est mécontente.", "blanks": 1 },
+            { "number": 4, "text": "Vous êtes en retard ; vous allez _____ être obligés d'attendre l'entracte pour rentrer.", "blanks": 1 },
+            { "number": 5, "text": "Vous avez passé au feu rouge et vous n'avez pas de permis de conduire. Veuillez _____ me suivre au poste de police.", "blanks": 1 },
+            { "number": 6, "text": "On avait deux valises chacun ; _____ on a pris un taxi.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 145,
+          "instruction": "Complétez et exprimez une conséquence.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "La chanteuse était souffrante ; par conséquent _____", "blanks": 1 },
+            { "number": 2, "text": "Voltaire a critiqué le pouvoir ; c'est pour cela que _____", "blanks": 1 },
+            { "number": 3, "text": "Le musée était en réparations ; en conséquence _____", "blanks": 1 },
+            { "number": 4, "text": "Elle maîtrise trois langues étrangères ; c'est pourquoi _____", "blanks": 1 },
+            { "number": 5, "text": "Je suis tombée dans la rue hier ; c'est pour ça que _____", "blanks": 1 },
+            { "number": 6, "text": "Camille Claudel n'était pas reconnue comme un grand sculpteur ; c'est pour cette raison _____", "blanks": 1 },
+            { "number": 7, "text": "Ils ont annoncé des licenciements massifs ; aussi _____", "blanks": 1 },
+            { "number": 8, "text": "Le Premier ministre a retiré sa proposition de loi ; ainsi _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 145,
+          "instruction": "Exprimez la conséquence avec les éléments donnés. Variez les expressions de la conséquence.",
+          "type": "composition",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Tous les partis politiques y sont représentés. – Une véritable démocratie.", "blanks": 1 },
+            { "number": 2, "text": "Madame Bovary de Flaubert – Roman jugé immoral. – Censuré.", "blanks": 1 },
+            { "number": 3, "text": "Fenêtre en ancien français s'écrivait « fenestre ». – Accent circonflexe sur le « e » en français moderne.", "blanks": 1 },
+            { "number": 4, "text": "Un train a déraillé. – Fermeture de la ligne pendant trois jours.", "blanks": 1 },
+            { "number": 5, "text": "Il s'est mis à hurler et à nous insulter. – On a quitté la pièce sans répondre.", "blanks": 1 },
+            { "number": 6, "text": "Vous n'avez pas de pièces d'identité. – Nous ne pouvons pas vous payer.", "blanks": 1 },
+            { "number": 7, "text": "Un désordre général régnait sur le pays. – L'armée a pu prendre le pouvoir.", "blanks": 1 },
+            { "number": 8, "text": "Il avait insulté le patron. – Il a été renvoyé.", "blanks": 1 },
+            { "number": 9, "text": "Le triangle a un angle droit. – C'est un triangle rectangle.", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [142, 143, 144, 145],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

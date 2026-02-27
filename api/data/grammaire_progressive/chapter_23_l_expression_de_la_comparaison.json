@@ -1,0 +1,188 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 23,
+  "chapter_title": "L'EXPRESSION de LA COMPARAISON",
+  "book_pages": [146, 147],
+  "sections": [
+    {
+      "section_title": "L'EXPRESSION de LA COMPARAISON",
+      "subtitle": null,
+      "book_pages": [146, 147],
+      "intro_examples": [
+        "Ça ne s'est pas passé comme je l'aurais voulu.",
+        "La deuxième partie était beaucoup plus intéressante que la première."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "La comparaison peut être exprimée par des conjonctions.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Comme » introduit une égalité simple.",
+          "examples": [
+            "Elle est exactement comme je l'avais imaginée."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Aussi » + adjectif/adverbe + « que » exprime une comparaison d'égalité qualitative.",
+          "examples": [
+            "L'examen était aussi difficile que celui de l'an dernier.",
+            "Le film n'a pas duré aussi longtemps qu'on l'avait prévu."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Autant de » + nom + « que », « autant que » expriment une comparaison d'égalité quantitative.",
+          "examples": [
+            "Cette voiture consomme autant d'essence que l'autre.",
+            "Tu peux parler autant que tu voudras, je ne changerai pas d'avis."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Plus » + adjectif/adverbe + « que », « plus de » + nom + « que » expriment une supériorité en qualité ou en quantité.",
+          "examples": [
+            "Ce bijou est plus cher que l'autre parce qu'il a plus de valeur."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Moins » + adjectif ou adverbe + « que », « moins de » + nom + « que » expriment une infériorité en qualité ou en quantité.",
+          "examples": [
+            "Cette région est moins pittoresque que l'autre et il y a moins de touristes."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Plus … plus », « moins … moins », « plus … moins », « moins … plus » introduisent un lien de proportionnalité dans la comparaison.",
+          "examples": [
+            "Plus je regarde ce tableau, plus il me plaît."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "La comparaison peut être renforcée.",
+          "examples": [],
+          "categories": [
+            {
+              "name": "Par « tout »",
+              "description": "Avec « aussi … que », « autant de … que » et « autant que ».",
+              "examples": [
+                "On n'a pas pris le même menu mais on a tout aussi bien déjeuné que vous.",
+                "Vous vous plaignez mais vous savez, nous avons tout autant de soucis que vous."
+              ]
+            },
+            {
+              "name": "Par « beaucoup » ou « bien »",
+              "description": "Avec « plus/moins … que », « plus/moins … de ».",
+              "examples": [
+                "Il fait beaucoup plus froid qu'hier mais il y a bien moins de brouillard."
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "rule": "La comparaison peut être introduite par des prépositions.",
+          "examples": [],
+          "categories": [
+            {
+              "name": "Comme",
+              "description": "Introduit une comparaison simple.",
+              "examples": ["Il est doux comme un agneau."]
+            },
+            {
+              "name": "En comparaison de / Par rapport à",
+              "description": "Rapprochent des éléments pour les opposer.",
+              "examples": [
+                "Les résultats sont bons en comparaison de ceux de l'an dernier.",
+                "Les chiffres sont bas par rapport à ceux du mois dernier."
+              ]
+            }
+          ],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 147,
+          "instruction": "Mettez le verbe au temps qui convient.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Nous passerons Noël en famille comme nous le (faire) _____ tous les ans.", "blanks": 1 },
+            { "number": 2, "text": "Je te prêterai de l'argent comme je te le (promettre) _____ au début du mois.", "blanks": 1 },
+            { "number": 3, "text": "Je te conseille d'abandonner ce projet mais tu feras comme tu (vouloir) _____", "blanks": 1 },
+            { "number": 4, "text": "Il criait comme chaque fois qu'il (se mettre en colère) _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 147,
+          "instruction": "Choisissez un adjectif ou un adverbe pour exprimer la comparaison comme dans le modèle.",
+          "type": "composition",
+          "context": "Chauffage électrique – cher – un chauffage au gaz.\n→ Le chauffage électrique est plus cher que le chauffage au gaz.\n→ Il est beaucoup plus cher. – Il est bien plus cher.",
+          "items": [
+            { "number": 1, "text": "Chemise en laine – chaud – chemise en coton.", "blanks": 1 },
+            { "number": 2, "text": "L'anglais – facile/difficile – le chinois.", "blanks": 1 },
+            { "number": 3, "text": "Le football – populaire – le tennis.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 147,
+          "instruction": "Complétez avec « aussi … que », « autant de … que » ou « autant que… ».",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Ils ne viennent pas _____ souvent _____ avant.", "blanks": 2 },
+            { "number": 2, "text": "Il n'a pas plu _____ hier.", "blanks": 1 },
+            { "number": 3, "text": "Je n'ai jamais vu quelqu'un qui a _____ énergie _____ lui.", "blanks": 2 },
+            { "number": 4, "text": "Tu peux crier _____ tu veux, je ne t'écoute pas.", "blanks": 1 },
+            { "number": 5, "text": "En France il y a _____ sortes de fromage _____ de jours dans l'année.", "blanks": 2 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 147,
+          "instruction": "Renforcez la comparaison avec « tout ».",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Son exposé était clair ; l'exposé de Christian était _____", "blanks": 1 },
+            { "number": 2, "text": "Vous travaillez beaucoup mais j'ai _____ vous.", "blanks": 1 },
+            { "number": 3, "text": "Il est content mais nous sommes _____ lui.", "blanks": 1 },
+            { "number": 4, "text": "Tu me reproches de trop fumer mais tu _____ moi.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 147,
+          "instruction": "Complétez.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "_____ on est de fous, _____ s'amuse.", "blanks": 2 },
+            { "number": 2, "text": "_____ il travaille, _____ il a envie de travailler.", "blanks": 2 },
+            { "number": 3, "text": "Moins _____, _____.", "blanks": 2 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [146, 147],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

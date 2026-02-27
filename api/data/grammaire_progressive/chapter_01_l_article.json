@@ -1,0 +1,1022 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 1,
+  "chapter_title": "L'ARTICLE",
+  "book_pages": [8, 9, 10, 11, 12, 13],
+  "sections": [
+    {
+      "section_title": "L'ARTICLE DÉFINI",
+      "subtitle": "«le», «la», «l'», «les»",
+      "book_pages": [8, 9, 10, 11],
+      "intro_examples": [
+        "Le printemps est ma saison préférée.",
+        "La Colombie est un pays qui nous attire.",
+        "Il n'aime pas la ville, il préfère la campagne.",
+        "En ce moment les affaires vont mal.",
+        "La femme de Gilles est italienne."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "Il est utilisé devant les noms qui désignent une personne ou une chose unique",
+          "categories": [
+            {
+              "label": "les astres, les saisons, les dates, les fêtes",
+              "examples": [
+                "J'aime le printemps.",
+                "Le 15 août est une fête religieuse en France."
+              ]
+            },
+            {
+              "label": "les continents, les pays, les régions, les océans",
+              "examples": [
+                "La Seine se jette dans la Manche.",
+                "Le Jura est une région où il y a des forêts de sapins."
+              ]
+            },
+            {
+              "label": "les titres",
+              "examples": [
+                "le Premier ministre; le comte de Bourbon; le général Redon."
+              ]
+            }
+          ],
+          "notes": [
+            "Les noms de ville sont utilisés sans article sauf quelques exceptions: Le Havre; Le Mans; La Rochelle; La Baule; La Haye; Le Caire."
+          ]
+        },
+        {
+          "rule": "Il faut noter l'emploi de l'article dans la construction du superlatif",
+          "examples": [
+            "C'est le plus beau, c'est la plus gentille."
+          ]
+        },
+        {
+          "rule": "Il est utilisé devant des noms pour leur donner une valeur générale",
+          "categories": [
+            {
+              "label": "les notions, les idées, la matière",
+              "examples": [
+                "L'argent ne fait pas le bonheur.",
+                "L'écologie est une préoccupation de notre époque.",
+                "L'or, l'argent, le cuivre sont des métaux."
+              ]
+            },
+            {
+              "label": "les noms qui désignent un ensemble, un tout",
+              "examples": [
+                "Les Français aiment le fromage.",
+                "Les gens n'aiment pas le changement."
+              ]
+            }
+          ],
+          "notes": [
+            "«Les» généralise mais en laissant possibles des exceptions: Les Français voyagent peu à l'étranger [= en général, ils ne voyagent pas beaucoup mais certains voyagent plus].",
+            "«Le», «la» généralisent mais sans exception: Le Français est fier de sa culture [= tous les Français sont fiers]."
+          ]
+        }
+      ],
+      "grammar_rules_page2": [
+        {
+          "rule": "L'article défini est utilisé quand le nom est déterminé",
+          "categories": [
+            {
+              "label": "par une proposition relative",
+              "examples": [
+                "J'ai rangé les journaux qui étaient sur la table."
+              ]
+            },
+            {
+              "label": "par un complément de nom",
+              "examples": [
+                "C'est la fenêtre de ma chambre."
+              ]
+            },
+            {
+              "label": "par la situation de communication",
+              "examples": [
+                "Il y aura quelques travaux à faire: les murs et le plafond doivent être repeints et il faudra changer la moquette."
+              ]
+            }
+          ]
+        },
+        {
+          "rule": "Il est utilisé pour exprimer la mesure",
+          "examples": [
+            "Les œufs coûtent 1,50 € la douzaine.",
+            "J'ai trouvé du tissu à 5 € le mètre.",
+            "Il est interdit de rouler à plus de 90 km à l'heure.",
+            "Dans ce supermarché on trouve de l'essence à 1 € le litre."
+          ]
+        },
+        {
+          "rule": "Il est utilisé à la place de l'adjectif possessif devant les noms indiquant les parties du corps",
+          "examples": [
+            "Elle a mal à la tête depuis hier [= sa tête lui fait mal].",
+            "Il a les yeux bleus et les cheveux blonds [= ses yeux sont bleus, ses cheveux sont blonds].",
+            "J'ai toujours les mains froides [= mes mains sont toujours froides]."
+          ],
+          "notes": [
+            "Cet emploi est courant avec les verbes pronominaux: se laver les cheveux; se brosser les dents; se casser le bras; se frotter les mains; se couper le doigt; etc.",
+            "Il est présent dans beaucoup d'expressions familières: mettre les pieds dans le plat; se serrer la ceinture; se casser la tête; se mettre le doigt dans l'œil; faire la sourde oreille; etc.",
+            "Il pensait que je lui ferais cadeau de la veste qu'il m'avait empruntée: il s'est mis le doigt dans l'œil [= il a fait une erreur de jugement, il s'est trompé]."
+          ]
+        },
+        {
+          "rule": "Les articles définis masculin singulier et masculin pluriel ont chacun une forme contractée «du», «des» qui ne doit pas être confondue avec un autre article",
+          "examples": [
+            "À l'entrée du [de + le] stade, il y avait des agents de la sécurité.",
+            "Elle achète des produits frais qui viennent en général des [de + les] fermes du voisinage."
+          ]
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 9,
+          "instruction": "À partir des informations suivantes, faites la description de la personne concernée en utilisant «le», «l'», «la» ou «les».",
+          "type": "composition",
+          "context": {
+            "Nom": "Lemarchand",
+            "Prénom": "Corinne",
+            "Date de naissance": "12/12/1953",
+            "Résidence": "La Rochelle",
+            "Pays": "France",
+            "Sports pratiqués": "natation, tennis, squash",
+            "Loisirs": "cinéma, musique, danse moderne",
+            "Goûts alimentaires": "poisson, fraises, glace",
+            "Préoccupations": "faim dans le monde, écologie, condition féminine"
+          },
+          "starter": "Corinne Lemarchand est née _____"
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 9,
+          "instruction": "Complétez avec «le», «l'», «la» ou «les».",
+          "type": "fill_blank",
+          "items": [
+            {
+              "number": 1,
+              "text": "_____ curiosité est un vilain défaut, _____ jalousie l'est encore plus, quant à _____ avarice, c'est bien pire.",
+              "blanks": 3
+            },
+            {
+              "number": 2,
+              "text": "_____ économie aujourd'hui dicte sa loi à _____ politique et _____ progrès social n'est pas au rendez-vous. _____ hommes politiques sont à court d'imagination. _____ écologistes sont les seuls à croire qu'il faut revenir en arrière pour retrouver _____ bonheur. _____ Français se désespèrent. Toutes _____ catégories sociales sont mécontentes. _____ fonctionnaires, _____ employés des banques, _____ militaires, etc. _____ agriculture est en crise, _____ élevage aussi. _____ classe politique se plaint, _____ syndicalistes et _____ partis de _____ opposition prédisent un automne chaud. _____ argent roi fait le bonheur des uns tandis que _____ pauvres deviennent de plus en plus pauvres. _____ chômage et _____ exclusion inquiètent et désespèrent _____ gens.",
+              "blanks": 22
+            }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 9,
+          "instruction": "Complétez avec l'article qui convient pour découvrir les représentations que les Français ont de certains animaux.",
+          "type": "fill_blank",
+          "items": [
+            { "number": 1, "text": "_____ hirondelle annonce soit _____ printemps soit _____ automne.", "blanks": 3 },
+            { "number": 2, "text": "_____ coq signale _____ aube.", "blanks": 2 },
+            { "number": 3, "text": "_____ chouette symbolise _____ malheur.", "blanks": 2 },
+            { "number": 4, "text": "_____ escargots arrivent après _____ pluie.", "blanks": 2 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 9,
+          "instruction": "Sur le même modèle, donnez les représentations qu'on a des animaux dans votre pays.",
+          "type": "free_response"
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 11,
+          "instruction": "Complétez avec «le», «l'», «la» ou «les».",
+          "type": "fill_blank",
+          "items": [
+            {
+              "number": 1,
+              "text": "J'ai visité _____ région que tu m'avais conseillé de voir, ainsi que _____ châteaux dont tu m'avais parlé. Mais je n'ai pas su trouver _____ petit restaurant où tu avais mangé _____ meilleures spécialités du Sud-Ouest. J'ai tout de même trouvé à _____ Table du Roi d'excellents plats régionaux.",
+              "blanks": 5
+            }
+          ]
+        },
+        {
+          "exercise_number": 6,
+          "book_page": 11,
+          "instruction": "Vous visitez une maison et vous constatez qu'il y a quelques travaux à faire. Composez un texte avec les éléments donnés.",
+          "type": "composition",
+          "context": "toit en mauvais état – portes et fenêtres à refaire – changer installation électrique – chauffage à mettre dans toutes les pièces – repeindre murs – heureusement planchers en bon état – pas besoin de changer moquette sauf dans chambre d'amis.",
+          "starter": "J'ai acheté une vieille maison à la campagne. Le toit est en mauvais état, _____"
+        },
+        {
+          "exercise_number": 7,
+          "book_page": 11,
+          "instruction": "Reliez les éléments de la colonne de gauche à ceux de la colonne de droite et faites des phrases.",
+          "type": "matching",
+          "columns": {
+            "left": ["1. œufs", "2. velours", "3. Il roule", "4. fraises", "5. cigarettes"],
+            "right": ["A. 120 km/heure", "B. 1,80 €/barquette", "C. 20 €/cartouche", "D. 8 €/mètre", "E. 1,80 €/douzaine"]
+          },
+          "starter": "Ce matin, les œufs coûtaient 1,80 € la douzaine au marché."
+        },
+        {
+          "exercise_number": 8,
+          "book_page": 11,
+          "instruction": "Découvrez ce portrait en complétant avec «le», «l'», «la» ou «les», puis faites le portrait de quelqu'un en utilisant l'article défini.",
+          "type": "fill_blank",
+          "items": [
+            {
+              "number": 1,
+              "text": "Ce bébé a _____ cheveux de son père, _____ yeux de sa mère, j'espère qu'il n'aura pas _____ langue de vipère de sa grand-mère, vous savez bien qu'elle a _____ dent dure.",
+              "blanks": 4
+            }
+          ]
+        },
+        {
+          "exercise_number": 9,
+          "book_page": 11,
+          "instruction": "Complétez avec «le», «la», «les» pour découvrir certaines expressions familières.",
+          "type": "fill_blank",
+          "items": [
+            {
+              "number": 1,
+              "text": "_____ politique me casse _____ pieds. D'après _____ Premier ministre, il faut se serrer _____ ceinture sans se casser _____ tête et lui faire confiance. _____ Président s'est cassé _____ dents sur _____ chômage. Mais s'ils croient que l'on va accepter ça sans rien dire, ils se mettent _____ doigt dans l'œil. Ils font _____ sourde oreille à nos revendications et nous allons mettre _____ pieds dans _____ plat.",
+              "blanks": 12
+            }
+          ]
+        },
+        {
+          "exercise_number": 10,
+          "book_page": 11,
+          "instruction": "Soulignez les articles contractés.",
+          "type": "underline",
+          "items": [
+            {
+              "text": "Comme c'était le premier jour des vacances, il y avait des embouteillages à la sortie des grandes villes. Le pire était à l'entrée du péage où les gens s'impatientaient et se lançaient des insultes."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "L'ARTICLE INDÉFINI",
+      "subtitle": "«un», «une», «des»",
+      "book_pages": [12, 13],
+      "intro_examples": [
+        "Ils ont cassé une assiette et des verres.",
+        "Elle porte un très joli manteau.",
+        "Dans la pièce, il y avait un piano à queue et un siège en velours rouge."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "Il est utilisé devant des noms qui désignent une personne ou une chose parmi d'autres personnes ou d'autres choses",
+          "examples": [
+            "Elle vient de passer un examen.",
+            "Hier nous avons rencontré un metteur en scène."
+          ]
+        },
+        {
+          "rule": "Il est aussi utilisé quand le nom est caractérisé",
+          "categories": [
+            {
+              "label": "par un adjectif",
+              "examples": ["on a cueilli des pommes délicieuses."]
+            },
+            {
+              "label": "par un complément de nom",
+              "examples": ["j'ai reçu des nouvelles de mon amie."]
+            },
+            {
+              "label": "par une proposition relative",
+              "examples": ["on a visité un château qui se trouve près du village."]
+            }
+          ]
+        },
+        {
+          "rule": "Il est utilisé après la construction «il y a», «c'est», «ce sont», «il existe» et introduit alors une idée nouvelle dans la situation de communication",
+          "examples": [
+            "On frappa à la porte. C'était un homme, un pauvre homme mal habillé."
+          ]
+        },
+        {
+          "rule": "«Un», «une» peuvent être utilisés pour exprimer une valeur générale",
+          "examples": [
+            "Un enfant a besoin d'affection. [= L'enfant a besoin d'affection.]"
+          ],
+          "notes": [
+            "«Des» ne peut pas être utilisé dans ce cas parce qu'il ne permet pas de généraliser: Des enfants ont besoin d'affection veut dire que certains enfants ont besoin d'affection, d'autres n'en ont pas besoin.",
+            "Il faut remarquer la différence entre: Une voiture doit être entretenue. [valeur générale] et Ils ont acheté une voiture. [une parmi d'autres]"
+          ]
+        },
+        {
+          "rule": "«Un», «une» peuvent indiquer la limitation qualitative",
+          "categories": [
+            {
+              "label": "d'une notion abstraite",
+              "examples": ["Ce soldat a montré un courage admirable."]
+            },
+            {
+              "label": "d'une chose unique dans son espèce",
+              "examples": ["Un grand soleil rouge se levait à l'horizon."]
+            }
+          ]
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 13,
+          "instruction": "Complétez avec des articles définis ou indéfinis.",
+          "type": "fill_blank",
+          "items": [
+            {
+              "number": 1,
+              "text": "Il vient de réussir à _____ concours difficile. Il y avait _____ centaines de concurrents, tous avec _____ quantité impressionnante de diplômes. _____ candidats étaient tous bien préparés. _____ sujets avaient été choisis par _____ jury spécialisé. C'est _____ sélection qui est dure mais elle a _____ mérite d'être juste.",
+              "blanks": 8
+            }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 13,
+          "instruction": "Inventez une histoire fantastique avec les éléments suivants en utilisant des articles définis et indéfinis.",
+          "type": "composition",
+          "context": "filet – poisson étrange – écailles argentées – mer d'azur – pêcheurs – nageoires – espèce de nez – corps – tête de...",
+          "starter": "Dans le filet, il y avait _____"
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 13,
+          "instruction": "Complétez avec l'article indéfini et justifiez son emploi comme dans l'exemple.",
+          "type": "fill_blank",
+          "context": "Exemple: Un malade = caractère général",
+          "items": [
+            {
+              "number": 1,
+              "text": "_____ malade a droit aux soins, mais il y a _____ malades qui abusent des médicaments, il y a _____ malades qui vont voir plusieurs médecins le même jour, il y a _____ malades qui sont toujours en cure. Bref _____ malade imaginaire creuse le déficit de la Sécurité sociale et empêche _____ vrai malade d'être bien soigné.",
+              "blanks": 6
+            }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 13,
+          "instruction": "Complétez ce dialogue avec les articles définis ou indéfinis qui conviennent.",
+          "type": "fill_blank",
+          "items": [
+            {
+              "number": 1,
+              "text": "– Ils ont _____ enfants?\n– Oui, ils ont _____ fils très gentil.\n– Qu'est-ce qu'il fait?\n– Il peint, c'est _____ peintre plein d'avenir. Il peint _____ êtres étranges, un peu comme Picasso. Ils ont aussi _____ fille. C'était _____ serveuse du Grand Café mais comme elle avait cassé _____ verres et _____ assiettes, elle a été renvoyée.\n– Et qu'est-ce qu'elle fait maintenant? Elle a retrouvé _____ emploi?\n– Non. Elle fait _____ stage et elle espère trouver _____ petit boulot.",
+              "blanks": 11
+            }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 13,
+          "instruction": "Complétez selon le modèle en utilisant un adjectif de votre choix.",
+          "type": "transformation",
+          "context": "On l'admirait pour son courage; elle avait toujours fait preuve d'un courage exemplaire.",
+          "items": [
+            { "number": 1, "text": "Elle était très tolérante, _____", "blanks": 1 },
+            { "number": 2, "text": "Son frère était audacieux, mais lui _____", "blanks": 1 },
+            { "number": 3, "text": "Toute la famille avait les yeux bleus mais elle _____", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "L'ARTICLE PARTITIF",
+      "subtitle": "«du», «de l'», «de la»",
+      "book_pages": [14, 15],
+      "intro_examples": [
+        "Buvez de l'eau, du jus de fruits: c'est bon pour la santé!",
+        "Il a toujours eu de la chance.",
+        "Olivier fait de la guitare et Anne, du piano."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "Il est utilisé devant un nom concret ou abstrait non comptable pour désigner une certaine quantité d'une matière ou une partie d'une notion",
+          "examples": [
+            "Achète du lait, de l'huile et de la confiture.",
+            "Pour ce métier, il faut du talent, de la patience et de la chance."
+          ],
+          "notes": [
+            "À la forme négative, «du», «de l'», «de la» devient «de»: Il ne prend jamais de sucre dans son café."
+          ]
+        },
+        {
+          "rule": "Il est souvent utilisé avec le verbe «faire» pour désigner une activité",
+          "examples": [
+            "Faire du sport, de l'équitation, de la marche.",
+            "Faire de la peinture; faire du piano; faire de la guitare."
+          ],
+          "notes": [
+            "L'article défini peut également être utilisé pour désigner une activité: faire le ménage; faire la vaisselle; faire les courses."
+          ]
+        },
+        {
+          "rule": "Il est utilisé avec «il y a» pour parler de la météo",
+          "examples": [
+            "Aujourd'hui, il y a du soleil.",
+            "Cette année il y a de la pluie presque tous les jours.",
+            "Il y aura de la neige sur les Alpes et du verglas sur le Jura."
+          ]
+        },
+        {
+          "rule": "Il est utilisé pour désigner la chair d'un animal; il s'agit alors d'une matière",
+          "examples": [
+            "Nous mangions du bœuf; nous mangeons aujourd'hui principalement de l'agneau, du poulet et surtout du poisson."
+          ]
+        },
+        {
+          "rule": "Il est utilisé avec des noms propres pour désigner une partie indéterminée de l'œuvre de la personne dont on parle",
+          "examples": [
+            "Elle a joué du Chopin et du Mozart."
+          ],
+          "notes": [
+            "Cet emploi fait partie de la langue parlée."
+          ]
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 15,
+          "instruction": "Complétez avec les articles définis, indéfinis ou partitifs qui conviennent.",
+          "type": "fill_blank",
+          "items": [
+            {
+              "number": 1,
+              "text": "– Tu fais _____ régime?\n– Ne m'en parle pas. Je n'ai pas _____ droit de manger _____ sucreries: _____ confiture, _____ chocolat, _____ gâteaux et surtout pas _____ sucre dans le café. Je n'ai pas le droit de manger _____ féculents. Fini _____ pâtes à l'italienne, _____ gros haricots blancs, _____ pommes de terre en robe des champs avec _____ beurre et _____ bon pain frais. _____ huile dans _____ salade? Pas question, pas _____ matières grasses non plus. Je n'ai pas _____ droit de boire _____ vin, mais _____ lait ou _____ jus de fruits, _____ eau à volonté. Pouah!\n– Et _____ viande, tu peux en manger?\n– Tu n'y penses pas. _____ bœuf, _____ mouton, _____ veau, _____ porc, il y a longtemps que je ne sais plus ce que c'est.\n– Mais alors qu'est-ce que tu manges?\n– Eh bien, en dehors de tout ça, je peux manger ce que je veux.",
+              "blanks": 25
+            }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 15,
+          "instruction": "Complétez avec les articles qui conviennent.",
+          "type": "fill_blank",
+          "items": [
+            {
+              "number": 1,
+              "text": "– Tu veux faire _____ sport. Bien, mais quel sport?\n– _____ rugby et _____ voile.\n– Faire _____ planche à voile à la montagne, ce n'est pas évident. Tu ferais mieux de faire _____ ski.\n– Pourquoi pas? J'aime bien _____ sports de glisse.\n– Bien, mais avant de faire _____ sport, il faut _____ entraînement.\n– L'un n'empêche pas l'autre, non?",
+              "blanks": 8
+            }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 15,
+          "instruction": "Même exercice.",
+          "type": "fill_blank",
+          "items": [
+            {
+              "number": 1,
+              "text": "J'en ai marre. Entre _____ courses, _____ ménage, _____ lavage, _____ repassage, _____ vaisselle, _____ repas, je ne m'en sors pas. Et dire qu'il y a _____ gens qui prétendent que _____ travail de _____ maison est _____ plus tranquille et _____ moins fatigant!",
+              "blanks": 11
+            }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 15,
+          "instruction": "Même exercice.",
+          "type": "fill_blank",
+          "items": [
+            {
+              "number": 1,
+              "text": "À côté de chez moi il y a une boucherie qui vend _____ bœuf excellent. Connaissez-vous la fable de La Fontaine, «La Grenouille qui voulait se faire aussi grosse que _____ bœuf»?",
+              "blanks": 2
+            },
+            {
+              "number": 2,
+              "text": "À la cantine, on sert souvent _____ poulet. Dans cette ferme, _____ poulets sont élevés en plein air.",
+              "blanks": 2
+            },
+            {
+              "number": 3,
+              "text": "Dans ce restaurant, il y a toujours _____ poisson très frais. Quand il fait très chaud, _____ poissons ne s'approchent pas du rivage.",
+              "blanks": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "L'ABSENCE D'ARTICLE",
+      "book_pages": [16, 17, 18, 19, 20, 21],
+      "intro_examples": [
+        "– Je suis végétarien: je ne mange pas de viande.",
+        "– Et du poisson, tu en manges?",
+        "– Je ne mange ni poisson, ni viande.",
+        "– Et tu bois ton café sans sucre?",
+        "– Mais ça n'a aucun goût, le café sans sucre!"
+      ],
+      "grammar_rules": [
+        {
+          "rule": "L'article indéfini et l'article partitif sont en général remplacés par «de» après la négation",
+          "examples": [
+            "– Tu as des cigarettes? – Non, je n'ai pas de cigarettes.",
+            "Elle fait du piano depuis deux ans, mais moi, je ne fais plus de piano depuis cinq ans.",
+            "Il a encore de la patience, mais moi, je n'ai plus de patience.",
+            "Elle prend du café mais je ne prends pas de café ni de thé."
+          ],
+          "notes": [
+            "Après «ni... ni», il n'y a pas d'articles: – Il y a de la salade et du persil dans le jardin? – Non hélas, il n'y a ni salade ni persil."
+          ]
+        },
+        {
+          "rule": "Après les négations «sans» et «ne ... aucun / aucune», il n'y a pas d'article",
+          "examples": [
+            "C'est un travail sans intérêt.",
+            "Je n'ai aucune chance de réussir."
+          ]
+        },
+        {
+          "rule": "Après «ce n'est pas», «ce ne sont pas», l'article est toujours utilisé",
+          "examples": [
+            "Ce n'est pas un ami, c'est un collègue de bureau.",
+            "Ce ne sont pas des fraises, ce sont des framboises."
+          ]
+        },
+        {
+          "rule": "L'article défini est conservé dans la phrase négative",
+          "examples": [
+            "J'aime la ville mais ma sœur n'aime pas la ville.",
+            "Elle n'aime ni la ville ni la campagne, elle préfère le bord de mer."
+          ]
+        },
+        {
+          "rule": "L'article n'est pas utilisé",
+          "categories": [
+            {
+              "label": "dans les affiches, les annonces",
+              "examples": ["Défense de fumer – Coiffeur pour dames – Nettoyage à sec."]
+            },
+            {
+              "label": "ni dans les énumérations",
+              "examples": ["Parents, enfants, tous riaient devant ce spectacle drôle."]
+            }
+          ]
+        },
+        {
+          "rule": "«Du», «de l'», «de la», «des» sont remplacés par «de» après des mots qui expriment la quantité",
+          "examples": [
+            "Elle a beaucoup de patience. – Il a peu d'amis. – On a trop de travail.",
+            "Il y avait à peu près une centaine de personnes."
+          ],
+          "notes": [
+            "Avec «la plupart», «la majorité», «la minorité», «la moitié», on utilise l'article: La plupart du temps ils jouent dans le jardin. La majorité de la population était contre le projet. La moitié de l'année, il pleut."
+          ]
+        },
+        {
+          "rule": "L'article n'est pas utilisé dans certaines constructions avec la préposition «de»",
+          "categories": [
+            {
+              "label": "certains verbes + de + nom",
+              "examples": [
+                "Les champs étaient couverts de rosée."
+              ],
+              "note": "orner de, remplir de, couvrir de, être plein de, entourer de, accompagner de..."
+            },
+            {
+              "label": "certains verbes, adjectifs, participes exprimant une émotion",
+              "examples": [
+                "La population mourait de faim et de soif.",
+                "Elle a pleuré de joie en l'apercevant."
+              ],
+              "note": "hurler de douleur; pleurer de joie; mourir de faim; être rouge de honte; être paralysé de peur; être rayonnant de bonheur; être mort de fatigue; etc."
+            },
+            {
+              "label": "des verbes ou des noms exprimant un besoin ou un manque",
+              "examples": [
+                "J'ai besoin de conseils. Vous manquez d'imagination."
+              ],
+              "note": "manquer de; se passer de; être privé de; etc.; le manque de; le besoin de; l'absence de; etc."
+            }
+          ]
+        },
+        {
+          "rule": "L'article n'est pas utilisé devant le nom dans certaines constructions verbe + nom",
+          "examples": [
+            "Il nous a rendu service plus d'une fois.",
+            "Elle nous a fait signe d'avancer plus vite.",
+            "Il s'est rendu compte de son erreur et s'est excusé."
+          ],
+          "notes": [
+            "avoir faim; avoir chaud; avoir peur; avoir sommeil; etc.",
+            "faire peur; faire signe; faire allusion; faire mal; etc.",
+            "rendre compte, rendre justice, rendre service; etc."
+          ]
+        },
+        {
+          "rule": "L'article n'est pas utilisé après la préposition «de» dans la construction nom + de + nom",
+          "categories": [
+            {
+              "label": "Le deuxième nom détermine le premier (catégorie)",
+              "examples": [
+                "un billet de train; un bouquet de fleurs; un cours d'anglais; une table de cuisine."
+              ],
+              "note": "On pourrait avoir: un billet d'avion; un bouquet de roses; un cours de maths; une table de salon."
+            },
+            {
+              "label": "Le deuxième nom indique une matière ou un produit; il est en général au pluriel",
+              "examples": [
+                "un collier de perles; un bois de sapins; une couronne de fleurs."
+              ]
+            }
+          ],
+          "notes": [
+            "Quand le deuxième nom, en général utilisé au singulier, indique une matière compacte, on utilise la préposition «en»: une bague en or; une casserole en acier; une armoire en chêne; une chemise en coton.",
+            "Il faut remarquer la différence entre: Ce matin en me levant j'ai trouvé la lampe du salon cassée en mille morceaux. et: Dans le magasin en face de la maison, ils vendent des lampes de salon."
+          ]
+        },
+        {
+          "rule": "L'article n'est pas utilisé devant un nom abstrait introduit par la préposition «avec»",
+          "examples": [
+            "Je le ferai avec plaisir.",
+            "Il a agi avec prudence."
+          ],
+          "notes": [
+            "Il faut utiliser l'article si le nom est déterminé: Il se déplace avec l'agilité d'un singe. Je le ferai avec un plaisir immense."
+          ]
+        },
+        {
+          "rule": "L'article disparaît dans certains proverbes ou expressions populaires",
+          "examples": [
+            "Pierre qui roule n'amasse pas mousse.",
+            "Abondance de biens ne nuit pas.",
+            "Araignée du matin, chagrin, araignée du soir, espoir.",
+            "Blanc bonnet et bonnet blanc.",
+            "Remuer ciel et terre.",
+            "À bon chat, bon rat.",
+            "Tel qui rit vendredi, dimanche pleurera.",
+            "Ventre affamé n'a pas d'oreille.",
+            "Prendre racine.",
+            "Perdre pied.",
+            "Courir à perdre haleine.",
+            "Rire à gorge déployée.",
+            "Chanter à tue-tête."
+          ]
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 17,
+          "instruction": "Complétez ce texte par des articles.",
+          "type": "fill_blank",
+          "items": [
+            {
+              "number": 1,
+              "text": "– Docteur, ça ne va pas.\n– Dans votre cas, _____ choses sont simples: plus _____ cigarettes, plus _____ apéritifs, plus _____ bons repas bien arrosés, ni _____ café et encore moins _____ pousse-café, mais par contre _____ sport et _____ marche. Pas _____ efforts violents et courts mais _____ efforts progressifs, tous _____ jours. Vous verrez, ça ira mieux très vite.",
+              "blanks": 11
+            }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 17,
+          "instruction": "Complétez ce texte par des articles si nécessaire.",
+          "type": "fill_blank",
+          "items": [
+            {
+              "number": 1,
+              "text": "– Tu as _____ beau jardin. Moi je ne cultive ni _____ plantes, ni _____ légumes. Je sais faire _____ différence entre _____ persil et _____ salade mais c'est tout.\n– Ici, tu as _____ salade, mais là, c'est _____ romaine, et là, _____ frisée.\n– Tu as _____ fruits?\n– Là-bas, j'ai _____ vigne mais je ne fais plus _____ fraises ni _____ framboises depuis l'an dernier. Je n'ai pas _____ arbres fruitiers: ni _____ pommiers, ni _____ poiriers, ni _____ pêchers. Rien. Ici, ils n'ont aucune _____ chance de pousser. En planter serait sans _____ intérêt.",
+              "blanks": 18
+            }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 17,
+          "instruction": "Complétez ce texte par des articles.",
+          "type": "fill_blank",
+          "items": [
+            {
+              "number": 1,
+              "text": "Mesdames et messieurs, ce n'est pas _____ enfant que vous avez devant vous. C'est _____ être capable de calculer plus vite qu' _____ ordinateur. C'est _____ être capable d'extraire _____ racine carrée plus vite que _____ machine. Ce n'est pas _____ enfant, c'est _____ génie. C'est _____ génie _____ calcul mental!",
+              "blanks": 10
+            }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 17,
+          "instruction": "Même exercice.",
+          "type": "fill_blank",
+          "items": [
+            {
+              "number": 1,
+              "text": "– Tu viens avec nous? On va passer _____ week-end à _____ campagne.\n– Pardonne-moi, mais je n'aime pas _____ campagne: je n'aime ni _____ odeur de _____ herbe mouillée, ni celle _____ vaches. Je n'aime ni _____ chant _____ coq, ni _____ chant _____ petits oiseaux, ni _____ coin-coin permanents _____ canards. J'aime _____ bruit _____ vagues sur _____ sable. J'aime _____ horizons infinis et _____ nuages, _____ merveilleux nuages. Quand vous irez à _____ mer, faites-moi signe.",
+              "blanks": 20
+            }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 17,
+          "instruction": "Rédigez une affiche ou une annonce pour:",
+          "type": "free_response",
+          "items": [
+            { "number": 1, "text": "interdire que les gens garent leur voiture: _____" },
+            { "number": 2, "text": "annoncer que des objets seront vendus aux enchères: _____" },
+            { "number": 3, "text": "annoncer sur une route qu'il faut rouler moins vite: _____" }
+          ]
+        },
+        {
+          "exercise_number": 6,
+          "book_page": 19,
+          "instruction": "Complétez ce texte avec des articles si nécessaire.",
+          "type": "fill_blank",
+          "items": [
+            {
+              "number": 1,
+              "text": "Il n'y avait qu' _____ petite centaine _____ personnes à _____ manifestation de soutien _____ sans-logis et surtout, pas assez _____ responsables politiques, pas assez _____ responsables syndicaux. Ce soir-là, _____ sans-logis avaient bien peu _____ amis. Par contre, en face, il y avait plus _____ une centaine _____ policiers. C'était bien triste!",
+              "blanks": 10
+            }
+          ]
+        },
+        {
+          "exercise_number": 7,
+          "book_page": 19,
+          "instruction": "Même exercice.",
+          "type": "fill_blank",
+          "items": [
+            {
+              "number": 1,
+              "text": "– Vous qui avez connu M. Dubois, la victime, pouvez-vous me dire ce qu'il faisait habituellement?\n– _____ plupart _____ temps, il était dans _____ jardin qui est derrière _____ maison.\n– Comme _____ moitié _____ année il pleut, que faisait-il alors?\n– _____ autre moitié _____ année, il la passait à lire derrière _____ fenêtre _____ salon. Il levait _____ tête de temps en temps et regardait passer _____ bateaux. _____ majorité _____ bateliers le connaissait. _____ plupart _____ temps, ils échangeaient _____ signe d'amitié.",
+              "blanks": 16
+            }
+          ]
+        },
+        {
+          "exercise_number": 8,
+          "book_page": 19,
+          "instruction": "Complétez ce texte avec des articles et la préposition «de».",
+          "type": "fill_blank",
+          "items": [
+            {
+              "number": 1,
+              "text": "_____ propriété était entourée _____ champs remplis _____ fleurs au printemps. _____ entrée était ornée _____ grille en fer forgé. Comme _____ maison était entourée _____ arbres, on ne la voyait pas de _____ entrée. Ce lieu était plein _____ charme, accompagné _____ certaine tristesse.",
+              "blanks": 10
+            }
+          ]
+        },
+        {
+          "exercise_number": 9,
+          "book_page": 19,
+          "instruction": "Donnez l'expression qui correspond à chacune des phrases suivantes.",
+          "type": "transformation",
+          "items": [
+            { "number": 1, "text": "Ses joues étaient rouges tellement il avait honte. Il était _____", "blanks": 1 },
+            { "number": 2, "text": "Il était tellement fatigué qu'il ne tenait plus debout. Il _____", "blanks": 1 },
+            { "number": 3, "text": "Quel bonheur! Le bonheur de sa vie. Elle _____", "blanks": 1 },
+            { "number": 4, "text": "Il était si heureux qu'il en pleurait. Il _____", "blanks": 1 },
+            { "number": 5, "text": "Il avait tellement peur qu'il ne pouvait faire un geste. Il _____", "blanks": 1 },
+            { "number": 6, "text": "La douleur était tellement aiguë qu'il cria très fort. Il _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 10,
+          "book_page": 19,
+          "instruction": "Complétez pour exprimer le manque.",
+          "type": "fill_blank",
+          "items": [
+            {
+              "number": 1,
+              "text": "Elle a toujours besoin de quelque chose: avant-hier, elle avait besoin _____, hier elle avait besoin _____, et ce matin elle _____",
+              "blanks": 3
+            },
+            {
+              "number": 2,
+              "text": "Il lui manque toujours quelque chose pour réussir: une fois, elle manque _____, une autre fois _____, hier elle a manqué _____",
+              "blanks": 3
+            }
+          ]
+        },
+        {
+          "exercise_number": 11,
+          "book_page": 19,
+          "instruction": "Utilisez les expressions suivantes dans des phrases de votre choix.",
+          "type": "free_response",
+          "context": "avoir sommeil – prendre soin – faire allusion – rendre service – faire peur."
+        },
+        {
+          "exercise_number": 12,
+          "book_page": 21,
+          "instruction": "Faites les associations qui conviennent.",
+          "type": "matching",
+          "columns": {
+            "left": ["1. lampe", "2. coucher", "3. buffet", "4. argent", "5. club"],
+            "right": ["A. football", "B. poche", "C. bureau", "D. soleil", "E. cuisine"]
+          },
+          "note": "Using: de"
+        },
+        {
+          "exercise_number": 13,
+          "book_page": 21,
+          "instruction": "Utilisez les associations que vous avez faites dans l'exercice 1 dans une phrase de votre choix.",
+          "type": "composition",
+          "context": "1. Une lampe de bureau. → Je cherche un magasin qui vend des lampes de bureau."
+        },
+        {
+          "exercise_number": 14,
+          "book_page": 21,
+          "instruction": "Complétez avec l'article qui convient.",
+          "type": "fill_blank",
+          "items": [
+            {
+              "number": 1,
+              "text": "Les enfants étaient allés dans _____ bois _____ chênes pour couper _____ branches et se faire _____ couronnes _____ feuilles à la manière _____ empereurs romains. _____ filles s'étaient fait _____ colliers _____ fruits rouges qui ressemblaient à _____ perles. Coiffés _____ chapeaux _____ carton, habillés _____ vieilles robes _____ soie ou _____ vieux pantalons _____ velours, ils se faisaient leur carnaval.",
+              "blanks": 16
+            }
+          ]
+        },
+        {
+          "exercise_number": 15,
+          "book_page": 21,
+          "instruction": "Complétez avec un article quand cela est nécessaire.",
+          "type": "fill_blank",
+          "items": [
+            {
+              "number": 1,
+              "text": "– Comment a-t-il fait ça? – Il a fait ça systématiquement, avec _____ violence, avec _____ rage, avec _____ haine, avec _____ plaisir non dissimulé, avec _____ air de vengeance.",
+              "blanks": 5
+            }
+          ]
+        },
+        {
+          "exercise_number": 16,
+          "book_page": 21,
+          "instruction": "Répondez comme vous le souhaitez selon le modèle.",
+          "type": "transformation",
+          "context": "– Comment a-t-il agi? → Il a agi avec prudence, avec une prudence excessive.",
+          "items": [
+            { "number": 1, "text": "– Comment a-t-il agi? → _____" },
+            { "number": 2, "text": "– Comment a-t-il parlé? _____" },
+            { "number": 3, "text": "– Comment s'est-il défendu? _____" },
+            { "number": 4, "text": "– Comment a-t-elle joué? _____" },
+            { "number": 5, "text": "– Comment l'a-t-elle pris? _____" },
+            { "number": 6, "text": "– Comment l'a-t-elle soigné? _____" }
+          ]
+        },
+        {
+          "exercise_number": 17,
+          "book_page": 21,
+          "instruction": "À quels contextes correspondent ces expressions populaires?",
+          "type": "matching",
+          "columns": {
+            "left": ["1. Plier bagage", "2. Fausser compagnie", "3. Blanc comme neige"],
+            "right": ["A. Quitter quelqu'un sans le prévenir.", "B. Partir en emportant toutes ses affaires.", "C. Se révéler innocent après avoir été soupçonné."]
+          }
+        }
+      ]
+    },
+    {
+      "section_title": "VALEUR SÉMANTIQUE DES TROIS TYPES D'ARTICLES",
+      "book_pages": [22, 23],
+      "intro_examples": [
+        "Le chien est un animal domestique. Un chien est un animal domestique.",
+        "Passe-moi le livre qui est là! Passe-moi un livre, n'importe lequel!",
+        "Du pain était posé sur la table. Le pain apporté par le boulanger était posé sur la table."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "L'article défini («le», «la») et l'article indéfini («un», «une») peuvent avoir la même valeur de généralité",
+          "examples": [
+            "Le chien est un animal domestique. Un chien est un animal domestique.",
+            "«Le» et «un» désignent la totalité des chiens."
+          ]
+        },
+        {
+          "rule": "L'article défini et l'article indéfini peuvent être utilisés dans une situation semblable",
+          "categories": [
+            {
+              "label": "«Le», «la», «les» quand le nom est déterminé par ce qui suit",
+              "examples": ["Passe-moi le livre qui est devant toi!"]
+            },
+            {
+              "label": "«Un», «une», «des» signalent des objets ou des personnes parmi d'autres",
+              "examples": ["Passe-moi un livre, n'importe lequel!"]
+            }
+          ]
+        },
+        {
+          "rule": "L'article défini et l'article partitif peuvent être utilisés avec des noms indiquant une matière ou une notion",
+          "categories": [
+            {
+              "label": "«Le», «la», «les» désignent la matière ou la notion dans sa généralité",
+              "examples": [
+                "Les Français aiment le fromage. – Les fruits sont bons pour la santé.",
+                "La patience est une qualité précieuse."
+              ]
+            },
+            {
+              "label": "«Du», «de la», «de l'» indiquent que la matière ou la notion est limitée en quantité",
+              "examples": [
+                "Il prend de la moutarde avec tous les plats.",
+                "Nous buvons du jus d'orange tous les matins.",
+                "Je lui ai conseillé d'avoir de la patience."
+              ]
+            }
+          ]
+        },
+        {
+          "rule": "L'article défini, l'article indéfini et l'article partitif peuvent être utilisés dans une situation semblable",
+          "categories": [
+            {
+              "label": "«Le», «la», «les» désignent une chose unique",
+              "examples": ["Aujourd'hui le vent s'est levé vers 5 heures."]
+            },
+            {
+              "label": "«Un», «une», «des» sont utilisés quand le nom est caractérisé par un adjectif, un complément ou une proposition relative",
+              "examples": ["Aujourd'hui, il y a un vent terrible."]
+            },
+            {
+              "label": "«Du», «de la», «de l'» sont utilisés devant un nom non comptable pour désigner une certaine quantité indéterminée",
+              "examples": ["Il y a du vent aujourd'hui."]
+            }
+          ]
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 23,
+          "instruction": "Trouvez parmi ces phrases celles qui ont la même valeur.",
+          "type": "matching",
+          "columns": {
+            "left": [
+              "1. Un chat est un animal domestique.",
+              "2. Un chat miaule.",
+              "3. Un chat boit du lait.",
+              "4. Voilà un chien de chasse.",
+              "5. Un chien de chasse n'a pas peur du fusil.",
+              "6. Achète-moi un bijou pas cher.",
+              "7. Passe-moi un livre qui est devant toi."
+            ],
+            "right": [
+              "Le chat est un animal domestique.",
+              "Le chat miaule.",
+              "Le chat boit du lait.",
+              "Voilà le chien de chasse.",
+              "Le chien de chasse n'a pas peur du fusil.",
+              "Achète-moi le bijou pas cher.",
+              "Passe-moi le livre qui est devant toi."
+            ]
+          }
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 23,
+          "instruction": "Récrivez ces phrases de manière à utiliser l'article défini.",
+          "type": "transformation",
+          "context": "Donne-moi un cendrier. → Donne-moi le cendrier qui est devant toi.",
+          "items": [
+            { "number": 1, "text": "Ouvre-moi une boîte de petits pois. _____" },
+            { "number": 2, "text": "Achète-moi un médicament. _____" },
+            { "number": 3, "text": "Rapporte-moi un souvenir. _____" },
+            { "number": 4, "text": "Dis-moi un mot gentil. _____" },
+            { "number": 5, "text": "Apporte-moi un plat. _____" },
+            { "number": 6, "text": "Passe-moi une assiette. _____" }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 23,
+          "instruction": "Transformez ces phrases de manière à utiliser l'article partitif.",
+          "type": "transformation",
+          "context": "Je vous recommande la patience. → Je vous recommande d'avoir de la patience.",
+          "items": [
+            { "number": 1, "text": "Je vous conseille le sang-froid. _____" },
+            { "number": 2, "text": "La fermeté n'est pas de trop. _____" },
+            { "number": 3, "text": "La force est nécessaire. _____" },
+            { "number": 4, "text": "Il faut avoir l'audace de le faire. _____" },
+            { "number": 5, "text": "La prudence sera une bonne chose. _____" },
+            { "number": 6, "text": "La persévérance sera utile. _____" }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 23,
+          "instruction": "Transformez ces phrases en utilisant selon votre choix l'article défini ou indéfini.",
+          "type": "transformation",
+          "context": "Aujourd'hui il y a du vent. → Aujourd'hui il y a un vent violent. – Le vent est fou.",
+          "items": [
+            { "number": 1, "text": "Demain il y aura du verglas. _____" },
+            { "number": 2, "text": "Au menu, il y a du bifteck. _____" },
+            { "number": 3, "text": "Hier il y avait du brouillard. _____" },
+            { "number": 4, "text": "Je voudrais du beurre. _____" },
+            { "number": 5, "text": "Je prendrai du vin. _____" },
+            { "number": 6, "text": "Donnez-moi du pain. _____" }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

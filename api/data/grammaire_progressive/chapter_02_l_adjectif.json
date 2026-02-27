@@ -1,0 +1,384 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 2,
+  "chapter_title": "L'ADJECTIF",
+  "book_pages": [24, 25, 26, 27, 28, 29],
+  "sections": [
+    {
+      "section_title": "LES ADJECTIFS NUMÉRAUX",
+      "subtitle": null,
+      "book_pages": [24, 25],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "Les adjectifs numéraux cardinaux sont invariables sauf «vingt» et «cent» qui prennent un «s» quand ils sont multipliés et non suivis d'un autre nombre.",
+          "examples": [
+            "Quatre-vingts francs mais quatre-vingt-deux francs.",
+            "Deux cents francs mais deux cent cinquante francs."
+          ],
+          "categories": [],
+          "notes": ["«Mille» est toujours invariable: deux mille francs."]
+        },
+        {
+          "rule": "On utilise les numéraux cardinaux pour les dates, sauf pour le premier du mois.",
+          "examples": [
+            "Le vingt-cinq décembre est le jour de la fête de Noël.",
+            "Le premier janvier est le jour de l'an."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Les fractions s'expriment avec les numéraux ordinaux au dénominateur.",
+          "examples": [
+            "1/2 = un demi",
+            "1/3 = un tiers",
+            "1/4 = un quart"
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Les multiples s'expriment par: le/la double, le/la triple, le/la quadruple, etc.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Pour exprimer l'approximation, on utilise des suffixes en «-aine»: une dizaine, une douzaine, une quinzaine, une vingtaine, une trentaine, une quarantaine, une cinquantaine, une centaine, un millier.",
+          "examples": [
+            "Il y avait une centaine de personnes.",
+            "Dans une quinzaine de jours."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 25,
+          "instruction": "Écrivez en lettres les opérations suivantes et leurs résultats.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "98 − 82 = _____", "blanks": 1 },
+            { "number": 2, "text": "60 + 18 = _____", "blanks": 1 },
+            { "number": 3, "text": "125 x 2 = _____", "blanks": 1 },
+            { "number": 4, "text": "135 : 10 = _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 25,
+          "instruction": "Vous avez invité trois de vos ami(e)s au théâtre et vous allez chercher les places. Complétez le dialogue suivant.",
+          "type": "dialogue",
+          "context": null,
+          "items": [
+            { "number": null, "text": "- Je voudrais _____ pour la représentation de demain.\n- Matinée ou soirée ?\n- Soirée.\n- Je n'ai plus que _____ au parterre et _____ au premier balcon.", "blanks": 3 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 25,
+          "instruction": "Complétez ce texte en employant convenablement les adjectifs numéraux qui s'imposent.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "_____ hommes masqués descendent d'une voiture, enlèvent du coffre _____ grands sacs d'où ils sortent des armes. Alors _____ hommes s'approchent doucement de la maison ; _____ se mettent de chaque côté de la porte, _____ passent par derrière. C'est alors que les projecteurs de la police s'allument sur _____ hommes de devant.", "blanks": 6 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 25,
+          "instruction": "Le calendrier des fêtes françaises. Écrivez ces dates en lettres selon le modèle.",
+          "type": "transformation",
+          "context": "25 décembre → Le vingt-cinq décembre est le jour de la fête de Noël.",
+          "items": [
+            { "number": 1, "text": "14 juillet. _____", "blanks": 1 },
+            { "number": 2, "text": "15 août. _____", "blanks": 1 },
+            { "number": 3, "text": "1er novembre. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 25,
+          "instruction": "A. Donnez le nom des fractions suivantes et complétez si nécessaire.\nB. Comment appelle-t-on ce qui est:",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "A.", "blanks": 0 },
+            { "number": 1, "text": "1/2 _____", "blanks": 1 },
+            { "number": 2, "text": "1/3 _____", "blanks": 1 },
+            { "number": 3, "text": "1/4 _____", "blanks": 1 },
+            { "number": 4, "text": "1/8 _____", "blanks": 1 },
+            { "number": 5, "text": "1/3 du gâteau _____", "blanks": 1 },
+            { "number": 6, "text": "1/2 d'une orange _____", "blanks": 1 },
+            { "number": null, "text": "B.", "blanks": 0 },
+            { "number": 1, "text": "x 2 _____", "blanks": 1 },
+            { "number": 2, "text": "x 3 _____", "blanks": 1 },
+            { "number": 3, "text": "x 4 _____", "blanks": 1 },
+            { "number": 4, "text": "x 5 _____", "blanks": 1 },
+            { "number": 5, "text": "x 100 _____", "blanks": 1 },
+            { "number": 6, "text": "x 10 _____", "blanks": 1 },
+            { "number": 7, "text": "x 25 _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 6,
+          "book_page": 25,
+          "instruction": "Vous n'êtes pas sûr des chiffres avancés et vous préférez rester approximatif. Réécrivez ce texte.",
+          "type": "transformation",
+          "context": "Dans quinze jours nous recevrons cent étudiants. Pour les cours et travaux pratiques, nous aurions besoin de douze livres par étudiant, c'est-à-dire mille deux cents ouvrages. Pourriez-vous les faire parvenir dans les huit jours ? Merci par avance.",
+          "items": [
+            { "number": null, "text": "_____", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "L'ADJECTIF INDÉFINI",
+      "subtitle": null,
+      "book_pages": [26, 27],
+      "intro_examples": [
+        "J'ai vu ce film plusieurs fois ; c'est un bon film mais il a quand même quelques défauts. Philippe ne l'a pas aimé et il a trouvé un prétexte quelconque pour sortir de la salle avant la fin."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "Les adjectifs indéfinis ont en général un caractère imprécis mais peuvent être classés en plusieurs catégories.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Ils peuvent exprimer une imprécision totale: certain, quelconque, quel.",
+          "examples": [
+            "L'ambiance était froide ; il a fallu trouver un sujet quelconque pour animer la conversation ! [= n'importe quel sujet]",
+            "J'ai trouvé le spectacle quelconque. [sans caractère précis = mauvais]",
+            "Pour faire faire un passeport, ils demandent je ne sais quel papier ! [= je ne sais pas quel papier précis ils demandent]",
+            "Ils se rencontrèrent un certain jour, en hiver. [= un jour parmi d'autres]"
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Ils peuvent exprimer une quantité en général pas très importante (sauf plusieurs): quelques, certains, plusieurs.",
+          "examples": [
+            "Il a écrit quelques articles pour le journal de l'université.",
+            "Elles ont fait plusieurs voyages en Europe.",
+            "Certains fruits sont mûrs ; il faut les cueillir."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Ils peuvent exprimer une quantité nulle: aucun(e) ; nul(s), nulle(s).",
+          "examples": [
+            "Je n'ai lu aucun journal depuis une semaine.",
+            "Il est nul en sciences physiques. [= zéro]"
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Ils peuvent exprimer la totalité: chaque ; tout, tous, toute(s).",
+          "examples": [
+            "Nous nous voyons chaque jour au lycée. [= tous les jours]",
+            "On a visité tout le pays. [= entièrement]"
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Ils peuvent exprimer l'identité ou la différence: même(s) ; tel(s), telle(s) ; autre(s) ; différent(s), différente(s).",
+          "examples": [
+            "Nous sommes nés le même jour.",
+            "Il a affirmé que la crise allait continuer : une telle affirmation nous a étonnés. [= une affirmation comme celle-là]"
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 27,
+          "instruction": "Dans ce dialogue remplacez les éléments soulignés par les adjectifs indéfinis qui conviennent.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": null, "text": "- Comment avez-vous trouvé le film de Lelouch ?\n- Assez mauvais. _____\n- Et les acteurs ?\n- La plupart n'ont pas la moindre _____ notion du métier d'acteur, ce qui fait que l'ensemble du _____ groupe est médiocre.\n- Vous êtes dur.\n- Non, car s'il n'y avait que deux ou trois _____ défauts, je serais moins sévère mais il y a tout de même des imperfections, même si elles ne sont pas nombreuses.", "blanks": 4 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 27,
+          "instruction": "Réécrivez ce texte en utilisant le maximum d'adjectifs indéfinis exprimant une quantité pas très importante ou nulle.",
+          "type": "transformation",
+          "context": "Il avait fait des voyages en Extrême-Orient à la suite desquels il avait écrit des articles dans un grand journal du soir. Il y avait des articles qui avaient eu du succès mais les autres étaient sans intérêt. Mais cela ne lui laissait pas la plus petite chance de devenir un jour un grand reporter.",
+          "items": [
+            { "number": null, "text": "_____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 27,
+          "instruction": "Dites à peu près le contraire en utilisant des adjectifs indéfinis.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il a parlé d'un problème précis d'économie. _____", "blanks": 1 },
+            { "number": 2, "text": "J'ai trouvé sa femme formidable. _____", "blanks": 1 },
+            { "number": 3, "text": "Il me manque un seul papier pour obtenir ma carte de séjour. _____", "blanks": 1 },
+            { "number": 4, "text": "Il a fait de nombreuses missions en Afrique. _____", "blanks": 1 },
+            { "number": 5, "text": "Toutes les vignes seront arrachées. _____", "blanks": 1 },
+            { "number": 6, "text": "Beaucoup d'arbres fruitiers doivent être traités. _____", "blanks": 1 },
+            { "number": 7, "text": "Il a fait des progrès énormes. _____", "blanks": 1 },
+            { "number": 8, "text": "Il est très bon en français. _____", "blanks": 1 },
+            { "number": 9, "text": "Il a très envie d'aller en France l'année prochaine. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 27,
+          "instruction": "Réécrivez ce texte en utilisant l'adjectif «tout» quand c'est possible.",
+          "type": "transformation",
+          "context": "Le soir on sort du lycée et le matin il faut être à l'arrêt du car avant 7 heures sauf bien sûr le mercredi. Chaque semaine se ressemble, chaque mois est identique. Chacun est triste et fatigué. La classe rêve de vacances qui n'en finiraient pas.",
+          "items": [
+            { "number": null, "text": "_____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 27,
+          "instruction": "Complétez ce texte en utilisant des adjectifs indéfinis qui expriment l'identité ou la différence.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "J'ai aimé la première moitié de sa conférence de presse. Mais _____ partie était vide. Elle contenait les _____ idées, les _____ propositions, dont il avait déjà parlé deux mois avant. Il a bien sûr abordé des thèmes _____ mais c'était vague. Devant un _____ problème, il faut envisager une _____ solution.", "blanks": 6 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "LA PLACE DE L'ADJECTIF",
+      "subtitle": null,
+      "book_pages": [28, 29],
+      "intro_examples": [
+        "Ce livre magnifique raconte l'incroyable histoire d'un jeune homme irlandais qui..."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "Certains adjectifs se placent toujours après le nom qu'ils qualifient ; ce sont les plus nombreux.",
+          "examples": [],
+          "categories": [
+            { "label": "nationalité, formes géométriques, couleurs", "examples": ["un film américain", "une table ronde", "une veste noire"] },
+            { "label": "adjectifs de relation", "examples": ["des produits chimiques", "une usine textile"] },
+            { "label": "adjectifs qui ont plus de deux syllabes", "examples": ["un air mélancolique"] },
+            { "label": "adjectifs suivis d'un complément", "examples": ["un immeuble haut de six étages"] },
+            { "label": "participes passés employés comme adjectifs", "examples": ["une porte ouverte", "les yeux fermés", "une maison démolie", "les rideaux tirés"] }
+          ],
+          "notes": []
+        },
+        {
+          "rule": "Certains adjectifs se placent en général avant le nom ; ils sont peu nombreux mais souvent utilisés: grand – petit – gros – vieux – jeune – bon – mauvais – beau – joli – long – large – autre – même – nouveau – dernier – prochain.",
+          "examples": [
+            "une jeune femme",
+            "un gros arbre",
+            "un grand chapeau"
+          ],
+          "categories": [],
+          "notes": [
+            "Lorsqu'il y a deux adjectifs de cette catégorie, l'un se met devant le nom, l'autre derrière: une jolie robe longue, une belle jupe plissée, une nouvelle veste cintrée.",
+            "«Robe longue», «jupe plissée», «veste cintrée» forment des unités lexicales parce qu'ils appartiennent à une catégorie de vêtements."
+          ]
+        },
+        {
+          "rule": "Certains adjectifs peuvent se placer avant ou après le nom. Les adjectifs qui servent à apprécier ont un caractère plus subjectif quand ils sont placés avant le nom.",
+          "examples": [
+            "C'est une histoire incroyable. – C'est une incroyable histoire.",
+            "Il a eu des notes excellentes. – Il a eu d'excellentes notes."
+          ],
+          "categories": [],
+          "notes": [
+            "Quand l'adjectif est placé devant un nom pluriel, «des» devient «de» ou «d'»: À Orsay, il y a des tableaux magnifiques. À Orsay, il y a de magnifiques tableaux.",
+            "Nous avons pensé à d'autres solutions ; de telles solutions peuvent être envisagées rapidement."
+          ]
+        },
+        {
+          "rule": "Le changement de place de ces adjectifs modifie leur sens.",
+          "examples": [
+            "un livre cher [qui coûte cher] / mon cher ami [que j'aime]",
+            "Tu as les mains sales. / Il fait un sale temps [mauvais].",
+            "C'est un métal dur. / C'est un dur métier [difficile].",
+            "C'est un homme grand. / C'est un grand homme [important].",
+            "C'est mon dernier franc. / le mois dernier [passé].",
+            "Ce sera mon prochain achat. / l'an prochain [suivant]."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 29,
+          "instruction": "Qualifiez chacun des éléments soulignés. Mettez cet adjectif à la place qui convient.",
+          "type": "transformation",
+          "context": "Ce film est l'histoire d'une femme dont le mari l'oblige à lui donner les plans de la banque dans laquelle elle travaille. Cette femme, employée sans histoire, permettra à son mari de faire un hold-up sans laisser de traces mais en emportant une somme d'argent.",
+          "items": [
+            { "number": null, "text": "_____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 29,
+          "instruction": "Ajoutez un adjectif de votre choix.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Une jeune femme _____", "blanks": 1 },
+            { "number": 2, "text": "Un grand chapeau _____", "blanks": 1 },
+            { "number": 3, "text": "Une jolie jupe _____", "blanks": 1 },
+            { "number": 4, "text": "Un grand arbre _____", "blanks": 1 },
+            { "number": 5, "text": "Une grosse affaire _____", "blanks": 1 },
+            { "number": 6, "text": "Quelle histoire _____ !", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 29,
+          "instruction": "Faites pour chacune des phrases une paraphrase explicative comme dans l'exemple.",
+          "type": "transformation",
+          "context": "Tu as les mains sales. → Tes mains ne sont pas propres.",
+          "items": [
+            { "number": 1, "text": "Il fait un sale temps. _____", "blanks": 1 },
+            { "number": 2, "text": "C'est un pauvre homme. _____", "blanks": 1 },
+            { "number": 3, "text": "C'est un homme pauvre. _____", "blanks": 1 },
+            { "number": 4, "text": "C'est un grand homme. _____", "blanks": 1 },
+            { "number": 5, "text": "C'est un homme grand. _____", "blanks": 1 },
+            { "number": 6, "text": "C'est une voiture ancienne. _____", "blanks": 1 },
+            { "number": 7, "text": "C'est son ancienne voiture. _____", "blanks": 1 },
+            { "number": 8, "text": "C'est un curieux garçon. _____", "blanks": 1 },
+            { "number": 9, "text": "C'est un garçon curieux. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 29,
+          "instruction": "Trouvez des adjectifs et placez-les comme il convient pour terminer cette description.",
+          "type": "fill_blank",
+          "context": "Un vieux couple",
+          "items": [
+            { "number": null, "text": "Mme Gordet était une de ces _____ femmes _____, _____ et _____ qui portent de _____ robes _____ avec un tablier _____ par-dessus. Elle ressemblait à une fleur _____ de l'arrière-saison avec des pétales _____ et un parfum _____. Son mari avait l'allure _____ et _____ d'un militaire. C'était un homme _____ de taille et _____ d'épaules. Il portait des vêtements _____, _____ et _____. Il avait toujours un air _____. Ils avaient deux filles. La fille _____ avait un air _____ et _____. Elle marchait d'un pas _____ et _____. Leur fille _____ au contraire était d'humeur _____. Elle portait le très _____ prénom de Mathilde.", "blanks": 25 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [24, 25, 26, 27, 28, 29],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

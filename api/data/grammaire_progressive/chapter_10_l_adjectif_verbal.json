@@ -1,0 +1,135 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 10,
+  "chapter_title": "L'ADJECTIF VERBAL",
+  "book_pages": [82, 83],
+  "sections": [
+    {
+      "section_title": "FORMATION",
+      "subtitle": null,
+      "book_pages": [82],
+      "intro_examples": [
+        "C'est un livre passionnant que j'ai lu la semaine précédente.",
+        "Leurs enfants sont charmants mais très différents l'un de l'autre."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "L'adjectif verbal est formé à partir du verbe. Il s'accorde, comme les adjectifs, avec le nom qu'il qualifie.",
+          "examples": [
+            "une histoire intéressante – un quartier bruyant",
+            "des étoffes brillantes – des enfants charmants"
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Il est en général semblable graphiquement au participe présent, mais il peut dans certains cas être différent.",
+          "examples": [
+            "Je l'ai vu la semaine précédente. – La semaine précédant les examens, il n'y aura pas de cours.",
+            "C'est un argument convaincant. – Ses arguments nous convainquant, nous avons voté le projet."
+          ],
+          "categories": [],
+          "notes": [
+            "On ne peut pas former un adjectif verbal à partir de tous les verbes."
+          ]
+        },
+        {
+          "rule": "La liste suivante présente les adjectifs verbaux et les participes présents ayant une graphie différente.",
+          "examples": [],
+          "categories": [
+            {
+              "category": "Groupe 1 : terminaison -ent (adj.) vs -ant (part. prés.)",
+              "items": [
+                "adhérer : adhérant → adhérent (adj. ou nom)",
+                "converger : convergeant → convergent",
+                "différer : différant → différent",
+                "diverger : divergeant → divergent",
+                "émerger : émergeant → émergent",
+                "équivaloir : équivalant → équivalent",
+                "exceller : excellant → excellent",
+                "influer : influant → influent",
+                "négliger : négligeant → négligent",
+                "précéder : précédant → précédent",
+                "somnoler : somnolant → somnolent"
+              ]
+            },
+            {
+              "category": "Groupe 2 : terminaison -cant/-gant (adj.) vs -quant/-guant (part. prés.)",
+              "items": [
+                "communiquer : communiquant → communicant",
+                "convaincre : convainquant → convaincant",
+                "fatiguer : fatiguant → fatigant",
+                "intriguer : intriguant → intrigant",
+                "naviguer : naviguant → navigant",
+                "provoquer : provoquant → provocant",
+                "suffoquer : suffoquant → suffocant",
+                "vaquer : vaquant → vacant"
+              ]
+            }
+          ],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 83,
+          "instruction": "Formez des adjectifs verbaux comme dans l'exemple.",
+          "type": "transformation",
+          "context": "Des enfants qui obéissent sont des enfants obéissants.",
+          "items": [
+            { "number": 1, "text": "Une couleur qu'on voit bien _____", "blanks": 1 },
+            { "number": 2, "text": "Des enfants qui font du bruit _____", "blanks": 1 },
+            { "number": 3, "text": "Un enfant qui sourit souvent _____", "blanks": 1 },
+            { "number": 4, "text": "Des femmes qui charment _____", "blanks": 1 },
+            { "number": 5, "text": "Des articles qui intéressent les lecteurs _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 83,
+          "instruction": "Complétez par l'adjectif verbal ou le participe présent. Attention à la graphie (utilisez le tableau).",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Je l'avais rencontré l'année (précéder) _____ ; c'était un jour du mois (précéder) _____ les fêtes. Nous avions échangé des idées (converger) _____ sur bien des points, mais nous avions des opinions (diverger) _____ sur le néolibéralisme. Ses arguments me (convaincre) _____, nous avions bu un (exceller) _____ champagne pour fêter notre rencontre. Après, je ne l'ai plus revu. Il est devenu, paraît-il, un homme (influer) _____ mais aussi (intriguer) _____, hélas ! Qu'importe, je ne suis pas (adhérer) _____ à son parti, ni à sa politique.", "blanks": 9 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 83,
+          "instruction": "Transformez les phrases en utilisant un adjectif verbal (reportez-vous au tableau pour la graphie).",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "C'était un enfant qui remuait tout le temps. En effet, il était _____", "blanks": 1 },
+            { "number": 2, "text": "C'était une fille qui provoquait tous les garçons. En effet, elle _____", "blanks": 1 },
+            { "number": 3, "text": "C'est un ouvrier qui néglige trop son travail. En effet, il _____", "blanks": 1 },
+            { "number": 4, "text": "On a fait une marche qui nous a fatigués. En effet, _____", "blanks": 1 },
+            { "number": 5, "text": "J'ai vu un spectacle qui a enthousiasmé tout le monde. C'est vrai, _____", "blanks": 1 },
+            { "number": 6, "text": "Il a fait une chaleur qui nous suffoquait. Ah oui, _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 83,
+          "instruction": "Transformez ces phrases pour faire apparaître un adjectif verbal ou un participe présent.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Je l'ai vu le jour qui précédait la rentrée. _____", "blanks": 1 },
+            { "number": 2, "text": "Ses arguments nous ont convaincus. _____", "blanks": 1 },
+            { "number": 3, "text": "Cet enfant me fatigue beaucoup. _____", "blanks": 1 },
+            { "number": 4, "text": "C'est une personne qui a de l'influence. _____", "blanks": 1 },
+            { "number": 5, "text": "On l'a aperçu qui émergeait de l'eau. _____", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [82, 83],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

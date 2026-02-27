@@ -1,0 +1,124 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 12,
+  "chapter_title": "LA FORME PRONOMINALE",
+  "book_pages": [88, 89],
+  "sections": [
+    {
+      "section_title": "LA FORME PRONOMINALE",
+      "subtitle": null,
+      "book_pages": [88, 89],
+      "intro_examples": [
+        "Elle se couche tard tous les soirs.",
+        "Nous nous sommes rencontrés par hasard.",
+        "Je ne me souviens plus de rien."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "La forme pronominale comprend un pronom personnel de la même personne que le sujet.",
+          "examples": [
+            "Je me lève à 8 heures. – Nous nous préparons à partir.",
+            "Assieds-toi ! – Détendez-vous ! – Méfions-nous !"
+          ],
+          "categories": [],
+          "notes": [
+            "Aux temps composés, on emploie « être » : Elle s'était endormie après s'être allongée sur le canapé."
+          ]
+        },
+        {
+          "rule": "Il existe plusieurs sortes de verbes pronominaux. Les verbes réfléchis indiquent que le sujet fait l'action pour lui ; le pronom est complément direct ou indirect du verbe.",
+          "examples": [
+            "Il se lave les cheveux. [c. objet direct : laver quelque chose]",
+            "Elle se demande si elle sortira ou pas. [c. objet indirect : demander à quelqu'un]"
+          ],
+          "categories": [],
+          "notes": [
+            "Quand le pronom est complément d'objet direct, aux temps composés, le participe passé s'accorde avec le sujet sauf s'il est suivi d'un nom qui est lui-même complément d'objet direct : Elle s'est lavée. Mais : Elle s'est lavé les cheveux.",
+            "Le participe passé ne s'accorde pas quand le pronom est complément d'objet indirect : Elle s'est demandé si elle partirait. – Ils se sont dit qu'ils avaient raison."
+          ]
+        },
+        {
+          "rule": "Les verbes réciproques indiquent qu'il y a un lien de réciprocité entre les sujets ; leur emploi est toujours pluriel.",
+          "examples": [
+            "Lucile et Jonathan s'écrivent régulièrement. [Lucile écrit à Jonathan ↔ Jonathan écrit à Lucile.]"
+          ],
+          "categories": [],
+          "notes": [
+            "Attention à l'accord du participe passé aux temps composés : Elles se sont rencontrées et se sont parlé. [rencontrer quelqu'un mais parler à quelqu'un]"
+          ]
+        },
+        {
+          "rule": "Il existe des verbes qui sont seulement pronominaux, une soixantaine : s'en aller, se souvenir, se moquer, s'évanouir, se méfier, s'enfuir, etc.",
+          "examples": [],
+          "categories": [],
+          "notes": [
+            "Aux temps composés, le participe passé s'accorde avec le sujet : Elle s'est méfiée de nous. Ils se sont enfuis."
+          ]
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 89,
+          "instruction": "Conjuguez le verbe « se coucher tard tous les soirs ».",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "– Tu _____ ? – Non, au contraire je _____ de bonne heure.", "blanks": 2 },
+            { "number": 2, "text": "– Il _____ ? – Oui, je crois qu' _____", "blanks": 2 },
+            { "number": 3, "text": "– Elles _____ ? – Non, _____", "blanks": 2 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 89,
+          "instruction": "Réécrivez ce texte au passé et faites les accords si nécessaire.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Elle s'assoit au volant de sa vieille voiture. Elle se regarde un instant dans le rétroviseur, histoire de remettre une mèche de cheveux en place. Elle s'allume une cigarette avant de mettre sa ceinture. Elle se met à penser, à réfléchir et soudain sans raison apparente elle se met à pleurer à grosses larmes, sans bruit. Son regard se fixe sur un point inexistant et cependant lointain. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 89,
+          "instruction": "Réécrivez ce texte au passé et faites les accords si nécessaire.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Elle se lave les dents puis se brosse les cheveux avant de se mettre du rouge aux lèvres. Elle se regarde dans sa glace et se demande comment effacer ces petites rides aux coins de sa bouche et de ses yeux. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 89,
+          "instruction": "Soulignez dans ce texte les verbes qui ne sont pas réciproques. Puis réécrivez ce texte au passé et faites les accords si nécessaire.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Ils se voient régulièrement depuis plusieurs mois. Quand elle s'absente, ils s'écrivent régulièrement, se téléphonent tous les soirs. Parfois même, ils s'appellent la nuit. Quand elle revient ils se rencontrent au café de la Gare, où il s'attendent et de peur d'être en retard ils se dépêchent tous les deux. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 89,
+          "instruction": "Complétez avec le verbe au passé composé.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Ils (s'en aller) _____ avant le dernier métro.", "blanks": 1 },
+            { "number": 2, "text": "Elle (se souvenir) _____ qu'elle avait oublié son parapluie au cinéma.", "blanks": 1 },
+            { "number": 3, "text": "Elle (se moquer) _____ de sa coupe de cheveux.", "blanks": 1 },
+            { "number": 4, "text": "Elles (se méfier) _____ de ce client, il avait un drôle d'air.", "blanks": 1 },
+            { "number": 5, "text": "Elles (s'enfuir) _____ en laissant tout derrière elles.", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [88, 89],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

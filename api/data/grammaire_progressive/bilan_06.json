@@ -1,0 +1,101 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": null,
+  "chapter_title": "BILAN n°6",
+  "book_pages": [132, 133],
+  "sections": [
+    {
+      "section_title": "BILAN n°6",
+      "subtitle": "Les Pronoms Relatifs, Les Pronoms Personnels Compléments, Les Pronoms Indéfinis",
+      "book_pages": [132, 133],
+      "intro_examples": [],
+      "grammar_rules": [],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 132,
+          "instruction": "Reliez les deux phrases par le pronom relatif qui convient.",
+          "type": "bilan",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il vient d'acheter une voiture d'occasion. La carrosserie doit être repeinte. _____", "blanks": 1 },
+            { "number": 2, "text": "Je vous présente mon amie Brigitte. Je partage un appartement. _____", "blanks": 1 },
+            { "number": 3, "text": "Elle veut bien me prêter son ordinateur. Elle ne s'en sert pas souvent. _____", "blanks": 1 },
+            { "number": 4, "text": "Nous aimons bien monter sur la falaise. De là, nous voyons tout le village serré autour du fleuve. _____", "blanks": 1 },
+            { "number": 5, "text": "Je viens de recevoir une lettre. Il faut que j'y réponde dès maintenant. _____", "blanks": 1 },
+            { "number": 6, "text": "C'est un outil pratique. Avec cet outil on peut faire beaucoup de choses dans le jardin. _____", "blanks": 1 },
+            { "number": 7, "text": "Dans le salon il y a une cheminée. Au-dessus de cette cheminée est accroché un miroir vénitien. _____", "blanks": 1 },
+            { "number": 8, "text": "Il a reçu une bourse. Grâce à cette bourse il pourra continuer ses études. _____", "blanks": 1 },
+            { "number": 9, "text": "Le professeur nous a donné des sujets de dissertation. Parmi ces sujets deux sont sur la liberté et un sur le bonheur. _____", "blanks": 1 },
+            { "number": 10, "text": "J'ai trouvé un coffret au grenier. À l'intérieur de ce coffret il y avait de vieilles photos de famille. _____", "blanks": 1 },
+            { "number": 11, "text": "C'était un professeur extraordinaire. Tous les élèves avaient du respect à son égard. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 132,
+          "instruction": "Complétez ces phrases avec « ce qui », « ce que », « ce dont », « ce + préposition + quoi ».",
+          "type": "bilan",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "C'est un enfant gâté ; il obtient toujours tout _____ veut.", "blanks": 1 },
+            { "number": 2, "text": "Le coût était élevé ; c'est _____ l'a fait hésiter.", "blanks": 1 },
+            { "number": 3, "text": "Un verre d'eau fraîche, c'est tout _____ j'ai envie pour le moment.", "blanks": 1 },
+            { "number": 4, "text": "Il devrait sortir de l'hôpital bientôt ; c'est _____ nous espérons tous.", "blanks": 1 },
+            { "number": 5, "text": "Je vous ai dit tout _____ je savais, du moins tout _____ on m'a informé.", "blanks": 2 },
+            { "number": 6, "text": "Il nous a annoncé son divorce ; _____ nous a beaucoup surpris.", "blanks": 1 },
+            { "number": 7, "text": "Il a annoncé en plein dîner son mariage : _____ on ne s'attendait pas du tout.", "blanks": 1 },
+            { "number": 8, "text": "La passion pour la peinture, la reconnaissance de son talent : c'est _____ il avait fondé toute sa vie.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 133,
+          "instruction": "Répondez en remplaçant les éléments soulignés par le pronom qui convient.",
+          "type": "bilan",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "N'avez-vous pas oublié mes conseils ? Non, _____", "blanks": 1 },
+            { "number": 2, "text": "Vous êtes sûr qu'elle n'oubliera pas le rendez-vous ? Oui, _____", "blanks": 1 },
+            { "number": 3, "text": "Êtes-vous allés aux Floralies ? Oui, _____", "blanks": 1 },
+            { "number": 4, "text": "Vous voulez encore un peu de café ? Oui, _____", "blanks": 1 },
+            { "number": 5, "text": "Ils s'attendaient à ce changement de situation ? Non, _____", "blanks": 1 },
+            { "number": 6, "text": "Est-ce que tu te souviens que tu pars ce soir ? Oui, _____", "blanks": 1 },
+            { "number": 7, "text": "Il paraît qu'il leur a dit qu'il partait ? Oui, _____", "blanks": 1 },
+            { "number": 8, "text": "Elle a rappelé que la réunion était annulée ? Oui, _____", "blanks": 1 },
+            { "number": 9, "text": "Est-ce qu'ils savent que nous les attendons ? Oui, _____", "blanks": 1 },
+            { "number": 10, "text": "Est-ce qu'elle est pour quelque chose dans cette affaire ? Non, _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 133,
+          "instruction": "Reliez les éléments de la colonne de gauche aux éléments de la colonne de droite.",
+          "type": "matching",
+          "context": null,
+          "items": [
+            { "number": null, "text": "1. Elle est inconsciente. Elle fait... → A. N'importe lesquels\n2. Il est réservé et timide. Il ne parle pas à... → B. N'importe où\n3. Donne-moi un journal. ... → C. N'importe qui\n4. Partons à la campagne ! ... → D. N'importe quoi\n5. Quels livres veux-tu ? ... → E. N'importe lequel\n\n1. _____ 2. _____ 3. _____ 4. _____ 5. _____", "blanks": 5 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 133,
+          "instruction": "Dans les proverbes qui suivent, soulignez le pronom indéfini, puis indiquez à quel texte ils correspondent.",
+          "type": "bilan",
+          "context": "1. Nul n'est censé ignorer la loi.\n2. Tout est bien qui finit bien.\n3. Chacun pour soi et Dieu pour tous.\n4. Tel qui rit vendredi dimanche pleurera.",
+          "items": [
+            { "number": null, "text": "A. Une jeune fille de condition moyenne obtient du roi, qui est guéri d'une maladie grave, d'épouser Bertrand, comte de Roussillon, qu'elle aime. Mais le jour de son mariage Bertrand abandonne Hélène qu'il méprise. Cependant l'amour d'Hélène triomphera car Bertrand reviendra près d'Hélène et ils seront très heureux. _____", "blanks": 1 },
+            { "number": null, "text": "B. Pour sa défense elle n'a su dire qu'une chose : « Je ne savais pas que c'était interdit. » Or, cet argument-là, personne n'a le droit de l'utiliser. _____", "blanks": 1 },
+            { "number": null, "text": "C. Souvent, après les grandes joies ou le bonheur, on voit arriver les peines ou le malheur. _____", "blanks": 1 },
+            { "number": null, "text": "D. Je lui ai conseillé de s'occuper de ses affaires et pas de celles des autres. Celles des autres ? Il y a là-haut, dans le ciel, quelqu'un qui s'en occupera. _____", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [132, 133],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

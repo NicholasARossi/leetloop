@@ -1,0 +1,109 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": null,
+  "chapter_title": "BILAN n°7",
+  "book_pages": [148, 149],
+  "sections": [
+    {
+      "section_title": "BILAN n°7",
+      "subtitle": "La Situation dans le Temps, L'Expression de la Cause, de la Conséquence, de la Comparaison",
+      "book_pages": [148, 149],
+      "intro_examples": [],
+      "grammar_rules": [],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 148,
+          "instruction": "Nous sommes le 19 juin 2001 à Paris avant le départ pour Dakar pour le Rallye automobile Dakar-Dakar. Indiquez par rapport à cette date tout ce qui s'est passé avant et ce qui se passera après.",
+          "type": "bilan",
+          "context": "La veille avait eu lieu la dernière réunion de travail.../La semaine suivante...\n\n15 juin 2001 : Regroupement des équipes. Entraînement\n17 juin 2001 : Réunion de travail pour les entraîneurs et les mécaniciens.\n18 juin 2001 : Dernière réunion avant le départ. Étude du parcours.\n19 juin 2001 : Départ pour Dakar.\n26 juin 2001 : Mise en place du camp de base.\n30 juin 2001 : Derniers entraînements. Dernières mises au point.\n1er juillet : Départ de la course.",
+          "items": [
+            { "number": null, "text": "Rédigez un texte situant tous ces événements par rapport au 19 juin 2001.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 148,
+          "instruction": "Racontez une étape de la course en utilisant le plus de mots outils possible pour situer cet événement dans le temps et marquer sa durée.",
+          "type": "composition",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Racontez une étape de la course.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 148,
+          "instruction": "Exprimez la cause en utilisant les prépositions qui conviennent. Utilisez des propositions différentes.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "L'aéroport est fermé _____ le brouillard.", "blanks": 1 },
+            { "number": 2, "text": "Mes enfants ont pu être sauvés _____ au dévouement des médecins.", "blanks": 1 },
+            { "number": 3, "text": "Il fallait se presser de rentrer la récolte _____ l'orage qui arrivait.", "blanks": 1 },
+            { "number": 4, "text": "_____ les grèves de métro et _____ la SNCF, le magasin sera fermé.", "blanks": 2 },
+            { "number": 5, "text": "_____ le stationnement dans une zone interdite, je suis obligé de vous adresser une contravention.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 148,
+          "instruction": "Complétez avec les conjonctions qui conviennent pour exprimer la conséquence ; utilisez autant que possible des conjonctions différentes.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il dit n'importe quoi _____ personne ne l'écoute.", "blanks": 1 },
+            { "number": 2, "text": "Elle était _____ étrangement habillée _____ tout le monde se retournait sur son passage.", "blanks": 2 },
+            { "number": 3, "text": "Il avait _____ plu _____ l'eau rentrait sous les portes.", "blanks": 2 },
+            { "number": 4, "text": "Il est _____ riche _____ ne sait pas quoi faire de son argent.", "blanks": 2 },
+            { "number": 5, "text": "Le chien a eu très peur _____ s'est caché sous l'armoire.", "blanks": 1 },
+            { "number": 6, "text": "J'étais _____ en colère _____ j'ai cassé une assiette.", "blanks": 2 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 149,
+          "instruction": "Complétez ces phrases comme il convient.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Je lui ai dit cela parce que _____", "blanks": 1 },
+            { "number": 2, "text": "Puisqu'elle a déjà travaillé avec nous _____", "blanks": 1 },
+            { "number": 3, "text": "Il ne s'est pas soigné sérieusement c'est pourquoi _____", "blanks": 1 },
+            { "number": 4, "text": "Elle parlait doucement si bien que _____", "blanks": 1 },
+            { "number": 5, "text": "Ils ont trop exagéré de sorte que _____", "blanks": 1 },
+            { "number": 6, "text": "Il jouera le prochain match ; ainsi _____", "blanks": 1 },
+            { "number": 7, "text": "Elle ne lui avait pas téléphoné car _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 6,
+          "book_page": 149,
+          "instruction": "Complétez ce texte comme il convient.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Elle avait _____ mal qu'elle avait appelé son médecin. Quand elle est arrivée à son cabinet, il avait tout préparé _____ l'intervention a eu lieu immédiatement et _____ tout s'est très bien passé. Elle était endormie, elle ne peut _____ pas savoir ce qu'on lui a fait. En fait, ce n'était pas grave _____ elle a pu sortir de l'hôpital le lendemain. Tout a été fait _____ qu'elle retrouve sa santé et ses activités le plus vite possible.", "blanks": 6 }
+          ]
+        },
+        {
+          "exercise_number": 7,
+          "book_page": 149,
+          "instruction": "Comparez les éléments proposés.",
+          "type": "composition",
+          "context": "La femme des années 60 / la femme des années 90 → La femme des années 90 est beaucoup plus indépendante que celle des années 60.",
+          "items": [
+            { "number": 1, "text": "L'homme des années 60 / l'homme des années 90 _____", "blanks": 1 },
+            { "number": 2, "text": "L'équipe italienne de football / l'équipe brésilienne de football _____", "blanks": 1 },
+            { "number": 3, "text": "La langue française / la langue anglaise _____", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [148, 149],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

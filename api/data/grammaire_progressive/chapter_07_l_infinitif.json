@@ -1,0 +1,287 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 7,
+  "chapter_title": "L'INFINITIF",
+  "book_pages": [74, 75, 76, 77],
+  "sections": [
+    {
+      "section_title": "CARACTÉRISTIQUES",
+      "subtitle": null,
+      "book_pages": [74, 75],
+      "intro_examples": [
+        "Partir, c'est mourir un peu.",
+        "Elle a dû partir pour aller les accueillir à la gare.",
+        "Nous souhaitons recevoir votre réponse avant de prendre notre décision."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "L'infinitif se distingue par ses terminaisons : aimer – réfléchir – vendre – pouvoir – dire – répondre.",
+          "examples": [
+            "Avant de répondre, il faut réfléchir."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "L'infinitif a une forme pronominale, une forme passive, une forme négative, une forme passée.",
+          "examples": [
+            "s'apercevoir – se lever – se souvenir : Je n'arrive pas à me lever tôt.",
+            "être fermé – être dit – être fini : Cette porte doit être fermée la nuit.",
+            "ne pas aimer – ne jamais dormir – ne plus venir : Il vaut mieux ne rien dire. Ne pas se pencher par la fenêtre !",
+            "Il me semble le lui avoir dit. – Elle espère être arrivée avant midi."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "L'infinitif peut être remplacé par le nom ; c'est la forme nominale du verbe.",
+          "examples": [
+            "Il aime lire. → Il aime la lecture.",
+            "Le dîner, le déjeuner, le boire, le manger, etc."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Comme le nom, l'infinitif est souvent utilisé après une préposition (de, à, pour, après, sans).",
+          "examples": [
+            "Elle est contente de partir.",
+            "Sortez sans faire de bruit."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "L'infinitif peut exprimer l'ordre, le conseil, les directives.",
+          "examples": [
+            "Ne pas marcher sur la pelouse.",
+            "Boire frais de préférence.",
+            "Prendre 100 g de farine et mélanger avec deux œufs."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 75,
+          "instruction": "Réécrivez ces phrases en utilisant les mots entre parenthèses et en mettant les verbes soulignés à l'infinitif.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Réfléchissez avant de répondre. (il faut) _____", "blanks": 1 },
+            { "number": 2, "text": "Fermez la porte derrière vous. (devoir) _____", "blanks": 1 },
+            { "number": 3, "text": "Ne dites rien. (il est préférable de) _____", "blanks": 1 },
+            { "number": 4, "text": "Ne vous penchez pas ! (il est interdit de) _____", "blanks": 1 },
+            { "number": 5, "text": "Ne dites jamais rien de cette affaire. (valoir mieux) _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 75,
+          "instruction": "Répondez avec l'infinitif passé comme dans l'exemple.",
+          "type": "transformation",
+          "context": "Quand espérez-vous rentrer ? → Nous espérons être rentrés pour Noël.",
+          "items": [
+            { "number": 1, "text": "Quand espérez-vous partir ? – _____", "blanks": 1 },
+            { "number": 2, "text": "Quand penses-tu arriver ? – _____", "blanks": 1 },
+            { "number": 3, "text": "Avez-vous reproché quelque chose à Jacques ? – Je ne pense pas _____", "blanks": 1 },
+            { "number": 4, "text": "Est-ce que tu as été suivi par quelqu'un ? – Je ne crois pas _____", "blanks": 1 },
+            { "number": 5, "text": "Est-ce que tu l'as déjà rencontré ? – Je ne me rappelle pas _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 75,
+          "instruction": "Transformez l'infinitif en nom comme dans l'exemple.",
+          "type": "transformation",
+          "context": "Il aime lire → Il aime la lecture.",
+          "items": [
+            { "number": 1, "text": "Il est très sportif, il aime courir, sauter et aussi nager. _____", "blanks": 1 },
+            { "number": 2, "text": "Alexandre est sportif aussi ; il aime boxer, plonger et tirer à l'arc. _____", "blanks": 1 },
+            { "number": 3, "text": "Delphine n'aime pas le sport ; elle aime chanter, lire et surtout peindre, mais par-dessus tout, elle aime se promener. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 75,
+          "instruction": "Complétez ce texte à l'aide des prépositions qui conviennent.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Avant _____ partir, je suis content _____ vous dire combien j'ai apprécié notre rencontre. _____ vouloir faire des compliments excessifs, je dois dire que j'ai été enthousiasmé par vos travaux. _____ avoir vu vos équipes au travail je suis sûr que les résultats seront bientôt là _____ faire honneur à cette collaboration.", "blanks": 5 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 75,
+          "instruction": "Donnez la recette d'un plat que vous aimez cuisiner en utilisant des verbes à l'infinitif.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": null, "text": "_____", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "EMPLOIS",
+      "subtitle": null,
+      "book_pages": [76, 77],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "L'infinitif est employé après certains verbes. Des verbes de mouvement : aller, venir, descendre, monter, courir, partir, sortir, etc.",
+          "examples": [
+            "Il est sorti acheter du pain.",
+            "Elle est venue rapporter les livres qu'on lui avait prêtés."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Les verbes modaux : falloir, devoir, pouvoir, savoir, vouloir, oser, paraître, sembler, faire, laisser, etc.",
+          "examples": [
+            "Je n'ai pas voulu y aller. – Elle n'a pas su répondre.",
+            "Il a failli mourir. – Laissez-moi passer !",
+            "J'ai fait attendre les clients. – Elle a laissé tomber ses clefs."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Des verbes qui expriment la croyance, la supposition : croire, estimer, penser, dire, supposer, déclarer, etc.",
+          "examples": [
+            "Ils pensent avoir fini avant midi. – Elle suppose pouvoir venir en été.",
+            "Elle estime avoir raison."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Les verbes qui expriment le désir, l'intention : espérer, souhaiter, désirer, aimer, adorer, préférer, détester, aimer mieux, il vaut mieux, etc.",
+          "examples": [
+            "Nous espérons recevoir bientôt de vos nouvelles.",
+            "Il vaut mieux réserver avant d'y aller.",
+            "Je préfère rester ici."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Les verbes qui expriment la perception : voir, regarder, apercevoir, entendre, écouter, sentir, etc.",
+          "examples": [
+            "Je l'ai entendu rire. – J'ai vu les enfants traverser.",
+            "On a senti quelqu'un bouger.",
+            "On a entendu quelqu'un crier."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 77,
+          "instruction": "À l'aide des éléments proposés, faites des phrases en utilisant un verbe de mouvement comme dans l'exemple.",
+          "type": "transformation",
+          "context": "Chercher des champignons → Ils sont allés chercher des champignons.",
+          "items": [
+            { "number": 1, "text": "Voir ses grands-parents _____", "blanks": 1 },
+            { "number": 2, "text": "Chercher du secours _____", "blanks": 1 },
+            { "number": 3, "text": "Prendre un manteau dans sa chambre _____", "blanks": 1 },
+            { "number": 4, "text": "Poster le courrier _____", "blanks": 1 },
+            { "number": 5, "text": "Attendre ses amis à l'aéroport _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 77,
+          "instruction": "Complétez les phrases par un verbe convenant au contexte.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il faut _____ le temps comme il vient.", "blanks": 1 },
+            { "number": 2, "text": "J'ai dû _____ l'ouverture du magasin.", "blanks": 1 },
+            { "number": 3, "text": "Elle a pu _____ ce voyage grâce à vous.", "blanks": 1 },
+            { "number": 4, "text": "Je n'ai pas su _____ la réalité en face.", "blanks": 1 },
+            { "number": 5, "text": "Ils n'ont pas osé _____ de risques.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 77,
+          "instruction": "Même exercice.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il croit toujours _____ faire plus qu'il ne fait.", "blanks": 1 },
+            { "number": 2, "text": "Elle estime _____ ses parents du mieux qu'elle le peut.", "blanks": 1 },
+            { "number": 3, "text": "Je suppose _____ fini ce travail avant samedi.", "blanks": 1 },
+            { "number": 4, "text": "Elle affirme ne pas _____ allée chez lui ce soir-là.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 77,
+          "instruction": "Complétez ces phrases en utilisant un verbe à l'infinitif.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "J'espère _____", "blanks": 1 },
+            { "number": 2, "text": "Elle souhaite _____", "blanks": 1 },
+            { "number": 3, "text": "Nous préférons _____", "blanks": 1 },
+            { "number": 4, "text": "Je déteste _____", "blanks": 1 },
+            { "number": 5, "text": "Il vaut mieux _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 77,
+          "instruction": "Remplacez le verbe souligné par l'infinitif.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "J'ai vu les troupeaux qui traversaient la rivière. _____", "blanks": 1 },
+            { "number": 2, "text": "J'ai aperçu les chasseurs qui poursuivaient le sanglier. _____", "blanks": 1 },
+            { "number": 3, "text": "Elle a senti le sol qui s'ouvrait sous ses pieds. _____", "blanks": 1 },
+            { "number": 4, "text": "Nous avons entendu la radio qui annonçait la catastrophe. _____", "blanks": 1 },
+            { "number": 5, "text": "Vous avez senti que quelque chose bougeait dans le grenier ? _____", "blanks": 1 },
+            { "number": 6, "text": "J'ai vu les voleurs qui s'enfuyaient par la porte de derrière. _____", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "CONTRAINTES D'UTILISATION",
+      "subtitle": null,
+      "book_pages": [76],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "L'infinitif remplace obligatoirement le subjonctif après les conjonctions : que, pour que, afin que, avant que, sans que, de peur que, de crainte que, en attendant que, quand le sujet du premier verbe et celui du verbe au subjonctif sont les mêmes.",
+          "examples": [
+            "Je voudrais que je sorte. → Je voudrais sortir."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "L'infinitif peut remplacer l'indicatif quand le sujet du premier verbe et celui de l'indicatif sont les mêmes ; le niveau de langue est alors plus soutenu.",
+          "examples": [
+            "J'espère que je recevrai bientôt de vos nouvelles. → J'espère recevoir bientôt de vos nouvelles."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": []
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [74, 75, 76, 77],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

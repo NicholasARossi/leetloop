@@ -1,0 +1,440 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 15,
+  "chapter_title": "L'ADVERBE",
+  "book_pages": [100, 101, 102, 103, 104, 105, 106, 107],
+  "sections": [
+    {
+      "section_title": "CARACTÉRISTIQUES",
+      "subtitle": null,
+      "book_pages": [100, 101],
+      "intro_examples": [
+        "Il roule vite. – Elle a beaucoup voyagé.",
+        "Ils m'ont récemment écrit. – Ça sent bon.",
+        "Heureusement, il n'y a pas eu de morts dans l'accident !"
+      ],
+      "grammar_rules": [
+        {
+          "rule": "Les adverbes sont des mots invariables qui modifient le sens d'un verbe, d'un adjectif, d'un autre adverbe, ou d'une phrase.",
+          "examples": [
+            "d'un verbe : il court vite,",
+            "d'un adjectif : ils sont très gentils,",
+            "d'un autre adverbe : elle a assez bien réussi,",
+            "d'une phrase : je suis allé chez eux ; dommage, ils étaient sortis !"
+          ],
+          "categories": [
+            {
+              "category": "Sortes d'adverbes",
+              "items": [
+                "la quantité : beaucoup, trop, assez, peu, davantage, plus, moins, autant, etc.",
+                "l'intensité : très, tellement, si, tant, etc.",
+                "la comparaison : plus, moins, aussi, autant, etc.",
+                "le temps : alors, après, avant, aujourd'hui, hier, demain, bientôt, aussitôt, déjà, depuis, maintenant, autrefois, etc.",
+                "le lieu : ici, là, ailleurs, loin, près, dedans, dehors, arrière, avant, çà et là, nulle part, autre part, dessus, dessous, devant, derrière, etc.",
+                "l'interrogation : quand, où, pourquoi, comment, combien, etc.",
+                "la négation : non, ne, ni, pas du tout, etc.",
+                "l'affirmation : oui, si",
+                "l'exclamation : quel(le) quels, quelles, comme, etc.",
+                "la manière : bien, mal, mieux, pire, ainsi, ensemble, soudain, vite, exprès, par hasard, etc."
+              ]
+            }
+          ],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 101,
+          "instruction": "Complétez à l'aide d'adverbes de quantité.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "– Voilà vos fruits.\n– J'en ai beaucoup _____. Enlevez-m'en un _____.\n– En avez-vous _____ comme ça ?\n– Oui, ça va. Par contre mettez-moi _____ de haricots verts.", "blanks": 4 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 101,
+          "instruction": "Complétez à l'aide d'adverbes d'intensité.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "– Il faisait _____ froid et nous avions _____ marché dans la neige que nous étions morts de fatigue. Nous étions _____ fatigués, _____ fatigués que nous voulions nous arrêter, mais alors nous serions morts de froid.", "blanks": 4 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 101,
+          "instruction": "Dites le contraire.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Elle est plus grande que lui. _____", "blanks": 1 },
+            { "number": 2, "text": "Elle est moins gentille que lui. _____", "blanks": 1 },
+            { "number": 3, "text": "Elle est aussi intelligente que lui. _____", "blanks": 1 },
+            { "number": 4, "text": "Il y a plus d'hommes que de femmes dans ce parti. _____", "blanks": 1 },
+            { "number": 5, "text": "J'ai eu autant de chance que toi. _____", "blanks": 1 },
+            { "number": 6, "text": "Elle est de plus en plus jeune. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 101,
+          "instruction": "Écrivez un petit texte en utilisant quelques adverbes de temps choisis dans la liste suivante.",
+          "type": "free_response",
+          "context": "hier – alors – depuis 2 heures les pompiers – aujourd'hui – avant – déjà – demain – après – autrefois – aussitôt après – aussitôt – maintenant – ensuite – bientôt – enfin",
+          "items": [
+            { "number": null, "text": "_____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 101,
+          "instruction": "Complétez ce dialogue avec les adverbes de lieu qui conviennent.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "– Il est d'ici ? – Non, il est _____.\n– Il habite loin d'ici ? – Non, son logement est _____ d'ici.\n– Il a travaillé quelque part ? – Non, _____.\n– Il a voyagé ? – Non, il est toujours resté _____.", "blanks": 4 }
+          ]
+        },
+        {
+          "exercise_number": 6,
+          "book_page": 101,
+          "instruction": "Complétez avec des adverbes de manière.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "– Comment vous êtes-vous rencontrés ? – _____\n– Comment va-t-elle ? – _____\n– Comment a-t-il cassé le vase ? – _____\n– Vous avez fait ça à deux ou trois ? – Non, on l'a fait tous _____\n– Est-ce qu'il a eu raison de partir ? – Oui, il a _____ fait de partir.\n– Tout va de plus en plus mal. – Oui, c'est _____ qu'avant.", "blanks": 6 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "LES ADVERBES DE MODALITÉ",
+      "subtitle": null,
+      "book_pages": [102, 103],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "Ils servent à indiquer l'attitude de celui qui parle par rapport à ce qu'il dit. Ils peuvent exprimer le jugement, l'affirmation, la négation, l'exclamation, l'ordre des événements, la précision, la restriction.",
+          "examples": [],
+          "categories": [
+            {
+              "category": "Types d'adverbes de modalité",
+              "items": [
+                "le jugement : peut-être, évidemment, naturellement, certes, dommage, malheureusement, bien sûr, hélas, etc. — On avait rendez-vous à midi : évidemment elle était en retard !",
+                "l'affirmation : oui, si, certes, en effet, sans doute, etc. — Tu as revu Myriam. – En effet on a dîné ensemble hier.",
+                "la négation : aucunement, nullement, etc. — Je n'ai aucunement promis de l'emmener au cinéma.",
+                "l'exclamation : comme, que, bravo, chapeau, etc. — Comme tu es belle ! Que tu as grandi, mon enfant ! Alors là, je dis chapeau !",
+                "l'ordre des événements : d'abord, ensuite, puis, enfin, finalement, etc. — Nous visiterons d'abord le Musée d'Orsay, puis nous irons nous promener sur les quais de la Seine et enfin nous ferons la visite guidée de Notre-Dame.",
+                "la précision : même, notamment, plutôt, surtout, seulement, etc. — On annonce des grèves pour la semaine prochaine, notamment dans les transports. Ils sont agaçants, je dirais même insupportables.",
+                "la restriction : au moins, du moins, etc. — Ils se sont mariés sans inviter leurs amis ; ils auraient pu au moins envoyer un faire-part de mariage ! Il va être nommé directeur du service ; du moins c'est ce qu'on dit."
+              ]
+            }
+          ],
+          "notes": [
+            "« D'abord », « par ailleurs », « de plus », « en outre », « enfin » sont des adverbes utilisés à l'écrit pour indiquer l'organisation et la hiérarchisation des idées."
+          ]
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 103,
+          "instruction": "Vous êtes l'ami(e) de Pierre. Portez votre propre jugement sur ces propos à l'aide des adverbes qui conviennent.",
+          "type": "free_response",
+          "context": "– Tu as revu Pierre ?\n– Oui. Il voulait que nous sortions. On est allés au cinéma. Il a choisi un film policier. Le film était bon, les acteurs ne l'étaient pas trop.\n– Tu aurais préféré une comédie musicale ?",
+          "items": [
+            { "number": null, "text": "_____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 103,
+          "instruction": "Renforcez les affirmations et les négations à l'aide des adverbes qui conviennent.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Un État, comme un ménage, ne peut dépenser plus d'argent qu'il n'en gagne. _____", "blanks": 1 },
+            { "number": 2, "text": "On peut présenter les choses comme ça. Mais il ne faut pas oublier qu'à notre époque, c'est une règle difficile à appliquer. _____", "blanks": 1 },
+            { "number": 3, "text": "Je n'ai pas envie d'entrer dans une telle discussion. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 103,
+          "instruction": "Vous êtes allé(e) à une exposition de peinture. Rapportez les exclamations admiratives ou non que vous avez entendues devant certains tableaux.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "_____", "blanks": 1 },
+            { "number": 2, "text": "_____", "blanks": 1 },
+            { "number": 3, "text": "_____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 103,
+          "instruction": "Vous proposez un circuit dans une ville ou une région de votre choix. Énumérez vos propositions.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "_____", "blanks": 1 },
+            { "number": 2, "text": "_____", "blanks": 1 },
+            { "number": 3, "text": "_____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 103,
+          "instruction": "Vous êtes au Salon de l'automobile, vous vantez les qualités du dernier modèle de la marque X. Développez vos arguments.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "D'abord _____", "blanks": 1 },
+            { "number": 2, "text": "Par ailleurs _____", "blanks": 1 },
+            { "number": 3, "text": "De plus _____", "blanks": 1 },
+            { "number": 4, "text": "En outre _____", "blanks": 1 },
+            { "number": 5, "text": "Enfin _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 6,
+          "book_page": 103,
+          "instruction": "Employez « au moins » et « du moins » dans un contexte de votre choix.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": null, "text": "_____", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "LES ADVERBES EN « -MENT »",
+      "subtitle": null,
+      "book_pages": [104, 105],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "Les adverbes en « -ment » expriment la manière et sont formés de plusieurs façons.",
+          "examples": [],
+          "categories": [
+            {
+              "category": "Formation des adverbes en -ment",
+              "items": [
+                "Adjectif au féminin + « -ment » quand celui-ci est terminé par une consonne ou par « e » : lent → lente → lentement, doux → douce → doucement, vif → vive → vivement, cruel → cruelle → cruellement, rapide → rapidement, difficile → difficilement, incroyable → incroyablement, facile → facilement",
+                "Adjectif au masculin + « -ment » quand celui-ci est terminé par « i », « u », « ai » et « é » : poli → poliment, absolu → absolument, vrai → vraiment, exagéré → exagérément",
+                "Les adjectifs en « -ent » ou « ant » se transforment en « -emment » ou « -amment » : violent → violemment, patient → patiemment, constant → constamment, élégant → élégamment"
+              ]
+            }
+          ],
+          "notes": [
+            "« -emment » et « -amment » se prononcent de la même façon : [amã]."
+          ]
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 105,
+          "instruction": "À partir des adjectifs suivants, trouvez l'adverbe correspondant que vous utiliserez dans une phrase de votre choix.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "simple : _____", "blanks": 1 },
+            { "number": 2, "text": "tranquille : _____", "blanks": 1 },
+            { "number": 3, "text": "soudain : _____", "blanks": 1 },
+            { "number": 4, "text": "total : _____", "blanks": 1 },
+            { "number": 5, "text": "heureux : _____", "blanks": 1 },
+            { "number": 6, "text": "naturel : _____", "blanks": 1 },
+            { "number": 7, "text": "absolu : _____", "blanks": 1 },
+            { "number": 8, "text": "fréquent : _____", "blanks": 1 },
+            { "number": 9, "text": "prudent : _____", "blanks": 1 },
+            { "number": 10, "text": "constant : _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 105,
+          "instruction": "Complétez avec les adverbes qui conviennent.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "– Est-ce qu'elle fait bien la cuisine ?\n– Oui, _____.\n– Qu'est-ce qu'elle prépare de _____ ?\n– Je ne sais pas mais ça sent _____.\n– Sans doute _____ épicé comme d'habitude.", "blanks": 4 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 105,
+          "instruction": "Même exercice.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "– Qu'est-ce que vous faites ce soir ?\n– On passe la soirée _____ devant la télévision, avec les Dupont, à regarder le match.\n– Je ne les connais pas.\n– Mais si, ils habitent _____ à côté de chez nous.\n– Si tu veux, on se voit _____.\n– _____ d'accord.", "blanks": 4 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 105,
+          "instruction": "Même exercice.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "– Comment va ta mère ?\n– Elle va _____.\n– Elle travaille _____, _____ à mon avis.\n– As-tu rencontré Martine Moreau ?\n– Oui, et je l'ai trouvée _____. Maintenant elle vit _____ seule.\n– Elle viendra _____ en vacances près de chez nous à l'île de Ré.\n– Sans doute, elle a _____ aimé les îles.", "blanks": 7 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "ADVERBES PARTICULIERS",
+      "subtitle": null,
+      "book_pages": [104],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "Ils peuvent appartenir à plusieurs catégories sémantiques.",
+          "examples": [
+            "Il travaille bien. [manière] – Il fait bien des erreurs. [quantité = beaucoup]",
+            "Il est bien aimable. [intensité = très] – Ah, c'est bien lui. [jugement = tout à fait]"
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "L'adverbe « tout » (= entièrement) peut être invariable ou variable.",
+          "examples": [],
+          "categories": [
+            {
+              "category": "Règles de « tout » adverbe",
+              "items": [
+                "Il est invariable devant un adverbe, une préposition ou dans certaines expressions : Il habite tout à côté de chez moi. On a passé la soirée tout tranquillement devant la télé. Tout à coup, elle s'est mise à pleurer. – On se voit tout à l'heure ? – Tout à fait d'accord !",
+                "Il est invariable devant un adjectif au masculin : Le salon est tout propre mais les meubles sont tout sales.",
+                "Il s'accorde avec l'adjectif au féminin qui commence par une consonne ou un « h » aspiré : La cuisine est toute sale mais les chambres sont toutes propres. Elle a paru toute honteuse.",
+                "Il peut rester invariable ou s'accorder quand l'adjectif féminin commence par une voyelle ou un « h » muet : Elle a semblé tout étonnée. – Elle est tout heureuse."
+              ]
+            }
+          ],
+          "notes": []
+        }
+      ],
+      "exercises": []
+    },
+    {
+      "section_title": "LA PLACE DE L'ADVERBE",
+      "subtitle": null,
+      "book_pages": [106, 107],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "Il se place devant un adjectif ou un adverbe.",
+          "examples": [
+            "Ils sont très sympathiques. – Je vais plutôt bien en ce moment.",
+            "– Elle est excessivement gentille. – C'est tout à fait vrai."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Il se place après un verbe conjugué à un temps simple.",
+          "examples": [
+            "Elle travaille beaucoup. – Parle doucement !",
+            "Je regarde souvent la télévision."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Il se place entre l'auxiliaire et le participe passé avec un verbe à un temps composé.",
+          "examples": [
+            "Elle a toujours affirmé que c'était vrai.",
+            "Sa lettre est déjà arrivée.",
+            "Elle aurait au moins pu nous prévenir."
+          ],
+          "categories": [],
+          "notes": [
+            "Quand l'adverbe est « long » (plusieurs syllabes), il peut être placé après le participe passé : Elle a violemment réagi. → Elle a réagi violemment."
+          ]
+        },
+        {
+          "rule": "L'adverbe de lieu est toujours placé après l'auxiliaire.",
+          "examples": [
+            "Je l'ai cherché partout et je ne l'ai trouvé nulle part."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Sa place varie quand il modifie l'ensemble d'une phrase.",
+          "examples": [
+            "Autrefois, les femmes ne travaillaient pas.",
+            "Les femmes ne travaillaient pas, autrefois.",
+            "Les femmes, autrefois, ne travaillaient pas."
+          ],
+          "categories": [],
+          "notes": [
+            "Les adverbes « peut-être », « aussi », « ainsi », « à peine », « sans doute » sont suivis de l'inversion du verbe et du sujet quand ils sont placés au début de la phrase : Il va peut-être venir dans la soirée. → Peut-être va-t-il venir dans la soirée.",
+            "Ce procédé est surtout utilisé à l'écrit."
+          ]
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 107,
+          "instruction": "Placez les adverbes suivants là où ils conviennent.",
+          "type": "fill_blank",
+          "context": "peu – très – plutôt – régulièrement – beaucoup – bien",
+          "items": [
+            { "number": null, "text": "– Comment vas-tu ?\n– Je vais bien en ce moment. Je travaille, je sors, je fais du sport, je dors. Voilà mon secret.\n– Et avec tes voisins comment ça marche ?\n– Ils ne sont pas sympathiques. Ils font hurler la télé ou la radio. Ils parlent fort. C'est l'enfer !", "blanks": 6 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 107,
+          "instruction": "Même exercice.",
+          "type": "fill_blank",
+          "context": "encore – partout – déjà – toujours – violemment",
+          "items": [
+            { "number": null, "text": "Il a nié avoir été l'auteur du hold-up de la banque. Il est arrivé que l'on condamne un innocent, mais on n'a pas vu quelqu'un comme lui être blanc comme neige. Cependant il a réagi aux accusations portées contre lui et on n'a pas trouvé ses empreintes. La police a pourtant cherché.", "blanks": 5 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 107,
+          "instruction": "Réécrivez ces phrases de telle manière qu'elles commencent par un adverbe. Faites toutes les transformations nécessaires.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Il va venir dans la soirée. Il aura pris ses précautions. Il est malin mais nous serons là pour l'attendre. Dès qu'il entrera dans l'immeuble, nous bloquerons toutes les issues. Nous pourrons l'arrêter tranquillement, sans risques inutiles. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 107,
+          "instruction": "Dites à quelle catégorie appartiennent les adverbes suivants. Donnez de leur sens un équivalent.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Vous avez assez bavardé, taisez-vous maintenant. _____", "blanks": 1 },
+            { "number": 2, "text": "Cette femme est assez jolie. _____", "blanks": 1 },
+            { "number": 3, "text": "Pierre travaille plus que toi. _____", "blanks": 1 },
+            { "number": 4, "text": "Pierre est plus intelligent que Paul. _____", "blanks": 1 },
+            { "number": 5, "text": "Notre voyage s'est terminé heureusement. _____", "blanks": 1 },
+            { "number": 6, "text": "Heureusement, notre voyage s'est terminé. _____", "blanks": 1 },
+            { "number": 7, "text": "Ce garçon est bien aimable. _____", "blanks": 1 },
+            { "number": 8, "text": "C'est bien elle. _____", "blanks": 1 },
+            { "number": 9, "text": "Cet ouvrier travaille bien. _____", "blanks": 1 },
+            { "number": 10, "text": "Cet élève fait encore bien des fautes. _____", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [100, 101, 102, 103, 104, 105, 106, 107],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

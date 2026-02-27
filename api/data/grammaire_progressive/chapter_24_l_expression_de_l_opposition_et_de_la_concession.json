@@ -1,0 +1,315 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 24,
+  "chapter_title": "L'EXPRESSION DE L'OPPOSITION et de LA CONCESSION",
+  "book_pages": [150, 151, 152, 153],
+  "sections": [
+    {
+      "section_title": "L'OPPOSITION",
+      "subtitle": null,
+      "book_pages": [150, 151],
+      "intro_examples": [
+        "Elle dépense sans compter alors qu'elle a peu d'argent.",
+        "Il est froid et avare ; sa femme, au contraire, est généreuse.",
+        "Bien qu'il y ait eu peu de neige, nous avons skié.",
+        "Ils étaient pauvres, pourtant ils se sentaient heureux."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "L'opposition peut être introduite par une conjonction.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Alors que », « tandis que » sont les conjonctions les plus courantes.",
+          "examples": [
+            "Elle est calme et réservée alors que son frère est agité et bavard.",
+            "Ils font des études scientifiques tandis que leurs parents ont fait des études littéraires."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Tandis que », « pendant que » peuvent exprimer l'opposition avec une nuance de durée.",
+          "examples": [
+            "Ils regardaient la télévision tandis qu'elle lisait.",
+            "Pendant que je travaillais sur ma thèse, ils étaient à la montagne où ils skiaient."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "L'opposition peut être introduite par une préposition.",
+          "examples": [],
+          "categories": [
+            {
+              "name": "Au lieu de",
+              "description": "Est suivi de l'infinitif ou d'un nom.",
+              "examples": [
+                "Au lieu de reconnaître ses torts, il a été agressif.",
+                "Elle a préféré un livre d'art au lieu d'un disque de jazz."
+              ]
+            },
+            {
+              "name": "Contrairement à",
+              "description": "Est suivi d'un nom ou d'un pronom.",
+              "examples": [
+                "Contrairement à lui, je n'aime pas la peinture moderne.",
+                "Ce quartier de la ville est désert, contrairement aux autres quartiers toujours animés."
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "rule": "L'opposition peut être introduite par un mot de liaison.",
+          "examples": [],
+          "categories": [
+            {
+              "name": "Mais",
+              "description": "Le mot de liaison le plus courant.",
+              "examples": ["Il m'a promis de venir mais il est allé voir son frère."]
+            },
+            {
+              "name": "Au contraire",
+              "description": "Marque une opposition forte.",
+              "examples": ["Elle aime aller au spectacle. Lui, au contraire, aime recevoir des amis chez lui."]
+            },
+            {
+              "name": "En revanche / Par contre",
+              "description": "Marquent fortement l'opposition. « En revanche » est d'un niveau de langue plus soutenu ; « par contre » est d'un niveau de langue moins soutenu.",
+              "examples": [
+                "Elle attirait par sa beauté ; en revanche elle était critiquée pour son caractère.",
+                "Il n'aime pas les légumes ; par contre il adore les pâtes."
+              ]
+            }
+          ],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 151,
+          "instruction": "Complétez les phrases suivantes.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Ce candidat est populaire auprès des jeunes alors que _____", "blanks": 1 },
+            { "number": 2, "text": "Cet avion fait escale à Athènes tandis que _____", "blanks": 1 },
+            { "number": 3, "text": "Elle ressemble à sa mère alors que _____", "blanks": 1 },
+            { "number": 4, "text": "Ils ont commencé par traduire le texte alors que _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 151,
+          "instruction": "Reliez les deux phrases par « tandis que » ou « pendant que ».",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Elle travaillait dur. – Ils jouaient aux cartes. _____", "blanks": 1 },
+            { "number": 2, "text": "Tout le monde se prépare pour la fête. – Elle pleure dans sa chambre. _____", "blanks": 1 },
+            { "number": 3, "text": "Les voleurs cambriolaient leur appartement. – Ils dormaient à poings fermés. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 151,
+          "instruction": "Transformez les phrases en introduisant « au lieu de » + infinitif ou nom.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Je ne boirai pas d'apéritif mais je prendrai un jus d'orange. _____", "blanks": 1 },
+            { "number": 2, "text": "Ne mettez pas d'huile mais utilisez du beurre. C'est meilleur ! _____", "blanks": 1 },
+            { "number": 3, "text": "Nous prendrons le train mais pas l'avion. C'est trop cher ! _____", "blanks": 1 },
+            { "number": 4, "text": "Pour son anniversaire elle veut un disque et non un livre. _____", "blanks": 1 },
+            { "number": 5, "text": "Je préfère un hors-d'œuvre et un dessert et pas de plat. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 151,
+          "instruction": "Complétez les phrases suivantes.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Elle a un appétit d'oiseau, contrairement à _____", "blanks": 1 },
+            { "number": 2, "text": "Contrairement à New York, _____", "blanks": 1 },
+            { "number": 3, "text": "Il est têtu et colérique, contrairement à _____", "blanks": 1 },
+            { "number": 4, "text": "Le ciel du nord de la France est gris et brumeux, contrairement à _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 151,
+          "instruction": "Utilisez « mais », « en revanche » ou « par contre » pour exprimer une opposition.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Les jeunes aiment les films d'aventures ; _____", "blanks": 1 },
+            { "number": 2, "text": "Il aime aller à la pêche ; _____", "blanks": 1 },
+            { "number": 3, "text": "Je voulais être médecin ; _____", "blanks": 1 },
+            { "number": 4, "text": "Elle désirait une fille ; _____", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "LA CONCESSION",
+      "subtitle": null,
+      "book_pages": [152, 153],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "La concession englobe l'opposition et la restriction. Elle exprime qu'une cause n'entraîne pas la conséquence qu'on attendait.",
+          "examples": [
+            "Je l'ai rencontré plusieurs fois ; pourtant je ne me souviens pas du tout de son visage."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "La concession peut être introduite par une conjonction.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Bien que », « quoique » sont suivis du subjonctif.",
+          "examples": [
+            "Bien qu'il soit tard, il fait encore jour.",
+            "Il ne fut pas reconnu à son époque, quoiqu'il ait eu du talent."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Même si » exprime l'opposition et la condition.",
+          "examples": [
+            "C'est un bon romancier même s'il n'a pas reçu de prix littéraire.",
+            "Même si elle souffrait, elle ne se plaignait pas.",
+            "Même s'il avait de l'argent, il ne m'en prêterait pas.",
+            "Il ne nous aurait rien dit, même s'il l'avait su."
+          ],
+          "categories": [],
+          "notes": [
+            "« Même si » peut être suivi du présent ou du passé composé (opposition) ; il peut exprimer la condition et l'hypothèse."
+          ]
+        },
+        {
+          "rule": "« Sans que » introduit une négation ; il est suivi du subjonctif.",
+          "examples": [
+            "Elles sont venues sans que je les aie invitées.",
+            "= Elles sont venues bien que je ne les aie pas invitées."
+          ],
+          "categories": [],
+          "notes": [
+            "Si les deux sujets sont identiques, il faut utiliser « sans » + infinitif : Il est entré sans avoir frappé à la porte."
+          ]
+        },
+        {
+          "rule": "La concession peut être introduite par une préposition.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Malgré », « en dépit de », « sans » sont suivis d'un nom.",
+          "examples": [
+            "Malgré son air farouche, c'est un gentil garçon.",
+            "En dépit de l'indifférence qu'elle lui montrait, il ne cessait de l'aimer.",
+            "Ils sont sortis sans l'autorisation de leur père."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "La concession peut être introduite par un mot de liaison.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Mais », « pourtant », « cependant » sont les plus courants.",
+          "examples": [
+            "Il est sorti dans le froid ; pourtant le médecin le lui avait interdit."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Néanmoins », « toutefois » sont d'un niveau de langue soutenu.",
+          "examples": [
+            "Beaucoup de mesures ont été prises pour réduire le chômage. Néanmoins/toutefois, il ne cesse d'augmenter."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 153,
+          "instruction": "Conjuguez les verbes au mode et au temps qui conviennent.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Bien que (être) _____ une ville médiévale, il y a beaucoup d'immeubles modernes.", "blanks": 1 },
+            { "number": 2, "text": "Ce magasin a beaucoup de clients, même si les vendeurs (ne pas être) _____ aimables.", "blanks": 1 },
+            { "number": 3, "text": "Quoique des accords de paix (signer) _____ l'an dernier, la tension dans la région persiste.", "blanks": 1 },
+            { "number": 4, "text": "Je lui envoie une lettre de temps en temps, bien qu'elle (écrire) _____ jamais.", "blanks": 1 },
+            { "number": 5, "text": "Elle paraît jeune même si elle (fêter) _____ ses quarante ans le mois dernier.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 153,
+          "instruction": "Reliez les deux phrases en introduisant « sans que ».",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il est passé près de moi. Je ne l'ai pas vu. _____", "blanks": 1 },
+            { "number": 2, "text": "Les voleurs lui ont pris son sac. Elle n'a pas eu le temps de réagir. _____", "blanks": 1 },
+            { "number": 3, "text": "Le professeur les a punis collectivement. Il n'a pas cherché à connaître l'origine du chahut. _____", "blanks": 1 },
+            { "number": 4, "text": "Ils se sont mariés. Personne ne le savait. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 153,
+          "instruction": "Utilisez « malgré » ou « en dépit de » pour exprimer une concession ; faites les transformations nécessaires.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il fait froid. Il est sorti sans manteau. _____", "blanks": 1 },
+            { "number": 2, "text": "Il y a de nombreuses recherches sur la maladie. Aucun vaccin n'a été trouvé. _____", "blanks": 1 },
+            { "number": 3, "text": "Les prix augmentent. Les gens continuent de consommer. _____", "blanks": 1 },
+            { "number": 4, "text": "Son propriétaire a menacé de le poursuivre en justice. Il ne paye toujours pas son loyer. _____", "blanks": 1 },
+            { "number": 5, "text": "Ce film a reçu de mauvaises critiques. Il a eu du succès auprès du grand public. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 153,
+          "instruction": "Complétez les phrases pour exprimer une concession.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il avait promis de venir me voir mais _____", "blanks": 1 },
+            { "number": 2, "text": "Les voitures polluent les villes ; pourtant _____", "blanks": 1 },
+            { "number": 3, "text": "Elle se plaignait toujours de rester seule ; cependant _____", "blanks": 1 },
+            { "number": 4, "text": "Les gens se disent volontiers écologistes. Néanmoins _____", "blanks": 1 },
+            { "number": 5, "text": "Il devint aveugle à l'âge de trente ans. Toutefois _____", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [150, 151, 152, 153],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

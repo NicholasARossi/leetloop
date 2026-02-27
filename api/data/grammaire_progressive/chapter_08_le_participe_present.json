@@ -1,0 +1,139 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 8,
+  "chapter_title": "LE PARTICIPE PRÉSENT",
+  "book_pages": [78, 79],
+  "sections": [
+    {
+      "section_title": "FORMATION ET CARACTÉRISTIQUES",
+      "subtitle": null,
+      "book_pages": [78],
+      "intro_examples": [
+        "Sur le tableau de gauche on voit un enfant jouant à la balle.",
+        "Le 11 novembre étant férié, nos magasins seront fermés."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "Le participe présent est formé à partir du radical de la première personne du pluriel de l'indicatif.",
+          "examples": [
+            "nous jouons → jouant – nous disons → disant – nous agissons → agissant"
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Certains participes présents ont une forme irrégulière.",
+          "examples": [
+            "être → étant – avoir → ayant – savoir → sachant"
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Il a une forme composée (ayant ou étant + participe passé) qui indique une antériorité.",
+          "examples": [
+            "Les personnes ayant déjà acheté leurs billets peuvent se présenter au contrôle.",
+            "Les marchandises n'étant pas arrivées, on ne pourra pas vous les livrer."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le participe présent est surtout utilisé à l'écrit dans la presse, la correspondance et la langue administrative.",
+          "examples": [
+            "Cherchons vendeuse parlant l'anglais.",
+            "N'ayant pas reçu à cette date de confirmation, nous annulons notre réservation."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": []
+    },
+    {
+      "section_title": "EMPLOIS",
+      "subtitle": null,
+      "book_pages": [78, 79],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "Le participe présent peut remplacer la relative avec « qui ».",
+          "examples": [
+            "C'est un sportif qui a des qualités techniques rares. → C'est un sportif ayant des qualités techniques rares."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Il peut exprimer la cause ; il remplace dans ce cas « comme », « étant donné que ».",
+          "examples": [
+            "Comme la pluie tombait très fort, nous avons dû rentrer. → La pluie tombant très fort, nous avons dû rentrer.",
+            "Étant donné qu'elle a vécu en Asie, elle situe souvent ses romans dans cette région. → Ayant vécu en Asie, elle situe souvent ses romans dans cette région."
+          ],
+          "categories": [],
+          "notes": [
+            "Quand il exprime la cause, le sujet du participe présent peut être semblable ou différent de celui de l'autre phrase."
+          ]
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 79,
+          "instruction": "Réécrivez ces phrases en utilisant le participe présent à la place des éléments soulignés.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "C'est un tableau qui représente la Nativité. _____", "blanks": 1 },
+            { "number": 2, "text": "Comment appelle-t-on ce poisson qui a une tête de chat ? _____", "blanks": 1 },
+            { "number": 3, "text": "Sur cette photo, c'est ma fille qui dansait au bal de l'école. _____", "blanks": 1 },
+            { "number": 4, "text": "C'est un livre qui dépeint la vie des habitants de Terre-Neuve. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 79,
+          "instruction": "Remplacez les éléments soulignés par la forme composée du participe présent.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Les passagers qui n'ont pas rempli de fiche de police devront se présenter au contrôle. _____", "blanks": 1 },
+            { "number": 2, "text": "Les candidats qui auront obtenu le plus de voix se présenteront au deuxième tour des élections. _____", "blanks": 1 },
+            { "number": 3, "text": "Les vêtements qui ont été achetés pendant les soldes ne pourront pas être repris. _____", "blanks": 1 },
+            { "number": 4, "text": "Les étudiants titulaires du baccalauréat pourront s'inscrire en faculté. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 79,
+          "instruction": "Mettez les phrases suivantes au style télégraphique en utilisant le participe présent.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Nous cherchons un appartement qui ait une vue sur la mer. _____", "blanks": 1 },
+            { "number": 2, "text": "Nous recherchons une voiture diesel qui ait moins de 1000 km. _____", "blanks": 1 },
+            { "number": 3, "text": "Nous offrons des chiens et des chats qui possèdent un pedigree. _____", "blanks": 1 },
+            { "number": 4, "text": "Nous engageons un commercial qui sache parfaitement le japonais. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 79,
+          "instruction": "Utilisez les éléments suivants pour exprimer la cause avec le participe présent.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Le 23 – jour férié / aucun magasin ouvert _____", "blanks": 1 },
+            { "number": 2, "text": "Ce film – peu de succès / rapidement retiré des salles _____", "blanks": 1 },
+            { "number": 3, "text": "Le brouillard – se lever / décider de dormir en route _____", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [78, 79],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

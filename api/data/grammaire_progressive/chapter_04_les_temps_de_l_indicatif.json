@@ -1,0 +1,899 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 4,
+  "chapter_title": "LES TEMPS de L'INDICATIF",
+  "book_pages": [38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53],
+  "sections": [
+    {
+      "section_title": "LE PRÉSENT",
+      "subtitle": null,
+      "book_pages": [38, 39],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "Le présent situe l'action au moment où le locuteur parle. L'action est en train de se faire.",
+          "examples": [
+            "Qu'est-ce qu'il fait ? – Il rit."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "«Être en train de» + infinitif insiste sur le déroulement de l'action ; la durée est plus ou moins longue.",
+          "examples": [
+            "Ne me dérangez pas, je suis en train de travailler."
+          ],
+          "categories": [],
+          "notes": [
+            "«Être en train de» ne peut pas être utilisé avec un verbe exprimant un sentiment, un comportement, ni avec des verbes comme venir, habiter...",
+            "Je n'aime pas la vie citadine, je préfère la campagne.",
+            "Elle apprécie le jazz moderne.",
+            "Il a l'impression que le temps passe très vite."
+          ]
+        },
+        {
+          "rule": "Le présent peut indiquer l'habitude, la répétition ; il est alors employé en général avec une marque temporelle.",
+          "examples": [
+            "Ils vont souvent au cinéma.",
+            "Je me lève vers 8 heures."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le présent peut indiquer une action future certaine ; il est alors employé avec une marque temporelle exprimant un futur proche ou lointain.",
+          "examples": [
+            "Nous décollons dans une heure.",
+            "On s'installe en Suède l'année prochaine."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le présent peut remplacer un temps du passé pour rendre la scène plus vivante ; il a alors une valeur stylistique.",
+          "examples": [
+            "«J'habitais à cette époque à Nantes, où je faisais mes études. Un matin, le facteur arrive, apporte une lettre ; elle vient des États-Unis. J'avais obtenu une bourse pour aller étudier à Boston pendant deux ans !»"
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 39,
+          "instruction": "Réécrivez les phrases en utilisant la forme «être en train de» quand c'est possible.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Qu'est-ce que tu fais ? Je vérifie le sens d'un mot dans le dictionnaire. _____", "blanks": 1 },
+            { "number": 2, "text": "Elle n'aime pas beaucoup la viande, elle préfère le poisson. _____", "blanks": 1 },
+            { "number": 3, "text": "Nous vivons à l'étranger depuis deux ans. _____", "blanks": 1 },
+            { "number": 4, "text": "Elle prépare sa valise ; le train part à 18 heures. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 39,
+          "instruction": "Complétez le texte en choisissant le verbe qui convient.",
+          "type": "fill_blank",
+          "context": "rentrer – allumer – sortir – aller – se lever – déjeuner – quitter – prendre – se diriger – s'habiller – écouter\n\nUn homme qui a ses habitudes",
+          "items": [
+            { "number": null, "text": "Tous les matins il _____ à 6 h 30. Il _____ aussitôt la radio qu'il _____ en faisant sa toilette. Ensuite il _____ et _____. À 7 heures, il _____ son appartement et, qu'il vente ou qu'il pleuve, il _____ acheter son journal, toujours le même. Puis d'un pas rapide et toujours sur le trottoir de gauche, il _____ vers le métro. À 19 heures le soir, il _____ le métro et toujours par le trottoir de gauche, il _____ chez lui.", "blanks": 10 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 39,
+          "instruction": "Utilisez le présent à la place du futur pour rendre le texte plus vivant.",
+          "type": "transformation",
+          "context": "Le train partira dans quelques minutes. À midi, nous aurons un arrêt de quinze minutes à Bordeaux. Nous passerons la frontière avant la nuit. Nous arriverons avant minuit.",
+          "items": [
+            { "number": null, "text": "_____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 39,
+          "instruction": "Utilisez le présent à la place des passés quand c'est possible pour donner à ce texte un caractère plus vivant.",
+          "type": "transformation",
+          "context": "À cette époque-là, je chassais en Afrique. Un jour où nous étions partis avec une seule voiture, la voiture est tombée en panne, impossible de réparer. Le village le plus proche était à une dizaine de kilomètres. Le plus sportif d'entre nous a dit qu'il était volontaire pour y aller. À la nuit il est revenu, seul, épuisé. Il n'y avait pas de mécanicien dans ce village.",
+          "items": [
+            { "number": null, "text": "_____", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "LES PASSÉS",
+      "subtitle": "l'imparfait, le passé composé, le passé simple",
+      "book_pages": [40, 41],
+      "intro_examples": [
+        "Je lisais quand il est arrivé.",
+        "Ce jour-là, il lisait quand elle arriva."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "Les passés situent l'action avant le moment où le locuteur parle.",
+          "examples": [
+            "Ce soir-là, nous dînions sur la terrasse ; soudain un orage a éclaté.",
+            "Ce matin-là, il écoutait de la musique ; soudain un orage éclata."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "L'imparfait indique que l'action est montrée en train de se faire dans le passé ; l'action est en cours, elle n'est pas finie dans le passé ; on dit qu'elle est vue comme non-accomplie dans le passé.",
+          "examples": [
+            "Hier, je lisais quand il est arrivé.",
+            "Nous dînions sur la terrasse ; soudain un orage a éclaté."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le passé composé et le passé simple indiquent que l'action s'est produite et s'est terminée dans le passé ; elle est vue comme accomplie.",
+          "examples": [
+            "Nous dînions sur la terrasse, un orage a éclaté.",
+            "Nous dînions sur la terrasse, un orage éclata."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le passé composé est utilisé à l'oral ou à l'écrit dans les journaux et même dans la littérature moderne.",
+          "examples": [
+            "Le chef d'État s'est éteint à l'âge de 92 ans...",
+            "À dix-huit ans, j'ai quitté ma famille, mes amis..."
+          ],
+          "categories": [],
+          "notes": [
+            "Le passé composé peut avoir une autre valeur (voir p. 44)."
+          ]
+        },
+        {
+          "rule": "Le passé simple est utilisé surtout à l'écrit dans des textes narratifs : des récits, des contes, des biographies, des textes historiques.",
+          "examples": [
+            "Une épidémie terrible s'abattit sur toute la région.",
+            "Christophe Colomb partit pour les Amériques sans le savoir.",
+            "François Mitterrand fut réélu en 1988.",
+            "Jules César battit les Gaulois à Alésia. Il fit prisonnier leur chef Vercingétorix qu'il emmena en captivité à Rome."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 41,
+          "instruction": "Mettez les verbes entre parenthèses à l'imparfait.",
+          "type": "fill_blank",
+          "context": "Malheurs du temps : la grande peste",
+          "items": [
+            { "number": null, "text": "À cette époque une maladie pestilentielle (s'abattre) _____ sur toute l'Italie. Rome, ville la plus populeuse et qui (accueillir) _____ des gens du monde entier, (être) _____ la plus atteinte. Le fléau (faire mourir) _____ des quantités d'animaux et d'êtres humains. Les habitants de Rome (fuir) _____ vers des sites plus salubres que (couvrir) _____ de très épaisses forêts de lauriers. On (raconter) _____ qu'on (pouvoir résister) _____ à la contagion de l'air grâce aux odeurs que (donner) _____ les lauriers. Néanmoins, la maladie prit une dimension considérable...", "blanks": 9 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 41,
+          "instruction": "Mettez les verbes au passé composé, puis imaginez une suite à cette histoire.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "On (se disputer) _____, il (partir) _____ ; je (éclater) _____ en sanglots puis je (retrouver) _____ mon calme. Je (prendre) _____ un verre d'eau, je (avaler) _____ un cachet et je (se jeter) _____ sur mon lit. Le téléphone (sonner) _____ ; je (ne pas répondre) _____. Je (dormir) _____ pendant des heures et je (se réveiller) _____ avec la lune sur le plafond de ma chambre. Je (penser) _____ à lui. À ce moment-là, on (frapper) _____.", "blanks": 13 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 41,
+          "instruction": "Réécrivez ce passage des Misérables en utilisant le passé composé à la place du passé simple.",
+          "type": "transformation",
+          "context": "– Ah ! C'est encore toi ! répondit Jean Valjean, et se dressant brusquement tout debout, le pied toujours sur la pièce d'argent, il ajouta : Veux-tu bien te sauver !\nL'enfant effaré le regarda, puis commença à trembler de la tête aux pieds et, après quelques secondes de stupeur, se mit à s'enfuir en courant de toutes ses forces sans oser tourner le cou ni jeter un cri.\nCependant à une certaine distance, l'essoufflement le força de s'arrêter, et Jean Valjean, à travers sa rêverie, l'entendit qui sanglotait.\n\nVictor Hugo, Les Misérables (chapitre XIII)",
+          "items": [
+            { "number": null, "text": "_____", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "L'IMPARFAIT",
+      "subtitle": null,
+      "book_pages": [42, 43],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "L'imparfait peut indiquer l'existence d'un fait à un moment du passé.",
+          "examples": [
+            "Il y a 2 000 ans la France s'appelait la Gaule.",
+            "Au début du siècle, les femmes ne votaient pas."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "L'imparfait peut indiquer un fait habituel dans le passé.",
+          "examples": [
+            "Il sortait toujours après le déjeuner, s'asseyait sur le même banc sous le chêne, lisait, puis dormait pendant une bonne demi-heure."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "L'imparfait est employé dans les descriptions.",
+          "examples": [
+            "Il faisait beau. C'était un dimanche.",
+            "Les gens se promenaient dans les rues ou bavardaient à la terrasse des cafés.",
+            "J'étais heureuse..."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "L'imparfait est employé dans le discours indirect à la place du présent quand le premier verbe est au passé : c'est alors un présent dans le passé.",
+          "examples": [
+            "Il m'a fait savoir qu'il voulait partir.",
+            "Elle répondit qu'elle en avait assez de cette situation.",
+            "On disait qu'il allait se marier."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "L'imparfait peut être employé dans un contexte hypothétique pour suggérer, proposer.",
+          "examples": [
+            "– Qu'est-ce qu'on peut lui offrir pour son anniversaire ?",
+            "– Si on lui offrait un sac de voyage ?"
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "L'imparfait est employé après «comme si» pour exprimer une hypothèse.",
+          "examples": [
+            "Le ciel est gris comme s'il allait pleuvoir. [= Le ciel est gris ; on dirait qu'il va pleuvoir.]"
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "L'imparfait peut être utilisé pour décrire un fait qui a failli se produire.",
+          "examples": [
+            "Encore un peu et tu tombais [= tu n'es pas tombé mais tu as failli tomber.]",
+            "Heureusement que je suis arrivé. Une minute de plus et la salle de bains était inondée [la salle de bains n'est pas inondée mais elle a failli l'être ; nous avons frisé la catastrophe]."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 43,
+          "instruction": "Répondez en utilisant l'imparfait comme dans l'exemple.",
+          "type": "transformation",
+          "context": "Il y a 2 000 ans, la France s'appelle déjà la France ? → Non, il y a 2 000 ans, la France s'appelait la Gaule.",
+          "items": [
+            { "number": 1, "text": "Au début du siècle, les antibiotiques existent déjà ? Non, _____", "blanks": 1 },
+            { "number": 2, "text": "Il y a 2 000 ans, les Pyramides ne sont pas encore construites ? Si, _____", "blanks": 1 },
+            { "number": 3, "text": "Avant la guerre, la télévision n'existe pas ? Si, _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 43,
+          "instruction": "Racontez comment se passait dans votre enfance une de vos fêtes préférées ; décrivez cette fête.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Tous les ans _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 43,
+          "instruction": "Réécrivez ce texte en le commençant ainsi : Il lui a dit qu'il voulait partir...",
+          "type": "transformation",
+          "context": "Je lui ai dit : « Je veux partir. J'étouffe ici. Je veux voir et connaître autre chose. J'en ai assez de cette médiocrité. Je ne supporte plus cette monotonie. J'ai envie d'autres horizons. »",
+          "items": [
+            { "number": null, "text": "_____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 43,
+          "instruction": "Avec vos frères et sœurs, vous discutez du cadeau à faire pour la fête des mères.",
+          "type": "dialogue",
+          "context": "- Si on lui offrait un sac de voyage ? – Non, elle en a déjà plusieurs. Offrons-lui plutôt un bijou.",
+          "items": [
+            { "number": null, "text": "- Oui. Si on _____ ? – Non, _____. Cherchons plutôt _____.\n- Oui, si _____ ? – D'accord.", "blanks": 4 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 43,
+          "instruction": "Complétez les phrases suivantes, comme dans l'exemple.",
+          "type": "fill_blank",
+          "context": "Le ciel est gris comme s'il allait neiger.",
+          "items": [
+            { "number": 1, "text": "Il est pâle comme s'il _____", "blanks": 1 },
+            { "number": 2, "text": "Elle est rouge comme si elle _____", "blanks": 1 },
+            { "number": 3, "text": "Il est habillé comme s'il _____", "blanks": 1 },
+            { "number": 4, "text": "Il y a beaucoup de monde dans les rues comme si _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 6,
+          "book_page": 43,
+          "instruction": "Exprimez la même idée avec l'imparfait.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Nous ne sommes pas encore partis mais nous avons failli le faire. Un peu plus _____", "blanks": 1 },
+            { "number": 2, "text": "Ils ont failli avoir un accident. Un geste maladroit _____", "blanks": 1 },
+            { "number": 3, "text": "Elle a failli le gifler. Encore un peu _____", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "LE PASSÉ COMPOSÉ",
+      "subtitle": null,
+      "book_pages": [44, 45],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "Le passé composé indique une action plus ou moins courte, précisée ou pouvant être précisée dans le temps passé.",
+          "examples": [
+            "Ils sont arrivés à 8 heures.",
+            "Nous avons dansé toute la nuit.",
+            "J'ai travaillé pendant deux heures.",
+            "Elle est née en juin."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le passé composé est employé à l'oral ou à l'écrit pour raconter des événements passés ; dans ce cas il est utilisé avec des imparfaits qui servent à décrire.",
+          "examples": [
+            "Hier je me suis promenée dans le quartier. Je flânais quand j'ai rencontré une vieille camarade de lycée..."
+          ],
+          "categories": [],
+          "notes": [
+            "Il remplace dans ce cas le passé simple: En 1958, le général de Gaulle a été élu président. / En 1958, le général de Gaulle fut élu président."
+          ]
+        },
+        {
+          "rule": "Le passé composé est employé pour exprimer qu'une action vient de se terminer mais qu'elle a un effet (physique ou psychologique) sur le présent.",
+          "examples": [
+            "J'ai travaillé toute la journée, je suis fatigué.",
+            "Il a trop mangé ; il a mal à l'estomac.",
+            "Ça va mieux, j'ai retrouvé mon calme."
+          ],
+          "categories": [],
+          "notes": [
+            "Quand il indique un fort rapport de continuité avec le présent, il ne peut pas être remplacé par le passé simple: Ça va mieux, j'ai retrouvé mon calme. / Ça va mieux, je retrouvai mon calme. (impossible)"
+          ]
+        },
+        {
+          "rule": "Le passé composé est employé après «si» pour exprimer la condition ou l'hypothèse.",
+          "examples": [
+            "Si tu as mangé trop de chocolat, tu seras malade.",
+            "Si nous n'avons pas fini ce soir, nous ne pourrons pas aller au théâtre.",
+            "Si vous ne les avez pas prévenus, dépêchez-vous de le faire."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 45,
+          "instruction": "Mettez au passé composé les verbes proposés.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Hier il _____ toute la journée. (neiger)", "blanks": 1 },
+            { "number": 2, "text": "Il _____ toute la nuit pour finir son mémoire. (veiller)", "blanks": 1 },
+            { "number": 3, "text": "L'avion _____ à 21 heures. Il n'avait pas de retard. (atterrir)", "blanks": 1 },
+            { "number": 4, "text": "C'est moi qui _____ les documents et c'est elle qui _____ la synthèse. (rassembler – rédiger)", "blanks": 2 },
+            { "number": 5, "text": "Il _____ au moment de la déclaration de la guerre. (naître)", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 45,
+          "instruction": "Mettez les verbes au passé composé ou à l'imparfait comme il convient, puis trouvez une suite à cette histoire.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Je le (rencontrer) _____ quand je (être) _____ étudiante. La première fois qu'il me (parler) _____, je (rougir) _____. Ce (être) _____ pendant un cours de littérature. Il me (demander) _____ si je (pouvoir) _____ lui prêter mon livre. Il me (sourire – regarder) _____ et me _____ avec insistance. Je (être) _____ émue ; je ne (pouvoir) _____ plus parler.", "blanks": 11 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 45,
+          "instruction": "Continuez les phrases pour exprimer le résultat dans le présent.",
+          "type": "fill_blank",
+          "context": "→ J'ai trop dormi et je ne suis pas en forme.",
+          "items": [
+            { "number": 1, "text": "Il a toujours été bizarre _____", "blanks": 1 },
+            { "number": 2, "text": "Je n'ai rien compris _____", "blanks": 1 },
+            { "number": 3, "text": "On a eu les résultats _____", "blanks": 1 },
+            { "number": 4, "text": "Nous avons roulé toute la nuit _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 45,
+          "instruction": "Dites si ces passés composés peuvent être remplacés par des passés simples.",
+          "type": "fill_blank",
+          "context": "Racine est né en 1639 et il est mort en 1699. → Possible",
+          "items": [
+            { "number": 1, "text": "J'ai lavé mon pull à l'eau chaude et je ne peux plus le mettre. _____", "blanks": 1 },
+            { "number": 2, "text": "Il a neigé toute la nuit, maintenant la route est glissante. _____", "blanks": 1 },
+            { "number": 3, "text": "Paris a été libérée en 1944. _____", "blanks": 1 },
+            { "number": 4, "text": "Je suis en retard, j'ai attendu l'autobus pendant vingt minutes. _____", "blanks": 1 },
+            { "number": 5, "text": "Elle est partie ; elle doit être déjà arrivée chez elle. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 45,
+          "instruction": "Reliez les éléments suivants pour exprimer la condition ou l'hypothèse.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "train déjà parti – prendre le car _____", "blanks": 1 },
+            { "number": 2, "text": "ne pas fermer le compteur – risque de court-circuit _____", "blanks": 1 },
+            { "number": 3, "text": "perdre sa carte bancaire – téléphoner vite à la banque _____", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "LE PASSÉ SIMPLE",
+      "subtitle": null,
+      "book_pages": [46, 47],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "Le passé simple est formé selon trois types de conjugaison.",
+          "examples": [],
+          "categories": [
+            { "label": "type PARLER: [e] et [a]", "examples": ["je parl-ai, tu parl-as, il/elle/on parl-a, nous parl-âmes, vous parl-âtes, ils/elles parl-èrent"] },
+            { "label": "type DIRE: [i]", "examples": ["je d-is, tu d-is, il/elle/on d-it, nous d-îmes, vous d-îtes, ils/elles d-irent"] },
+            { "label": "type CROIRE: [y]", "examples": ["je cr-us, tu cr-us, il/elle/on cr-ut, nous cr-ûmes, vous cr-ûtes, ils/elles cr-urent"] }
+          ],
+          "notes": [
+            "ÊTRE: je fus, tu fus, il/elle/on fut, nous fûmes, vous fûtes, ils/elles furent.",
+            "AVOIR: j'eus [y], tu eus [y], il/elle/on eut [y], nous eûmes, vous eûtes, ils/elles eurent."
+          ]
+        },
+        {
+          "rule": "Le passé simple indique une action ponctuelle dans le passé, précisée ou pouvant être précisée.",
+          "examples": [
+            "Il mourut le 17 janvier 1902.",
+            "Elle s'en alla très tôt ce jour-là."
+          ],
+          "categories": [],
+          "notes": [
+            "Une action exprimée par le passé simple est pensée comme n'ayant aucun rapport avec le présent."
+          ]
+        },
+        {
+          "rule": "Le passé simple existe surtout à l'écrit. Il est utilisé dans les textes littéraires, historiques, les biographies et certains journaux.",
+          "examples": [
+            "Elle éteignit la lampe, tira l'épais rideau de velours bleu et monta dans sa chambre où elle lut pendant une partie de la nuit.",
+            "Il fut élu en 1947 et démissionna deux ans plus tard.",
+            "Il naquit à Bordeaux en 1625 et fut éduqué au lycée de Bordeaux."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Dans un récit au passé, le passé simple est utilisé avec l'imparfait. L'imparfait sert à décrire et le passé simple est le temps des actions.",
+          "examples": [
+            "D'un air enjoué il se présenta à tous les invités qui étaient dans le salon."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 47,
+          "instruction": "Réécrivez cette biographie de Molière en utilisant le passé simple quand c'est possible et en mettant les autres verbes à l'imparfait.",
+          "type": "transformation",
+          "context": "Molière naît en 1622. C'est le fils d'un riche commerçant parisien. De 1636 à 1642, il fait de bonnes études au collège de Clermont à Paris, puis il apprend le droit à Orléans.\nIl est tout d'abord attiré par la philosophie mais c'est surtout un passionné de théâtre. En 1643, il décide de pratiquer cet art ; cette expérience ne dure pas. Molière est mis en prison pour dettes.\nMais il ne se décourage pas. Il commence à écrire des pièces.\nEn 1658, il s'installe à Paris. Dans ses pièces, il critique les nobles et les bourgeois. Cela lui vaut beaucoup d'ennemis.\nEn 1664, il combat l'hypocrisie religieuse dans Tartuffe. La pièce est aussitôt interdite.\nDes problèmes de famille et de santé rendent la fin de sa vie difficile. L'Avare, Les Femmes savantes, Le Malade imaginaire sont ses derniers succès. Il meurt le 17 février 1673 pendant la quatrième représentation de cette dernière pièce.",
+          "items": [
+            { "number": null, "text": "_____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 47,
+          "instruction": "Mettez les verbes entre parenthèses au passé simple.",
+          "type": "fill_blank",
+          "context": "Le Radeau de La Méduse",
+          "items": [
+            { "number": null, "text": "Le 2 juillet 1816, une frégate royale, La Méduse, (s'échouer) _____ au large du Sénégal. Le gouvernement (interdire) _____ le récit des quinze survivants recueillis par un navire après treize jours de dérive. Ceux-ci (mettre) _____ en cause l'attitude des officiers qui avaient abandonné 149 marins et soldats sur un radeau après avoir embarqué sur des chaloupes.\nGéricault (s'emparer) _____ de cette affaire pour en faire un tableau auquel il (donner) _____ une signification politique : il (vouloir) _____ symboliser dans sa toile « le drame d'une génération sans guide ».", "blanks": 6 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 47,
+          "instruction": "Vous avez traversé l'Atlantique à la voile, en solitaire. Vous écrivez votre journal de bord en utilisant le passé simple.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": null, "text": "La première journée _____\nLe lendemain _____\nPendant la semaine qui suivit _____\nLe dixième jour _____\nTrois jours durant _____\nToutes ces nuits-là _____\nUn matin, au lever du jour _____", "blanks": 7 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "LE FUTUR",
+      "subtitle": null,
+      "book_pages": [48, 49],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "Le futur situe l'action après le moment où le locuteur parle. Ce moment, plus ou moins proche, est souvent indiqué par une marque temporelle.",
+          "examples": [
+            "Bientôt nous serons en vacances.",
+            "L'année prochaine je ferai mes études à Londres."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le futur est une projection dans l'avenir.",
+          "examples": [
+            "Quand je serai grand, je serai pilote d'avion."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le futur peut exprimer: l'ordre, les directives ; la promesse ; les prévisions.",
+          "examples": [
+            "Vous ferez pour demain l'exercice 40 de la page 102.",
+            "Tu iras chercher le pain quand tu rentreras.",
+            "Nous nous retrouverons à 15 heures devant le bureau d'Air France.",
+            "Je te le promets, papa, je ne recommencerai plus.",
+            "Il pleuvra sur la majeure partie du pays."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le futur proche («aller» au présent + infinitif) situe l'action après le moment où le locuteur parle en indiquant une continuité avec le présent.",
+          "examples": [
+            "Attention, tu vas tomber !",
+            "Attends-moi, je vais sortir en même temps que toi."
+          ],
+          "categories": [],
+          "notes": [
+            "Le futur indique une coupure avec le moment où le locuteur parle. Le futur proche indique que l'action ne s'est pas produite mais qu'elle est sur le point de se produire.",
+            "Je l'en reparlerai plus tard. / Je vais te parler franchement, écoute-moi !"
+          ]
+        },
+        {
+          "rule": "«Être sur le point de» situe l'action juste après le moment où le locuteur parle.",
+          "examples": [
+            "Je ne dors pas encore mais je suis sur le point de m'endormir."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 49,
+          "instruction": "Vous fêtez votre anniversaire samedi prochain. Dites comment vous organiserez la soirée.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Il y aura beaucoup de monde. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 49,
+          "instruction": "Utilisez les informations suivantes dans une courte lettre que vous écrivez à l'ami(e) qui voyagera avec vous.",
+          "type": "free_response",
+          "context": "départ Charles-de-Gaulle le 18.6 à 12 h 30\narrivée Athènes le 18.6 à 15 heures\ntaxi vers le Pirée le 18.6 à 19 heures\nembarquement sur L'Athénée le 18.6 à 21 heures\ndébarquement à Alexandrie le 19.6 à 11 heures",
+          "items": [
+            { "number": null, "text": "Si tout se passe bien, nous partirons de _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 49,
+          "instruction": "Utilisez les prévisions météorologiques suivantes pour rédiger le bulletin pour le journal télévisé du soir.",
+          "type": "free_response",
+          "context": "• le matin : Pluies sur la Bretagne. Reste du pays ensoleillé sauf dans l'Est : nuages.\n• dans l'après-midi : Éclaircies sur la Bretagne. Ciel couvert sur les montagnes. Température en baisse dans l'Est.\n• le soir : Léger refroidissement sur l'ensemble du pays. Risque de brouillard sur la Bourgogne.",
+          "items": [
+            { "number": null, "text": "_____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 49,
+          "instruction": "Vous êtes reporter à la radio ; continuez comme dans l'exemple.",
+          "type": "transformation",
+          "context": "Les coureurs sont sur le point de partir. Attention, ils vont partir ! Ça y est, ils partent. Ils sont partis.",
+          "items": [
+            { "number": null, "text": "Les taureaux _____\nLes chevaux _____\nLes joueurs _____\nLes athlètes _____\nLes coureurs _____", "blanks": 5 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "L'ANTÉRIORITÉ",
+      "subtitle": null,
+      "book_pages": [50, 51],
+      "intro_examples": [
+        "On avait fait les courses et on préparait le repas."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "L'antériorité indique qu'une action se passe avant une autre action.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le passé composé situe l'action avant un moment situé dans le présent. Il est obligatoirement employé en relation avec le présent après une marque temporelle comme: quand, après que, dès que, une fois que, aussitôt que, etc.",
+          "examples": [
+            "Il a remporté les élections ; aujourd'hui il est président.",
+            "Une fois qu'elle a accompagné les enfants à l'école, elle va au bureau."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le passé composé marque une antériorité dans l'expression de la condition avec «si».",
+          "examples": [
+            "Si vous avez mangé trop de chocolat, vous aurez mal au ventre."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le plus-que-parfait situe l'action avant un moment du passé exprimé par l'imparfait, le passé composé et le passé simple.",
+          "examples": [
+            "Elle lisait un livre qu'elle avait acheté le matin même.",
+            "J'ai raté le train ! – Je t'avais bien dit de partir plus tôt.",
+            "Le bébé s'était endormi ; elle sortit sans faire de bruit."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le plus-que-parfait est obligatoirement employé en relation avec l'imparfait après une marque temporelle comme: quand, après que, dès que, une fois que, aussitôt que, etc.",
+          "examples": [
+            "Dès que nous étions arrivés à la mer, nous nous jetions dans l'eau et jouions pendant des heures."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le plus-que-parfait marque une antériorité dans l'expression de l'hypothèse avec «si».",
+          "examples": [
+            "Si j'avais su qui elle était, je me serais méfié d'elle."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le passé antérieur (avoir ou être au passé simple + participe passé) est obligatoirement employé en relation avec le passé simple après une marque temporelle comme: quand, après que, une fois que, aussitôt que, dès que, etc.",
+          "examples": [
+            "Aussitôt qu'ils eurent dépassé la frontière, ils remarquèrent que l'architecture était différente."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le futur antérieur situe l'action avant une autre action exprimée au futur ou indique qu'elle est accomplie avant le moment indiqué par une marque temporelle.",
+          "examples": [
+            "Quand il sera réveillé, je lui parlerai.",
+            "J'espère que nous aurons fini avant 18 heures."
+          ],
+          "categories": [],
+          "notes": [
+            "Le futur antérieur est obligatoirement employé en relation avec le futur après une marque temporelle comme: quand, après que, dès que, une fois que, aussitôt que, etc.",
+            "Dès que je serai arrivé, je vous téléphonerai."
+          ]
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 51,
+          "instruction": "Mettez ces phrases au passé, selon le modèle.",
+          "type": "transformation",
+          "context": "Elle lit un livre qu'elle a acheté ce matin. → Elle lisait un livre qu'elle avait acheté ce matin.",
+          "items": [
+            { "number": 1, "text": "Elle regarde le film qu'elle a loué quelques instants auparavant. _____", "blanks": 1 },
+            { "number": 2, "text": "Elle note l'adresse qu'elle a entendue à la radio. _____", "blanks": 1 },
+            { "number": 3, "text": "Elle cuisine le canard qu'il a tué le matin même. _____", "blanks": 1 },
+            { "number": 4, "text": "Il répare la porte qu'il a cassée sans le faire exprès. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 51,
+          "instruction": "Établissez une relation d'antériorité passé composé/présent.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Dès qu'il (prendre) _____ son petit déjeuner, il (acheter) _____ le journal.", "blanks": 2 },
+            { "number": 2, "text": "Après qu'elle (se réveiller) _____, elle (écouter) _____ la radio.", "blanks": 2 },
+            { "number": 3, "text": "Aussitôt qu'il (donner) _____ des ordres, les enfants (obéir) _____.", "blanks": 2 },
+            { "number": 4, "text": "Une fois que nous (apprendre) _____ nos leçons, elle nous (autoriser) _____ à jouer.", "blanks": 2 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 51,
+          "instruction": "Faites des phrases, comme dans l'exemple, à partir des éléments donnés.",
+          "type": "transformation",
+          "context": "les élections/président → Il a gagné les élections, aujourd'hui il est président.",
+          "items": [
+            { "number": 1, "text": "gagner la course/champion du monde. _____", "blanks": 1 },
+            { "number": 2, "text": "beaucoup travailler/prendre des vacances. _____", "blanks": 1 },
+            { "number": 3, "text": "trop regarder la télévision/avoir mal aux yeux. _____", "blanks": 1 },
+            { "number": 4, "text": "beaucoup voyager/rester à la maison. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 51,
+          "instruction": "Établissez une relation d'antériorité comme dans l'exemple.",
+          "type": "transformation",
+          "context": "avoir reçu les résultats avant midi/téléphoner dans l'après-midi → Nous aurons reçu les résultats avant midi, nous vous téléphonerons dans l'après-midi.",
+          "items": [
+            { "number": 1, "text": "avoir terminé le travail avant midi/aller déjeuner ensuite. _____", "blanks": 1 },
+            { "number": 2, "text": "avoir rencontré les syndicats avant la fin de la semaine/informer alors. _____", "blanks": 1 },
+            { "number": 3, "text": "avoir fini l'expérience dans deux jours/savoir enfin la vérité. _____", "blanks": 1 },
+            { "number": 4, "text": "avoir bientôt reçu sa réponse/alors décider. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 51,
+          "instruction": "Transformez selon l'exemple en établissant une relation d'antériorité.",
+          "type": "transformation",
+          "context": "Dès leur retour, ils vous téléphoneront → Dès qu'ils seront revenus, ils vous téléphoneront.",
+          "items": [
+            { "number": 1, "text": "Après leur entrée dans le magasin, nous entrerons à notre tour. _____", "blanks": 1 },
+            { "number": 2, "text": "Dès leur sortie, nous irons voir ce qu'il y a dans l'appartement. _____", "blanks": 1 },
+            { "number": 3, "text": "Une fois le travail fini, nous les paierons, pas avant. _____", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "LA POSTÉRIORITÉ",
+      "subtitle": null,
+      "book_pages": [52, 53],
+      "intro_examples": [
+        "Il promet qu'il reviendra demain."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "La postériorité indique qu'une action se passe après une autre action.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le futur, le futur proche et «être sur le point de» situent l'action après un moment exprimé par le présent.",
+          "examples": [
+            "Elle se prépare, elle va sortir.",
+            "Il ne peut pas répondre au téléphone, il est sur le point de sortir."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le conditionnel présent et le conditionnel passé situent l'action après un moment du passé exprimé par l'imparfait, le passé composé et le passé simple.",
+          "examples": [
+            "Je savais qu'il rentrerait tôt ; qu'il serait rentré avant midi.",
+            "Elle a dit qu'elle finirait dans la matinée ; qu'elle aurait fini avant midi.",
+            "Le gouvernement affirma que les prix baisseraient ; que les prix auraient baissé avant la fin de l'année."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "«Aller + infinitif» et «être sur le point de» à l'imparfait situent l'action après un moment exprimé par l'imparfait, le passé composé et le passé simple.",
+          "examples": [
+            "Elle nous disait / Elle nous a dit / Elle nous dit — de nous dépêcher parce que le repas allait être froid.",
+            "Il nous appelait / Il nous a appelé / Il nous appela — pour nous dire qu'il était sur le point de sortir."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le futur peut situer l'action après un autre futur ; dans ce cas les deux futurs sont liés par «et», «puis», «ensuite» ou «après».",
+          "examples": [
+            "Je travaillerai puis je sortirai.",
+            "Nous irons la chercher à l'aéroport et nous la déposerons à son hôtel.",
+            "On prendra le train jusqu'à Lyon, ensuite on louera une voiture pour aller à Annecy."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 53,
+          "instruction": "Répondez aux questions comme dans l'exemple.",
+          "type": "transformation",
+          "context": "Tu crois qu'il rentrera tôt ? – Bien sûr puisqu'il a dit qu'il rentrerait avant dix heures.",
+          "items": [
+            { "number": 1, "text": "Tu crois qu'il sera là demain matin ? _____", "blanks": 1 },
+            { "number": 2, "text": "Tu crois qu'elle m'aidera dans mes recherches ? _____", "blanks": 1 },
+            { "number": 3, "text": "Tu crois qu'elle viendra avec nous ? _____", "blanks": 1 },
+            { "number": 4, "text": "Tu crois qu'elle restera longtemps absente ? _____", "blanks": 1 },
+            { "number": 5, "text": "Tu crois qu'il réussira à son concours ? _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 53,
+          "instruction": "Complétez ces phrases en utilisant le conditionnel passé comme dans l'exemple.",
+          "type": "transformation",
+          "context": "Il affirma qu'une solution serait trouvée avant la fin du mois.",
+          "items": [
+            { "number": 1, "text": "Il décida que _____", "blanks": 1 },
+            { "number": 2, "text": "Il déclara que _____", "blanks": 1 },
+            { "number": 3, "text": "Il confirma que _____", "blanks": 1 },
+            { "number": 4, "text": "Il osa dire que _____", "blanks": 1 },
+            { "number": 5, "text": "Il finit par avouer que _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 53,
+          "instruction": "Répondez à ces questions comme dans l'exemple.",
+          "type": "transformation",
+          "context": "Il fallait vous prévenir ? – Mais bien sûr, il aurait fallu me prévenir tout de suite.",
+          "items": [
+            { "number": 1, "text": "_____ vous téléphoner ? _____", "blanks": 2 },
+            { "number": 2, "text": "_____ vous écrire ? _____", "blanks": 2 },
+            { "number": 3, "text": "_____ vous appeler ? _____", "blanks": 2 },
+            { "number": 4, "text": "_____ vous prévenir ? _____", "blanks": 2 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 53,
+          "instruction": "Complétez en utilisant les éléments donnés comme dans l'exemple.",
+          "type": "transformation",
+          "context": "Il nous écrivait qu'ils étaient sur le point de quitter Paris.",
+          "items": [
+            { "number": 1, "text": "Elle criait _____ (aller à l'imparfait + infinitif)", "blanks": 1 },
+            { "number": 2, "text": "Elle a crié _____ (aller à l'imparfait + infinitif)", "blanks": 1 },
+            { "number": 3, "text": "Elle cria _____ (aller à l'imparfait + infinitif)", "blanks": 1 },
+            { "number": 4, "text": "Il nous écrivait _____ (être à l'imparfait + «sur le point de» + infinitif)", "blanks": 1 },
+            { "number": 5, "text": "Il nous a écrit _____ (être à l'imparfait + «sur le point de» + infinitif)", "blanks": 1 },
+            { "number": 6, "text": "Il nous écrivit _____ (être à l'imparfait + «sur le point de» + infinitif)", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

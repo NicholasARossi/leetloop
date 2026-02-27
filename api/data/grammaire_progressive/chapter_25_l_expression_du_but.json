@@ -1,0 +1,140 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 25,
+  "chapter_title": "L'EXPRESSION DU BUT",
+  "book_pages": [154, 155],
+  "sections": [
+    {
+      "section_title": "L'EXPRESSION DU BUT",
+      "subtitle": null,
+      "book_pages": [154, 155],
+      "intro_examples": [
+        "Ils nous ont téléphoné pour que nous allions dîner avec eux.",
+        "Elle est venue pour s'excuser.",
+        "Ils ont préféré rester à la maison de peur qu'il (ne) fasse de l'orage."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "Le but peut être exprimé par une conjonction. Le résultat souhaité étant possible mais pas certain, il est exprimé au subjonctif.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Pour que » et « afin que » n'ont pas de nuance particulière.",
+          "examples": [
+            "Ses parents l'ont envoyé très jeune en France pour qu'il puisse bien parler la langue."
+          ],
+          "categories": [],
+          "notes": [
+            "Si les deux sujets sont identiques, il faut employer « pour » + infinitif ou « afin que » + infinitif (voir page 76).",
+            "On a mis un canapé-lit dans le salon pour y faire dormir nos amis de passage."
+          ]
+        },
+        {
+          "rule": "Quand il y a deux buts exprimés, le second but est introduit seulement par « que ».",
+          "examples": [
+            "Elle a fait des courses pour que nous ayons quelque chose à manger et que nous ne soyons pas obligés d'aller en faire en arrivant."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Pour que… ne… pas », « de peur que… » expriment un but qu'on veut éviter.",
+          "examples": [
+            "Ils parlaient bas pour qu'on ne les entende pas.",
+            "Nous partirons tôt de peur qu'il (n') y ait des embouteillages."
+          ],
+          "categories": [],
+          "notes": [
+            "Si les deux sujets sont identiques, il faut employer « pour ne pas » + infinitif, « de peur de » + infinitif : Nous sommes rentrés sur la pointe des pieds pour ne pas les réveiller. J'ai pris de l'aspirine de peur d'avoir mal à la tête."
+          ]
+        },
+        {
+          "rule": "Le but peut être exprimé par une préposition.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Pour », « de peur de » sont obligatoirement suivis de l'infinitif lorsque les sujets sont identiques.",
+          "examples": [
+            "J'ai réservé un mois à l'avance pour être sûr d'avoir des places.",
+            "Je lui ai téléphoné avant de partir de peur de ne pas le trouver chez lui."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Pour », « de peur de » peuvent être suivis d'un nom.",
+          "examples": [
+            "J'aimerais un produit efficace pour l'entretien de la moquette.",
+            "Ils ne sont pas sortis en bateau de peur d'une tempête."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 155,
+          "instruction": "Complétez en utilisant le temps et le mode qui conviennent.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Ils ont entouré leur maison d'une barrière pour que les animaux (ne pas pouvoir) _____ pénétrer dans le jardin.", "blanks": 1 },
+            { "number": 2, "text": "Laisse le plat dans le four pour qu'il (ne pas refroidir) _____.", "blanks": 1 },
+            { "number": 3, "text": "Ils ont installé un foyer dans l'école pour que les élèves (aller) _____ s'y reposer à l'heure du déjeuner.", "blanks": 1 },
+            { "number": 4, "text": "Nous leur avons prêté une boussole afin qu'ils (ne pas se perdre) _____ dans la forêt.", "blanks": 1 },
+            { "number": 5, "text": "Ils continueront leur enquête afin que la vérité (être) _____ connue.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 155,
+          "instruction": "Subjonctif ou infinitif ? Reliez les phrases suivantes comme dans le modèle.",
+          "type": "transformation",
+          "context": "Elle m'a envoyé une carte. Elle m'invite à son mariage.\n→ Elle m'a envoyé une carte pour / afin de m'inviter à son mariage.\nElle m'a envoyé une carte. Je vais la chercher à l'aéroport.\n→ Elle m'a envoyé une carte pour que / afin que j'aille la chercher à l'aéroport.",
+          "items": [
+            { "number": 1, "text": "Ils ont acheté une voiture. Ils peuvent aller voir leurs parents le dimanche. _____", "blanks": 1 },
+            { "number": 2, "text": "Le moniteur a ajouté un entraînement. Les joueurs seront prêts pour le match. _____", "blanks": 1 },
+            { "number": 3, "text": "Il lui a prêté un maillot de bain. Il ira à la piscine. _____", "blanks": 1 },
+            { "number": 4, "text": "J'ai mis deux pulls. Je n'aurai pas froid. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 155,
+          "instruction": "Complétez les phrases suivantes.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Elle a caché sa robe de peur que _____", "blanks": 1 },
+            { "number": 2, "text": "Il a emporté des chèques de voyage pour ne pas _____", "blanks": 1 },
+            { "number": 3, "text": "Ils n'ont rien dit à leurs parents de peur que _____", "blanks": 1 },
+            { "number": 4, "text": "J'ai pris de l'essence pour ne pas _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 155,
+          "instruction": "Complétez avec le mot qui convient : préparation – achat – repassage – dépannage.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Elle m'a conseillé un produit pour _____ des chemises.", "blanks": 1 },
+            { "number": 2, "text": "J'ai appelé un spécialiste pour _____ rapide du lave-linge.", "blanks": 1 },
+            { "number": 3, "text": "Ils se sont réunis pour _____ de la conférence.", "blanks": 1 },
+            { "number": 4, "text": "Il m'a donné le nom d'un magasin pour _____ d'un bon ordinateur.", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [154, 155],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

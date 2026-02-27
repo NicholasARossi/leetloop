@@ -1,0 +1,220 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 18,
+  "chapter_title": "LES PRONOMS PERSONNELS COMPLÉMENTS",
+  "book_pages": [126, 127, 128, 129],
+  "sections": [
+    {
+      "section_title": "PLACE",
+      "subtitle": null,
+      "book_pages": [126, 127],
+      "intro_examples": [
+        "Je ne les ai pas vus depuis longtemps.",
+        "Tu te souviens qu'on part demain ? Bien sûr, je m'en souviens."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "Les pronoms compléments remplacent un nom. Ils se placent devant le verbe aux temps simples et composés ; avec la négation, ils sont placés entre la première négation et le verbe.",
+          "examples": [
+            "– Vous voyez encore les Morin ? – Non, nous ne les voyons plus. Nous ne les avons pas vus depuis trois mois.",
+            "– Tu téléphones souvent à Paul ? – Non, je ne lui téléphone plus. Je ne lui ai pas téléphoné depuis 3 mois.",
+            "– Elle va encore en Bretagne ? – Non, elle n'y va plus. Elle n'y est pas allée depuis longtemps.",
+            "– Tu achèteras des crevettes ? – Non, je n'en achèterai pas. Je n'en ai pas acheté depuis longtemps."
+          ],
+          "categories": [],
+          "notes": [
+            "Avec l'impératif affirmatif : Dis-le ! – Téléphonez-lui ! – Vas-y ! – Penses-y ! – Prends-en !",
+            "Avec l'impératif négatif : Ne le dis pas ! – Ne lui téléphonez pas ! – N'y va pas ! – N'y pense pas ! – N'en prends pas !"
+          ]
+        },
+        {
+          "rule": "Avec deux pronoms, l'ordre est : me/te/se/nous/vous → le/la/les → lui/leur → y → en.",
+          "examples": [
+            "1 → 2 : Elle me le donne.",
+            "1 → 4 : Je m'y intéresse. – Je t'y invite.",
+            "1 → 5 : Il m'en donne.",
+            "2 → 3 : Je le lui donne.",
+            "3 → 5 : Tu lui en donnes."
+          ],
+          "categories": [],
+          "notes": [
+            "Il y a → Il y en a. Elle ne me la donne pas."
+          ]
+        },
+        {
+          "rule": "Impératif affirmatif avec deux pronoms : l'ordre est le/la/les → moi/nous/vous/lui/leur → m'/t' → y → en.",
+          "examples": [
+            "1 → 2 : Donne-le-moi.",
+            "1 → 3 : Donnez-la-lui.",
+            "3 → 6 : Donnez-nous-en.",
+            "4 → 6 : Donnez-m'en."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Impératif négatif avec deux pronoms : l'ordre redevient normal (me/nous/vous → le/la/les → en).",
+          "examples": [
+            "1 → 2 : Ne me le dis pas.",
+            "Ne me les montre pas.",
+            "1 → 3 : Ne nous en donne pas."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 127,
+          "instruction": "Répondez aux questions en remplaçant le mot souligné par le pronom complément selon le modèle.",
+          "type": "fill_blank",
+          "context": "– Vous avez donné à manger au chien ?\n– Oui, nous lui avons donné à manger hier, mais nous ne lui avions pas donné à manger ce matin.",
+          "items": [
+            { "number": 1, "text": "Tu as téléphoné à Marie ?\nOui, _____, mais _____ depuis une semaine.", "blanks": 2 },
+            { "number": 2, "text": "Vous avez fait des réservations pour le train et pour l'hôtel ?\nOui, _____ pour le train, mais _____", "blanks": 2 },
+            { "number": 3, "text": "Vous avez visité le château entièrement ?\nOui, _____, mais _____ entièrement.", "blanks": 2 },
+            { "number": 4, "text": "Tu es allé chez ta grand-mère ?\nOui, _____, mais _____ depuis plus d'un an.", "blanks": 2 },
+            { "number": 5, "text": "Tu as réfléchi à ma proposition ?\nOui, _____, mais _____ suffisamment.", "blanks": 2 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 127,
+          "instruction": "Répondez affirmativement en remplaçant les groupes de mots soulignés par les pronoms qui conviennent.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il a offert des roses à sa sœur ? → Oui, il _____", "blanks": 1 },
+            { "number": 2, "text": "Vous avez envoyé la facture au client ? → Oui, _____", "blanks": 1 },
+            { "number": 3, "text": "Tu me laisseras ton adresse de vacances ? → Oui, _____", "blanks": 1 },
+            { "number": 4, "text": "Vous avez prêté une chaise aux voisins ? → Oui, _____", "blanks": 1 },
+            { "number": 5, "text": "Tu nous a conviés à ton exposition ? → Oui, _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 127,
+          "instruction": "Répondez selon le modèle.",
+          "type": "transformation",
+          "context": "– Je pense beaucoup à mes recherches. – Pensez-y mais n'y pensez pas trop.",
+          "items": [
+            { "number": 1, "text": "– Je réfléchis trop à l'avenir. – _____", "blanks": 1 },
+            { "number": 2, "text": "– J'écris à Luc tous les jours. – _____", "blanks": 1 },
+            { "number": 3, "text": "– Je mange beaucoup de chocolat. – _____", "blanks": 1 },
+            { "number": 4, "text": "– Je gâte trop cet enfant. – _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 127,
+          "instruction": "Utilisez l'impératif et les pronoms compléments selon le modèle en vous aidant des tableaux de la page 128.",
+          "type": "transformation",
+          "context": "Tu leur diras la vérité. → Dis-la-leur !",
+          "items": [
+            { "number": 1, "text": "Tu me donneras de tes nouvelles. _____", "blanks": 1 },
+            { "number": 2, "text": "Vous ne leur donnerez pas de conseils. _____", "blanks": 1 },
+            { "number": 3, "text": "Tu lui offriras un livre. _____", "blanks": 1 },
+            { "number": 4, "text": "Tu ne lui présenteras pas ton petit ami. _____", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "LES PRONOMS « LE », « EN » et « Y »",
+      "subtitle": null,
+      "book_pages": [128, 129],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "« LE » ou « L' » est utilisé avec un verbe à construction directe. Il remplace un groupe de mots, une phrase entière. Ils sont appelés pronoms « neutres » parce qu'ils ne représentent pas un mot marqué par le masculin, le féminin, le singulier ou le pluriel.",
+          "examples": [
+            "Vous êtes fatigué, je le vois. [le = que vous êtes fatigué]",
+            "J'ai appris que tu t'étais marié ; c'est Marie qui me l'a dit. [l' = que tu t'étais marié]"
+          ],
+          "categories": [],
+          "notes": [
+            "« Le » ou « l' » peut remplacer un adjectif ou un nom construit avec « être » : Elle était en colère ? Ah oui, elle l'était vraiment. [l' = en colère] Je ne suis pas prête mais je le serai dans dix minutes. [le = prête]"
+          ]
+        },
+        {
+          "rule": "« EN » est utilisé avec un verbe ou un adjectif construit avec « de ».",
+          "examples": [
+            "– Êtes-vous content de la nouvelle organisation du service ? – Oui, j'en suis très content. [en = qu'on ait réorganisé le service]",
+            "– Est-ce que tu te moques de ce qu'il a dit ? – Oui, je m'en moque. [en = de ce qu'il a dit]"
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "« Y » est utilisé avec un verbe construit avec « à ».",
+          "examples": [
+            "– La municipalité s'est-elle opposée à la construction de l'autoroute ? – Oui, elle s'y est opposée. [y = à ce que l'autoroute soit construite]"
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 129,
+          "instruction": "Réécrivez ces phrases en conservant le sens et en faisant apparaître la transformation pronominale avec l'impératif.",
+          "type": "transformation",
+          "context": "Tu ne m'as pas rendu mes livres. → Rends-les-moi.",
+          "items": [
+            { "number": 1, "text": "Donne-nous tes conseils. Oui, _____", "blanks": 1 },
+            { "number": 2, "text": "Donne-moi ton avis. Oui, _____", "blanks": 1 },
+            { "number": 3, "text": "Je n'ai pas besoin de tes conseils. Non, _____", "blanks": 1 },
+            { "number": 4, "text": "Je ne veux pas connaître ton avis. Non, _____", "blanks": 1 },
+            { "number": 5, "text": "Je ne veux pas de ce travail. Non, _____", "blanks": 1 },
+            { "number": 6, "text": "Tu me l'as déjà dit plusieurs fois. Non, _____", "blanks": 1 },
+            { "number": 7, "text": "Je veux bien encore de ce gâteau. Oui, _____", "blanks": 1 },
+            { "number": 8, "text": "Confie-nous ton fils pendant les vacances. Oui, _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 129,
+          "instruction": "Répondez avec le pronom neutre qui convient.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "– Elle arrivera à l'heure ? – Je _____ espère.", "blanks": 1 },
+            { "number": 2, "text": "– Il apporte des boissons ? – Je _____ compte bien.", "blanks": 1 },
+            { "number": 3, "text": "– Il y aurait un remaniement ministériel ? – On _____ dit.", "blanks": 1 },
+            { "number": 4, "text": "– Les enfants apprennent leurs leçons ? – Elle _____ veille.", "blanks": 1 },
+            { "number": 5, "text": "– La loi serait changée ? – On _____ parle.", "blanks": 1 },
+            { "number": 6, "text": "– Tu penses partir à l'étranger ? – Je _____ réfléchis.", "blanks": 1 },
+            { "number": 7, "text": "– Vous saviez que Paul était marié ? – Nous _____ ignorions.", "blanks": 1 },
+            { "number": 8, "text": "– Il veut acheter une nouvelle voiture ? – Il _____ a envie.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 129,
+          "instruction": "Remplacez le groupe de mots soulignés par le pronom neutre qui convient selon le modèle.",
+          "type": "transformation",
+          "context": "Ils nous ont informés de ce qu'ils avaient décidé. → Ils nous en ont informés.",
+          "items": [
+            { "number": 1, "text": "Elle croit que je suis d'accord avec son choix. _____", "blanks": 1 },
+            { "number": 2, "text": "Ils ont promis qu'ils viendraient en été. _____", "blanks": 1 },
+            { "number": 3, "text": "J'ai souvent eu envie de tout laisser tomber. _____", "blanks": 1 },
+            { "number": 4, "text": "Nous avons longuement réfléchi à ce que vous nous avez proposé. _____", "blanks": 1 },
+            { "number": 5, "text": "Il ne s'est pas rendu compte du mal qu'il leur avait fait. _____", "blanks": 1 },
+            { "number": 6, "text": "Vous n'avez pas prêté attention à ce qu'il a dit. _____", "blanks": 1 },
+            { "number": 7, "text": "Ils ne se sont pas aperçus qu'on leur avait volé des objets précieux. _____", "blanks": 1 },
+            { "number": 8, "text": "Elle ne se souvenait plus qu'on s'était rencontrés chez Pierre. _____", "blanks": 1 },
+            { "number": 9, "text": "Avant de partir ils ont interdit qu'on ouvre les fenêtres. _____", "blanks": 1 },
+            { "number": 10, "text": "Il ne pense déjà plus à ce qu'elle a dit. _____", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [126, 127, 128, 129],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

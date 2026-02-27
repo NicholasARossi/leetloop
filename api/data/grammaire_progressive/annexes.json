@@ -1,0 +1,478 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": null,
+  "chapter_title": "ANNEXES",
+  "book_pages": [170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189],
+  "sections": [
+    {
+      "section_title": "LA CONCORDANCE DES TEMPS",
+      "subtitle": "Temps de la proposition principale et temps de la proposition subordonnée",
+      "book_pages": [170, 171, 172, 173, 174, 175, 176, 177],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "Indicatif → Indicatif : A. Si le verbe de la principale est au présent ou au futur simple (il dit, je sais / il dira, je saurai), la subordonnée peut exprimer : 1. Action simultanée → présent (qu'il fait beau), 2. Action antérieure → passé composé / passé récent (qu'il a fait beau / qu'il vient de faire beau), 3. Action postérieure → futur simple / futur proche (qu'il fera beau / qu'il va faire beau).",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Indicatif → Indicatif : B. Si le verbe de la principale est au passé (composé, imparfait, passé simple : il a dit, il disait, il dit / j'ai su, je savais, je sus), la subordonnée peut exprimer : 1. Action simultanée → imparfait (qu'il faisait beau), 2. Action antérieure → plus-que-parfait / plus-que-parfait récent (qu'il avait fait beau / qu'il venait de faire beau), 3. Action postérieure → conditionnel présent / futur proche dans le passé (qu'il ferait beau / qu'il allait faire beau).",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Indicatif → Subjonctif : Si la principale contient « il dit que » avec un verbe de volonté (je veux, je voudrai, je voudrais, j'aurais voulu, j'ai voulu, je voulais, je voulus, j'avais voulu), la subordonnée utilise : 1. Action simultanée ou postérieure → présent du subjonctif (qu'il parle), 2. Action antérieure → passé du subjonctif (qu'il soit parti).",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Si le temps du verbe de la principale change, le temps du verbe de la subordonnée change aussi car il dépend du temps du verbe de la principale. Tableau des correspondances : Présent → qu'il vient (présent) / qu'il viendra (futur) / qu'il est venu (passé composé ou imparfait) / qu'il vienne (subjonctif). Passé → qu'il venait (imparfait) / qu'il viendrait (conditionnel) / qu'il était venu, qu'il venait, qu'il viendrait (plus-que-parfait, imparfait, futur dans le passé) / qu'il vienne (subjonctif).",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Dans les subordonnées de temps, l'action peut être : 1. simultanée (avoir lieu en même temps que celle de la principale), 2. antérieure (avoir lieu avant celle de la principale), 3. postérieure (avoir lieu après celle de la principale).",
+          "examples": [],
+          "categories": [
+            {
+              "name": "Simultanéité",
+              "description": "Conjonctions : quand, comme, alors que, chaque fois que (simultanéité simple) ; pendant que, tandis que, depuis que (simultanéité + durée) ; au fur et à mesure que (simultanéité + progression). Verbes à l'indicatif.",
+              "examples": ["Quand je fais la vaisselle, je casse une assiette ou un verre."]
+            },
+            {
+              "name": "Antériorité",
+              "description": "Conjonctions : quand, depuis que, dès que, aussitôt que, chaque fois (une fois) que, etc. Verbes à l'indicatif.",
+              "examples": ["Quand je lis un livre ennuyeux, je m'endors."]
+            },
+            {
+              "name": "Postériorité",
+              "description": "Conjonctions : avant que, en attendant que, jusqu'à ce que, etc. Ces conjonctions appellent le subjonctif.",
+              "examples": [
+                "Il faudra du temps avant qu'elle (ne) guérisse.",
+                "Avant que vous ne partiez, il faudrait bien que vous fassiez une visite à notre vieille cousine.",
+                "Jusqu'à ce que je sois revenu, ne bougez pas d'ici."
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "rule": "Dans les subordonnées de cause, les principales conjonctions sont : parce que, puisque, du moment que, comme, d'autant que, étant donné que, etc. Les verbes sont à l'indicatif. « Parce que » ne subordonne que l'indicatif et le conditionnel. « Parce que » ne permet pas la juxtaposition de deux modes.",
+          "examples": [
+            "Ce pauvre enfant pleurait parce qu'il avait peur du docteur.",
+            "Il a obtenu ce poste parce qu'il a travaillé dur.",
+            "Du moment qu'il se soigne, il guérira.",
+            "Comme j'avais toujours travaillé, j'avais droit à une pension."
+          ],
+          "categories": [],
+          "notes": [
+            "« Comme » permet la juxtaposition de l'indicatif et du subjonctif : Comme elle l'attend, qu'il fasse vite.",
+            "« Puisque » a la même relation de concordance des temps que « comme » : Puisqu'elle l'attend, qu'il fasse vite."
+          ]
+        },
+        {
+          "rule": "Dans les subordonnées de conséquence, les principales conjonctions sont : si bien que, de sorte que, de façon que, de manière que, si… que, tellement que, tel que, etc. Les verbes sont à l'indicatif si la conséquence est un fait réel.",
+          "examples": [
+            "Le vent s'est levé si bien que nous sommes restés au port.",
+            "Il s'est mis à neiger, si bien que nous n'avons pu franchir le col.",
+            "Il avait tellement vu d'atrocités qu'il en était devenu vieux avant l'âge."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Dans les subordonnées de but, les principales conjonctions sont : pour que, afin que, de peur que, de crainte que, de manière que, de façon que, de sorte que, etc. Les verbes sont au subjonctif.",
+          "examples": [
+            "Je lui téléphone pour qu'elle soit rassurée. [dans le but de la rassurer]"
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Dans les subordonnées de concession, les principales conjonctions sont : que…, ou que…, soit que…, soit que + subjonctif. La concession portant sur toute la proposition : bien que, quoique + subjonctif. La concession portant sur un attribut, un complément, un adverbe : aussi malade qu'il soit / aussi longtemps que tu seras malade.",
+          "examples": [
+            "Que vous fassiez bien ou que vous fassiez mal, attendez-vous à être critiqué.",
+            "Bien qu'il soit malade, il refuse de se soigner.",
+            "Aussi malade qu'il soit, il refuse de se soigner.",
+            "Aussi longtemps que tu seras malade, je te soignerai."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Dans les subordonnées de condition introduites par les conjonctions : si, même si, sauf si, excepté si, etc., on a des verbes à l'indicatif. Hypothèse certaine : Présent → Futur (Si je gagne au Loto, j'irai en Chine). Hypothèse incertaine : Imparfait → Conditionnel (Si je gagnais au Loto, j'irais en Chine). Hypothèse non réalisée : Plus-que-parfait → Conditionnel passé (Si j'avais gagné au Loto, je serais allé en Chine).",
+          "examples": [
+            "Au cas où vous changeriez d'avis, prévenez-moi.",
+            "En admettant que vous ne soyez pas l'assassin, à qui d'autre profiterait le crime ?",
+            "Si elle venait passer ses vacances à la maison et qu'elle vienne avec ses enfants, j'en serais ravi."
+          ],
+          "categories": [],
+          "notes": [
+            "Avec « au cas où » + conditionnel.",
+            "Avec « à moins que, à condition que, pourvu que, à supposer que, en admettant que » + subjonctif.",
+            "Quand deux propositions conditionnelles se suivent, la deuxième est introduite par « que » + subjonctif."
+          ]
+        }
+      ],
+      "exercises": []
+    },
+    {
+      "section_title": "LA CONSTRUCTION DES VERBES",
+      "subtitle": null,
+      "book_pages": [178, 179, 180, 181, 182, 183, 184, 185],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "Différence de préposition = Différence de sens. De nombreux verbes changent de sens selon la préposition qui les accompagne.",
+          "examples": [
+            "Assister qq'un = Venir en aide à quelqu'un. / Assister à qqchose = Assister à une cérémonie officielle.",
+            "Changer qqchose = Changer les meubles de place. / Changer de qqchose = Changer de chemise, d'idées, etc.",
+            "Croire qqchose = Je crois ce qu'il dit. / Croire à qqchose = Je crois à la résurrection. / Croire en qq'un = Je crois en l'avenir.",
+            "Penser à qq'un, à qqchose = Il pense à ses enfants et à leur avenir. / Penser qqchose de qqchose = Que pensez-vous des Affaires ? / Penser qqchose de qq'un = Je ne pense que du bien de cette personne.",
+            "Servir qq'un ou qqchose = Servir ses patrons, la patrie. / Servir de qqchose = Mon manteau me servait de couverture.",
+            "Tenir qqchose = Elle tient très fort son sac. / Tenir à qqchose = Je tiens à ce bijou, il était à ma mère."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "La préposition dépend de la nature des compléments. Exemples : Arracher qqchose à qq'un / Arracher qqchose de / Arracher qq'un à qqchose. Échapper à qq'un à qqchose / Échapper d'un lieu. Emprunter qqchose à qq'un / Emprunter de qqchose. Jouer à qqchose / Jouer de qqchose. S'appuyer sur qqchose / S'appuyer sur qq'un / S'appuyer contre qqchose.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Principaux verbes qui fonctionnent avec un infinitif. Verbes + infinitif (l'infinitif se rapporte au sujet) : Accourir, Adorer, Aimer, Aller, Assurer, Avoir beau, Compter, Courir, Croire, Daigner, Déclarer, Descendre, Désirer, Détester, Devoir, Espérer, Être censé, Être supposé, Faillir, Faire, Falloir, Laisser, Monter, Nier, Oser, Paraître, Penser, Pouvoir, Préférer, Prétendre, Proclamer, Raconter, Reconnaître, Rentrer, Retourner, Revenir, Savoir, Sembler, Se figurer, S'imaginer, Se rappeler, Supposer, Souhaiter, Venir, Vouloir + faire qch.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Verbes + infinitif (l'infinitif se rapporte au complément ou à un terme non exprimé) : Apercevoir qn faire qch, Écouter qn faire qch, Entendre qn faire qch, Regarder qn faire qch, Sentir qn faire qch, Voir qn faire qch.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Formes impersonnelles qui fonctionnent avec de + infinitif : Il est bon de, Il est difficile de, Il est fâcheux de, Il est désirable de, Il est facile de, Il est important de, Il est naturel de, Il est nécessaire de, Il est préférable de, Il est question de, Il est temps de, Il est utile de, Il importe de, Il suffit de faire qch.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Verbes qui fonctionnent avec de + infinitif (l'infinitif se rapporte au sujet) : Accepter de, Achever de, Affecter de, Attendre de, Avertir de, Avoir besoin/coutume/droit/envie/honte/l'air/raison/le regret/tort de, Cesser de, Convenir de, Craindre de, Décider de, Différer de, Douter de, Entreprendre de, Essayer de, Éviter de, Faire mieux de, Feindre de, Jurer de, Manquer de, Menacer de, Mériter de, Négliger de, Obtenir le droit de, Offrir de, Oublier de, Parler de, Prendre garde de, Refuser de, Regretter de, Rire de, Risquer de, Rougir de, Trembler de, Souffrir de, S'abstenir de, S'accuser de, S'aviser de, Se charger de, Se contenter de, Se défendre de, Se dépêcher de, Se dispenser de, S'efforcer de, S'empresser de, S'ennuyer de, S'étonner de, S'excuser de, Se féliciter de, Se flatter de, Se garder de, Se glorifier de, Se hâter de, Se lasser de, Se mêler de, Se passer de, Se presser de, Se proposer de, Se réjouir de, Se repentir de, Se souvenir de, Se vanter de faire qch.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Verbes qui fonctionnent avec de + infinitif (l'infinitif se rapporte au complément direct) : Accuser qn de, Blâmer qn de, Charger qn de, Dispenser qn de, Empêcher qn de, Exempter qn de, Excuser qn de, Féliciter qn de, Persuader qn de, Prier qn de, Punir qn de, Remercier qn de, Soupçonner qn de, Supplier qn de faire qch.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Verbes qui fonctionnent avec de + infinitif (l'infinitif se rapporte au complément indirect) : Commander à qn de, Conseiller à qn de, Défendre à qn de, Ordonner à qn de, Pardonner à qn de, Permettre à qn de, Prescrire à qn de, Promettre à qn de, Proposer à qn de, Recommander à qn de, Reprocher à qn de, Souhaiter à qn de, Suggérer à qn de, En vouloir à qn de faire qch.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Verbes qui fonctionnent avec à + infinitif (l'infinitif se rapporte au sujet) : Aimer à, Apprendre à, Arriver à, Aspirer à, Chercher à, Commencer à, Concourir à, Consentir à, Continuer à, Être réduit à, Être occupé à, Exceller à, Hésiter à, Jouer à, Parvenir à, Passer (temps) à, Persévérer à, Persister à, Prendre plaisir à, Rester à, Réussir à, Renoncer à, Songer à, Tarder à, Tendre à, Tenir à, Travailler à, Viser à, S'acharner à, S'amuser à, S'appliquer à, S'apprêter à, S'attacher à, S'attendre à, Se borner à, Se décider à, Se disposer à, S'employer à, S'essayer à, S'exposer à, Se fatiguer à, S'habituer à, Se hasarder à, S'ingénier à, Se mettre à, S'obstiner à, Se préparer à, Se refuser à, Se résigner à, Se résoudre à faire qch.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Verbes qui fonctionnent avec à + infinitif (l'infinitif se rapporte au complément direct) : Aider qn à, Autoriser qn à, Condamner qn à, Contraindre qn à, Convier qn à, Décider qn à, Employer qn à, Encourager qn à, Engager qn à, Forcer qn à, Habituer qn à, Inviter qn à, Obliger qn à, Pousser qn à, Préparer qn à, Réduire qn à faire qch.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Verbes qui fonctionnent avec à + infinitif (l'infinitif se rapporte au complément indirect) : Apprendre à qn à, Enseigner à qn à faire qch.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Ça + Infinitif : Consister à, Contribuer à, Servir à, Suffire à faire qch.",
+          "examples": [
+            "Ça consiste (ce travail) à ramasser les vieux papiers.",
+            "Ça sert (cette machine) à couper les raisins."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Principaux noms qui fonctionnent avec de + infinitif : L'adresse de, L'âge de, L'air de, L'apparence de, L'art de, L'audace de, L'avis de, Le besoin de, Le bonheur de, La capacité de, La certitude de, La chance de, Le courage de, La cruauté de, Le danger de, Le désir de, Le devoir de, La difficulté de, La douleur de, Le droit de, L'effet de, L'effort de, L'envie de, L'espoir de, La facilité de, La façon de, La faculté de, Le fait de, La fierté de, La fièvre de, La force de, Le goût de, L'habileté de, L'habitude de, La honte de, L'impatience de, L'importance de, L'impossibilité de, L'imprudence de, L'incapacité de, L'inutilité de, La joie de, Le loisir de, Le malheur de, La manie de, La manière de, Le moment de, Le motif de, Le moyen de, La nécessité de, L'occasion de, L'obligeance de, La paresse de, La passion de, La peine de, La perspective de, La peur de, Le plaisir de, La possibilité de, Le pouvoir de, La prétention de, Le prétexte de, La prudence de, La puissance de, La raison de, La sensation de, La soif de, Le soin de, La sottise de, La surprise de, L'utilité de, La volonté de, Le vœu de faire qch.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": []
+    },
+    {
+      "section_title": "TABLEAU DES CONJUGAISONS",
+      "subtitle": null,
+      "book_pages": [186, 187, 188, 189],
+      "intro_examples": [],
+      "grammar_rules": [],
+      "conjugation_tables": [
+        {
+          "verb": "ÊTRE",
+          "participe_passé": "été",
+          "participe_présent": "étant",
+          "tenses": {
+            "présent": ["je suis", "tu es", "il est", "nous sommes", "vous êtes", "ils sont"],
+            "subjonctif": ["que je sois", "que tu sois", "qu'il soit", "que nous soyons", "que vous soyez", "qu'ils soient"],
+            "passé_simple": ["je fus", "tu fus", "il fut", "nous fûmes", "vous fûtes", "ils furent"],
+            "conditionnel": ["je serais", "tu serais", "il serait", "nous serions", "vous seriez", "ils seraient"]
+          }
+        },
+        {
+          "verb": "AVOIR",
+          "participe_passé": "eu",
+          "participe_présent": "ayant",
+          "tenses": {
+            "présent": ["j'ai", "tu as", "il a", "nous avons", "vous avez", "ils ont"],
+            "subjonctif": ["que j'aie", "que tu aies", "qu'il ait", "que nous ayons", "que vous ayez", "qu'ils aient"],
+            "passé_simple": ["j'eus", "tu eus", "il eut", "nous eûmes", "vous eûtes", "ils eurent"],
+            "conditionnel": ["j'aurais", "tu aurais", "il aurait", "nous aurions", "vous auriez", "ils auraient"]
+          }
+        },
+        {
+          "verb": "ALLER",
+          "participe_passé": "allé",
+          "participe_présent": "allant",
+          "tenses": {
+            "présent": ["je vais", "tu vas", "il va", "nous allons", "vous allez", "ils vont"],
+            "subjonctif": ["que j'aille", "que tu ailles", "qu'il aille", "que nous allions", "que vous alliez", "qu'ils aillent"],
+            "passé_simple": ["j'allai", "tu allas", "il alla", "nous allâmes", "vous allâtes", "ils allèrent"],
+            "conditionnel": ["j'irais", "tu irais", "il irait", "nous irions", "vous iriez", "ils iraient"]
+          }
+        },
+        {
+          "verb": "FAIRE",
+          "participe_passé": "fait",
+          "participe_présent": "faisant",
+          "tenses": {
+            "présent": ["je fais", "tu fais", "il fait", "nous faisons", "vous faites", "ils font"],
+            "subjonctif": ["que je fasse", "que tu fasses", "qu'il fasse", "que nous fassions", "que vous fassiez", "qu'ils fassent"],
+            "passé_simple": ["je fis", "tu fis", "il fit", "nous fîmes", "vous fîtes", "ils firent"],
+            "conditionnel": ["je ferais", "tu ferais", "il ferait", "nous ferions", "vous feriez", "ils feraient"]
+          }
+        },
+        {
+          "verb": "SAVOIR",
+          "participe_passé": "su",
+          "participe_présent": "sachant",
+          "tenses": {
+            "présent": ["je sais", "tu sais", "il sait", "nous savons", "vous savez", "ils savent"],
+            "subjonctif": ["que je sache", "que tu saches", "qu'il sache", "que nous sachions", "que vous sachiez", "qu'ils sachent"],
+            "passé_simple": ["je sus", "tu sus", "il sut", "nous sûmes", "vous sûtes", "ils surent"],
+            "conditionnel": ["je saurais", "tu saurais", "il saurait", "nous saurions", "vous sauriez", "ils sauraient"]
+          }
+        },
+        {
+          "verb": "PARLER (-ER)",
+          "participe_passé": "parlé",
+          "participe_présent": "parlant",
+          "tenses": {
+            "présent": ["je parle", "tu parles", "il parle", "nous parlons", "vous parlez", "ils parlent"],
+            "subjonctif": ["que je parle", "que tu parles", "qu'il parle", "que nous parlions", "que vous parliez", "qu'ils parlent"],
+            "passé_simple": ["je parlai", "tu parlas", "il parla", "nous parlâmes", "vous parlâtes", "ils parlèrent"],
+            "conditionnel": ["je parlerais", "tu parlerais", "il parlerait", "nous parlerions", "vous parleriez", "ils parleraient"]
+          }
+        },
+        {
+          "verb": "FINIR (-IR, -issant)",
+          "participe_passé": "fini",
+          "participe_présent": "finissant",
+          "other_verbs": "agir, punir, réfléchir, rougir, mûrir, etc.",
+          "tenses": {
+            "présent": ["je finis", "tu finis", "il finit", "nous finissons", "vous finissez", "ils finissent"],
+            "subjonctif": ["que je finisse", "que tu finisses", "qu'il finisse", "que nous finissions", "que vous finissiez", "qu'ils finissent"],
+            "passé_simple": ["je finis", "tu finis", "il finit", "nous finîmes", "vous finîtes", "ils finirent"],
+            "conditionnel": ["je finirais", "tu finirais", "il finirait", "nous finirions", "vous finiriez", "ils finiraient"]
+          }
+        },
+        {
+          "verb": "POUVOIR",
+          "participe_passé": "pu",
+          "participe_présent": "pouvant",
+          "tenses": {
+            "présent": ["je peux", "tu peux", "il peut", "nous pouvons", "vous pouvez", "ils peuvent"],
+            "subjonctif": ["que je puisse", "que tu puisses", "qu'il puisse", "que nous puissions", "que vous puissiez", "qu'ils puissent"],
+            "passé_simple": ["je pus", "tu pus", "il put", "nous pûmes", "vous pûtes", "ils purent"],
+            "conditionnel": ["je pourrais", "tu pourrais", "il pourrait", "nous pourrions", "vous pourriez", "ils pourraient"]
+          }
+        },
+        {
+          "verb": "DEVOIR",
+          "participe_passé": "dû",
+          "participe_présent": "devant",
+          "tenses": {
+            "présent": ["je dois", "tu dois", "il doit", "nous devons", "vous devez", "ils doivent"],
+            "subjonctif": ["que je doive", "que tu doives", "qu'il doive", "que nous devions", "que vous deviez", "qu'ils doivent"],
+            "passé_simple": ["je dus", "tu dus", "il dut", "nous dûmes", "vous dûtes", "ils durent"],
+            "conditionnel": ["je devrais", "tu devrais", "il devrait", "nous devrions", "vous devriez", "ils devraient"]
+          }
+        },
+        {
+          "verb": "VOULOIR",
+          "participe_passé": "voulu",
+          "participe_présent": "voulant",
+          "tenses": {
+            "présent": ["je veux", "tu veux", "il veut", "nous voulons", "vous voulez", "ils veulent"],
+            "subjonctif": ["que je veuille", "que tu veuilles", "qu'il veuille", "que nous voulions", "que vous vouliez", "qu'ils veuillent"],
+            "passé_simple": ["je voulus", "tu voulus", "il voulut", "nous voulûmes", "vous voulûtes", "ils voulurent"],
+            "conditionnel": ["je voudrais", "tu voudrais", "il voudrait", "nous voudrions", "vous voudriez", "ils voudraient"]
+          }
+        },
+        {
+          "verb": "FALLOIR",
+          "participe_passé": "fallu",
+          "participe_présent": "fallant",
+          "tenses": {
+            "présent": ["il faut"],
+            "subjonctif": ["qu'il faille"],
+            "passé_simple": ["il fallut"],
+            "conditionnel": ["il faudrait"]
+          }
+        },
+        {
+          "verb": "VIVRE",
+          "participe_passé": "vécu",
+          "participe_présent": "vivant",
+          "tenses": {
+            "présent": ["je vis", "tu vis", "il vit", "nous vivons", "vous vivez", "ils vivent"],
+            "subjonctif": ["que je vive", "que tu vives", "qu'il vive", "que nous vivions", "que vous viviez", "qu'ils vivent"],
+            "passé_simple": ["je vécus", "tu vécus", "il vécut", "nous vécûmes", "vous vécûtes", "ils vécurent"],
+            "conditionnel": ["je vivrais", "tu vivrais", "il vivrait", "nous vivrions", "vous vivriez", "ils vivraient"]
+          }
+        },
+        {
+          "verb": "NAÎTRE",
+          "participe_passé": "né",
+          "participe_présent": "naissant",
+          "tenses": {
+            "présent": ["je nais", "tu nais", "il naît", "nous naissons", "vous naissez", "ils naissent"],
+            "subjonctif": ["que je naisse", "que tu naisses", "qu'il naisse", "que nous naissions", "que vous naissiez", "qu'ils naissent"],
+            "passé_simple": ["je naquis", "tu naquis", "il naquit", "nous naquîmes", "vous naquîtes", "ils naquirent"],
+            "conditionnel": ["je naîtrais", "tu naîtrais", "il naîtrait", "nous naîtrions", "vous naîtriez", "ils naîtraient"]
+          }
+        },
+        {
+          "verb": "MOURIR",
+          "participe_passé": "mort",
+          "participe_présent": "mourant",
+          "tenses": {
+            "présent": ["je meurs", "tu meurs", "il meurt", "nous mourons", "vous mourez", "ils meurent"],
+            "subjonctif": ["que je meure", "que tu meures", "qu'il meure", "que nous mourions", "que vous mouriez", "qu'ils meurent"],
+            "passé_simple": ["je mourus", "tu mourus", "il mourut", "nous mourûmes", "vous mourûtes", "ils moururent"],
+            "conditionnel": ["je mourrais", "tu mourrais", "il mourrait", "nous mourrions", "vous mourriez", "ils mourraient"]
+          }
+        },
+        {
+          "verb": "RENDRE (-RE)",
+          "participe_passé": "rendu",
+          "participe_présent": "rendant",
+          "other_verbs": "attendre, vendre, répondre, descendre, mordre",
+          "tenses": {
+            "présent": ["je rends", "tu rends", "il rend", "nous rendons", "vous rendez", "ils rendent"],
+            "subjonctif": ["que je rende", "que tu rendes", "qu'il rende", "que nous rendions", "que vous rendiez", "qu'ils rendent"],
+            "passé_simple": ["je rendis", "tu rendis", "il rendit", "nous rendîmes", "vous rendîtes", "ils rendirent"],
+            "conditionnel": ["je rendrais", "tu rendrais", "il rendrait", "nous rendrions", "vous rendriez", "ils rendraient"]
+          }
+        },
+        {
+          "verb": "METTRE",
+          "participe_passé": "mis",
+          "participe_présent": "mettant",
+          "other_verbs": "permettre"
+        },
+        {
+          "verb": "PEINDRE",
+          "participe_passé": "peint",
+          "participe_présent": "peignant",
+          "other_verbs": "dépeindre, craindre, se plaindre, atteindre, teindre"
+        },
+        {
+          "verb": "VOIR",
+          "participe_passé": "vu",
+          "participe_présent": "voyant"
+        },
+        {
+          "verb": "BOIRE",
+          "participe_passé": "bu",
+          "participe_présent": "buvant"
+        },
+        {
+          "verb": "CONNAÎTRE",
+          "participe_passé": "connu",
+          "participe_présent": "connaissant",
+          "other_verbs": "paraître, apparaître, disparaître, reconnaître"
+        },
+        {
+          "verb": "CROIRE",
+          "participe_passé": "cru",
+          "participe_présent": "croyant"
+        },
+        {
+          "verb": "VENIR",
+          "participe_passé": "venu",
+          "participe_présent": "venant",
+          "other_verbs": "revenir, devenir, prévenir, se souvenir, tenir, retenir, obtenir, entretenir"
+        },
+        {
+          "verb": "OFFRIR",
+          "participe_passé": "offert",
+          "participe_présent": "offrant",
+          "other_verbs": "couvrir, découvrir, ouvrir, souffrir"
+        },
+        {
+          "verb": "PARTIR",
+          "participe_passé": "parti",
+          "participe_présent": "partant",
+          "other_verbs": "sortir, sentir, servir, dormir, suivre, mentir"
+        },
+        {
+          "verb": "LIRE",
+          "participe_passé": "lu",
+          "participe_présent": "lisant",
+          "other_verbs": "relire, plaire, déplaire"
+        },
+        {
+          "verb": "DIRE",
+          "participe_passé": "dit",
+          "participe_présent": "disant",
+          "other_verbs": "interdire, médire, redire"
+        },
+        {
+          "verb": "ÉCRIRE",
+          "participe_passé": "écrit",
+          "participe_présent": "écrivant",
+          "other_verbs": "décrire, inscrire"
+        },
+        {
+          "verb": "PRENDRE",
+          "participe_passé": "pris",
+          "participe_présent": "prenant",
+          "other_verbs": "apprendre, comprendre"
+        }
+      ],
+      "exercises": []
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

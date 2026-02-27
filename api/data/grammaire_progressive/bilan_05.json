@@ -1,0 +1,89 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": null,
+  "chapter_title": "BILAN n°5",
+  "book_pages": [116, 117],
+  "sections": [
+    {
+      "section_title": "BILAN n°5",
+      "subtitle": "Le Discours Indirect, L'Adverbe, Les Prépositions",
+      "book_pages": [116, 117],
+      "intro_examples": [],
+      "grammar_rules": [],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 116,
+          "instruction": "Faites un petit texte avec ces phrases en utilisant l'interrogation indirecte.",
+          "type": "bilan",
+          "context": "Avant de prendre le départ de la course « Vendée-Globe » (autour du monde à la voile, seul, sans escale), le navigateur se demande :\n– Est-ce que j'aurai assez d'eau ?\n– Mes appareils de liaison résisteront-ils ?\n– Comment sera la météo, favorable ou non ?\n– Combien d'icebergs le bateau rencontrera-t-il ?\n– Aurai-je la force de résister à la solitude ?\n– Dans les 40° rugissants (40° de latitude sud) comment réagira le bateau ?\n– Quand arriverai-je, si j'arrive ?",
+          "items": [
+            { "number": null, "text": "_____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 116,
+          "instruction": "Rendez compte de la conférence du Premier ministre en faisant toutes les transformations nécessaires.",
+          "type": "bilan",
+          "context": "« Je ne changerai pas de cap. Les options que moi-même et mon gouvernement avons prises sont les meilleures. Il n'y en a pas d'autres possibles. Les résultats seront bientôt visibles. Il suffira d'un peu de patience pour que la situation ait le temps de s'améliorer et que tout le monde puisse bénéficier enfin de la bonne santé des entreprises et des finances publiques. »",
+          "items": [
+            { "number": null, "text": "Le Premier ministre a dit que _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 116,
+          "instruction": "Complétez le texte à l'aide des expressions de temps suivantes.",
+          "type": "bilan",
+          "context": "nuit-là (2) – journée – soir (2) – lendemain (2) – matin – journée-là – veille – durant – pendant\n\nL'examen d'un étudiant au Moyen Âge",
+          "items": [
+            { "number": null, "text": "La _____ de la soutenance _____ la journée l'étudiant devait rassembler ses notes, préparer tout ce dont il aurait besoin le _____. Le _____ même il devait retrouver ses camarades qui l'accompagneraient jusqu'au tombeau du Saint Patron. Là, il commencerait sa veillée jusqu'au _____ matin. _____ toute cette _____ il ne devait absolument pas dormir. Le _____ il se préparerait pour se présenter devant le jury qui le questionnerait la _____ entière. Le _____ venu, après délibération, le jury le déclarerait admis ou « rejeté ». S'il n'était pas admis il lui faudrait sortir par une petite porte, mais sous les cris des autres étudiants qui lui jetteraient toutes sortes de légumes et de fruits pourris. Il se souviendrait toute sa vie de cette _____ et de cette _____.", "blanks": 12 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 117,
+          "instruction": "Formez les adverbes correspondant aux adjectifs suivants et utilisez-les dans une phrase de votre choix.",
+          "type": "bilan",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Agréable : _____", "blanks": 1 },
+            { "number": 2, "text": "Prudent : _____", "blanks": 1 },
+            { "number": 3, "text": "Élégant : _____", "blanks": 1 },
+            { "number": 4, "text": "Gentil : _____", "blanks": 1 },
+            { "number": 5, "text": "Éternel : _____", "blanks": 1 },
+            { "number": 6, "text": "Naïf : _____", "blanks": 1 },
+            { "number": 7, "text": "Amoureux : _____", "blanks": 1 },
+            { "number": 8, "text": "Assidu : _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 117,
+          "instruction": "Placez, là où c'est possible, les adverbes proposés pour modaliser ce texte.",
+          "type": "bilan",
+          "context": "aussitôt – poliment – lentement – bien – juste – évidemment – longtemps – précisément – encore – à peine – élégamment – d'habitude – longuement",
+          "items": [
+            { "number": null, "text": "On avait rendez-vous au métro Saint-Michel, _____ à côté de la fontaine. Elle était _____ en retard. J'ai attendu _____, _____ une heure. À six heures, elle n'était pas _____ là. Alors, j'ai marché _____ vers la terrasse du café d'en face, en me disant que je rencontrerais _____ quelqu'un que je connaissais. J'étais _____ assis que j'ai vu arriver Nathalie _____ habillée comme _____. Elle s'est excusée _____ puis _____ elle a commencé à me raconter _____ ses amours, ses ennuis de travail, ses problèmes de santé. Je connaissais sa vie de A à Z.", "blanks": 13 }
+          ]
+        },
+        {
+          "exercise_number": 6,
+          "book_page": 117,
+          "instruction": "Complétez ces textes avec la préposition qui convient.",
+          "type": "bilan",
+          "context": null,
+          "items": [
+            { "number": null, "text": "A. – _____ quoi était la statue ? – Elle était _____ or massif.\n– _____ où venait-elle ? _____ Extrême-Orient.\n– _____ quel pays ? Je ne sais pas. – _____ Japon ou _____ Indes.\n– Comment se trouvait-elle _____ le magasin de M. Chang ? – _____ hasard, je pense.\n– Qui l'a achetée ? – _____ chance, une femme _____ diplomate, je crois.\n– Vous vous souvenez _____ elle ? – Un peu. Elle était _____ pantalon _____ la manière des Pakistanaises. Elle portait des bijoux _____ grande valeur. C'est tout ce qui m'a frappé.\n\nB. Ils étaient venus _____ partout, _____ pied, _____ cheval, _____ voiture _____ rendre un dernier hommage _____ celui _____ lequel ils avaient mis tous leurs espoirs.", "blanks": 20 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [116, 117],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

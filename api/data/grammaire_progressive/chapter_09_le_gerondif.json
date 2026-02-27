@@ -1,0 +1,160 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 9,
+  "chapter_title": "LE GÉRONDIF",
+  "book_pages": [80, 81],
+  "sections": [
+    {
+      "section_title": "FORMATION",
+      "subtitle": null,
+      "book_pages": [80],
+      "intro_examples": [
+        "En arrivant au croisement, vous tournerez à gauche.",
+        "Elle fait la vaisselle en écoutant la radio.",
+        "Tu trouveras son numéro de téléphone en regardant dans l'annuaire."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "Le gérondif est formé comme le participe présent mais il est précédé de « en ».",
+          "examples": [
+            "nous écoutons la radio → en écoutant la radio.",
+            "nous lisons le journal → en lisant le journal."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Certains verbes sont irréguliers.",
+          "examples": [
+            "être → en étant – avoir → en ayant – savoir → en sachant"
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": []
+    },
+    {
+      "section_title": "EMPLOIS",
+      "subtitle": null,
+      "book_pages": [80, 81],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "Le gérondif indique qu'une action se passe en même temps qu'une autre action ; les deux actions sont dites simultanées.",
+          "examples": [
+            "Elle prend son café en écoutant les informations."
+          ],
+          "categories": [],
+          "notes": [
+            "Le sujet est obligatoirement le même pour les deux verbes : Elle prend son café et elle écoute les informations en même temps."
+          ]
+        },
+        {
+          "rule": "Le gérondif peut exprimer simplement la simultanéité.",
+          "examples": [
+            "Fais attention au moment où tu traverseras le boulevard. → Fais attention en traversant le boulevard."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le gérondif peut exprimer la cause.",
+          "examples": [
+            "Comme il a fait trop de sport, il s'est fait mal au dos. → En faisant trop de sport, il s'est fait mal au dos."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le gérondif peut exprimer le moyen ou la manière.",
+          "examples": [
+            "Il s'est cassé la jambe en skiant."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Le gérondif peut exprimer la condition.",
+          "examples": [
+            "Tu pourras me contacter si tu appelles chez mon frère. → Tu pourras me contacter en appelant chez mon frère."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Quand il est précédé de « tout », il peut aussi exprimer l'opposition.",
+          "examples": [
+            "Elle est maigre ; pourtant elle mange beaucoup. → Elle reste mince tout en mangeant beaucoup."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 81,
+          "instruction": "Réécrivez ces phrases en utilisant le gérondif.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il lit son journal et il fume la pipe. _____", "blanks": 1 },
+            { "number": 2, "text": "Elle mange des amandes et regarde la télévision. _____", "blanks": 1 },
+            { "number": 3, "text": "Il fait ses devoirs et écoute de la musique. _____", "blanks": 1 },
+            { "number": 4, "text": "Il téléphone et conduit sa voiture. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 81,
+          "instruction": "Réécrivez ces phrases en transformant les mots soulignés en gérondif.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Méfie-toi à l'atterrissage, la manœuvre est délicate. _____", "blanks": 1 },
+            { "number": 2, "text": "À la traversée de Lyon, évite le centre-ville, il y a des ralentissements. _____", "blanks": 1 },
+            { "number": 3, "text": "Roule doucement dans la descente, il y a souvent des animaux qui traversent. _____", "blanks": 1 },
+            { "number": 4, "text": "À l'amorce du virage, ralentis, il est dangereux. _____", "blanks": 1 },
+            { "number": 5, "text": "Dans l'entreprise de cette affaire sois prudent ; tu prends des risques. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 81,
+          "instruction": "Indiquez dans les phrases suivantes si le gérondif exprime la simple simultanéité, la cause, le moyen, la condition ou l'opposition.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il a failli se noyer en faisant de la planche à voile. _____", "blanks": 1 },
+            { "number": 2, "text": "Elle ne se concentre pas assez en prenant ses cours. _____", "blanks": 1 },
+            { "number": 3, "text": "En ne jetant pas l'argent par les fenêtres, il aurait moins de soucis. _____", "blanks": 1 },
+            { "number": 4, "text": "Fais attention en lui parlant ; il est susceptible. _____", "blanks": 1 },
+            { "number": 5, "text": "En travaillant trop, elle a fini par avoir une dépression. _____", "blanks": 1 },
+            { "number": 6, "text": "Il est très heureux tout en ayant peu de moyens. _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 81,
+          "instruction": "Reliez ces phrases comme il convient et réécrivez-les en utilisant le gérondif.",
+          "type": "matching",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Elle s'est cassé un bras. / a. Pourtant j'économise autant que je peux. _____", "blanks": 1 },
+            { "number": 2, "text": "Vous ne tousserez plus. / b. Tu iras beaucoup plus vite. _____", "blanks": 1 },
+            { "number": 3, "text": "Elle s'est brûlée. / c. Elle s'habille pourtant pour pas cher. _____", "blanks": 1 },
+            { "number": 4, "text": "Je n'arriverai pas à acheter cette maison. / d. Elle était en train de faire la cuisine. _____", "blanks": 1 },
+            { "number": 5, "text": "Prends le métro. / e. Elle a glissé sur de la neige verglacée. _____", "blanks": 1 },
+            { "number": 6, "text": "Elle est toujours élégante. / f. Si vous arrêtez de fumer. _____", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [80, 81],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

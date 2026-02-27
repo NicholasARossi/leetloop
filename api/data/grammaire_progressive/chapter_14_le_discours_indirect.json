@@ -1,0 +1,330 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 14,
+  "chapter_title": "LE DISCOURS INDIRECT",
+  "book_pages": [94, 95, 96, 97, 98, 99],
+  "sections": [
+    {
+      "section_title": "L'INTERROGATION INDIRECTE",
+      "subtitle": null,
+      "book_pages": [94, 95],
+      "intro_examples": [
+        "Jacques a téléphoné. Il a demandé si nous étions libres dimanche prochain. Il voulait savoir si nous emmènerions les enfants."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "Il y a interrogation indirecte avec les verbes qui posent implicitement une question : ignorer, demander, chercher, ne pas savoir, etc., et après les verbes exprimant les différentes manières de « dire » comme répondre, ajouter, affirmer, expliquer, annoncer, etc.",
+          "examples": [
+            "On me demande quand tu pars. – Il affirme que c'est vrai."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "La construction est simple si l'on part de l'interrogation directe.",
+          "examples": [
+            "– Quand pars-tu ? – Elle demande quand tu pars.",
+            "– Où allez-vous ? – Il veut savoir où vous allez.",
+            "– Combien est-ce que ça coûte ? – Il demande combien ça coûte.",
+            "– Qu'est-ce que tu fais ? – Elle lui demande ce qu'elle fait.",
+            "– Qu'est-ce qui s'est passé ? – Ils veulent savoir ce qui s'est passé.",
+            "– Quelle veste tu porteras ? – Il veut savoir quelle veste tu porteras."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Si l'interrogation concerne toute la phrase, on utilise « si ».",
+          "examples": [
+            "– Est-ce que tu seras prêt à 6 heures ? – Il demande si tu seras prêt à 6 heures.",
+            "– Est-ce que ça vient d'Amérique ? – Elle veut savoir si ça vient d'Amérique."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 95,
+          "instruction": "Transformez ces interrogations en interrogations indirectes en essayant de varier les verbes introducteurs comme dans l'exemple.",
+          "type": "transformation",
+          "context": "Quel cadeau allez-vous lui offrir ? → Elle veut savoir quel cadeau on va lui offrir.",
+          "items": [
+            { "number": 1, "text": "– Quand est-ce que vous irez à Pau ? – _____", "blanks": 1 },
+            { "number": 2, "text": "– Pourquoi vous vous disputez ? – _____", "blanks": 1 },
+            { "number": 3, "text": "– Comment iras-tu à l'aéroport ? – _____", "blanks": 1 },
+            { "number": 4, "text": "– Qu'est-ce qui la rend triste ? – _____", "blanks": 1 },
+            { "number": 5, "text": "– Qu'est-ce qu'on fait ce soir ? – _____", "blanks": 1 },
+            { "number": 6, "text": "– Où est-ce qu'il est parti ? – _____", "blanks": 1 },
+            { "number": 7, "text": "– Avec qui partez-vous en vacances ? – _____", "blanks": 1 },
+            { "number": 8, "text": "– Est-ce que tu as compris ? – _____", "blanks": 1 },
+            { "number": 9, "text": "– Laquelle préfères-tu ? – _____", "blanks": 1 },
+            { "number": 10, "text": "– Quel cadeau lui ferait plaisir ? – _____", "blanks": 1 },
+            { "number": 11, "text": "– Êtes-vous prêts ? – _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 95,
+          "instruction": "Transformez les impératifs au discours indirect en utilisant le mode qui convient.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Répondez avant jeudi ! Il demande _____ . – Il demande que _____", "blanks": 2 },
+            { "number": 2, "text": "Parle plus fort ! Il lui dit _____ . – Il veut que _____", "blanks": 2 },
+            { "number": 3, "text": "Partez avant midi ! Elle suggère _____ . – Elle suggère que _____", "blanks": 2 },
+            { "number": 4, "text": "Allons-y ensemble ! Il propose _____ . – Il propose que _____", "blanks": 2 },
+            { "number": 5, "text": "Arrêtez de crier ! Elle dit _____ . – Elle demande que _____", "blanks": 2 },
+            { "number": 6, "text": "Rangez vos affaires ! Elle nous demande _____ . – Elle veut que _____", "blanks": 2 },
+            { "number": 7, "text": "Dépêchez-vous ! Il dit _____ . – Il veut que _____", "blanks": 2 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 95,
+          "instruction": "Transformez ces phrases au discours indirect en faisant les changements de pronoms et d'adjectifs qui conviennent.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "– Est-ce que tu peux me prêter ton livre ? – Elle demande _____", "blanks": 1 },
+            { "number": 2, "text": "– Quand est-ce que vous viendrez me voir ? – Il veut savoir _____", "blanks": 1 },
+            { "number": 3, "text": "– J'ai laissé mes clés dans ta voiture ? – Il me dit _____", "blanks": 1 },
+            { "number": 4, "text": "– Où est-ce que j'ai pu oublier mes lunettes ? – Elle se demande _____", "blanks": 1 },
+            { "number": 5, "text": "– J'ai rencontré ta sœur devant chez moi ? – Il dit _____", "blanks": 1 },
+            { "number": 6, "text": "– Est-ce que vous pourrez m'accompagner ? – Elle ne sait pas _____", "blanks": 1 },
+            { "number": 7, "text": "– Pourrais-tu me prêter le tien ? – Elle demande _____", "blanks": 1 },
+            { "number": 8, "text": "– Où avez-vous rangé ma veste ? – Il veut savoir _____", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "LE DISCOURS INDIRECT",
+      "subtitle": null,
+      "book_pages": [94],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "Il se caractérise par l'emploi d'une phrase introductrice comme il dit que, elle dit de.",
+          "examples": [
+            "Il dit qu'il reviendra dans l'heure. – Elle dit de l'appeler plus tard."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Il transforme l'impératif du discours direct en une phrase infinitive.",
+          "examples": [
+            "Parlez moins fort. → Il a dit de parler moins fort."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Il entraîne des changements de pronoms personnels ou possessifs, et d'adjectifs possessifs.",
+          "examples": [
+            "– Vous viendrez avec vos amis ? – Il veut savoir si nous viendrons avec nos amis."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Les formules introductrices peuvent entraîner des transformations au niveau des modes.",
+          "examples": [
+            "Je promets que je le ferai. – Je promets de le faire.",
+            "Il ordonne de le faire. – Il ordonne que tu le fasses."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": []
+    },
+    {
+      "section_title": "LA CONCORDANCE DES TEMPS",
+      "subtitle": "dans le discours indirect",
+      "book_pages": [96, 97],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "Quand le verbe qui introduit le discours indirect est au présent ou au futur, il n'y a pas changement de temps dans le passage du discours direct au discours indirect.",
+          "examples": [
+            "– Je n'ai pas pris le journal qui était sur la table.",
+            "– Il affirme qu'il n'a pas pris le journal qui était sur la table.",
+            "– Si tu lui demandes, il te dira qu'il n'a pas pris le journal qui était sur la table."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Quand le verbe qui introduit le discours indirect est à un temps du passé, le changement de temps dans le passage du discours direct au discours indirect se fait selon les règles de la concordance des temps.",
+          "examples": [
+            "Présent → Imparfait (simultanéité)",
+            "Passé composé → Plus-que-parfait (antériorité)",
+            "Futur proche → Aller à l'imparfait + infinitif (postériorité)",
+            "Passé récent → Venir à l'imparfait + infinitif (antériorité)",
+            "Futur → Conditionnel (postériorité)",
+            "Imparfait → Imparfait (simultanéité)",
+            "Plus-que-parfait → Plus-que-parfait (simultanéité)",
+            "Conditionnel → Conditionnel (simultanéité)"
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Exemples de concordance des temps avec « Il a dit / Il disait / Il dit / Il avait dit ».",
+          "examples": [
+            "– Je reçois beaucoup de visites. → Il a dit qu'il recevait beaucoup de visites.",
+            "– J'ai reçu beaucoup de visites. → Il a dit qu'il avait reçu beaucoup de visites.",
+            "– Je vais recevoir beaucoup de visites. → Il a dit qu'il allait recevoir beaucoup de visites.",
+            "– Je viens de recevoir beaucoup de visites. → Il disait qu'il venait de recevoir beaucoup de visites.",
+            "– Je recevrai beaucoup de visites. → Il dit qu'il recevrait beaucoup de visites.",
+            "– Je recevais beaucoup de visites. → Il a dit qu'il recevait beaucoup de visites.",
+            "– Je n'avais pas reçu beaucoup de visites. → Il avait dit qu'il n'avait pas reçu beaucoup de visites.",
+            "– J'aimerais recevoir beaucoup de visites. → Il a dit qu'il aimerait recevoir beaucoup de visites."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 97,
+          "instruction": "Rapportez les déclarations suivantes en écrivant un article dans un journal ; variez les verbes introducteurs.",
+          "type": "transformation",
+          "context": "Au tribunal l'accusé affirme : « Je n'ai pas tué le caissier et je n'ai pas emporté les lingots d'or ; je n'ai pas volé la voiture du directeur pour une simple raison : j'étais venu encaisser un chèque et je suis rentré en métro... »",
+          "items": [
+            { "number": null, "text": "Le journal Ouest-France rend compte du procès :\nL'accusé affirme _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 97,
+          "instruction": "Rapportez à un ami le contenu de cette lettre que vous venez de recevoir en faisant toutes les transformations nécessaires et en variant les verbes introducteurs.",
+          "type": "transformation",
+          "context": "Chère Isabelle,\nJe t'écris de Cuzco où je suis enfin arrivé après un voyage épuisant. Nous avons dû faire une escale technique à Asunción, ce qui m'a permis de voir les chutes du Paraná. C'était grandiose ! Comme il n'y avait pas de quoi réparer le réacteur nous avons attendu dans un hall non climatisé, sans rien à boire ni à manger. L'horreur pendant 6 heures ! Enfin nous avons pu repartir avant d'être morts de faim et de soif. À l'arrivée j'aurais voulu aller me coucher sans attendre mais comme le Consul était venu nous chercher je n'ai pas pu refuser son invitation à dîner. Tu vas être surprise d'apprendre que pendant cette soirée j'ai revu notre ami Jean-Christian... Je te raconterai tout ça dans ma prochaine lettre.\nPierre",
+          "items": [
+            { "number": null, "text": "J'ai reçu il y a un mois une lettre de Pierre dans laquelle il me disait qu'il _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 97,
+          "instruction": "Imaginez la suite de la lettre de l'exercice 2, puis rapportez-en le contenu à un ami comme dans l'exercice précédent.",
+          "type": "free_response",
+          "context": null,
+          "items": [
+            { "number": null, "text": "_____", "blanks": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "LES EXPRESSIONS DE TEMPS",
+      "subtitle": null,
+      "book_pages": [98, 99],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "Elles subissent un changement dans le passage du discours direct au discours indirect quand le verbe qui introduit le discours indirect est au passé.",
+          "examples": [
+            "L'année dernière quand il était passé par Paris, il m'avait téléphoné et m'avait dit : « Je pars pour Londres demain mais je serai de retour dans huit jours. »",
+            "→ Il m'avait dit qu'il partait pour Londres le lendemain mais qu'il serait de retour huit jours plus tard."
+          ],
+          "categories": [
+            {
+              "category": "Transformations des expressions de temps",
+              "items": [
+                "aujourd'hui → ce jour-là",
+                "ce matin/ce soir → ce matin-là/ce soir-là",
+                "en ce moment → à ce moment-là",
+                "cette année → cette année-là",
+                "hier → la veille",
+                "avant-hier → l'avant-veille",
+                "demain → le lendemain",
+                "après-demain → le surlendemain",
+                "le mois prochain → le mois suivant/d'après",
+                "l'année dernière → l'année précédente/d'avant",
+                "il y a deux semaines → deux semaines plus tôt",
+                "dans huit jours → huit jours plus tard"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "rule": "Les expressions de temps ne subissent pas de changement dans le passage du discours direct au discours indirect s'il y a un rapport avec le présent.",
+          "examples": [
+            "– Je passerai te chercher demain vers 11 heures.",
+            "– Il m'a téléphoné ce matin pour me dire qu'il passerait me chercher demain à 11 heures.",
+            "Mais : – Il m'a téléphoné il y a un mois pour me dire qu'il passerait me chercher le lendemain à 11 heures."
+          ],
+          "categories": [],
+          "notes": [
+            "Le changement des expressions de temps est remarquable dans tout récit. Ce matin-là, comme d'habitude, il s'était levé tôt."
+          ]
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 99,
+          "instruction": "Complétez ce texte par les expressions de temps qui conviennent.",
+          "type": "fill_blank",
+          "context": "Souvenir de la victoire de Marie-José Pérec aux 400 mètres aux jeux Olympiques d'Atlanta.",
+          "items": [
+            { "number": null, "text": "La course devait avoir lieu en fin d'après-midi sur le grand stade d'Atlanta. Ce matin-là Marie-Jo s'était réveillée de bonne heure car _____ elle s'était couchée tôt, comme elle l'avait fait tous les _____. Vers 5 heures elle s'était présentée sur la piste sûre d'elle-même, confiante dans ses possibilités. Après la course, _____ elle avait téléphoné à sa grand-mère restée aux Antilles, pour lui faire partager sa joie. _____ elle s'était réveillée en se demandant ce qui lui était arrivé _____. Puis tout au long de cette _____, elle avait eu l'impression de marcher sur un nuage. Que cette médaille d'or était belle !", "blanks": 6 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "LE DISCOURS INDIRECT LIBRE",
+      "subtitle": null,
+      "book_pages": [98, 99],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "L'auteur parle ici à la place de son personnage. C'est le cas du roman balzacien. La différence avec le discours indirect est qu'il n'y a pas de verbe introducteur.",
+          "examples": [
+            "– Tu viens avec nous ? – Non je suis attendu et je ne peux absolument pas me permettre d'être en retard.",
+            "Il ne pouvait les accompagner car il était attendu et il ne pouvait absolument pas se permettre d'être en retard."
+          ],
+          "categories": [],
+          "notes": [
+            "Le discours indirect serait : Il (Elle) lui demanda s'il venait avec eux. Il (Elle) lui répondit qu'il ne pouvait pas parce qu'il était attendu et qu'il ne pouvait absolument pas se permettre d'être en retard."
+          ]
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 2,
+          "book_page": 99,
+          "instruction": "Complétez ce récit en utilisant le contenu de la lettre ; faites les transformations qui conviennent.",
+          "type": "transformation",
+          "context": "Ce jour-là, il était arrivé tard dans la soirée. Il était monté directement dans sa chambre où il avait trouvé une lettre de la Marquise de D. Il l'avait ouverte aussitôt...\nCher ami,\nVenez demain au château vers cinq heures. Je vous y attendrai. J'ai aperçu hier notre ami Charles de... qui m'a fait part de son inquiétude de devoir quitter le pays le mois prochain. Je vous raconterai tout dans les détails... J'ai promis à Charles de lui donner le résultat de notre entretien dès après-demain. Soyez au rendez-vous, je vous en prie.\nVotre fidèle amie,",
+          "items": [
+            { "number": null, "text": "Il l'avait ouverte aussitôt. La marquise lui _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 99,
+          "instruction": "Rapportez cette communication téléphonique à un ami en faisant attention au lien avec le présent.",
+          "type": "transformation",
+          "context": "Allô Frédéric – J'arriverai demain matin à Charles-de-Gaulle – Je passerai la matinée à la Bibliothèque nationale – En fin de matinée, je déjeunerai avec le professeur Godant – En début d'après-midi, j'irai voir mon éditeur – En fin d'après midi, j'aurai encore quelques rendez-vous mais nous pourrions nous voir après cela vers 19 h 30 – Après, en fin de soirée, je reprendrai mon avion pour Madrid.",
+          "items": [
+            { "number": null, "text": "Pierre m'a téléphoné ce matin pour _____", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [94, 95, 96, 97, 98, 99],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

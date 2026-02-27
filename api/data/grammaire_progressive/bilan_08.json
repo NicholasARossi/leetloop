@@ -1,0 +1,127 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": null,
+  "chapter_title": "BILAN n°8",
+  "book_pages": [168, 169],
+  "sections": [
+    {
+      "section_title": "BILAN n°8",
+      "subtitle": "L'Opposition, la Concession, le But, la Condition, l'Hypothèse, la Modalisation",
+      "book_pages": [168, 169],
+      "intro_examples": [],
+      "grammar_rules": [],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 168,
+          "instruction": "Exprimez l'opposition entre les deux propositions données avec les conjonctions ou prépositions qui conviennent.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Le Massif central, les Vosges sont des montagnes anciennes. _____ les Alpes sont des montagnes jeunes.", "blanks": 1 },
+            { "number": 2, "text": "Ils assistaient au match _____ elles prenaient le thé dans un salon de la ville.", "blanks": 1 },
+            { "number": 3, "text": "_____ de t'énerver, lis plutôt la notice explicative.", "blanks": 1 },
+            { "number": 4, "text": "_____ à elle, il aime la vieille maison de famille, au bord de la mer.", "blanks": 1 },
+            { "number": 5, "text": "Il ne gagne pas bien sa vie. _____ travaille dur.", "blanks": 1 },
+            { "number": 6, "text": "Elle était végétarienne, lui _____ était un amateur de bonnes viandes.", "blanks": 1 },
+            { "number": 7, "text": "Je n'assisterai pas à la messe de mariage. _____ j'irai à la mairie.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 168,
+          "instruction": "Exprimez la concession entre les éléments donnés avec les conjonctions ou prépositions qui conviennent.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il se défend toujours _____ ait souvent tort.", "blanks": 1 },
+            { "number": 2, "text": "Il l'aime _____ il ne veut pas se marier avec elle.", "blanks": 1 },
+            { "number": 3, "text": "C'était un excellent joueur _____ n'ait pas fait une grande carrière internationale.", "blanks": 1 },
+            { "number": 4, "text": "_____ il n'a pas été sélectionné, il reste un excellent joueur.", "blanks": 1 },
+            { "number": 5, "text": "Ils ont vendu l'usine _____ les ouvriers l'aient su.", "blanks": 1 },
+            { "number": 6, "text": "_____ son courage, il ne remarchera pas, il restera handicapé.", "blanks": 1 },
+            { "number": 7, "text": "Je crois en lui, _____ j'ai des doutes sur la réussite de son prochain projet.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 168,
+          "instruction": "Faites les phrases de votre choix avec les éléments donnés pour exprimer la concession.",
+          "type": "composition",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Bien que _____", "blanks": 1 },
+            { "number": 2, "text": "_____ quoique _____", "blanks": 1 },
+            { "number": 3, "text": "_____ sans que _____", "blanks": 1 },
+            { "number": 4, "text": "Malgré _____", "blanks": 1 },
+            { "number": 5, "text": "Sans _____", "blanks": 1 },
+            { "number": 6, "text": "_____ cependant _____", "blanks": 1 },
+            { "number": 7, "text": "Même si _____", "blanks": 1 },
+            { "number": 8, "text": "_____ en dépit de _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 168,
+          "instruction": "Complétez ces phrases avec les conjonctions qui conviennent pour exprimer le but et mettez les verbes au mode convenable.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Elle est allée aux États-Unis _____ son enfant (pouvoir être soigné) _____", "blanks": 2 },
+            { "number": 2, "text": "Il leur a tout écrit _____ (savoir) _____ la vérité.", "blanks": 2 },
+            { "number": 3, "text": "On a fait creuser une cave _____ (y mettre) _____ le vin à vieillir.", "blanks": 2 },
+            { "number": 4, "text": "Elle lui a acheté un billet de train _____ (pouvoir économiser) _____ son argent et _____ (en avoir assez) _____ pendant son séjour à l'étranger.", "blanks": 4 },
+            { "number": 5, "text": "J'ai quitté le groupe _____ (avoir) _____ des ennuis avec la police.", "blanks": 2 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 169,
+          "instruction": "Complétez ces phrases comme vous l'entendez en exprimant la condition.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "_____ je t'en aurais donné.", "blanks": 1 },
+            { "number": 2, "text": "_____ je n'aurais pas fait tant de fautes à la dictée.", "blanks": 1 },
+            { "number": 3, "text": "_____ à la fin de la semaine j'aurais fini.", "blanks": 1 },
+            { "number": 4, "text": "_____ ça ne me ferait pas plaisir du tout.", "blanks": 1 },
+            { "number": 5, "text": "_____ je ferais une fête gigantesque.", "blanks": 1 },
+            { "number": 6, "text": "_____ vous m'auriez trouvé sur un lit d'hôpital.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 6,
+          "book_page": 169,
+          "instruction": "Complétez les phrases suivantes.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Si sa santé est meilleure _____", "blanks": 1 },
+            { "number": 2, "text": "Si j'ai l'autorisation _____", "blanks": 1 },
+            { "number": 3, "text": "À condition que _____", "blanks": 1 },
+            { "number": 4, "text": "Ne dites rien au cas où _____", "blanks": 1 },
+            { "number": 5, "text": "Si je gagnais aux courses _____", "blanks": 1 },
+            { "number": 6, "text": "Pourvu que vous ne passiez pas par la forêt _____", "blanks": 1 },
+            { "number": 7, "text": "Supposons que le triangle soit rectangle _____", "blanks": 1 },
+            { "number": 8, "text": "À supposer qu'il vienne _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 7,
+          "book_page": 169,
+          "instruction": "Soulignez dans ce texte les éléments modalisateurs.",
+          "type": "underline",
+          "context": null,
+          "items": [
+            { "number": null, "text": "La France est, dit-on, en crise. Il semble que la production soit en baisse et le diagnostic fait aujourd'hui, presque, l'unanimité dans les milieux politiques et syndicaux. Certains n'hésitent pas à opérer un parallèle entre la situation actuelle de l'Europe et celle des années 30 aux États-Unis. En dépit de ce bel unanimisme la France n'est pas vraiment en déflation. L'Europe non plus d'ailleurs. Deux fantasmes semblent alimenter, en France plus qu'ailleurs, le débat et les politiques économiques. Il y a ceux qui continuent, à tort ou à raison, de craindre une montée excessive des prix. Il y a ceux qui à tort ou à raison s'inquiètent de la baisse des prix et de ses conséquences. Les uns et les autres se trompent, sans doute, d'époque.", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [168, 169],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

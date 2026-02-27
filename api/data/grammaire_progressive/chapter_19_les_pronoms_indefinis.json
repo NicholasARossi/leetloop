@@ -1,0 +1,141 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 19,
+  "chapter_title": "LES PRONOMS INDÉFINIS",
+  "book_pages": [130, 131],
+  "sections": [
+    {
+      "section_title": "LES PRONOMS INDÉFINIS",
+      "subtitle": null,
+      "book_pages": [130, 131],
+      "intro_examples": [
+        "Quand ils sont arrivés à la gare, personne ne les attendait. Certains étaient inquiets ; quelque chose de grave s'était peut-être passé ?",
+        "Les autres restaient calmes..."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "Les pronoms indéfinis désignent une personne ou une chose non précisée.",
+          "examples": [
+            "On sonne, va ouvrir !",
+            "J'ai trouvé quelque chose dans l'escalier, je ne sais pas ce que c'est."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Ils peuvent remplacer un nom déjà mentionné.",
+          "examples": [
+            "Il y a beaucoup d'arbres dans le jardin : tous sont des arbres fruitiers."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Ils peuvent exprimer l'imprécision totale.",
+          "examples": [
+            "Quelqu'un m'a dit que vous aviez déménagé.",
+            "Il viendra un de ces jours."
+          ],
+          "categories": [],
+          "notes": [
+            "« Quelqu'un », « quelque chose » sont souvent suivis de la préposition « de » + adjectif : C'est quelque chose de nouveau. – On m'a dit que c'était quelqu'un de bizarre."
+          ]
+        },
+        {
+          "rule": "Ils peuvent exprimer une quantité indéterminée.",
+          "examples": [
+            "Des roses ? Oui, j'en prendrai quelques-unes.",
+            "Certains pensent que le projet ne sera pas mis en œuvre."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Ils peuvent exprimer une quantité nulle.",
+          "examples": [
+            "Je ne sais rien de cette affaire.",
+            "Il ne connaît personne ; il vient d'arriver."
+          ],
+          "categories": [],
+          "notes": [
+            "« Personne », « rien », sont souvent suivis de la préposition « de » + adjectif : Il n'a rien dit de nouveau. – Je n'ai trouvé personne de sérieux."
+          ]
+        },
+        {
+          "rule": "Ils peuvent exprimer la totalité.",
+          "examples": [
+            "J'ai trente élèves : tous sont gentils. [On prononce le « s » du pronom « tous ».]",
+            "Il a fait un cadeau à chacun de ses petits-enfants. [= tous ses petits-enfants]"
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Ils peuvent exprimer l'identité ou la différence.",
+          "examples": [
+            "– Tu as vu mes nouvelles chaussures ? – Mon frère a les mêmes.",
+            "– Il y a une heure que nous parlons de cet accident ! – Tu as raison, parlons d'autre chose."
+          ],
+          "categories": [],
+          "notes": [
+            "« Qui » est souvent utilisé dans les proverbes : Qui vivra, verra. Qui veut voyager loin, ménage sa monture."
+          ]
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 131,
+          "instruction": "Réécrivez ce texte de façon qu'il ne reste aucune imprécision.",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": null, "text": "– Quelqu'un m'a dit que vous aviez changé de femme et de travail ; mais pas de maison, j'espère ?\n– Pas encore, mais j'y penserai.\n– Quelqu'un, encore, m'a dit que vous aviez emporté quelque chose de précieux appartenant à votre femme. Mais je ne l'ai pas cru, car ce quelqu'un est vraiment quelqu'un de bizarre.\n– Un de ces jours vous apprendrez la vérité. Patientez.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 131,
+          "instruction": "Répondez à l'inspecteur à la place du voleur en utilisant l'imprécision.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "– Qu'est-ce que tu as à me dire sur cette affaire ?\n\n– Qui as-tu rencontré ce soir-là ?\n\n– Tu es allé au bar, au billard, à la boîte de nuit.\n– Non, _____\n\n– Mais quelqu'un t'a vu !\n\n_____ peut se tromper. L'erreur est humaine.", "blanks": 4 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 131,
+          "instruction": "Complétez le règlement suivant à l'aide des pronoms indéfinis qui conviennent.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "_____ ne devra rentrer après 22 heures. Le matin, _____ fera son lit et son ménage. _____ ne devra traîner ; _____ devra être en ordre. En cas de non-respect du règlement, _____ des coupables sera renvoyé.", "blanks": 5 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 131,
+          "instruction": "Complétez avec le pronom indéfini qui convient.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il appela sans que _____ réponde.", "blanks": 1 },
+            { "number": 2, "text": "Sauvez-vous avant que _____ vous voie.", "blanks": 1 },
+            { "number": 3, "text": "Ce texte est trop difficile pour que j'y comprenne _____.", "blanks": 1 },
+            { "number": 4, "text": "Il en savait plus que _____.", "blanks": 1 },
+            { "number": 5, "text": "Il y rencontrait beaucoup de gens mais c'était toujours _____.", "blanks": 1 },
+            { "number": 6, "text": "Elle en avait assez de cette discussion ; elle aurait bien voulu qu'on parle _____.", "blanks": 1 },
+            { "number": 7, "text": "Peut-on pleurer pour _____ ?", "blanks": 1 },
+            { "number": 8, "text": "_____ étaient pour, _____ étaient contre.", "blanks": 2 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [130, 131],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

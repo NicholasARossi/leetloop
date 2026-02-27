@@ -1,0 +1,268 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 20,
+  "chapter_title": "LA SITUATION dans LE TEMPS",
+  "book_pages": [134, 135, 136, 137],
+  "sections": [
+    {
+      "section_title": "SE SITUER, SITUER UN ÉVÉNEMENT dans le temps",
+      "subtitle": null,
+      "book_pages": [134, 135],
+      "intro_examples": [
+        "C'est un événement qui a eu lieu récemment, au cours de l'année passée.",
+        "Il y a huit jours qu'elle est partie et elle sera de retour dans trois jours."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "Par rapport à une date (celle du moment où l'on parle). Mots outils : hier, aujourd'hui, demain, avant-hier, après-demain, dans un mois, le lundi 3 février, etc.",
+          "examples": [
+            "Elle arrivera demain matin. – Elle partira dans trois semaines."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Par rapport à une époque (celle où l'on parle). Mots outils : dernièrement, à cette époque, maintenant, bientôt, récemment, prochainement, à partir de maintenant, la veille, le lendemain, etc.",
+          "examples": [
+            "Patrick Bruel passera prochainement à l'Olympia."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Par rapport à un autre fait.",
+          "examples": [],
+          "categories": [
+            {
+              "name": "Antériorité",
+              "description": "L'un est antérieur à l'autre. Mots outils : avant, déjà, dès (que), etc.",
+              "examples": ["Je viendrai vous saluer avant de partir."]
+            },
+            {
+              "name": "Simultanéité",
+              "description": "Les deux faits ont lieu en même temps. Mots outils : simultanément, au moment où, etc.",
+              "examples": ["Les deux accidents ont eu lieu simultanément."]
+            },
+            {
+              "name": "Postériorité",
+              "description": "L'un est postérieur à l'autre. Mots outils : après, puis, ensuite, etc.",
+              "examples": ["Après ce traitement vous devriez aller mieux."]
+            },
+            {
+              "name": "Origine",
+              "description": "L'un est l'origine de l'autre. Mots outils : depuis, désormais, dorénavant, etc.",
+              "examples": ["Depuis le 15 août la chasse est ouverte ; désormais vous pouvez y aller."]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "rule": "Par rapport à la répétition, la périodicité d'un fait. Mots outils : chaque jour, tous les jours/mois, quotidiennement, annuellement, deux fois par jour/mois, périodiquement, parfois, etc.",
+          "examples": [
+            "Périodiquement, il avait des crises de paludisme.",
+            "Chaque matin, il faisait le tour du parc."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Par rapport à la durée. Mots outils : longtemps, de, depuis, au cours de, ça fait, pendant, pour, en, durant, sur, dans, en avoir pour, être à, etc.",
+          "examples": [
+            "Il resta longtemps bloqué par la montée rapide des eaux.",
+            "Être à deux jours des vacances = on est en vacances dans deux jours."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Par rapport à sa fréquence. Mots outils : jamais, parfois, souvent, quelquefois, de temps en temps, toujours, etc.",
+          "examples": [
+            "Il n'oubliait jamais de lui envoyer des fleurs pour son anniversaire."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 135,
+          "instruction": "Rédigez le compte rendu du voyage d'une vedette de cinéma pour le journal régional.",
+          "type": "composition",
+          "context": "hier : dans la soirée, départ de chez elle\naujourd'hui : à 22 h avion pour Bangkok\ndemain : tôt le matin arrivée à Bangkok",
+          "items": [
+            { "number": null, "text": "Rédigez le compte rendu en utilisant les indications de temps.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 135,
+          "instruction": "Complétez le texte suivant en utilisant les adverbes de temps qui conviennent.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Dans les lycées on a vu _____ une montée de la violence. Des crimes ont été commis. On s'interroge _____ sur les causes de tels actes. On a peur que _____ nos lycées soient transformés en lieux plus dangereux que certains quartiers la nuit.", "blanks": 3 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 135,
+          "instruction": "Complétez le texte suivant en utilisant les adverbes ou les indications de temps qui conviennent.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Je passerai vous laisser mes clés _____ de partir ; j'apporterai _____ mon petit chat. Il ne devrait pas vous ennuyer car _____ sa série de piqûres, il va beaucoup mieux. Mais il ne faudra pas oublier de lui donner _____ matins sa pilule. _____ la fin de ses piqûres, c'est indispensable. _____ j'avais oublié de les lui donner, il a été horriblement malade. _____ on ne s'occupait pas des animaux comme aujourd'hui. _____ que les gens se sentent seuls, ils ont besoin de ces petits compagnons et ce n'est pas parce que _____ l'homme communiquera sur les autoroutes de l'information qu'il communiquera plus avec ses voisins. Allez, au revoir et merci.", "blanks": 9 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 135,
+          "instruction": "Complétez ce texte avec les indications de temps qui conviennent.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Il avait reçu des lettres anonymes _____. C'est que _____ quelque temps, il faisait des affaires un peu louches et _____ plus personne ne le regardait. Même s'il passait _____ dans la rue principale pour aller au bureau de tabac, plus personne ne le saluait. D'ailleurs _____ il serait entendu par le juge. On connaîtra _____ la vérité !", "blanks": 6 }
+          ]
+        }
+      ]
+    },
+    {
+      "section_title": "L'EXPRESSION de LA DURÉE",
+      "subtitle": null,
+      "book_pages": [136, 137],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "Temps pendant lequel une action continue ou est finie. Mots outils : il y a... que, voilà...que, ça fait... que, depuis, avant, plutôt.",
+          "examples": [
+            "Il y a huit jours qu'il est dans le coma. [= Il est dans le coma depuis huit jours.]",
+            "Ça fait trois jours qu'il a eu son accident. [= Il a eu son accident il y a trois jours.]"
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Comment évaluer le temps qui s'écoulera avant qu'une action s'accomplisse ou soit accomplie ?",
+          "examples": [],
+          "categories": [
+            {
+              "name": "Évaluation précise (moment du locuteur)",
+              "description": "Se fait avec « dans » si le moment de la parole est celui du locuteur.",
+              "examples": ["Il sera au travail dans deux jours."]
+            },
+            {
+              "name": "Évaluation précise (moment différent)",
+              "description": "Se fait avec « après », « plus tard » si le moment de la parole est différent de celui du locuteur.",
+              "examples": ["Il est arrivé à midi, il est reparti deux heures après. [= deux heures plus tard]"]
+            },
+            {
+              "name": "Évaluation approximative (futur)",
+              "description": "Se fait avec « dans les... qui viennent », « avant », « sous » avec les formes verbales du futur, du conditionnel, de l'imparfait et de l'impératif, si le moment de la parole est celui du locuteur.",
+              "examples": [
+                "– Est-ce qu'il vivra ? – On le saura dans les heures qui viennent.",
+                "Il partira dans un instant. Partez dans les huit jours qui viennent.",
+                "Il partirait volontiers dans l'heure qui vient.",
+                "S'il était là dans les jours qui viennent, il vous recevrait volontiers."
+              ]
+            },
+            {
+              "name": "Évaluation approximative (avant/sous)",
+              "description": "Se fait aussi avec « avant », « sous » si le moment de la parole est différent de celui du locuteur.",
+              "examples": [
+                "Il devait partir une huitaine de jours avant.",
+                "Vous recevrez la convocation sous huitaine. [langue administrative]"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "rule": "Comment évaluer le temps qui se déroulera à l'intérieur de limites (durée close) ? Elle s'exprime à l'aide de : pendant, dans, tout(e), pour, en, durant, au cours de.",
+          "examples": [
+            "Il a plu pendant une heure.",
+            "Il a plu tout le mois de juillet. [= pendant tout le mois...]",
+            "Il a plu dans la nuit. [= pendant une partie de...]",
+            "Il est parti pour quelque temps. [= pour un certain temps]",
+            "Il a construit son garage en une semaine. [= il a mis une semaine pour construire son garage]"
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 137,
+          "instruction": "Dites d'au moins trois manières différentes :",
+          "type": "transformation",
+          "context": "Il y a huit jours qu'il pleut. – Il y avait trois jours qu'elle ne mangeait plus.",
+          "items": [
+            { "number": null, "text": "Reformulez ces deux phrases d'au moins trois manières différentes chacune.", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 137,
+          "instruction": "Dites d'une autre manière :",
+          "type": "transformation",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il a atterri à midi, il redécollera dans deux heures. _____", "blanks": 1 },
+            { "number": 2, "text": "Il racontait qu'il avait _____", "blanks": 1 },
+            { "number": 3, "text": "Il avait atterri à midi _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 137,
+          "instruction": "Complétez le texte suivant de manière à exprimer que l'action se fait dans l'immédiat.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Je veux que vous soyez partis dans l'heure _____. Rassurez-vous, ils seront partis dans _____. Mais n'oubliez pas que dans _____ vous devrez avoir réglé leur problème de relogement. Je m'engage à ce qu'il soit réglé _____ leur départ. Je tiens vraiment à ce qu'ils soient installés _____ les deux jours.", "blanks": 5 }
+          ]
+        },
+        {
+          "exercise_number": 4,
+          "book_page": 137,
+          "instruction": "Répondez à l'interrogatoire suivant en utilisant « depuis » et « pendant » comme il convient.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "– Est-ce que vous avez toujours habité là ? – Non, _____", "blanks": 1 },
+            { "number": 2, "text": "– Il y a longtemps que vous ne travaillez plus ? – Non, _____", "blanks": 1 },
+            { "number": 3, "text": "– Combien de temps avez-vous travaillé dans cette société ? – J'ai _____", "blanks": 1 },
+            { "number": 4, "text": "– Et vous vous êtes reconverti à l'horticulture après ? Oui, _____", "blanks": 1 }
+          ]
+        },
+        {
+          "exercise_number": 5,
+          "book_page": 137,
+          "instruction": "Complétez ce texte par « depuis » ou « pendant » en mettant les verbes au temps convenable.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": null, "text": "Nous (être) _____ au service militaire ensemble mais après avoir été libérés, (être) _____ perdus de vue et _____ nous ne nous (être) _____ jamais revus. Mais _____ hier, j'ai retrouvé sa piste, grâce au journal. On n'en est pas sûr, mais il (avoir fait) _____ de la contrebande au Paraguay _____ plusieurs années. Mais _____ les mesures d'extradition prises par le gouvernement, il (être) _____ rentré en France où il (être resté) _____ caché _____ tout ce temps.", "blanks": 11 }
+          ]
+        },
+        {
+          "exercise_number": 6,
+          "book_page": 137,
+          "instruction": "Complétez à l'aide de « pendant » ou « en ».",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il a neigé _____ toute la nuit, mais la route a été dégagée _____ une heure.", "blanks": 2 },
+            { "number": 2, "text": "Je lis Le Monde chaque jour _____ deux heures, alors que mon ami qui lit rapidement arrive à le parcourir _____ quarante minutes.", "blanks": 2 },
+            { "number": 3, "text": "Il a économisé _____ des années pour s'acheter une voiture qu'il a abîmée _____ quelques jours.", "blanks": 2 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [134, 135, 136, 137],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}

@@ -1,0 +1,178 @@
+{
+  "book": "Grammaire Progressive du Français - Niveau Avancé",
+  "chapter_number": 26,
+  "chapter_title": "L'EXPRESSION de LA CONDITION et de L'HYPOTHÈSE",
+  "book_pages": [156, 157],
+  "sections": [
+    {
+      "section_title": "LA CONDITION",
+      "subtitle": null,
+      "book_pages": [156],
+      "intro_examples": [
+        "Si j'ai le temps, je passerai vous voir.",
+        "Si on avait une voiture, on irait te chercher à la gare.",
+        "Pourvu que le temps le permette, nous sortirons en mer."
+      ],
+      "grammar_rules": [
+        {
+          "rule": "La condition exprime qu'un fait ou un état est indispensable pour qu'en conséquence, un autre fait ou état existe.",
+          "examples": [],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Elle est introduite par « si » et la conséquence est exprimée à l'indicatif.",
+          "examples": [
+            "S'il fait beau, on ira à pied."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "La condition se situe dans le présent ou le passé, la conséquence se situe dans le futur.",
+          "examples": [
+            "Si vous acceptez notre offre, nous signerons le contrat dès demain."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "La condition et la conséquence se situent dans le futur.",
+          "examples": [
+            "Si j'ai de l'argent [demain], je l'inviterai au restaurant."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "La condition peut être aussi introduite par des conjonctions suivies du subjonctif.",
+          "examples": [
+            "Vous aurez la paix à condition que vous vous taisiez.",
+            "Nous ferons du ski pourvu qu'il y ait de la neige."
+          ],
+          "categories": [],
+          "notes": []
+        }
+      ],
+      "exercises": [],
+      "notes": []
+    },
+    {
+      "section_title": "L'HYPOTHÈSE",
+      "subtitle": null,
+      "book_pages": [156, 157],
+      "intro_examples": [],
+      "grammar_rules": [
+        {
+          "rule": "L'hypothèse exprime qu'un fait ou un état est imaginé. Sa conséquence est donc éventuelle.",
+          "examples": [
+            "Si tu arrivais assez tôt, nous pourrions dîner ensemble."
+          ],
+          "categories": [],
+          "notes": []
+        },
+        {
+          "rule": "Elle est introduite par « si » et la conséquence est exprimée au conditionnel.",
+          "examples": [],
+          "categories": [
+            {
+              "name": "Avenir",
+              "description": "L'hypothèse et la conséquence se situent dans l'avenir.",
+              "examples": ["Si vous veniez me voir [demain, dans un mois], ça me ferait plaisir [alors]."]
+            },
+            {
+              "name": "Présent",
+              "description": "L'hypothèse et la conséquence se situent dans le présent.",
+              "examples": ["Si j'avais de l'argent sur moi [là, maintenant], je te le prêterais [là, maintenant]."]
+            },
+            {
+              "name": "Passé",
+              "description": "L'hypothèse et la conséquence se situent dans le passé.",
+              "examples": ["Si vous étiez venus [hier], vous m'auriez fait plaisir [à ce moment-là]."]
+            },
+            {
+              "name": "Passé → Présent",
+              "description": "L'hypothèse se situe dans le passé, la conséquence dans le présent.",
+              "examples": ["Si j'avais touché ma bourse [hier], je l'aurais invité à dîner [maintenant]."]
+            },
+            {
+              "name": "Intemporel → Passé",
+              "description": "L'hypothèse est intemporelle, la conséquence est dans le passé.",
+              "examples": ["Si j'étais moins distrait, je n'aurais pas eu cet accident."]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "rule": "L'hypothèse peut être introduite par d'autres conjonctions.",
+          "examples": [],
+          "categories": [
+            {
+              "name": "Au cas où",
+              "description": "Suivi du conditionnel.",
+              "examples": ["Au cas où il n'y aurait pas de taxis, appelez-nous de la gare."]
+            },
+            {
+              "name": "En supposant que / En admettant que",
+              "description": "Suivis du subjonctif.",
+              "examples": ["En supposant que vous la rencontriez, ne lui parlez pas de moi."]
+            }
+          ],
+          "notes": []
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_number": 1,
+          "book_page": 157,
+          "instruction": "Utilisez le temps qui convient pour exprimer la condition et sa conséquence.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Si vous (être) _____ d'accord, vous (partir) _____ ensemble le week-end prochain.", "blanks": 2 },
+            { "number": 2, "text": "Si vous (envoyer) _____ une lettre aujourd'hui, vous (avoir) _____ une réponse demain.", "blanks": 2 },
+            { "number": 3, "text": "Ce soir, si la télévision (donner) _____ un bon film, nous le (regarder) _____.", "blanks": 2 },
+            { "number": 4, "text": "Si son état (ne pas s'améliorer) _____ avant la fin du mois, on (devoir) _____ l'hospitaliser.", "blanks": 2 }
+          ]
+        },
+        {
+          "exercise_number": 2,
+          "book_page": 157,
+          "instruction": "Utilisez le temps qui convient pour exprimer l'hypothèse et sa conséquence.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Si elle (se décider) _____ avant la fin de la semaine, on y (voir) _____ plus clair.", "blanks": 2 },
+            { "number": 2, "text": "Si Paris (être) _____ au bord de la mer, nous (pouvoir) _____ faire du bateau.", "blanks": 2 },
+            { "number": 3, "text": "Si la boulangerie (être) _____ ouverte, je (aller) _____ acheter du pain frais.", "blanks": 2 },
+            { "number": 4, "text": "Si tu me (appeler) _____ hier matin, nous (pouvoir) _____ passer la soirée ensemble.", "blanks": 2 },
+            { "number": 5, "text": "Si tu (travailler) _____ dès le début du semestre, tu (réussir) _____.", "blanks": 2 },
+            { "number": 6, "text": "Si elle (recevoir) _____ un chèque de sa famille, elle (rembourser) _____ ses dettes aujourd'hui même.", "blanks": 2 },
+            { "number": 7, "text": "Si je (être) _____ moins paresseux, je (participer) _____ au marathon dimanche dernier.", "blanks": 2 },
+            { "number": 8, "text": "Si elle (ne pas être) _____ toujours de mauvaise humeur, elle (avoir) _____ plus d'amis.", "blanks": 2 }
+          ]
+        },
+        {
+          "exercise_number": 3,
+          "book_page": 157,
+          "instruction": "Mettez les verbes au mode et au temps qui conviennent.",
+          "type": "fill_blank",
+          "context": null,
+          "items": [
+            { "number": 1, "text": "Il vaut mieux emporter des devises au cas où les banques (être fermé) _____ à votre arrivée.", "blanks": 1 },
+            { "number": 2, "text": "Vous irez mieux à condition que vous (prendre) _____ régulièrement les médicaments.", "blanks": 1 },
+            { "number": 3, "text": "Vous pourrez prendre le train pourvu que vous (réserver) _____ une place avant de partir.", "blanks": 1 },
+            { "number": 4, "text": "J'irai lui rendre visite en supposant qu'elle (vouloir) _____ bien me recevoir.", "blanks": 1 },
+            { "number": 5, "text": "Prends les clés au cas où je (arriver) _____ tard.", "blanks": 1 },
+            { "number": 6, "text": "En admettant que vous (avoir) _____ raison, la question n'est pas résolue.", "blanks": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "ingestion_status": {
+    "pages_completed": [156, 157],
+    "pages_remaining": [],
+    "last_updated": "2026-02-27"
+  }
+}
