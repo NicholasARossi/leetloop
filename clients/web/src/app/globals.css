@@ -136,6 +136,72 @@ body {
     z-index: -1;
   }
 
+  /* Card with alternate chamfer (TR + BL corners) - visual variety */
+  .card-alt {
+    @apply p-6;
+    position: relative;
+    background: black;
+    clip-path: polygon(
+      0 0,
+      calc(100% - var(--chamfer-md)) 0,
+      100% var(--chamfer-md),
+      100% 100%,
+      var(--chamfer-md) 100%,
+      0 calc(100% - var(--chamfer-md))
+    );
+  }
+
+  .card-alt::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    background: white;
+    clip-path: polygon(
+      0 0,
+      calc(100% - var(--chamfer-md) + 2px) 0,
+      100% calc(var(--chamfer-md) - 2px),
+      100% 100%,
+      calc(var(--chamfer-md) - 2px) 100%,
+      0 calc(100% - var(--chamfer-md) + 2px)
+    );
+    z-index: -1;
+  }
+
+  /* Schematic panel - octagonal (all 4 corners chamfered, smaller 10px cut) */
+  .panel-schematic {
+    @apply p-4;
+    position: relative;
+    background: black;
+    clip-path: polygon(
+      10px 0,
+      calc(100% - 10px) 0,
+      100% 10px,
+      100% calc(100% - 10px),
+      calc(100% - 10px) 100%,
+      10px 100%,
+      0 calc(100% - 10px),
+      0 10px
+    );
+  }
+
+  .panel-schematic::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    background: white;
+    clip-path: polygon(
+      8px 0,
+      calc(100% - 8px) 0,
+      100% 8px,
+      100% calc(100% - 8px),
+      calc(100% - 8px) 100%,
+      8px 100%,
+      0 calc(100% - 8px),
+      0 8px
+    );
+    z-index: -1;
+  }
+
   /* Primary button - mech style */
   .btn-primary {
     @apply px-4 py-2 font-medium transition-all;

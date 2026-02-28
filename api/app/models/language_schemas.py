@@ -227,6 +227,9 @@ class LanguageDashboardSummary(BaseModel):
     reviews_due: list[LanguageReviewItem] = []
     recent_score: Optional[float] = None
     exercises_this_week: int = 0
+    book_total_chapters: int = 0
+    book_completed_chapters: int = 0
+    book_completion_percentage: float = 0.0
 
 
 class SetActiveTrackRequest(BaseModel):
@@ -266,3 +269,99 @@ class LanguageQuestionResponse(BaseModel):
     expected_answer: Optional[str] = None
     focus_area: str
     key_concepts: list[str] = []
+
+
+# ============ Daily Exercise Models ============
+
+
+class DailyExercise(BaseModel):
+    """A single daily exercise."""
+
+    id: UUID
+    topic: str
+    exercise_type: str
+    question_text: str
+    expected_answer: Optional[str] = None
+    focus_area: Optional[str] = None
+    key_concepts: list[str] = []
+    is_review: bool = False
+    review_topic_reason: Optional[str] = None
+    status: str = "pending"
+    sort_order: int = 0
+    response_format: str = "single_line"
+    word_target: int = 3
+    # Response/grading (filled after submission)
+    response_text: Optional[str] = None
+    score: Optional[float] = None
+    verdict: Optional[str] = None
+    feedback: Optional[str] = None
+    corrections: Optional[str] = None
+    missed_concepts: list[str] = []
+    completed_at: Optional[datetime] = None
+
+
+class DailyExerciseBatch(BaseModel):
+    """Today's exercise batch."""
+
+    generated_date: str  # "2026-02-18"
+    track_id: Optional[UUID] = None
+    exercises: list[DailyExercise]
+    completed_count: int = 0
+    total_count: int = 0
+    average_score: Optional[float] = None
+
+
+class SubmitDailyExerciseRequest(BaseModel):
+    """Submit an answer for a daily exercise."""
+
+    response_text: str
+
+
+class DailyExerciseGrade(BaseModel):
+    """Grade result for a daily exercise."""
+
+    score: float
+    verdict: str
+    feedback: str
+    corrections: Optional[str] = None
+    missed_concepts: list[str] = []
+
+
+# ============ Book Progress Models ============
+
+
+class BookContentSection(BaseModel):
+    """A section within a book chapter."""
+
+    title: str
+    summary: str = ""
+    key_points: list[str] = []
+
+
+class ChapterProgressItem(BaseModel):
+    """Progress info for a single chapter in the book."""
+
+    name: str
+    order: int
+    difficulty: str
+    key_concepts: list[str] = []
+    is_completed: bool = False
+    is_current: bool = False
+    has_review_due: bool = False
+    review_reason: Optional[str] = None
+    book_summary: Optional[str] = None
+    book_sections: list[BookContentSection] = []
+
+
+class BookProgressResponse(BaseModel):
+    """Full book progress with per-chapter details."""
+
+    track_name: str
+    language: str
+    level: str
+    source_book: Optional[str] = None
+    total_chapters: int
+    completed_chapters: int
+    completion_percentage: float
+    average_score: float = 0.0
+    chapters: list[ChapterProgressItem]

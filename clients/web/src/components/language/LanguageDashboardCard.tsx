@@ -135,6 +135,24 @@ export function LanguageDashboardCard({
         </div>
       )}
 
+      {/* Book progress */}
+      {data.book_total_chapters > 0 && (
+        <div className="pt-3 mt-3 border-t border-gray-200">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-[11px] text-gray-500 uppercase tracking-wider">Book Progress</span>
+            <span className="text-[11px] font-medium text-black">
+              {data.book_completed_chapters}/{data.book_total_chapters} chapters
+            </span>
+          </div>
+          <div className="progress-bar">
+            <div
+              className="progress-fill transition-all duration-500"
+              style={{ width: `${data.book_completion_percentage}%` }}
+            />
+          </div>
+        </div>
+      )}
+
       {/* Stats row */}
       {(data.recent_score !== undefined || data.exercises_this_week > 0) && (
         <div className="flex items-center gap-4 pt-3 mt-3 border-t border-gray-200 text-xs text-gray-500">

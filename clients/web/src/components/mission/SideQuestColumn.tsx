@@ -31,7 +31,8 @@ export function SideQuestColumn({ quests, streak, trends, stats }: SideQuestColu
       )}
 
       {/* Stats summary — heatmap + even data grid */}
-      <div className="card-sm mt-6">
+      <div className="panel-schematic mt-6">
+
         <h4 className="section-id mb-3">Quick Stats</h4>
 
         {/* Heatmap */}
