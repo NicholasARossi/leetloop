@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LeetLoop - Daily Exercise Mix</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --accent-color: #FF8888;
+      --accent-rgb: 255 136 136;
+      --accent-color-dark: #993333;
+      --accent-color-20: #FF888833;
+      --chamfer-sm: 8px;
+      --chamfer-md: 16px;
+      --chamfer-lg: 24px;
+    }
+
+    body {
+      font-family: 'IBM Plex Mono', 'Consolas', monospace;
+      background-color: #d3d3d3;
+      background-size: 50px 50px;
+      background-image: linear-gradient(
+        45deg,
+        rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%,
+        rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%,
+        transparent 75%, transparent
+      );
+      color: #171717;
+      font-size: 13px;
+      line-height: 1.6;
+      padding: 32px;
+    }
+
+    .container { max-width: 680px; margin: 0 auto; }
+
+    /* ===== CARD (chamfered corners) ===== */
+    .card {
+      padding: 24px;
+      position: relative;
+      background: black;
+      clip-path: polygon(
+        var(--chamfer-md) 0, 100% 0,
+        100% calc(100% - var(--chamfer-md)),
+        calc(100% - var(--chamfer-md)) 100%,
+        0 100%, 0 var(--chamfer-md)
+      );
+      margin-bottom: 12px;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: white;
+      clip-path: polygon(
+        calc(var(--chamfer-md) - 2px) 0, 100% 0,
+        100% calc(100% - var(--chamfer-md) + 2px),
+        calc(100% - var(--chamfer-md) + 2px) 100%,
+        0 100%, 0 calc(var(--chamfer-md) - 2px)
+      );
+      z-index: -1;
+    }
+
+    /* Card-sm variant for exercise cards */
+    .card-sm {
+      padding: 16px;
+      position: relative;
+      background: black;
+      clip-path: polygon(
+        var(--chamfer-sm) 0, 100% 0,
+        100% calc(100% - var(--chamfer-sm)),
+        calc(100% - var(--chamfer-sm)) 100%,
+        0 100%, 0 var(--chamfer-sm)
+      );
+      margin-bottom: 10px;
+    }
+    .card-sm::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: white;
+      clip-path: polygon(
+        calc(var(--chamfer-sm) - 2px) 0, 100% 0,
+        100% calc(100% - var(--chamfer-sm) + 2px),
+        calc(100% - var(--chamfer-sm) + 2px) 100%,
+        0 100%, 0 calc(var(--chamfer-sm) - 2px)
+      );
+      z-index: -1;
+    }
+
+    /* Review accent - accent left edge via inset trick */
+    .card-sm.review::before {
+      inset: 2px 2px 2px 4px;
+    }
+    .card-sm.review {
+      border-left: 4px solid var(--accent-color);
+    }
+
+    /* Free-form special card */
+    .card-sm.freeform {
+      background: var(--accent-color-dark);
+    }
+
+    /* ===== HEADING ACCENT (Banquise-like but using system font since we can't load Banquise) ===== */
+    .heading-accent {
+      text-transform: uppercase;
+      background-color: var(--accent-color);
+      color: #fff;
+      padding: 6px 14px;
+      display: inline-block;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 2px;
+      text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    }
+
+    /* ===== SECTION TITLE ===== */
+    .section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: #666;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+      border-bottom: 2px solid black;
+    }
+
+    /* ===== SECTION ID ===== */
+    .section-id {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: #999;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+    .section-id::before {
+      content: '\00A7\00A0';
+      color: var(--accent-color);
+    }
+
+    /* ===== TAG (chamfered) ===== */
+    .tag {
+      display: inline-block;
+      padding: 3px 10px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #666;
+      position: relative;
+      background: black;
+      clip-path: polygon(
+        6px 0, 100% 0,
+        100% calc(100% - 6px),
+        calc(100% - 6px) 100%,
+        0 100%, 0 6px
+      );
+    }
+    .tag::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: #f0f0f0;
+      clip-path: polygon(
+        4px 0, 100% 0,
+        100% calc(100% - 4px),
+        calc(100% - 4px) 100%,
+        0 100%, 0 4px
+      );
+      z-index: -1;
+    }
+
+    /* Tier-colored tags */
+    .tag-quick::before { background: #d4edda; }
+    .tag-quick { color: #2e7d32; }
+    .tag-short::before { background: #e3f2fd; }
+    .tag-short { color: #1565c0; }
+    .tag-extended::before { background: #fff3e0; }
+    .tag-extended { color: #e65100; }
+    .tag-freeform::before { background: #fce4ec; }
+    .tag-freeform { color: #c62828; }
+    .tag-accent::before { background: var(--accent-color); }
+    .tag-accent { color: #000; }
+
+    /* ===== BADGE (chamfered) ===== */
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      position: relative;
+      background: black;
+      clip-path: polygon(
+        5px 0, 100% 0,
+        100% calc(100% - 5px),
+        calc(100% - 5px) 100%,
+        0 100%, 0 5px
+      );
+    }
+    .badge::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      clip-path: polygon(
+        3px 0, 100% 0,
+        100% calc(100% - 3px),
+        calc(100% - 3px) 100%,
+        0 100%, 0 3px
+      );
+      z-index: -1;
+    }
+    .badge-accent { color: #000; }
+    .badge-accent::before { background: var(--accent-color); }
+    .badge-default { color: #666; }
+    .badge-default::before { background: #f0f0f0; }
+
+    /* ===== PROGRESS BAR (chamfered) ===== */
+    .progress-bar {
+      height: 12px;
+      position: relative;
+      background: black;
+      clip-path: polygon(
+        4px 0, 100% 0,
+        100% calc(100% - 4px),
+        calc(100% - 4px) 100%,
+        0 100%, 0 4px
+      );
+    }
+    .progress-bar::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: #e5e5e5;
+      clip-path: polygon(
+        2px 0, 100% 0,
+        100% calc(100% - 2px),
+        calc(100% - 2px) 100%,
+        0 100%, 0 2px
+      );
+      z-index: 0;
+    }
+    .progress-fill {
+      background: var(--accent-color);
+      position: absolute;
+      inset: 2px;
+      right: auto;
+      z-index: 1;
+    }
+
+    /* ===== BTN-PRIMARY (chamfered) ===== */
+    .btn-primary {
+      padding: 6px 16px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      position: relative;
+      background: black;
+      color: #171717;
+      clip-path: polygon(
+        var(--chamfer-sm) 0, 100% 0,
+        100% calc(100% - var(--chamfer-sm)),
+        calc(100% - var(--chamfer-sm)) 100%,
+        0 100%, 0 var(--chamfer-sm)
+      );
+      transition: all 0.15s;
+    }
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: white;
+      clip-path: polygon(
+        calc(var(--chamfer-sm) - 2px) 0, 100% 0,
+        100% calc(100% - var(--chamfer-sm) + 2px),
+        calc(100% - var(--chamfer-sm) + 2px) 100%,
+        0 100%, 0 calc(var(--chamfer-sm) - 2px)
+      );
+      z-index: -1;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover::before { background: var(--accent-color); }
+
+    /* ===== INPUT (chamfered) ===== */
+    .input-chamfer {
+      width: 100%;
+      padding: 8px 14px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      border: none;
+      outline: none;
+      position: relative;
+      background: black;
+      color: #171717;
+      clip-path: polygon(
+        var(--chamfer-sm) 0, 100% 0,
+        100% calc(100% - var(--chamfer-sm)),
+        calc(100% - var(--chamfer-sm)) 100%,
+        0 100%, 0 var(--chamfer-sm)
+      );
+    }
+
+    /* Wrapper to get the chamfered border effect on inputs */
+    .input-wrap {
+      position: relative;
+      background: black;
+      clip-path: polygon(
+        var(--chamfer-sm) 0, 100% 0,
+        100% calc(100% - var(--chamfer-sm)),
+        calc(100% - var(--chamfer-sm)) 100%,
+        0 100%, 0 var(--chamfer-sm)
+      );
+    }
+    .input-wrap input,
+    .input-wrap textarea {
+      display: block;
+      width: calc(100% - 4px);
+      margin: 2px;
+      padding: 8px 12px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      border: none;
+      outline: none;
+      background: white;
+      color: #171717;
+      resize: vertical;
+      line-height: 1.6;
+      clip-path: polygon(
+        calc(var(--chamfer-sm) - 2px) 0, 100% 0,
+        100% calc(100% - var(--chamfer-sm) + 2px),
+        calc(100% - var(--chamfer-sm) + 2px) 100%,
+        0 100%, 0 calc(var(--chamfer-sm) - 2px)
+      );
+    }
+    .input-wrap input:focus,
+    .input-wrap textarea:focus {
+      background: #fff8f8;
+    }
+
+    /* ===== STAT GRID (black-gap grid) ===== */
+    .stat-grid {
+      display: grid;
+      gap: 1px;
+      background: black;
+      border: 2px solid black;
+    }
+    .stat-grid .cell {
+      background: white;
+      padding: 12px 8px;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 22px;
+      font-weight: normal;
+      letter-spacing: 1px;
+    }
+    .stat-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    /* ===== STATUS LIGHT ===== */
+    .status-light {
+      width: 10px;
+      height: 10px;
+      display: inline-block;
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      background-color: var(--accent-color);
+    }
+
+    /* ===== READING PASSAGE (schematic frame) ===== */
+    .passage {
+      background: #fafafa;
+      border-left: 3px solid var(--accent-color);
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      font-size: 13px;
+      line-height: 1.7;
+      font-style: italic;
+    }
+
+    /* ===== LENGTH INDICATOR ===== */
+    .length-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .length-label {
+      font-size: 10px;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .length-bar {
+      height: 3px;
+      width: 50px;
+      background: #ddd;
+    }
+    .length-fill { height: 100%; }
+    .length-fill.l1 { width: 20%; background: #2e7d32; }
+    .length-fill.l2 { width: 45%; background: #1565c0; }
+    .length-fill.l3 { width: 70%; background: #e65100; }
+    .length-fill.l4 { width: 100%; background: #c62828; }
+
+    /* ===== WORD COUNT ===== */
+    .word-count {
+      font-size: 10px;
+      color: #bbb;
+      text-align: right;
+      margin-top: 4px;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    /* ===== HINT ===== */
+    .hint {
+      font-size: 10px;
+      color: #bbb;
+      margin-top: 4px;
+    }
+
+    /* ===== LAYOUT HELPERS ===== */
+    .meta-row { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+    .focus { font-size: 11px; color: #888; margin-left: auto; }
+    .question { font-size: 13px; color: #333; margin-bottom: 10px; line-height: 1.6; white-space: pre-wrap; }
+    .input-row { display: flex; gap: 8px; align-items: flex-start; }
+    .space-y > * + * { margin-top: 10px; }
+
+    /* ===== DESIGN NOTES ===== */
+    .notes {
+      margin-top: 32px;
+      padding: 20px;
+      position: relative;
+      background: black;
+      clip-path: polygon(
+        var(--chamfer-md) 0, 100% 0,
+        100% calc(100% - var(--chamfer-md)),
+        calc(100% - var(--chamfer-md)) 100%,
+        0 100%, 0 var(--chamfer-md)
+      );
+    }
+    .notes::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: #fffde7;
+      clip-path: polygon(
+        calc(var(--chamfer-md) - 2px) 0, 100% 0,
+        100% calc(100% - var(--chamfer-md) + 2px),
+        calc(100% - var(--chamfer-md) + 2px) 100%,
+        0 100%, 0 calc(var(--chamfer-md) - 2px)
+      );
+      z-index: -1;
+    }
+    .notes h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 3px; color: #856404; margin-bottom: 12px; }
+    .notes ul { padding-left: 16px; font-size: 12px; line-height: 1.8; }
+    .notes li { margin-bottom: 2px; }
+    .notes code { background: #fff; padding: 1px 5px; border: 1px solid #eee; font-size: 11px; }
+    .notes table { width: 100%; border-collapse: collapse; font-size: 11px; margin: 10px 0; }
+    .notes th { text-align: left; padding: 6px 8px; border-bottom: 2px solid #c8a000; }
+    .notes td { padding: 6px 8px; border-bottom: 1px solid #eee; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ===== HEADER ===== -->
+  <div class="card">
+    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+      <span class="status-light"></span>
+      <span class="heading-accent">Languages</span>
+    </div>
+    <p style="font-size: 12px; color: #888; margin-top: 8px;">
+      Daily exercise mix &mdash; B1 French &mdash; 8 exercises across 4 intensity tiers.
+    </p>
+  </div>
+
+  <!-- ===== MIX DISTRIBUTION ===== -->
+  <div class="stat-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 16px;">
+    <div class="cell">
+      <div class="stat-value" style="color: #2e7d32;">3</div>
+      <div class="stat-label">Quick-fire</div>
+    </div>
+    <div class="cell">
+      <div class="stat-value" style="color: #1565c0;">2</div>
+      <div class="stat-label">Short</div>
+    </div>
+    <div class="cell">
+      <div class="stat-value" style="color: #e65100;">2</div>
+      <div class="stat-label">Extended</div>
+    </div>
+    <div class="cell">
+      <div class="stat-value" style="color: #c62828;">1</div>
+      <div class="stat-label">Free-form</div>
+    </div>
+  </div>
+
+  <!-- ===== PROGRESS ===== -->
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+    <span class="section-title" style="border: none; margin: 0; padding: 0;">Today's Exercises</span>
+    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #666;">
+      <span style="font-size: 18px; font-weight: 600; color: #171717;">0</span>/8
+    </span>
+  </div>
+  <div class="progress-bar" style="margin-bottom: 24px;">
+    <div class="progress-fill" style="width: 0%;"></div>
+  </div>
+
+  <!-- ===== REVIEWS ===== -->
+  <div class="section-id" style="margin-bottom: 10px;">Reviews (2)</div>
+
+  <!-- Review 1: Quick conjugation -->
+  <div class="card-sm review">
+    <div class="meta-row">
+      <span class="tag tag-quick">Quick</span>
+      <span class="tag">Conjugation</span>
+      <span class="badge badge-accent">Review</span>
+      <span class="focus">pass&eacute; compos&eacute;</span>
+    </div>
+    <div class="length-row">
+      <span class="length-label">1 word</span>
+      <div class="length-bar"><div class="length-fill l1"></div></div>
+    </div>
+    <p class="question">Conjuguez le verbe &laquo; partir &raquo; au pass&eacute; compos&eacute;, premi&egrave;re personne du singulier.</p>
+    <div class="input-row">
+      <div class="input-wrap" style="flex: 1;">
+        <input type="text" placeholder="Votre r&eacute;ponse..." />
+      </div>
+      <button class="btn-primary">Submit</button>
+    </div>
+    <p class="hint">Enter &rarr; submit</p>
+  </div>
+
+  <!-- Review 2: Short sentence construction -->
+  <div class="card-sm review">
+    <div class="meta-row">
+      <span class="tag tag-short">Short</span>
+      <span class="tag">Sentence</span>
+      <span class="badge badge-accent">Review</span>
+      <span class="focus">subjonctif pr&eacute;sent</span>
+    </div>
+    <div class="length-row">
+      <span class="length-label">1-2 sentences</span>
+      <div class="length-bar"><div class="length-fill l2"></div></div>
+    </div>
+    <p class="question">&Eacute;crivez une phrase en utilisant le subjonctif avec l&rsquo;expression &laquo; il faut que &raquo; et le verbe &laquo; savoir &raquo;.</p>
+    <div class="input-row">
+      <div class="input-wrap" style="flex: 1;">
+        <textarea rows="2" placeholder="Votre r&eacute;ponse..."></textarea>
+      </div>
+      <button class="btn-primary" style="align-self: flex-end;">Submit</button>
+    </div>
+    <p class="hint">Shift+Enter &rarr; new line &nbsp;&bull;&nbsp; Cmd+Enter &rarr; submit</p>
+  </div>
+
+  <!-- ===== NEW EXERCISES ===== -->
+  <div class="section-id" style="margin-bottom: 10px; margin-top: 20px;">Exercises (6)</div>
+
+  <!-- Exercise 1: Quick fill-in-blank -->
+  <div class="card-sm">
+    <div class="meta-row">
+      <span class="tag tag-quick">Quick</span>
+      <span class="tag">Fill Blank</span>
+      <span class="focus">pronoms relatifs</span>
+    </div>
+    <div class="length-row">
+      <span class="length-label">1-2 words</span>
+      <div class="length-bar"><div class="length-fill l1"></div></div>
+    </div>
+    <p class="question">Le livre ___ je t&rsquo;ai parl&eacute; est tr&egrave;s int&eacute;ressant.</p>
+    <div class="input-row">
+      <div class="input-wrap" style="flex: 1;">
+        <input type="text" placeholder="Remplissez le blanc..." />
+      </div>
+      <button class="btn-primary">Submit</button>
+    </div>
+    <p class="hint">Enter &rarr; submit</p>
+  </div>
+
+  <!-- Exercise 2: Quick vocabulary -->
+  <div class="card-sm">
+    <div class="meta-row">
+      <span class="tag tag-quick">Quick</span>
+      <span class="tag">Vocabulary</span>
+      <span class="focus">synonymes courants</span>
+    </div>
+    <div class="length-row">
+      <span class="length-label">1 word</span>
+      <div class="length-bar"><div class="length-fill l1"></div></div>
+    </div>
+    <p class="question">Quel est un synonyme du mot &laquo; cependant &raquo; ?</p>
+    <div class="input-row">
+      <div class="input-wrap" style="flex: 1;">
+        <input type="text" placeholder="Votre r&eacute;ponse..." />
+      </div>
+      <button class="btn-primary">Submit</button>
+    </div>
+    <p class="hint">Enter &rarr; submit</p>
+  </div>
+
+  <!-- Exercise 3: Short error correction -->
+  <div class="card-sm">
+    <div class="meta-row">
+      <span class="tag tag-short">Short</span>
+      <span class="tag">Error Correction</span>
+      <span class="focus">accord du participe pass&eacute;</span>
+    </div>
+    <div class="length-row">
+      <span class="length-label">1-2 sentences</span>
+      <div class="length-bar"><div class="length-fill l2"></div></div>
+    </div>
+    <p class="question">Trouvez et corrigez les erreurs dans la phrase suivante :
+
+&laquo; Les fleurs que j&rsquo;ai achet&eacute; au march&eacute; sont tr&egrave;s belle et ils sentent bon. &raquo;</p>
+    <div class="input-row">
+      <div class="input-wrap" style="flex: 1;">
+        <textarea rows="2" placeholder="&Eacute;crivez la phrase corrig&eacute;e..."></textarea>
+      </div>
+      <button class="btn-primary" style="align-self: flex-end;">Submit</button>
+    </div>
+    <p class="hint">Shift+Enter &rarr; new line &nbsp;&bull;&nbsp; Cmd+Enter &rarr; submit</p>
+  </div>
+
+  <!-- Exercise 4: Extended situational -->
+  <div class="card-sm">
+    <div class="meta-row">
+      <span class="tag tag-extended">Extended</span>
+      <span class="tag">Situational</span>
+      <span class="focus">conditionnel + politesse</span>
+    </div>
+    <div class="length-row">
+      <span class="length-label">3-5 sentences</span>
+      <div class="length-bar"><div class="length-fill l3"></div></div>
+    </div>
+    <p class="question">Vous &ecirc;tes dans un h&ocirc;tel en France. Votre chambre a un probl&egrave;me (choisissez lequel). &Eacute;crivez ce que vous diriez &agrave; la r&eacute;ception pour expliquer le probl&egrave;me et demander une solution.</p>
+    <div>
+      <div class="input-wrap">
+        <textarea rows="4" placeholder="&Eacute;crivez votre r&eacute;ponse (3-5 phrases)..."></textarea>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+        <span class="word-count">0 words &mdash; target: 40-80</span>
+        <button class="btn-primary">Submit</button>
+      </div>
+    </div>
+    <p class="hint">Shift+Enter &rarr; new line &nbsp;&bull;&nbsp; Cmd+Enter &rarr; submit</p>
+  </div>
+
+  <!-- Exercise 5: Extended reading comprehension -->
+  <div class="card-sm">
+    <div class="meta-row">
+      <span class="tag tag-extended">Extended</span>
+      <span class="tag">Reading Comprehension</span>
+      <span class="focus">compr&eacute;hension &eacute;crite</span>
+    </div>
+    <div class="length-row">
+      <span class="length-label">3-5 sentences</span>
+      <div class="length-bar"><div class="length-fill l3"></div></div>
+    </div>
+    <div class="passage">
+      Marie habite &agrave; Lyon depuis cinq ans. Chaque matin, elle prend le tramway pour aller &agrave; son bureau dans le centre-ville. Hier, le tramway &eacute;tait en panne, alors elle a d&ucirc; prendre le bus. Elle est arriv&eacute;e en retard et son patron n&rsquo;&eacute;tait pas content. Marie a d&eacute;cid&eacute; d&rsquo;acheter un v&eacute;lo pour &eacute;viter ce genre de situation &agrave; l&rsquo;avenir.
+    </div>
+    <p class="question">R&eacute;pondez aux questions suivantes en phrases compl&egrave;tes :
+1. Pourquoi Marie a-t-elle pris le bus hier ?
+2. Quelle solution a-t-elle trouv&eacute;e ?
+3. &Agrave; votre avis, est-ce une bonne d&eacute;cision ? Pourquoi ?</p>
+    <div>
+      <div class="input-wrap">
+        <textarea rows="5" placeholder="R&eacute;pondez en phrases compl&egrave;tes..."></textarea>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+        <span class="word-count">0 words &mdash; target: 50-100</span>
+        <button class="btn-primary">Submit</button>
+      </div>
+    </div>
+    <p class="hint">Shift+Enter &rarr; new line &nbsp;&bull;&nbsp; Cmd+Enter &rarr; submit</p>
+  </div>
+
+  <!-- Exercise 6: FREE-FORM writing -->
+  <div class="card-sm freeform">
+    <div class="meta-row">
+      <span class="tag tag-freeform">Free-form</span>
+      <span class="tag">Journal Entry</span>
+      <span class="focus">expression &eacute;crite libre</span>
+    </div>
+    <div class="length-row">
+      <span class="length-label" style="color: #c62828;">8-10 sentences</span>
+      <div class="length-bar"><div class="length-fill l4"></div></div>
+    </div>
+    <p class="question">Racontez un souvenir d&rsquo;enfance qui vous a marqu&eacute;. D&eacute;crivez o&ugrave; vous &eacute;tiez, ce qui s&rsquo;est pass&eacute;, et pourquoi ce moment est important pour vous.
+
+Utilisez au moins : l&rsquo;imparfait (description), le pass&eacute; compos&eacute; (actions), et 2-3 connecteurs logiques (donc, pourtant, d&rsquo;abord, ensuite, finalement...).</p>
+    <div>
+      <div class="input-wrap" style="background: var(--accent-color-dark);">
+        <textarea rows="8" placeholder="&Eacute;crivez librement (8-10 phrases)..."></textarea>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+        <span class="word-count">0 words &mdash; target: 100-150</span>
+        <button class="btn-primary">Submit</button>
+      </div>
+    </div>
+    <p class="hint" style="color: #999;">This is your main writing exercise. Take your time.</p>
+  </div>
+
+  <!-- ===== DESIGN NOTES ===== -->
+  <div class="notes">
+    <h3>Design Notes &mdash; Daily Mix Strategy</h3>
+    <ul>
+      <li><strong>4 tiers of response length</strong>, each with different UI treatment:</li>
+    </ul>
+    <table>
+      <thead>
+        <tr>
+          <th>Tier</th>
+          <th>Response</th>
+          <th>Input UI</th>
+          <th>Exercise Types</th>
+          <th style="text-align:center;">Daily</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag tag-quick" style="font-size:9px; padding: 2px 6px;">Quick</span></td>
+          <td>1-2 words</td>
+          <td><code>&lt;input&gt;</code> + Enter</td>
+          <td>fill_blank, conjugation, vocabulary</td>
+          <td style="text-align:center;">3</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-short" style="font-size:9px; padding: 2px 6px;">Short</span></td>
+          <td>1-2 sentences</td>
+          <td><code>&lt;textarea rows=2&gt;</code></td>
+          <td>sentence_construction, error_correction, grammar</td>
+          <td style="text-align:center;">2</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-extended" style="font-size:9px; padding: 2px 6px;">Extended</span></td>
+          <td>3-5 sentences</td>
+          <td><code>&lt;textarea rows=4&gt;</code> + word count</td>
+          <td>situational, reading_comprehension, dialogue</td>
+          <td style="text-align:center;">2</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-freeform" style="font-size:9px; padding: 2px 6px;">Free-form</span></td>
+          <td>8-10 sentences</td>
+          <td><code>&lt;textarea rows=8&gt;</code> + word count</td>
+          <td>journal_entry, opinion_essay, story_continuation, letter_writing</td>
+          <td style="text-align:center;">1</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li><strong>New exercise types to add:</strong>
+        <ul>
+          <li><code>error_correction</code> &mdash; find/fix errors in a passage</li>
+          <li><code>situational</code> &mdash; real-life scenario, write what you'd say</li>
+          <li><code>dialogue</code> &mdash; write a conversation for a situation</li>
+          <li><code>journal_entry</code> &mdash; personal writing on a theme</li>
+          <li><code>opinion_essay</code> &mdash; argue a position</li>
+          <li><code>story_continuation</code> &mdash; continue from a prompt</li>
+          <li><code>letter_writing</code> &mdash; formal/informal letter</li>
+        </ul>
+      </li>
+      <li><strong>Backend generates per exercise:</strong> <code>response_format</code> (<code>"single_line"</code> | <code>"short_text"</code> | <code>"long_text"</code> | <code>"free_form"</code>) and <code>word_target</code></li>
+      <li><strong>Grading scales with length:</strong> free-form gets richer feedback on structure, flow, cohesion</li>
+      <li><strong>Reviews can be any tier</strong> &mdash; failed quick-fires may upgrade to short/extended for deeper practice</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

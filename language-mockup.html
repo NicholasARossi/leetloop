@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeetLoop - Megaview Tabs Mockup</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #1a1a1a; }
+
+  /* ===== TOP TAB BAR (the megaview switcher) ===== */
+  .topbar { display: flex; align-items: stretch; background: #111; height: 44px; }
+  .topbar .logo { padding: 0 20px; display: flex; align-items: center; font-weight: 900; font-size: 15px; letter-spacing: 2px; color: #fff; border-right: 1px solid #333; }
+  .topbar .tabs { display: flex; flex: 1; }
+  .topbar .tab { display: flex; align-items: center; gap: 8px; padding: 0 24px; font-size: 13px; font-weight: 600; color: #888; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.15s; text-decoration: none; }
+  .topbar .tab:hover { color: #ccc; background: #1a1a1a; }
+  .topbar .tab.active-code { color: #fff; border-bottom-color: #3498db; background: #1a1a1a; }
+  .topbar .tab.active-lang { color: #fff; border-bottom-color: #e74c3c; background: #1a1a1a; }
+  .topbar .tab.active-sd { color: #fff; border-bottom-color: #f39c12; background: #1a1a1a; }
+  .topbar .tab .icon { font-size: 16px; }
+  .topbar .badge { background: #e74c3c; color: #fff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 8px; margin-left: 4px; }
+
+  /* ===== APP SHELL ===== */
+  .app { display: flex; min-height: calc(100vh - 44px); }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar { width: 220px; background: #fff; border-right: 2px solid #e0e0e0; flex-shrink: 0; padding-top: 8px; }
+  .sidebar .section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #aaa; font-weight: 700; padding: 16px 20px 8px; }
+  .sidebar nav a { display: flex; align-items: center; gap: 10px; padding: 9px 20px; font-size: 13px; color: #666; text-decoration: none; border-left: 3px solid transparent; transition: all 0.1s; }
+  .sidebar nav a:hover { background: #f9f9f9; color: #000; }
+  .sidebar nav a.active { border-left-color: #e74c3c; color: #000; font-weight: 600; background: #fef5f5; }
+  .sidebar nav a .nav-icon { width: 18px; text-align: center; font-size: 14px; }
+  .sidebar nav a .nav-badge { margin-left: auto; background: #fee; color: #e74c3c; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 8px; }
+  .sidebar .track-info { margin: 16px 16px 0; padding: 12px; background: #fef5f5; border: 1px solid #f0d0d0; }
+  .sidebar .track-info .track-name { font-size: 13px; font-weight: 700; }
+  .sidebar .track-info .track-meta { font-size: 11px; color: #888; margin-top: 2px; }
+  .sidebar .track-info .track-progress { height: 4px; background: #eee; margin-top: 8px; }
+  .sidebar .track-info .track-progress-fill { height: 100%; background: #e74c3c; }
+
+  /* ===== MAIN CONTENT ===== */
+  .main { flex: 1; padding: 32px; max-width: 960px; }
+
+  /* ===== REUSABLE COMPONENTS ===== */
+  .card { background: #fff; border: 2px solid #e0e0e0; padding: 24px; margin-bottom: 16px; }
+  .card-accent { border-color: #e74c3c; }
+  .card h2 { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+  .card h3 { font-size: 12px; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; color: #888; }
+  .tag { display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600; border: 1px solid; }
+  .tag-coral { background: #e74c3c; color: #fff; border-color: #e74c3c; }
+  .tag-gray { background: #f0f0f0; color: #555; border-color: #ccc; }
+  .tag-green { background: #d4edda; color: #155724; border-color: #c3e6cb; }
+  .tag-blue { background: #d1ecf1; color: #0c5460; border-color: #bee5eb; }
+  .progress { height: 6px; background: #eee; margin: 8px 0; }
+  .progress-fill { height: 100%; background: #e74c3c; }
+  .btn { display: inline-block; padding: 8px 16px; font-size: 12px; font-weight: 700; cursor: pointer; border: none; text-decoration: none; }
+  .btn-coral { background: #e74c3c; color: #fff; }
+  .btn-dark { background: #333; color: #fff; }
+  .btn-outline { background: #fff; color: #333; border: 2px solid #333; }
+  .text-sm { font-size: 13px; }
+  .text-xs { font-size: 11px; }
+  .text-gray { color: #888; }
+  .text-coral { color: #e74c3c; }
+  .text-green { color: #27ae60; }
+  .mb-2 { margin-bottom: 8px; }
+  .mb-4 { margin-bottom: 16px; }
+  .mt-4 { margin-top: 16px; }
+  .flex { display: flex; align-items: center; }
+  .between { justify-content: space-between; }
+  .gap { gap: 12px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .divider { border-top: 1px solid #eee; padding-top: 16px; margin-top: 16px; }
+  .exercise-item { padding: 12px 14px; border: 2px solid #e0e0e0; margin-bottom: 8px; cursor: pointer; transition: all 0.15s; }
+  .exercise-item:hover { border-color: #999; transform: translateX(3px); }
+  .exercise-item .dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; margin-right: 12px; flex-shrink: 0; }
+  .exercise-item .dot.active { background: #e74c3c; }
+  .score-circle { width: 56px; height: 56px; border-radius: 50%; border: 3px solid #e74c3c; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800; flex-shrink: 0; }
+
+  /* ===== ANNOTATIONS ===== */
+  .annotation { background: #fff3cd; border-left: 4px solid #ffc107; padding: 12px 16px; font-size: 12px; margin-bottom: 20px; }
+  .annotation strong { color: #856404; }
+  .page-title { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+  .page-subtitle { font-size: 13px; color: #888; margin-bottom: 24px; }
+
+  /* ===== HIDDEN TOGGLE ===== */
+  .view { display: none; }
+  .view.visible { display: flex; }
+  .topbar-wrapper.hidden { display: none; }
+  .topbar-wrapper.visible { display: block; }
+</style>
+</head>
+<body>
+
+<!-- ================================================================== -->
+<!-- ANNOTATION: What the user is looking at -->
+<!-- ================================================================== -->
+<div style="background:#2c3e50; color:#fff; padding:16px 24px; font-size:13px;">
+  <strong style="font-size:15px;">LeetLoop Megaview Architecture</strong>
+  <p style="margin-top:4px; color:#bdc3c7;">The top bar switches between entirely different apps. Each megaview has its own sidebar navigation, pages, and content. Click the tabs to see each mode.</p>
+</div>
+
+<!-- ================================================================== -->
+<!-- TOP TAB BAR - Always visible, switches megaviews -->
+<!-- ================================================================== -->
+<div class="topbar">
+  <div class="logo">LEETLOOP</div>
+  <div class="tabs">
+    <a class="tab active-code" id="tab-code" onclick="switchView('code')">
+      <span class="icon">&#9889;</span> LeetCode
+    </a>
+    <a class="tab" id="tab-lang" onclick="switchView('lang')">
+      <span class="icon">&#127760;</span> Languages
+      <span class="badge">2</span>
+    </a>
+    <a class="tab" id="tab-sd" onclick="switchView('sd')">
+      <span class="icon">&#9881;</span> System Design
+    </a>
+  </div>
+</div>
+
+<!-- ================================================================== -->
+<!-- MEGAVIEW 1: LEETCODE (current default view) -->
+<!-- ================================================================== -->
+<div class="view visible" id="view-code">
+  <div class="sidebar">
+    <div class="section-label">LeetCode</div>
+    <nav>
+      <a href="#" class="active"><span class="nav-icon">&#9889;</span> Dashboard</a>
+      <a href="#"><span class="nav-icon">&#127919;</span> Objective</a>
+      <a href="#"><span class="nav-icon">&#128506;</span> Path Progress</a>
+      <a href="#"><span class="nav-icon">&#128200;</span> Mastery</a>
+      <a href="#"><span class="nav-icon">&#128337;</span> Reviews <span class="nav-badge">3</span></a>
+      <a href="#"><span class="nav-icon">&#128196;</span> Submissions</a>
+      <a href="#"><span class="nav-icon">&#128172;</span> Coach</a>
+    </nav>
+  </div>
+  <div class="main">
+    <div class="annotation"><strong>Megaview: LeetCode</strong> &mdash; The current default view. Sidebar shows LeetCode-specific navigation (Objective, Path, Mastery, Reviews, Submissions, Coach).</div>
+    <div class="page-title">Your Daily Mission</div>
+    <p class="page-subtitle">Sunday, February 16</p>
+    <div class="card">
+      <h3>Today's Focus</h3>
+      <h2>Dynamic Programming fundamentals &mdash; practice bottom-up tabulation</h2>
+      <p class="text-sm text-gray">Balance: 2 new problems + 1 review</p>
+      <div class="progress" style="margin-top:16px;"><div class="progress-fill" style="width:33%;"></div></div>
+      <p class="text-xs text-gray mt-4">1 of 3 completed</p>
+    </div>
+    <div class="card">
+      <h3>Problems for Today</h3>
+      <div class="exercise-item"><div class="flex"><div class="dot active"></div><div><div style="font-weight:600; font-size:13px;">Two Sum</div><div class="text-xs text-gray">Arrays &bull; Easy &bull; Completed</div></div></div></div>
+      <div class="exercise-item"><div class="flex"><div class="dot"></div><div><div style="font-weight:600; font-size:13px;">Climbing Stairs</div><div class="text-xs text-gray">Dynamic Programming &bull; Easy</div></div></div></div>
+      <div class="exercise-item"><div class="flex"><div class="dot"></div><div><div style="font-weight:600; font-size:13px;">Merge Intervals (Review)</div><div class="text-xs text-gray">Sorting &bull; Medium &bull; Spaced repetition</div></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================== -->
+<!-- MEGAVIEW 2: LANGUAGES (entirely different sidebar + content) -->
+<!-- ================================================================== -->
+<div class="view" id="view-lang">
+  <div class="sidebar">
+    <div class="section-label">Languages</div>
+    <nav>
+      <a href="#" class="active" onclick="showLangPage('dashboard')"><span class="nav-icon">&#127968;</span> Dashboard</a>
+      <a href="#" onclick="showLangPage('practice')"><span class="nav-icon">&#9998;</span> Practice</a>
+      <a href="#" onclick="showLangPage('reviews')"><span class="nav-icon">&#128337;</span> Reviews <span class="nav-badge">2</span></a>
+      <a href="#" onclick="showLangPage('history')"><span class="nav-icon">&#128203;</span> History</a>
+      <a href="#" onclick="showLangPage('tracks')"><span class="nav-icon">&#128218;</span> All Tracks</a>
+    </nav>
+
+    <!-- Active track widget in sidebar -->
+    <div class="track-info">
+      <div class="track-name">French Verbs</div>
+      <div class="track-meta">French B1 &bull; 13 chapters</div>
+      <div class="track-progress"><div class="track-progress-fill" style="width:31%;"></div></div>
+      <div class="text-xs text-gray" style="margin-top:4px;">4 / 13 topics</div>
+    </div>
+
+    <div class="section-label" style="margin-top:20px;">Chapters</div>
+    <nav>
+      <a href="#" style="font-size:12px; padding:6px 20px; color:#27ae60;">
+        <span class="nav-icon" style="font-size:12px;">&#10003;</span> 1. Present Tense
+      </a>
+      <a href="#" style="font-size:12px; padding:6px 20px; color:#27ae60;">
+        <span class="nav-icon" style="font-size:12px;">&#10003;</span> 2. Irregular I
+      </a>
+      <a href="#" style="font-size:12px; padding:6px 20px; color:#27ae60;">
+        <span class="nav-icon" style="font-size:12px;">&#10003;</span> 3. Irregular II
+      </a>
+      <a href="#" style="font-size:12px; padding:6px 20px; color:#27ae60;">
+        <span class="nav-icon" style="font-size:12px;">&#10003;</span> 4. Imperative
+      </a>
+      <a href="#" class="active" style="font-size:12px; padding:6px 20px; border-left-color:#e74c3c;">
+        <span class="nav-icon" style="font-size:12px;">&#9654;</span> 5. Pass&eacute; Compos&eacute;
+      </a>
+      <a href="#" style="font-size:12px; padding:6px 20px;">
+        <span class="nav-icon" style="font-size:12px;">&#9679;</span> 6. Imperfect
+      </a>
+      <a href="#" style="font-size:12px; padding:6px 20px;">
+        <span class="nav-icon" style="font-size:12px;">&#9679;</span> 7. Reflexive Verbs
+      </a>
+      <a href="#" style="font-size:12px; padding:6px 20px;">
+        <span class="nav-icon" style="font-size:12px;">&#9679;</span> 8. Future / Cond.
+      </a>
+      <a href="#" style="font-size:12px; padding:6px 20px;">
+        <span class="nav-icon" style="font-size:12px;">&#9679;</span> 9. Compound Tenses
+      </a>
+      <a href="#" style="font-size:12px; padding:6px 20px;">
+        <span class="nav-icon" style="font-size:12px;">&#9679;</span> 10. Subjunctive I
+      </a>
+      <a href="#" style="font-size:12px; padding:6px 20px;">
+        <span class="nav-icon" style="font-size:12px;">&#9679;</span> 11. Subjunctive II
+      </a>
+      <a href="#" style="font-size:12px; padding:6px 20px;">
+        <span class="nav-icon" style="font-size:12px;">&#9679;</span> 12. Participle/Inf.
+      </a>
+      <a href="#" style="font-size:12px; padding:6px 20px;">
+        <span class="nav-icon" style="font-size:12px;">&#9679;</span> 13. Literary Tenses
+      </a>
+    </nav>
+  </div>
+
+  <div class="main">
+    <div class="annotation"><strong>Megaview: Languages</strong> &mdash; The entire sidebar has changed. Top nav = Dashboard, Practice, Reviews, History, Tracks. Below that = the active track's chapters with completion status. The content area is 100% language-focused.</div>
+
+    <!-- Language Dashboard -->
+    <div class="page-title">Language Dashboard</div>
+    <p class="page-subtitle">French Verbs &bull; B1 Level &bull; Full Immersion</p>
+
+    <div class="grid-2">
+      <div>
+        <!-- Today's exercise -->
+        <div class="card card-accent">
+          <div class="flex between mb-2">
+            <h3 style="margin:0;">Today's Exercise</h3>
+            <span class="tag tag-coral">Conjugation</span>
+          </div>
+          <p class="text-sm mb-2" style="font-weight:600;">5 The Pass&eacute; Compos&eacute;</p>
+          <p class="text-xs text-gray mb-4">pass&eacute; compos&eacute;, auxiliaire &ecirc;tre, accord du participe</p>
+
+          <div style="background:#fef5f5; padding:16px; border:1px solid #f0d0d0; margin-bottom:16px;">
+            <p style="font-size:14px; line-height:1.7; font-style:italic;">
+              Conjuguez le verbe &laquo; aller &raquo; au pass&eacute; compos&eacute; pour les personnes suivantes :
+            </p>
+            <ul style="margin-top:10px; font-size:14px; line-height:2; padding-left:20px;">
+              <li>je ___</li>
+              <li>nous ___</li>
+              <li>elles ___</li>
+            </ul>
+          </div>
+
+          <textarea style="width:100%; min-height:80px; padding:10px; border:2px solid #ddd; font-size:13px; font-family:inherit; resize:vertical;" placeholder="Tapez votre r&eacute;ponse ici..."></textarea>
+          <div class="flex between mt-4">
+            <span class="text-xs text-gray">0 words</span>
+            <button class="btn btn-coral">Submit Answer</button>
+          </div>
+        </div>
+
+        <!-- Recent scores -->
+        <div class="card">
+          <h3>Recent Scores</h3>
+          <div style="display:flex; gap:8px; margin-top:8px;">
+            <div style="flex:1; text-align:center; padding:12px; background:#d4edda; border:1px solid #c3e6cb;">
+              <div style="font-size:20px; font-weight:800; color:#155724;">8.5</div>
+              <div class="text-xs text-gray">Ch. 4</div>
+            </div>
+            <div style="flex:1; text-align:center; padding:12px; background:#d4edda; border:1px solid #c3e6cb;">
+              <div style="font-size:20px; font-weight:800; color:#155724;">9.0</div>
+              <div class="text-xs text-gray">Ch. 3</div>
+            </div>
+            <div style="flex:1; text-align:center; padding:12px; background:#fff3cd; border:1px solid #ffc107;">
+              <div style="font-size:20px; font-weight:800; color:#856404;">6.5</div>
+              <div class="text-xs text-gray">Ch. 2</div>
+            </div>
+            <div style="flex:1; text-align:center; padding:12px; background:#d4edda; border:1px solid #c3e6cb;">
+              <div style="font-size:20px; font-weight:800; color:#155724;">7.0</div>
+              <div class="text-xs text-gray">Ch. 1</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <!-- Reviews due -->
+        <div class="card">
+          <div class="flex between mb-2">
+            <h3 style="margin:0;">Reviews Due</h3>
+            <span class="tag tag-coral">2 due</span>
+          </div>
+          <div class="exercise-item">
+            <div class="flex between">
+              <div class="flex"><div class="dot active"></div><div><div style="font-weight:600; font-size:13px;">2 Irregular Verbs (Part I)</div><div class="text-xs text-gray">Weak: &ecirc;tre/avoir conjugation</div></div></div>
+              <span class="btn btn-dark" style="font-size:11px;">Review</span>
+            </div>
+          </div>
+          <div class="exercise-item">
+            <div class="flex between">
+              <div class="flex"><div class="dot active"></div><div><div style="font-weight:600; font-size:13px;">4 The Imperative</div><div class="text-xs text-gray">Weak: negative imperatives</div></div></div>
+              <span class="btn btn-dark" style="font-size:11px;">Review</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="card">
+          <h3>This Week</h3>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px;">
+            <div style="padding:16px; background:#f9f9f9; text-align:center;">
+              <div style="font-size:28px; font-weight:800;">7</div>
+              <div class="text-xs text-gray">Exercises</div>
+            </div>
+            <div style="padding:16px; background:#f9f9f9; text-align:center;">
+              <div style="font-size:28px; font-weight:800;">7.8</div>
+              <div class="text-xs text-gray">Avg Score</div>
+            </div>
+            <div style="padding:16px; background:#f9f9f9; text-align:center;">
+              <div style="font-size:28px; font-weight:800;">4</div>
+              <div class="text-xs text-gray">Topics Done</div>
+            </div>
+            <div style="padding:16px; background:#f9f9f9; text-align:center;">
+              <div style="font-size:28px; font-weight:800;">5</div>
+              <div class="text-xs text-gray">Day Streak</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Exercise type picker -->
+        <div class="card">
+          <h3>Quick Practice</h3>
+          <p class="text-xs text-gray mb-4">Choose an exercise type for the current topic</p>
+          <div style="display:flex; flex-wrap:wrap; gap:6px;">
+            <span class="tag tag-coral" style="cursor:pointer;">Conjugation</span>
+            <span class="tag tag-gray" style="cursor:pointer;">Grammar</span>
+            <span class="tag tag-gray" style="cursor:pointer;">Fill Blank</span>
+            <span class="tag tag-gray" style="cursor:pointer;">Vocabulary</span>
+            <span class="tag tag-gray" style="cursor:pointer;">Sentence</span>
+            <span class="tag tag-gray" style="cursor:pointer;">Reading</span>
+            <span class="tag tag-gray" style="cursor:pointer;">Dictation</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================== -->
+<!-- MEGAVIEW 3: SYSTEM DESIGN (its own sidebar too) -->
+<!-- ================================================================== -->
+<div class="view" id="view-sd">
+  <div class="sidebar">
+    <div class="section-label">System Design</div>
+    <nav>
+      <a href="#" class="active"><span class="nav-icon">&#127968;</span> Dashboard</a>
+      <a href="#"><span class="nav-icon">&#9998;</span> Practice Session</a>
+      <a href="#"><span class="nav-icon">&#128337;</span> Reviews <span class="nav-badge">1</span></a>
+      <a href="#"><span class="nav-icon">&#128203;</span> History</a>
+      <a href="#"><span class="nav-icon">&#128218;</span> All Tracks</a>
+    </nav>
+    <div class="track-info" style="border-color:#f0d0a0; background:#fef9f0;">
+      <div class="track-name">Reliable ML</div>
+      <div class="track-meta">MLE Track &bull; 14 chapters</div>
+      <div class="track-progress"><div class="track-progress-fill" style="width:50%; background:#f39c12;"></div></div>
+      <div class="text-xs text-gray" style="margin-top:4px;">7 / 14 topics</div>
+    </div>
+  </div>
+  <div class="main">
+    <div class="annotation"><strong>Megaview: System Design</strong> &mdash; Same concept. Sidebar becomes System Design-specific (Dashboard, Practice Session, Reviews, History, Tracks). Each megaview is its own world.</div>
+    <div class="page-title">System Design Dashboard</div>
+    <p class="page-subtitle">Reliable ML &bull; MLE Track</p>
+    <div class="card">
+      <h3>Next Topic</h3>
+      <h2>Chapter 8: Monitoring ML Models in Production</h2>
+      <p class="text-sm text-gray">Key concepts: data drift, model decay, alerting, feature stores</p>
+      <div style="margin-top:16px;">
+        <button class="btn" style="background:#f39c12; color:#fff;">Start Session</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function switchView(view) {
+  // Hide all views
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('visible'));
+  // Deactivate all tabs
+  document.querySelectorAll('.topbar .tab').forEach(t => {
+    t.classList.remove('active-code', 'active-lang', 'active-sd');
+  });
+  // Show selected view and activate tab
+  document.getElementById('view-' + view).classList.add('visible');
+  const tab = document.getElementById('tab-' + view);
+  if (view === 'code') tab.classList.add('active-code');
+  if (view === 'lang') tab.classList.add('active-lang');
+  if (view === 'sd') tab.classList.add('active-sd');
+}
+</script>
+
+</body>
+</html>

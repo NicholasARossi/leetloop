@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeetLoop — Language Exercise Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ===== RESET + BASE (matches globals.css) ===== */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --accent-color: #FF8888;
+    --accent-rgb: 255 136 136;
+    --accent-color-dark: #993333;
+    --accent-color-20: #FF888833;
+    --chamfer-sm: 8px;
+    --chamfer-md: 16px;
+  }
+  body {
+    font-family: 'IBM Plex Mono', 'Consolas', monospace;
+    background-color: #d3d3d3;
+    background-size: 50px 50px;
+    background-image: linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent);
+    color: #171717;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  /* ===== CARD (chamfered corners, stacked border) ===== */
+  .card {
+    padding: 24px;
+    position: relative;
+    background: black;
+    clip-path: polygon(var(--chamfer-md) 0, 100% 0, 100% calc(100% - var(--chamfer-md)), calc(100% - var(--chamfer-md)) 100%, 0 100%, 0 var(--chamfer-md));
+    margin-bottom: 16px;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    background: white;
+    clip-path: polygon(calc(var(--chamfer-md) - 2px) 0, 100% 0, 100% calc(100% - var(--chamfer-md) + 2px), calc(100% - var(--chamfer-md) + 2px) 100%, 0 100%, 0 calc(var(--chamfer-md) - 2px));
+    z-index: -1;
+  }
+
+  /* ===== CARD-ALT (alternate chamfer) ===== */
+  .card-alt {
+    padding: 24px;
+    position: relative;
+    background: black;
+    clip-path: polygon(0 0, calc(100% - var(--chamfer-md)) 0, 100% var(--chamfer-md), 100% 100%, var(--chamfer-md) 100%, 0 calc(100% - var(--chamfer-md)));
+    margin-bottom: 16px;
+  }
+  .card-alt::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    background: white;
+    clip-path: polygon(0 0, calc(100% - var(--chamfer-md) + 2px) 0, 100% calc(var(--chamfer-md) - 2px), 100% 100%, calc(var(--chamfer-md) - 2px) 100%, 0 calc(100% - var(--chamfer-md) + 2px));
+    z-index: -1;
+  }
+
+  /* ===== LIST ITEM (interactive card) ===== */
+  .list-item {
+    padding: 16px;
+    margin-bottom: 12px;
+    position: relative;
+    background: black;
+    clip-path: polygon(var(--chamfer-md) 0, 100% 0, 100% calc(100% - var(--chamfer-md)), calc(100% - var(--chamfer-md)) 100%, 0 100%, 0 var(--chamfer-md));
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+  .list-item::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    background: white;
+    clip-path: polygon(calc(var(--chamfer-md) - 2px) 0, 100% 0, 100% calc(100% - var(--chamfer-md) + 2px), calc(100% - var(--chamfer-md) + 2px) 100%, 0 100%, 0 calc(var(--chamfer-md) - 2px));
+    z-index: -1;
+    transition: background 0.15s;
+  }
+  .list-item:hover { background: var(--accent-color); }
+
+  /* ===== TAG (chamfered chip) ===== */
+  .tag {
+    display: inline-block;
+    padding: 4px 12px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #525252;
+    position: relative;
+    background: black;
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  }
+  .tag::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    background: #f5f5f5;
+    clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+    z-index: -1;
+  }
+  .tag-accent::before { background: var(--accent-color); }
+  .tag-accent { color: black; }
+
+  /* ===== BUTTONS ===== */
+  .btn-primary {
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    position: relative;
+    background: black;
+    color: black;
+    clip-path: polygon(var(--chamfer-sm) 0, 100% 0, 100% calc(100% - var(--chamfer-sm)), calc(100% - var(--chamfer-sm)) 100%, 0 100%, 0 var(--chamfer-sm));
+  }
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    background: white;
+    clip-path: polygon(calc(var(--chamfer-sm) - 2px) 0, 100% 0, 100% calc(100% - var(--chamfer-sm) + 2px), calc(100% - var(--chamfer-sm) + 2px) 100%, 0 100%, 0 calc(var(--chamfer-sm) - 2px));
+    z-index: -1;
+    transition: background 0.15s;
+  }
+  .btn-primary:hover::before { background: var(--accent-color); }
+
+  /* ===== BADGE (small chamfered) ===== */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    position: relative;
+    background: black;
+    clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+  }
+  .badge::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    clip-path: polygon(3px 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px);
+    z-index: -1;
+  }
+  .badge-accent { color: black; }
+  .badge-accent::before { background: var(--accent-color); }
+  .badge-default { color: #525252; }
+  .badge-default::before { background: #f0f0f0; }
+  .badge-pass { color: black; }
+  .badge-pass::before { background: var(--accent-color); }
+  .badge-fail { color: #525252; }
+  .badge-fail::before { background: #e5e5e5; }
+
+  /* ===== SECTION TITLE ===== */
+  .section-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #525252;
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+    border-bottom: 2px solid black;
+  }
+
+  /* ===== HEADING ACCENT (Banquise-style) ===== */
+  .heading-accent {
+    text-transform: uppercase;
+    background-color: var(--accent-color);
+    color: #fff;
+    padding: 4px 12px;
+    display: inline-block;
+    font-weight: 600;
+    font-size: 14px;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  }
+
+  /* ===== STATUS LIGHT ===== */
+  .status-light {
+    width: 10px;
+    height: 10px;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    flex-shrink: 0;
+  }
+  .status-light-active { background-color: var(--accent-color); }
+  .status-light-inactive { background-color: #a3a3a3; }
+
+  /* ===== STAT VALUE ===== */
+  .stat-value { font-size: 32px; color: black; font-weight: normal; }
+  .stat-value-coral { color: var(--accent-color-dark); }
+  .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: #737373; margin-top: 4px; }
+
+  /* ===== SECTION ID ===== */
+  .section-id {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #a3a3a3;
+  }
+  .section-id::before { content: '§ '; color: var(--accent-color); }
+
+  /* ===== PROGRESS BAR ===== */
+  .progress-bar {
+    height: 12px;
+    position: relative;
+    background: black;
+    clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+  }
+  .progress-bar::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    background: #e5e5e5;
+    clip-path: polygon(2px 0, 100% 0, 100% calc(100% - 2px), calc(100% - 2px) 100%, 0 100%, 0 2px);
+    z-index: -1;
+  }
+  .progress-fill {
+    background: var(--accent-color);
+    position: absolute;
+    inset: 2px;
+    right: auto;
+    z-index: 1;
+  }
+
+  /* ===== PANEL SCHEMATIC (octagonal) ===== */
+  .panel-schematic {
+    padding: 16px;
+    position: relative;
+    background: black;
+    clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);
+    margin-bottom: 16px;
+  }
+  .panel-schematic::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    background: white;
+    clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px);
+    z-index: -1;
+  }
+
+  /* ===== CUSTOM: EXPANDABLE SECTION ===== */
+  .expand-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    padding: 0;
+    text-align: left;
+  }
+  .expand-toggle .toggle-hint {
+    font-size: 12px;
+    color: #a3a3a3;
+    flex-shrink: 0;
+  }
+
+  .expand-content {
+    overflow: hidden;
+    transition: max-height 0.2s;
+  }
+
+  /* ===== ANSWER AREA ===== */
+  textarea.answer-input {
+    width: 100%;
+    min-height: 120px;
+    padding: 14px;
+    border: 2px solid black;
+    background: white;
+    font-size: 13px;
+    font-family: 'IBM Plex Mono', monospace;
+    line-height: 1.7;
+    resize: vertical;
+    color: #171717;
+  }
+  textarea.answer-input:focus { outline: none; box-shadow: 0 0 0 2px var(--accent-color); }
+  textarea.answer-input::placeholder { color: #a3a3a3; font-style: italic; }
+
+  /* fill-in inputs */
+  input.fill-input {
+    border: none;
+    border-bottom: 2px solid black;
+    background: transparent;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    text-align: center;
+    width: 140px;
+    padding: 2px 4px;
+    outline: none;
+    color: #171717;
+  }
+  input.fill-input:focus { border-bottom-color: var(--accent-color); }
+  input.fill-input::placeholder { color: #ccc; }
+
+  /* ===== LAYOUT ===== */
+  .container { max-width: 760px; margin: 0 auto; padding: 24px; }
+  .screen { display: none; }
+  .screen.visible { display: block; }
+
+  /* ===== SCREEN NAV ===== */
+  .screen-nav {
+    background: #111;
+    display: flex;
+    align-items: stretch;
+    height: 44px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    overflow-x: auto;
+  }
+  .screen-nav .label {
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #525252;
+    font-weight: 600;
+    border-right: 1px solid #333;
+    white-space: nowrap;
+  }
+  .screen-nav button {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 0 14px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    font-family: 'IBM Plex Mono', monospace;
+    white-space: nowrap;
+    transition: all 0.1s;
+  }
+  .screen-nav button:hover { color: #aaa; background: #1a1a1a; }
+  .screen-nav button.active { color: #fff; border-bottom-color: var(--accent-color); background: #1a1a1a; }
+
+  /* ===== CORRECTION STYLES ===== */
+  .wrong { text-decoration: line-through; color: #a3a3a3; }
+  .right { color: var(--accent-color-dark); font-weight: 600; }
+
+  /* ===== CONCEPT CHIP ===== */
+  .concept-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 500;
+    margin: 3px;
+    border: 2px solid;
+  }
+  .concept-got { border-color: var(--accent-color); background: var(--accent-color-20); color: black; }
+  .concept-missed { border-color: #d4d4d4; background: #f5f5f5; color: #525252; }
+</style>
+</head>
+<body>
+
+<div class="screen-nav">
+  <div class="label">Screens</div>
+  <button class="active" onclick="show('exercise')">Exercise</button>
+  <button onclick="show('fill')">Fill Blank</button>
+  <button onclick="show('reading')">Reading</button>
+  <button onclick="show('result-pass')">Result (Pass)</button>
+  <button onclick="show('result-fail')">Result (Fail)</button>
+  <button onclick="show('reviews')">Reviews</button>
+  <button onclick="show('review-exercise')">Review Exercise</button>
+</div>
+
+<!-- ================================================================== -->
+<!-- SCREEN 1: EXERCISE (Conjugation) — question card + answer card     -->
+<!-- ================================================================== -->
+<div class="screen visible" id="screen-exercise">
+<div class="container">
+
+  <!-- Header card -->
+  <div class="card">
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+      <div class="status-light status-light-active"></div>
+      <span class="heading-accent">EXERCICE</span>
+    </div>
+    <p style="font-size:12px; color:#737373;">
+      French Verbs · B1 · Passé Composé
+    </p>
+  </div>
+
+  <!-- Exercise card with expandable question -->
+  <div class="card">
+    <button class="expand-toggle" onclick="toggle('q1')">
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <span class="tag tag-accent">5. Passé Composé</span>
+        <span class="tag" style="font-size:10px;">Conjugaison</span>
+        <span style="font-size:11px; color:#737373; text-transform:uppercase; letter-spacing:0.05em;">auxiliaire être · accord</span>
+      </div>
+      <span class="toggle-hint" id="q1-hint">Masquer</span>
+    </button>
+
+    <div id="q1-content" style="margin-top:16px;">
+      <!-- Question block — left border, gray bg -->
+      <div style="padding:16px; background:#fafafa; border-left:4px solid black; margin-bottom:16px;">
+        <p style="font-size:13px; line-height:1.8; white-space:pre-wrap;">Consigne : Conjuguez le verbe « aller » au passé composé. Faites attention à l'accord du participe passé avec le sujet.
+
+a) Je ___ hier soir.
+b) Nous ___ au marché.
+c) Elles ___ à la plage.
+d) Il ___ chez le médecin.</p>
+      </div>
+
+      <!-- Key concepts -->
+      <p style="font-size:11px; color:#737373; margin-bottom:6px;">Concepts clés :</p>
+      <div style="display:flex; flex-wrap:wrap; gap:4px;">
+        <span class="tag" style="font-size:10px;">passé composé</span>
+        <span class="tag" style="font-size:10px;">auxiliaire être</span>
+        <span class="tag" style="font-size:10px;">accord du participe</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Answer card -->
+  <div class="card">
+    <p style="font-size:12px; font-weight:600; margin-bottom:10px;">Votre réponse</p>
+    <textarea class="answer-input" placeholder="Tapez votre réponse ici…"></textarea>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+      <span style="font-size:11px; color:#a3a3a3;">0 mots</span>
+      <button class="btn-primary">Soumettre</button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ================================================================== -->
+<!-- SCREEN 2: FILL IN THE BLANK                                        -->
+<!-- ================================================================== -->
+<div class="screen" id="screen-fill">
+<div class="container">
+
+  <div class="card">
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+      <div class="status-light status-light-active"></div>
+      <span class="heading-accent">EXERCICE</span>
+    </div>
+    <p style="font-size:12px; color:#737373;">French Verbs · B1 · L'Imparfait</p>
+  </div>
+
+  <!-- Exercise card -->
+  <div class="card">
+    <button class="expand-toggle" onclick="toggle('q2')">
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <span class="tag tag-accent">6. Imparfait</span>
+        <span class="tag" style="font-size:10px;">Texte à trous</span>
+        <span style="font-size:11px; color:#737373; text-transform:uppercase; letter-spacing:0.05em;">description au passé</span>
+      </div>
+      <span class="toggle-hint" id="q2-hint">Masquer</span>
+    </button>
+
+    <div id="q2-content" style="margin-top:16px;">
+      <div style="padding:16px; background:#fafafa; border-left:4px solid black; margin-bottom:16px;">
+        <p style="font-size:13px; line-height:1.8; font-weight:500; color:#993333; margin-bottom:12px;">
+          Consigne : Complétez chaque phrase avec le verbe entre parenthèses à l'imparfait.
+        </p>
+
+        <div style="font-size:13px; line-height:2.4;">
+          <p>1. Quand j'<input class="fill-input" placeholder="…"> (être) petit, je <input class="fill-input" placeholder="…"> (jouer) dans le jardin.</p>
+          <p>2. Il <input class="fill-input" placeholder="…"> (pleuvoir) souvent quand nous <input class="fill-input" placeholder="…"> (habiter) à Lyon.</p>
+          <p>3. Vous <input class="fill-input" placeholder="…"> (prendre) toujours le bus ?</p>
+          <p>4. Les enfants <input class="fill-input" placeholder="…"> (courir) pendant que leurs parents <input class="fill-input" placeholder="…"> (lire).</p>
+        </div>
+      </div>
+
+      <p style="font-size:11px; color:#737373; margin-bottom:6px;">Concepts clés :</p>
+      <div style="display:flex; flex-wrap:wrap; gap:4px;">
+        <span class="tag" style="font-size:10px;">terminaisons de l'imparfait</span>
+        <span class="tag" style="font-size:10px;">radical (nous au présent)</span>
+        <span class="tag" style="font-size:10px;">verbes irréguliers</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit -->
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <span style="font-size:11px; color:#a3a3a3;">4 phrases · 7 réponses</span>
+      <button class="btn-primary">Soumettre</button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ================================================================== -->
+<!-- SCREEN 3: READING COMPREHENSION                                    -->
+<!-- ================================================================== -->
+<div class="screen" id="screen-reading">
+<div class="container">
+
+  <div class="card">
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+      <div class="status-light status-light-active"></div>
+      <span class="heading-accent">EXERCICE</span>
+    </div>
+    <p style="font-size:12px; color:#737373;">French Verbs · B1 · Verbes réfléchis</p>
+  </div>
+
+  <!-- Exercise card -->
+  <div class="card">
+    <button class="expand-toggle" onclick="toggle('q3')">
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <span class="tag tag-accent">7. Verbes réfléchis</span>
+        <span class="tag" style="font-size:10px;">Compréhension</span>
+      </div>
+      <span class="toggle-hint" id="q3-hint">Masquer</span>
+    </button>
+
+    <div id="q3-content" style="margin-top:16px;">
+      <!-- Reading passage -->
+      <div style="padding:16px; background:#fafafa; border-left:4px solid black; margin-bottom:16px;">
+        <p style="font-size:11px; color:#993333; font-weight:500; margin-bottom:12px; text-transform:uppercase; letter-spacing:0.05em;">
+          Lisez le texte suivant, puis répondez aux questions.
+        </p>
+        <p style="font-size:13px; line-height:2;">
+          Marie <strong>se réveille</strong> tous les matins à six heures. Elle
+          <strong>se lève</strong> immédiatement, <strong>se douche</strong>,
+          et <strong>s'habille</strong> en vingt minutes. Elle ne
+          <strong>se maquille</strong> jamais le matin.
+        </p>
+        <p style="font-size:13px; line-height:2; margin-top:8px;">
+          Son mari, Pierre, <strong>se réveille</strong> beaucoup plus tard. Il déteste
+          <strong>se dépêcher</strong>. Le week-end, ils <strong>se promènent</strong>
+          ensemble au parc et <strong>se reposent</strong> l'après-midi.
+        </p>
+      </div>
+
+      <p style="font-size:11px; color:#737373; margin-bottom:6px;">Concepts clés :</p>
+      <div style="display:flex; flex-wrap:wrap; gap:4px;">
+        <span class="tag" style="font-size:10px;">verbes pronominaux</span>
+        <span class="tag" style="font-size:10px;">routine quotidienne</span>
+        <span class="tag" style="font-size:10px;">se + verbe</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Answer card — questions in target language -->
+  <div class="card">
+    <p style="font-size:12px; font-weight:600; margin-bottom:14px;">Questions</p>
+
+    <div style="margin-bottom:16px;">
+      <p style="font-size:12px; font-weight:500; margin-bottom:6px;">
+        1. À quelle heure Marie se réveille-t-elle ?
+      </p>
+      <textarea class="answer-input" style="min-height:50px;" placeholder="Répondez en phrase complète…"></textarea>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <p style="font-size:12px; font-weight:500; margin-bottom:6px;">
+        2. Identifiez quatre verbes pronominaux et donnez leur infinitif.
+      </p>
+      <textarea class="answer-input" style="min-height:70px;" placeholder="Écrivez votre réponse ici…"></textarea>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <p style="font-size:12px; font-weight:500; margin-bottom:6px;">
+        3. Conjuguez « se dépêcher » au passé composé pour « nous ».
+      </p>
+      <textarea class="answer-input" style="min-height:40px;" placeholder="…"></textarea>
+    </div>
+
+    <div style="display:flex; justify-content:flex-end; margin-top:12px;">
+      <button class="btn-primary">Soumettre</button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ================================================================== -->
+<!-- SCREEN 4: RESULT (PASS)                                            -->
+<!-- ================================================================== -->
+<div class="screen" id="screen-result-pass">
+<div class="container">
+
+  <!-- Score card -->
+  <div class="card" style="text-align:center; padding:32px 24px;">
+    <div style="margin-bottom:8px;">
+      <span class="stat-value" style="font-size:56px; color:var(--accent-color-dark);">8.5</span>
+      <span style="font-size:20px; color:#a3a3a3;">/10</span>
+    </div>
+    <span class="badge badge-pass">RÉUSSI</span>
+  </div>
+
+  <!-- Exercise (collapsed) -->
+  <div class="card">
+    <button class="expand-toggle" onclick="toggle('r1')">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span class="tag tag-accent">5. Passé Composé</span>
+        <span class="tag" style="font-size:10px;">Conjugaison</span>
+      </div>
+      <span class="toggle-hint" id="r1-hint">Afficher</span>
+    </button>
+    <div id="r1-content" style="display:none; margin-top:16px;">
+      <div style="padding:16px; background:#fafafa; border-left:4px solid black;">
+        <p style="font-size:13px; line-height:1.8; white-space:pre-wrap;">Consigne : Conjuguez le verbe « aller » au passé composé…</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feedback card -->
+  <div class="card">
+    <p style="font-size:12px; font-weight:600; margin-bottom:10px;">Commentaire</p>
+    <div style="padding:14px; background:#fafafa; border-left:4px solid var(--accent-color);">
+      <p style="font-size:13px; line-height:1.8;">
+        Excellent travail sur la conjugaison du passé composé avec l'auxiliaire « être ».
+        Vous avez correctement identifié que « aller » utilise « être » et non « avoir ».
+        L'accord du participe passé avec « elles » est parfait.
+      </p>
+      <p style="font-size:13px; line-height:1.8; margin-top:10px;">
+        <strong>Point d'attention :</strong> Pour la forme « nous », n'oubliez pas l'accord
+        au pluriel : allé<strong>s</strong>.
+      </p>
+    </div>
+  </div>
+
+  <!-- Corrections card -->
+  <div class="card" style="border-left:4px solid var(--accent-color); clip-path:none; background:black;">
+    <div style="position:absolute; inset:2px; background:white; z-index:-1;"></div>
+    <p style="font-size:12px; font-weight:600; margin-bottom:10px;">Corrections</p>
+
+    <div style="padding:10px 14px; background:#fafafa; margin-bottom:8px; font-size:13px; line-height:1.8;">
+      <p>b) Nous <span class="wrong">sommes allé</span> → <span class="right">sommes allés</span> au marché.</p>
+      <p style="font-size:11px; color:#737373; margin-top:6px;">
+        « Nous » est pluriel — participe passé : allé<strong>s</strong>.
+      </p>
+    </div>
+  </div>
+
+  <!-- Concepts card -->
+  <div class="card">
+    <p style="font-size:12px; font-weight:600; margin-bottom:10px;">Concepts évalués</p>
+    <div>
+      <span class="concept-chip concept-got">✓ auxiliaire être</span>
+      <span class="concept-chip concept-got">✓ choix être vs avoir</span>
+      <span class="concept-chip concept-got">✓ accord féminin pluriel</span>
+      <span class="concept-chip concept-missed">✗ accord masculin pluriel</span>
+    </div>
+    <p style="font-size:11px; color:#a3a3a3; margin-top:10px;">
+      1 concept ajouté à la file de révision · intervalle : 1 jour
+    </p>
+  </div>
+
+  <!-- Actions -->
+  <div style="display:flex; gap:10px; justify-content:center;">
+    <button class="btn-primary">Exercice suivant</button>
+    <button class="btn-primary">Tableau de bord</button>
+  </div>
+
+</div>
+</div>
+
+<!-- ================================================================== -->
+<!-- SCREEN 5: RESULT (FAIL)                                            -->
+<!-- ================================================================== -->
+<div class="screen" id="screen-result-fail">
+<div class="container">
+
+  <!-- Score card -->
+  <div class="card" style="text-align:center; padding:32px 24px;">
+    <div style="margin-bottom:8px;">
+      <span class="stat-value" style="font-size:56px;">3.0</span>
+      <span style="font-size:20px; color:#a3a3a3;">/10</span>
+    </div>
+    <span class="badge badge-fail">À RETRAVAILLER</span>
+  </div>
+
+  <!-- Feedback card -->
+  <div class="card">
+    <p style="font-size:12px; font-weight:600; margin-bottom:10px;">Commentaire</p>
+    <div style="padding:14px; background:#fafafa; border-left:4px solid #d4d4d4;">
+      <p style="font-size:13px; line-height:1.8;">
+        L'imparfait se forme avec le radical de « nous » au présent + les terminaisons
+        <strong>-ais, -ais, -ait, -ions, -iez, -aient</strong>.
+      </p>
+      <p style="font-size:13px; line-height:1.8; margin-top:10px;">
+        Exemple : nous jou<strong>ons</strong> → je jou<strong>ais</strong>.
+        Vous avez confondu les terminaisons de l'imparfait avec celles du présent.
+      </p>
+    </div>
+  </div>
+
+  <!-- Detailed corrections card -->
+  <div class="card">
+    <p style="font-size:12px; font-weight:600; margin-bottom:10px;">Corrections détaillées</p>
+
+    <div style="padding:10px 14px; background:#fafafa; margin-bottom:8px; font-size:13px; line-height:1.8;">
+      <p>1. j'<span class="wrong">étai</span> → <span class="right">étais</span></p>
+      <p style="font-size:11px; color:#737373; margin-top:4px;">1re personne → terminaison <strong>-ais</strong></p>
+    </div>
+
+    <div style="padding:10px 14px; background:#fafafa; margin-bottom:8px; font-size:13px; line-height:1.8;">
+      <p>2. il <span class="wrong">pleuvais</span> → <span class="right">pleuvait</span></p>
+      <p style="font-size:11px; color:#737373; margin-top:4px;">3e personne → terminaison <strong>-ait</strong></p>
+    </div>
+
+    <div style="padding:10px 14px; background:#fafafa; margin-bottom:8px; font-size:13px; line-height:1.8;">
+      <p>3. vous <span class="wrong">prennez</span> → <span class="right">preniez</span></p>
+      <p style="font-size:11px; color:#737373; margin-top:4px;">radical de « nous pren<strong>ons</strong> » → pren- + <strong>-iez</strong></p>
+    </div>
+
+    <div style="padding:10px 14px; background:#fafafa; font-size:13px; line-height:1.8;">
+      <p>4. parents <span class="wrong">lisait</span> → <span class="right">lisaient</span></p>
+      <p style="font-size:11px; color:#737373; margin-top:4px;">pluriel → terminaison <strong>-aient</strong></p>
+    </div>
+  </div>
+
+  <!-- Concepts -->
+  <div class="card">
+    <p style="font-size:12px; font-weight:600; margin-bottom:10px;">Concepts évalués</p>
+    <div>
+      <span class="concept-chip concept-missed">✗ terminaisons de l'imparfait</span>
+      <span class="concept-chip concept-missed">✗ radical (nous au présent)</span>
+      <span class="concept-chip concept-missed">✗ distinction présent / imparfait</span>
+      <span class="concept-chip concept-got">✓ accord sujet-verbe</span>
+    </div>
+    <p style="font-size:11px; color:#a3a3a3; margin-top:10px;">
+      3 concepts ajoutés à la file de révision · intervalle : 1 jour
+    </p>
+  </div>
+
+  <!-- Quick reference (scaffolding after fail) -->
+  <div class="panel-schematic">
+    <p class="section-id" style="margin-bottom:10px;">Rappel : Formation de l'imparfait</p>
+    <table style="width:100%; font-size:12px; border-collapse:collapse;">
+      <thead>
+        <tr style="border-bottom:2px solid black;">
+          <th style="text-align:left; padding:6px; font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:#737373;">Pronom</th>
+          <th style="text-align:left; padding:6px; font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:#737373;">Terminaison</th>
+          <th style="text-align:left; padding:6px; font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:#737373;">Exemple</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid #e5e5e5;"><td style="padding:6px;">je</td><td style="padding:6px;">-ais</td><td style="padding:6px;">je parlais</td></tr>
+        <tr style="border-bottom:1px solid #e5e5e5;"><td style="padding:6px;">tu</td><td style="padding:6px;">-ais</td><td style="padding:6px;">tu parlais</td></tr>
+        <tr style="border-bottom:1px solid #e5e5e5;"><td style="padding:6px;">il / elle</td><td style="padding:6px;">-ait</td><td style="padding:6px;">il parlait</td></tr>
+        <tr style="border-bottom:1px solid #e5e5e5;"><td style="padding:6px;">nous</td><td style="padding:6px;">-ions</td><td style="padding:6px;">nous parlions</td></tr>
+        <tr style="border-bottom:1px solid #e5e5e5;"><td style="padding:6px;">vous</td><td style="padding:6px;">-iez</td><td style="padding:6px;">vous parliez</td></tr>
+        <tr><td style="padding:6px;">ils / elles</td><td style="padding:6px;">-aient</td><td style="padding:6px;">ils parlaient</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="display:flex; gap:10px; justify-content:center;">
+    <button class="btn-primary">Réessayer</button>
+    <button class="btn-primary">Tableau de bord</button>
+  </div>
+
+</div>
+</div>
+
+<!-- ================================================================== -->
+<!-- SCREEN 6: REVIEW QUEUE                                             -->
+<!-- ================================================================== -->
+<div class="screen" id="screen-reviews">
+<div class="container">
+
+  <div class="card">
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+      <div class="status-light status-light-active"></div>
+      <span class="heading-accent">RÉVISIONS</span>
+    </div>
+    <p style="font-size:12px; color:#737373;">
+      5 concepts à réviser · classés par urgence
+    </p>
+  </div>
+
+  <p class="section-title">À réviser aujourd'hui</p>
+
+  <!-- Review item 1: just failed, urgent -->
+  <div class="list-item">
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div class="status-light status-light-active"></div>
+        <div>
+          <p style="font-weight:600; font-size:13px;">Accord du participe passé (pluriel)</p>
+          <p style="font-size:11px; color:#737373; margin-top:2px;">
+            Ch. 5 — Passé Composé · échoué il y a 1 jour ·
+            <span style="color:var(--accent-color-dark); font-weight:500;">1re révision</span>
+          </p>
+        </div>
+      </div>
+      <button class="btn-primary" style="font-size:11px;">Réviser</button>
+    </div>
+  </div>
+
+  <!-- Review item 2: just failed -->
+  <div class="list-item">
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div class="status-light status-light-active"></div>
+        <div>
+          <p style="font-weight:600; font-size:13px;">Terminaisons de l'imparfait</p>
+          <p style="font-size:11px; color:#737373; margin-top:2px;">
+            Ch. 6 — Imparfait · échoué il y a 1 jour ·
+            <span style="color:var(--accent-color-dark); font-weight:500;">1re révision</span>
+          </p>
+        </div>
+      </div>
+      <button class="btn-primary" style="font-size:11px;">Réviser</button>
+    </div>
+  </div>
+
+  <!-- Review item 3: passed before, growing interval -->
+  <div class="list-item">
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div class="status-light status-light-inactive"></div>
+        <div>
+          <p style="font-weight:600; font-size:13px;">Radical de l'imparfait (irréguliers)</p>
+          <p style="font-size:11px; color:#737373; margin-top:2px;">
+            Ch. 6 — Imparfait · réussi il y a 3 jours ·
+            <span style="font-weight:500;">2e révision (4j)</span>
+          </p>
+        </div>
+      </div>
+      <button class="btn-primary" style="font-size:11px;">Réviser</button>
+    </div>
+  </div>
+
+  <!-- Review item 4 -->
+  <div class="list-item">
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div class="status-light status-light-inactive"></div>
+        <div>
+          <p style="font-weight:600; font-size:13px;">Impératif négatif</p>
+          <p style="font-size:11px; color:#737373; margin-top:2px;">
+            Ch. 4 — Impératif · réussi il y a 5 jours ·
+            <span style="font-weight:500;">3e révision (8j)</span>
+          </p>
+        </div>
+      </div>
+      <button class="btn-primary" style="font-size:11px;">Réviser</button>
+    </div>
+  </div>
+
+  <!-- Review item 5: nearly mastered -->
+  <div class="list-item">
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div class="status-light status-light-inactive"></div>
+        <div>
+          <p style="font-weight:600; font-size:13px;">Être vs Avoir (choix de l'auxiliaire)</p>
+          <p style="font-size:11px; color:#737373; margin-top:2px;">
+            Ch. 2 — Irréguliers I · réussi il y a 12 jours ·
+            <span style="font-weight:500;">4e révision (16j)</span>
+          </p>
+        </div>
+      </div>
+      <button class="btn-primary" style="font-size:11px;">Réviser</button>
+    </div>
+  </div>
+
+  <!-- Stats summary -->
+  <div class="panel-schematic" style="margin-top:24px;">
+    <p class="section-id" style="margin-bottom:10px;">Progression des révisions</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:2px; background:black; border:2px solid black;">
+      <div style="background:white; padding:12px; text-align:center;">
+        <p class="stat-value" style="font-size:24px;">2</p>
+        <p class="stat-label">urgentes</p>
+      </div>
+      <div style="background:white; padding:12px; text-align:center;">
+        <p class="stat-value" style="font-size:24px;">2</p>
+        <p class="stat-label">en cours</p>
+      </div>
+      <div style="background:white; padding:12px; text-align:center;">
+        <p class="stat-value" style="font-size:24px;">1</p>
+        <p class="stat-label">bientôt maîtrisé</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ================================================================== -->
+<!-- SCREEN 7: REVIEW EXERCISE (micro-focused)                          -->
+<!-- ================================================================== -->
+<div class="screen" id="screen-review-exercise">
+<div class="container">
+
+  <div class="card">
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+      <div class="status-light status-light-active"></div>
+      <span class="heading-accent">RÉVISION</span>
+      <span class="badge badge-accent">1re tentative</span>
+    </div>
+    <p style="font-size:12px; color:#737373;">
+      Concept : Accord du participe passé au pluriel
+    </p>
+  </div>
+
+  <!-- Exercise card -->
+  <div class="card">
+    <button class="expand-toggle" onclick="toggle('rv1')">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span class="tag tag-accent">Révision ciblée</span>
+        <span style="font-size:11px; color:#737373; text-transform:uppercase; letter-spacing:0.05em;">accord participe passé</span>
+      </div>
+      <span class="toggle-hint" id="rv1-hint">Masquer</span>
+    </button>
+
+    <div id="rv1-content" style="margin-top:16px;">
+      <!-- Rappel (rule reminder) -->
+      <div style="padding:12px 16px; background:var(--accent-color-20); border:2px solid var(--accent-color); margin-bottom:16px; font-size:12px; line-height:1.7;">
+        <strong>Rappel :</strong> Avec l'auxiliaire « être », le participe passé s'accorde
+        en genre et en nombre avec le sujet.
+        <br>Ex : Elles sont allée<strong>s</strong> · Nous sommes parti<strong>s</strong>
+      </div>
+
+      <!-- Question -->
+      <div style="padding:16px; background:#fafafa; border-left:4px solid black;">
+        <p style="font-size:13px; font-weight:500; color:#993333; margin-bottom:12px;">
+          Consigne : Accordez correctement le participe passé.
+        </p>
+        <div style="font-size:13px; line-height:2.4;">
+          <p>1. Marie et Sophie sont <input class="fill-input" placeholder="…"> (arriver) en retard.</p>
+          <p>2. Nous sommes <input class="fill-input" placeholder="…"> (descendre) à la station.</p>
+          <p>3. Les filles se sont <input class="fill-input" placeholder="…"> (lever) tôt.</p>
+          <p>4. Ils sont <input class="fill-input" placeholder="…"> (partir) sans nous.</p>
+          <p>5. Elle est <input class="fill-input" placeholder="…"> (venir) nous voir hier.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit -->
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <span style="font-size:11px; color:#a3a3a3;">Révision 1 sur 5 aujourd'hui</span>
+      <div style="display:flex; gap:8px;">
+        <button class="btn-primary">Passer</button>
+        <button class="btn-primary">Soumettre</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ================================================================== -->
+<!-- JAVASCRIPT                                                         -->
+<!-- ================================================================== -->
+<script>
+function show(screen) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('visible'));
+  document.querySelectorAll('.screen-nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-' + screen).classList.add('visible');
+  event.target.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function toggle(id) {
+  const el = document.getElementById(id + '-content');
+  const hint = document.getElementById(id + '-hint');
+  if (el.style.display === 'none') {
+    el.style.display = 'block';
+    hint.textContent = 'Masquer';
+  } else {
+    el.style.display = 'none';
+    hint.textContent = 'Afficher';
+  }
+}
+</script>
+
+</body>
+</html>
