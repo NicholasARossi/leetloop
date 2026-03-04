@@ -1,5 +1,6 @@
 import { Sidebar } from '@/components/layout/Sidebar'
 import { MegaviewTabs } from '@/components/layout/MegaviewTabs'
+import { MainContent } from '@/components/layout/MainContent'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -7,9 +8,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <MegaviewTabs />
       <div className="flex flex-1">
         <Sidebar />
-        <main className="flex-1 p-8">
+        <MainContent>
           {children}
-        </main>
+        </MainContent>
       </div>
     </div>
   )

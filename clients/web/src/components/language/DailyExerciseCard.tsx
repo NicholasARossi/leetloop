@@ -50,24 +50,7 @@ export function DailyExerciseCard({ exercise, onSubmit }: DailyExerciseCardProps
     return responseText.trim().split(/\s+/).length
   }, [responseText])
 
-  const getScoreColor = (score: number) => {
-    if (score >= 7) return 'text-coral'
-    if (score >= 5) return 'text-gray-600'
-    return 'text-black'
-  }
-
-  const getVerdictBadge = (verdict: string) => {
-    switch (verdict) {
-      case 'pass':
-        return <span className="badge badge-accent">PASS</span>
-      case 'borderline':
-        return <span className="badge badge-default">BORDERLINE</span>
-      case 'fail':
-        return <span className="badge-hard">FAIL</span>
-      default:
-        return null
-    }
-  }
+  const isPass = exercise.verdict === 'pass' || (exercise.score != null && exercise.score >= 7)
 
   const handleInputChange = (value: string) => {
     setResponseText(value)
@@ -91,13 +74,11 @@ export function DailyExerciseCard({ exercise, onSubmit }: DailyExerciseCardProps
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (isTextarea) {
-      // Cmd/Ctrl+Enter to submit for textarea
       if (e.key === 'Enter' && (e.metaKey || e.ctrlKey) && responseText.trim()) {
         e.preventDefault()
         handleSubmit()
       }
     } else {
-      // Enter to submit for single-line input
       if (e.key === 'Enter' && !e.shiftKey && responseText.trim()) {
         e.preventDefault()
         handleSubmit()
@@ -111,8 +92,17 @@ export function DailyExerciseCard({ exercise, onSubmit }: DailyExerciseCardProps
       <div
         className={clsx(
           'border-2 bg-white transition-all',
-          exercise.is_review ? 'border-l-4 border-l-coral border-gray-200' : 'border-gray-200'
+          isPass
+            ? 'border-gray-200'
+            : 'border-gray-200'
         )}
+        style={
+          isPass
+            ? { borderLeftWidth: '4px', borderLeftColor: 'var(--accent-color)' }
+            : exercise.is_review
+              ? { borderLeftWidth: '4px', borderLeftColor: '#b0b0b0' }
+              : {}
+        }
       >
         {/* Collapsed summary row */}
         <button
@@ -120,13 +110,28 @@ export function DailyExerciseCard({ exercise, onSubmit }: DailyExerciseCardProps
           className="w-full text-left px-3 py-2.5 flex items-center gap-2 cursor-pointer hover:bg-gray-50 transition-colors"
         >
           <span className="tag text-[10px]">{exercise.exercise_type.toUpperCase()}</span>
+          {exercise.is_review && (
+            <span className="badge badge-accent text-[9px]">Révision</span>
+          )}
+          {exercise.review_topic_reason && !exercise.is_review && (
+            <span className="badge badge-default text-[9px]">Adapté</span>
+          )}
           <span className="text-xs text-gray-600 flex-1 truncate">{exercise.focus_area || exercise.topic}</span>
           {exercise.score != null && (
-            <span className={clsx('text-lg font-bold font-mono', getScoreColor(exercise.score))}>
+            <span
+              className={clsx('text-lg font-bold font-mono')}
+              style={{ color: isPass ? 'var(--accent-color-dark)' : '#737373' }}
+            >
               {exercise.score.toFixed(1)}
             </span>
           )}
-          {exercise.verdict && getVerdictBadge(exercise.verdict)}
+          {exercise.verdict && (
+            isPass
+              ? <span className="badge badge-accent text-[9px]">Réussi</span>
+              : exercise.verdict === 'borderline'
+                ? <span className="badge badge-default text-[9px]">Limite</span>
+                : <span className="badge badge-default text-[9px]">À revoir</span>
+          )}
           <span className="text-gray-400 text-xs ml-1">{expanded ? '\u25B2' : '\u25BC'}</span>
         </button>
 
@@ -134,23 +139,23 @@ export function DailyExerciseCard({ exercise, onSubmit }: DailyExerciseCardProps
         {expanded && (
           <div className="px-3 pb-3 border-t border-gray-100 space-y-2 pt-2">
             <div>
-              <span className="text-[10px] uppercase tracking-wide text-gray-400">Q:</span>
+              <span className="text-[10px] uppercase tracking-wide text-gray-400">Q :</span>
               <p className="text-sm text-gray-800 whitespace-pre-wrap">{exercise.question_text}</p>
             </div>
             <div>
-              <span className="text-[10px] uppercase tracking-wide text-gray-400">A:</span>
+              <span className="text-[10px] uppercase tracking-wide text-gray-400">R :</span>
               <p className="text-sm font-mono text-black">{exercise.response_text || responseText}</p>
             </div>
             {exercise.feedback && (
               <div>
-                <span className="text-[10px] uppercase tracking-wide text-gray-400">Feedback:</span>
+                <span className="text-[10px] uppercase tracking-wide text-gray-400">Retour :</span>
                 <p className="text-xs text-gray-700">{exercise.feedback}</p>
               </div>
             )}
             {exercise.corrections && (
               <div>
-                <span className="text-[10px] uppercase tracking-wide text-coral">Correction:</span>
-                <p className="text-xs text-coral">{exercise.corrections}</p>
+                <span className="text-[10px] uppercase tracking-wide" style={{ color: 'var(--accent-color-dark)' }}>Correction :</span>
+                <p className="text-xs" style={{ color: 'var(--accent-color-dark)' }}>{exercise.corrections}</p>
               </div>
             )}
             {exercise.missed_concepts && exercise.missed_concepts.length > 0 && (
@@ -170,24 +175,55 @@ export function DailyExerciseCard({ exercise, onSubmit }: DailyExerciseCardProps
   return (
     <div
       className={clsx(
-        'border-2 bg-white',
-        exercise.is_review ? 'border-l-4 border-l-coral border-gray-200' : 'border-gray-200'
+        'border-2 bg-white transition-all',
+        state === 'answering' || state === 'submitting'
+          ? 'border-gray-300'
+          : 'border-gray-200'
       )}
+      style={
+        (state === 'answering' || state === 'submitting')
+          ? { borderLeftWidth: '4px', borderLeftColor: 'var(--accent-color)' }
+          : exercise.is_review
+            ? { borderLeftWidth: '4px', borderLeftColor: 'var(--accent-color-40)' }
+            : {}
+      }
     >
       <div className="px-3 pt-3 pb-2">
-        {/* Header: type tag + review badge + focus area */}
+        {/* Header: type tag + review/adapted badge + focus area */}
         <div className="flex items-center gap-2 mb-2">
           <span className="tag text-[10px]">{exercise.exercise_type.toUpperCase()}</span>
           {exercise.is_review && (
-            <span className="badge badge-accent text-[10px]">Review</span>
+            <span className="badge badge-accent text-[10px]">Révision</span>
+          )}
+          {exercise.review_topic_reason && !exercise.is_review && (
+            <span className="badge badge-default text-[10px]">Adapté</span>
           )}
           {exercise.focus_area && (
             <span className="text-xs text-gray-500 ml-auto">{exercise.focus_area}</span>
           )}
         </div>
 
+        {/* Key concepts chips */}
+        {exercise.key_concepts && exercise.key_concepts.length > 0 && (
+          <div className="flex flex-wrap gap-1 mb-2">
+            {exercise.key_concepts.map((concept, i) => (
+              <span key={i} className="tag text-[9px]">{concept}</span>
+            ))}
+          </div>
+        )}
+
         {/* Question */}
         <p className="text-sm text-gray-800 whitespace-pre-wrap mb-3">{exercise.question_text}</p>
+
+        {/* Word target indicator */}
+        {state === 'pending' && (
+          <p className="text-[10px] text-gray-400 mb-2">
+            {responseFormat === 'single_line' ? 'Réponse courte' :
+             responseFormat === 'short_text' ? 'Texte court' :
+             responseFormat === 'long_text' ? 'Texte long' :
+             'Expression libre'} — cible : {wordTarget} mot{wordTarget > 1 ? 's' : ''}
+          </p>
+        )}
 
         {/* Input area */}
         {isTextarea ? (
@@ -196,23 +232,24 @@ export function DailyExerciseCard({ exercise, onSubmit }: DailyExerciseCardProps
               value={responseText}
               onChange={(e) => handleInputChange(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Your answer..."
+              placeholder="Votre réponse..."
               disabled={state === 'submitting'}
               rows={TEXTAREA_ROWS[responseFormat] || 2}
               className={clsx(
-                'w-full px-3 py-1.5 border-2 border-black text-sm font-mono focus:outline-none focus:border-coral transition-colors resize-vertical',
+                'w-full px-3 py-1.5 border-2 border-gray-300 text-sm font-mono focus:outline-none transition-colors resize-vertical',
                 state === 'submitting' && 'opacity-50 cursor-not-allowed bg-gray-50'
               )}
+              style={{ borderColor: state === 'answering' ? 'var(--accent-color)' : undefined }}
             />
             <div className="flex items-center justify-between mt-1">
               <div className="flex items-center gap-3">
                 {showWordCount && (
                   <span className="text-[10px] text-gray-400 font-mono">
-                    {wordCount} word{wordCount !== 1 ? 's' : ''} — target: {wordTarget}
+                    {wordCount} mot{wordCount !== 1 ? 's' : ''} — cible : {wordTarget}
                   </span>
                 )}
                 <span className="text-[10px] text-gray-400">
-                  {navigator.platform?.includes('Mac') ? '⌘' : 'Ctrl'}+Enter to submit
+                  {typeof navigator !== 'undefined' && navigator.platform?.includes('Mac') ? '⌘' : 'Ctrl'}+Entrée pour soumettre
                 </span>
               </div>
               <button
@@ -227,7 +264,7 @@ export function DailyExerciseCard({ exercise, onSubmit }: DailyExerciseCardProps
                       : 'bg-black hover:bg-gray-800'
                 )}
               >
-                {state === 'submitting' ? 'Grading...' : 'Submit'}
+                {state === 'submitting' ? 'Évaluation...' : 'Soumettre'}
               </button>
             </div>
           </div>
@@ -239,12 +276,13 @@ export function DailyExerciseCard({ exercise, onSubmit }: DailyExerciseCardProps
                 value={responseText}
                 onChange={(e) => handleInputChange(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Your answer..."
+                placeholder="Votre réponse..."
                 disabled={state === 'submitting'}
                 className={clsx(
-                  'flex-1 px-3 py-1.5 border-2 border-black text-sm font-mono focus:outline-none focus:border-coral transition-colors',
+                  'flex-1 px-3 py-1.5 border-2 border-gray-300 text-sm font-mono focus:outline-none transition-colors',
                   state === 'submitting' && 'opacity-50 cursor-not-allowed bg-gray-50'
                 )}
+                style={{ borderColor: state === 'answering' ? 'var(--accent-color)' : undefined }}
               />
               <button
                 onClick={handleSubmit}
@@ -258,10 +296,15 @@ export function DailyExerciseCard({ exercise, onSubmit }: DailyExerciseCardProps
                       : 'bg-black hover:bg-gray-800'
                 )}
               >
-                {state === 'submitting' ? 'Grading...' : 'Submit'}
+                {state === 'submitting' ? 'Évaluation...' : 'Soumettre'}
               </button>
             </div>
-            <p className="text-[10px] text-gray-400 mt-1">Enter to submit</p>
+            <div className="flex items-center justify-between mt-1">
+              <p className="text-[10px] text-gray-400">Entrée pour soumettre</p>
+              {state === 'pending' && (
+                <button className="text-[10px] text-gray-400 hover:text-gray-600 transition-colors">Passer</button>
+              )}
+            </div>
           </>
         )}
       </div>
