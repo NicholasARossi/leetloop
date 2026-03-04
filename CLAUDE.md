@@ -85,38 +85,47 @@ Extension and web use `SUPABASE_URL` and `SUPABASE_ANON_KEY`. API additionally n
 
 ## Deployment
 
-**Infrastructure:** All services deployed to Google Cloud Run.
+**CRITICAL: Always verify the GCP project before deploying.** The correct project is `leetloop-485404`. Before any deploy, run `gcloud config get-value project` and confirm it returns `leetloop-485404`. If it doesn't, run `gcloud config set project leetloop-485404` first. Never deploy to any other project.
+
+**Infrastructure:** All services deployed to Google Cloud Run in `us-central1`.
 
 **Secrets Management:** Environment variables are stored in Google Secrets Manager and pulled at deploy time. Never hardcode secrets in Dockerfiles or commit `.env` files.
 
 ```bash
-# Deploy web dashboard (from monorepo root)
-gcloud builds submit --tag gcr.io/$PROJECT_ID/leetloop-web --file clients/web/Dockerfile .
+# FIRST: Verify correct project
+gcloud config get-value project  # Must be leetloop-485404
+
+# Build web image (from monorepo root, uses cloudbuild.yaml with build-time secrets)
+gcloud builds submit --config clients/web/cloudbuild.yaml .
+
+# Deploy web dashboard
 gcloud run deploy leetloop-web \
-  --image gcr.io/$PROJECT_ID/leetloop-web \
-  --region $REGION \
+  --image gcr.io/leetloop-485404/leetloop-web:latest \
+  --region us-central1 \
   --allow-unauthenticated \
   --port 3000 \
   --update-secrets="NEXT_PUBLIC_SUPABASE_URL=supabase-url:latest" \
   --update-secrets="NEXT_PUBLIC_SUPABASE_ANON_KEY=supabase-anon-key:latest" \
   --update-secrets="NEXT_PUBLIC_API_URL=api-url:latest"
 
-# Deploy API (from api/ directory)
-gcloud builds submit --tag gcr.io/$PROJECT_ID/leetloop-api .
+# Build API image (from api/ directory)
+cd api && gcloud builds submit --tag gcr.io/leetloop-485404/leetloop-api .
+
+# Deploy API
 gcloud run deploy leetloop-api \
-  --image gcr.io/$PROJECT_ID/leetloop-api \
-  --region $REGION \
+  --image gcr.io/leetloop-485404/leetloop-api:latest \
+  --region us-central1 \
   --allow-unauthenticated \
   --port 8080 \
   --update-secrets="SUPABASE_URL=supabase-url:latest" \
-  --update-secrets="SUPABASE_KEY=supabase-key:latest" \
+  --update-secrets="SUPABASE_KEY=supabase-service-role-key:latest" \
   --update-secrets="GOOGLE_API_KEY=google-api-key:latest"
 ```
 
 **Required Secrets in Google Secrets Manager:**
 - `supabase-url` - Supabase project URL
 - `supabase-anon-key` - Supabase anonymous key (for web)
-- `supabase-key` - Supabase service key (for API)
+- `supabase-service-role-key` - Supabase service role key (for API)
 - `google-api-key` - Gemini API key
 - `api-url` - Deployed API Cloud Run URL
 
