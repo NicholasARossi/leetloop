@@ -38,7 +38,7 @@ async def get_onboarding_status(
         # No onboarding record exists - create one
         new_record = {
             "user_id": str(user_id),
-            "has_objective": False,
+            "has_win_rate_target": False,
             "extension_installed": False,
             "history_imported": False,
             "first_path_selected": False,
@@ -71,10 +71,10 @@ async def update_onboarding_step(
     """
     Update a specific onboarding step.
 
-    Step names: "objective", "extension", "history", "path"
+    Step names: "winrate", "extension", "history", "path"
     """
     step_field_map = {
-        "objective": "has_objective",
+        "winrate": "has_win_rate_target",
         "extension": "extension_installed",
         "history": "history_imported",
         "path": "first_path_selected",
@@ -276,10 +276,10 @@ async def complete_onboarding(
         status = response.data[0]
 
         # Check all required steps (extension and history can be skipped)
-        if not status.get("has_objective"):
+        if not status.get("has_win_rate_target"):
             raise HTTPException(
                 status_code=400,
-                detail="Cannot complete onboarding: objective not set"
+                detail="Cannot complete onboarding: win rate target not set"
             )
 
         if not status.get("first_path_selected"):
@@ -376,7 +376,7 @@ async def reset_onboarding(
             supabase.table("user_onboarding")
             .upsert({
                 "user_id": str(user_id),
-                "has_objective": False,
+                "has_win_rate_target": False,
                 "extension_installed": False,
                 "history_imported": False,
                 "first_path_selected": False,

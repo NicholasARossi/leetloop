@@ -6,11 +6,9 @@ import { useRouter } from 'next/navigation'
 import {
   leetloopApi,
   type OnboardingStatus,
-  type ObjectiveTemplateSummary,
   type LearningPathSummary,
-  type CreateObjectiveRequest,
 } from '@/lib/api'
-import { ObjectiveStep } from './steps/ObjectiveStep'
+import { WinRateStep } from './steps/WinRateStep'
 import { ExtensionStep } from './steps/ExtensionStep'
 import { HistoryStep } from './steps/HistoryStep'
 import { PathStep } from './steps/PathStep'
@@ -20,10 +18,10 @@ interface OnboardingWizardProps {
   initialStatus?: OnboardingStatus
 }
 
-type StepId = 'objective' | 'extension' | 'history' | 'path'
+type StepId = 'winrate' | 'extension' | 'history' | 'path'
 
 const steps: { id: StepId; label: string; required: boolean }[] = [
-  { id: 'objective', label: 'Set Goal', required: true },
+  { id: 'winrate', label: 'Set Win Rate', required: true },
   { id: 'extension', label: 'Install Extension', required: false },
   { id: 'history', label: 'Import History', required: false },
   { id: 'path', label: 'Choose Path', required: true },
@@ -35,26 +33,21 @@ export function OnboardingWizard({ userId, initialStatus }: OnboardingWizardProp
   const [loading, setLoading] = useState(!initialStatus)
   const [error, setError] = useState<string | null>(null)
 
-  // Data for steps
-  const [templates, setTemplates] = useState<ObjectiveTemplateSummary[]>([])
   const [paths, setPaths] = useState<LearningPathSummary[]>([])
 
   const currentStepIndex = status?.current_step ? status.current_step - 1 : 0
-  const currentStep = steps[currentStepIndex]?.id || 'objective'
+  const currentStep = steps[currentStepIndex]?.id || 'winrate'
 
   const loadData = useCallback(async () => {
     try {
-      const [statusData, templatesData, pathsData] = await Promise.all([
+      const [statusData, pathsData] = await Promise.all([
         initialStatus ? Promise.resolve(initialStatus) : leetloopApi.getOnboardingStatus(userId),
-        leetloopApi.getObjectiveTemplates(),
         leetloopApi.getPaths(),
       ])
 
       setStatus(statusData)
-      setTemplates(templatesData)
       setPaths(pathsData)
 
-      // If onboarding is complete, redirect to dashboard
       if (statusData.onboarding_complete) {
         router.push('/dashboard')
       }
@@ -70,14 +63,13 @@ export function OnboardingWizard({ userId, initialStatus }: OnboardingWizardProp
     loadData()
   }, [loadData])
 
-  async function handleObjectiveComplete(data: CreateObjectiveRequest) {
+  async function handleWinRateComplete() {
     try {
-      await leetloopApi.createObjective(userId, data)
-      await leetloopApi.updateOnboardingStep(userId, 'objective', true)
+      await leetloopApi.updateOnboardingStep(userId, 'winrate', true)
       await refreshStatus()
     } catch (err) {
-      console.error('Failed to create objective:', err)
-      setError('Failed to create objective')
+      console.error('Failed to update onboarding:', err)
+      setError('Failed to save win rate targets')
     }
   }
 
@@ -233,10 +225,10 @@ export function OnboardingWizard({ userId, initialStatus }: OnboardingWizardProp
 
       {/* Step Content */}
       <div className="card">
-        {currentStep === 'objective' && (
-          <ObjectiveStep
-            templates={templates}
-            onComplete={handleObjectiveComplete}
+        {currentStep === 'winrate' && (
+          <WinRateStep
+            userId={userId}
+            onComplete={handleWinRateComplete}
           />
         )}
 

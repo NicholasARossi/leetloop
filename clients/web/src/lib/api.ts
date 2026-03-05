@@ -219,39 +219,31 @@ export const leetloopApi = {
       method: 'POST',
     }),
 
-  // Objectives
-  getObjectiveTemplates: () =>
-    api<ObjectiveTemplateSummary[]>('/api/objectives/templates'),
+  // Win Rate
+  getWinRateTargets: (userId: string) =>
+    api<WinRateTargets>(`/api/winrate/${userId}/targets`),
 
-  getObjectiveTemplate: (templateId: string) =>
-    api<ObjectiveTemplate>(`/api/objectives/templates/${templateId}`),
-
-  createObjective: (userId: string, data: CreateObjectiveRequest) =>
-    api<MetaObjective>(`/api/objectives/${userId}`, {
+  setWinRateTargets: (userId: string, request: SetWinRateTargetsRequest) =>
+    api<WinRateTargets>(`/api/winrate/${userId}/targets`, {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: JSON.stringify(request),
     }),
 
-  getObjective: (userId: string) =>
-    api<MetaObjectiveResponse>(`/api/objectives/${userId}`),
+  getWinRateStats: (userId: string) =>
+    api<WinRateStats>(`/api/winrate/${userId}/stats`),
 
-  updateObjective: (userId: string, data: UpdateObjectiveRequest) =>
-    api<MetaObjective>(`/api/objectives/${userId}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
+  // Daily Feed
+  getDailyFeed: (userId: string) =>
+    api<DailyFeedResponse>(`/api/feed/${userId}`),
+
+  regenerateFeed: (userId: string) =>
+    api<DailyFeedResponse>(`/api/feed/${userId}/regenerate`, {
+      method: 'POST',
     }),
 
-  getObjectiveProgress: (userId: string, days?: number) =>
-    api<ObjectiveProgress[]>(
-      `/api/objectives/${userId}/progress${days ? `?days=${days}` : ''}`
-    ),
-
-  getObjectivePace: (userId: string) =>
-    api<PaceStatus>(`/api/objectives/${userId}/pace`),
-
-  deleteObjective: (userId: string) =>
-    api<{ success: boolean; deleted: number }>(`/api/objectives/${userId}`, {
-      method: 'DELETE',
+  extendFeed: (userId: string) =>
+    api<DailyFeedResponse>(`/api/feed/${userId}/extend`, {
+      method: 'POST',
     }),
 
   // Onboarding
@@ -686,18 +678,10 @@ export interface SideQuest {
   completed: boolean
 }
 
-export interface DailyObjective {
-  title: string
-  description: string
-  skill_tags: string[]
-  target_count: number
-  completed_count: number
-}
-
 export interface MissionResponse {
   user_id: string
   mission_date: string
-  objective: DailyObjective
+  objective?: { title: string; description: string; skill_tags: string[]; target_count: number; completed_count: number }
   main_quests: MainQuest[]
   side_quests: SideQuest[]
   streak: number
@@ -706,111 +690,70 @@ export interface MissionResponse {
   generated_at: string
 }
 
-// Objective Types
-export interface ObjectiveTemplateSummary {
-  id: string
-  name: string
-  company: string
-  role: string
-  level?: string
-  description?: string
-  estimated_weeks: number
-}
-
-export interface ObjectiveTemplate extends ObjectiveTemplateSummary {
-  required_skills: Record<string, number>
-  recommended_path_ids: string[]
-  difficulty_distribution: Record<string, number>
-  created_at?: string
-}
-
-export interface CreateObjectiveRequest {
-  template_id?: string
-  title: string
-  target_company: string
-  target_role: string
-  target_level?: string
-  target_deadline: string // ISO date string
-  weekly_problem_target?: number
-  daily_problem_minimum?: number
-  required_skills?: Record<string, number>
-  path_ids?: string[]
-}
-
-export interface UpdateObjectiveRequest {
-  title?: string
-  target_deadline?: string
-  weekly_problem_target?: number
-  daily_problem_minimum?: number
-  required_skills?: Record<string, number>
-  path_ids?: string[]
-  status?: 'active' | 'paused' | 'completed'
-}
-
-export interface MetaObjective {
+// Win Rate Types
+export interface WinRateTargets {
   id: string
   user_id: string
-  title: string
-  target_company: string
-  target_role: string
-  target_level?: string
-  target_deadline: string
-  started_at: string
-  weekly_problem_target: number
-  daily_problem_minimum: number
-  required_skills: Record<string, number>
-  path_ids: string[]
-  template_id?: string
-  status: 'active' | 'paused' | 'completed'
+  easy_target: number
+  medium_target: number
+  hard_target: number
+  optimality_threshold: number
   created_at?: string
   updated_at?: string
 }
 
-export interface PaceStatus {
-  status: 'ahead' | 'on_track' | 'behind' | 'critical'
-  problems_this_week: number
-  weekly_target: number
-  problems_behind: number
-  pace_percentage: number
-  projected_completion_date?: string
-  daily_rate_needed: number
+export interface SetWinRateTargetsRequest {
+  easy_target?: number
+  medium_target?: number
+  hard_target?: number
+  optimality_threshold?: number
 }
 
-export interface SkillGap {
-  domain: string
-  current_score: number
-  target_score: number
-  gap: number
-  priority: number
+export interface DifficultyWinRate {
+  rate: number
+  attempts: number
+  optimal: number
+  target: number
 }
 
-export interface ObjectiveProgress {
+export interface WinRateStats {
+  targets: WinRateTargets | null
+  current_30d: Record<string, DifficultyWinRate>
+  current_alltime: Record<string, DifficultyWinRate>
+  trend: { date: string; easy_rate: number; medium_rate: number; hard_rate: number }[]
+}
+
+export interface FeedItem {
   id: string
-  user_id: string
-  objective_id: string
-  progress_date: string
-  problems_completed: number
-  problems_attempted: number
-  cumulative_problems: number
-  target_cumulative: number
-  pace_status: 'ahead' | 'on_track' | 'behind' | 'critical'
+  problem_slug: string
+  problem_title?: string
+  difficulty?: 'Easy' | 'Medium' | 'Hard'
+  tags: string[]
+  feed_type: 'practice' | 'metric'
+  practice_source?: string
+  practice_reason?: string
+  metric_rationale?: string
+  sort_order: number
+  status: 'pending' | 'completed' | 'skipped'
+  was_accepted?: boolean
+  was_optimal?: boolean
+  runtime_percentile?: number
 }
 
-export interface MetaObjectiveResponse {
-  objective: MetaObjective
-  pace_status: PaceStatus
-  skill_gaps: SkillGap[]
-  days_remaining: number
-  total_days: number
-  problems_solved: number
-  total_problems_target: number
-  readiness_percentage: number
+export interface DailyFeedResponse {
+  user_id: string
+  feed_date: string
+  items: FeedItem[]
+  completed_count: number
+  total_count: number
+  practice_count: number
+  metric_count: number
 }
 
 // Onboarding Types
 export interface OnboardingStatus {
   user_id: string
-  has_objective: boolean
+  has_win_rate_target: boolean
   extension_installed: boolean
   history_imported: boolean
   first_path_selected: boolean
@@ -851,7 +794,7 @@ export interface MissionResponseV2 {
   can_regenerate: boolean
   generated_at: string
   // Legacy fields for backward compatibility
-  objective?: DailyObjective
+  objective?: { title: string; description: string; skill_tags: string[]; target_count: number; completed_count: number }
   main_quests?: MainQuest[]
   side_quests?: SideQuest[]
 }
