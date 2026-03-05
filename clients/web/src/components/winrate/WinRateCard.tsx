@@ -1,6 +1,5 @@
 'use client'
 
-import { clsx } from 'clsx'
 import type { WinRateStats, DifficultyWinRate } from '@/lib/api'
 
 interface WinRateCardProps {
@@ -9,36 +8,29 @@ interface WinRateCardProps {
   onTogglePeriod?: () => void
 }
 
-const difficultyConfig: Record<string, { label: string; color: string; bgColor: string }> = {
-  easy: { label: 'Easy', color: 'bg-green-500', bgColor: 'bg-green-100' },
-  medium: { label: 'Medium', color: 'bg-yellow-500', bgColor: 'bg-yellow-100' },
-  hard: { label: 'Hard', color: 'bg-red-500', bgColor: 'bg-red-100' },
+const difficultyLabels: Record<string, string> = {
+  easy: 'Easy',
+  medium: 'Medium',
+  hard: 'Hard',
 }
 
 function RateBar({ difficulty, data }: { difficulty: string; data: DifficultyWinRate }) {
-  const config = difficultyConfig[difficulty] || difficultyConfig.easy
+  const label = difficultyLabels[difficulty] || 'Easy'
   const ratePercent = Math.round(data.rate * 100)
   const targetPercent = Math.round(data.target * 100)
-  const isAboveTarget = data.rate >= data.target
 
   return (
     <div className="mb-3 last:mb-0">
       <div className="flex items-center justify-between mb-1">
-        <span className="text-xs font-bold uppercase tracking-wider">{config.label}</span>
-        <span className={clsx(
-          'text-xs font-mono font-bold',
-          isAboveTarget ? 'text-green-600' : 'text-red-600'
-        )}>
+        <span className="text-xs font-bold uppercase tracking-wider">{label}</span>
+        <span className="text-xs font-mono font-bold">
           {ratePercent}% ({data.optimal}/{data.attempts})
         </span>
       </div>
       <div className="relative h-4 border-2 border-black bg-gray-100">
         {/* Filled bar */}
         <div
-          className={clsx(
-            'h-full transition-all duration-500',
-            isAboveTarget ? 'bg-green-500' : 'bg-red-400'
-          )}
+          className="h-full transition-all duration-500 bg-coral"
           style={{ width: `${Math.min(ratePercent, 100)}%` }}
         />
         {/* Target marker */}
