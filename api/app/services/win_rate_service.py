@@ -165,7 +165,6 @@ class WinRateService:
             data, on_conflict="user_id,snapshot_date"
         ).execute()
 
-    def check_optimality(self, runtime_percentile: Optional[float], threshold: float = 70.0) -> bool:
-        if runtime_percentile is None:
-            return False
-        return runtime_percentile >= threshold
+    def check_optimality(self, accepted: bool) -> bool:
+        """Accepted = optimal. Gemini complexity analysis can downgrade later."""
+        return accepted
