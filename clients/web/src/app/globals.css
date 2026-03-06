@@ -75,11 +75,48 @@ body {
     );
   }
 
-  /* Card with chamfered corners - uses stacked layers for solid border */
+  /* =========================================================================
+     CHAMFERED BORDER TECHNIQUE
+     =========================================================================
+     Uses box-shadow: inset for pixel-perfect straight-edge borders, and
+     linear-gradient background-images for chamfer diagonal borders.
+     Single clip-path shapes the element. No ::before pseudo-elements.
+
+     This eliminates the sub-pixel anti-aliasing asymmetry caused by two
+     overlapping clip-paths rendering their edges independently.
+
+     Gradient math for chamfer size C with border width B (2px):
+     - Perpendicular distance from corner to chamfer line: C / sqrt(2)
+     - TL gradient (0px = outside polygon): strip from C/sqrt(2) to C/sqrt(2)+B
+     - BR gradient (0px = inside polygon): strip from C/sqrt(2)-B to C/sqrt(2)
+     - Gradient directions: 135deg for TL+BR chamfers, 225deg/45deg for TR+BL
+     ========================================================================= */
+
+  /* --- Gradient values per chamfer size (2px border) ---
+     The 135deg gradient starts at the corner (OUTSIDE the polygon) and
+     increases toward the center (INSIDE). The chamfer line is at C/sqrt(2).
+     Border strip goes from C/sqrt(2) to C/sqrt(2)+2 (inside the polygon).
+     16px: 11.31px to 13.31px
+      8px: 5.66px to 7.66px
+     10px: 7.07px to 9.07px
+      6px: 4.24px to 6.24px
+      5px: 3.54px to 5.54px
+      4px: 2.83px to 4.83px
+  */
+
+  /* Card with chamfered corners (TL + BR, 16px) */
   .card {
     @apply p-6;
     position: relative;
-    background: black;
+    background-color: white;
+    background-image:
+      linear-gradient(135deg, transparent 11.31px, black 11.31px, black 13.31px, transparent 13.31px),
+      linear-gradient(135deg, transparent 9.31px, black 9.31px, black 11.31px, transparent 11.31px);
+    background-size: 16px 16px, 16px 16px;
+    background-position: top left, bottom right;
+    background-repeat: no-repeat;
+    background-origin: border-box;
+    box-shadow: inset 0 0 0 2px black;
     clip-path: polygon(
       var(--chamfer-md) 0,
       100% 0,
@@ -88,28 +125,21 @@ body {
       0 100%,
       0 var(--chamfer-md)
     );
-  }
-
-  .card::before {
-    content: '';
-    position: absolute;
-    inset: 2px;
-    background: white;
-    clip-path: polygon(
-      calc(var(--chamfer-md) - 2px) 0,
-      100% 0,
-      100% calc(100% - var(--chamfer-md) + 2px),
-      calc(100% - var(--chamfer-md) + 2px) 100%,
-      0 100%,
-      0 calc(var(--chamfer-md) - 2px)
-    );
-    z-index: -1;
+    filter: drop-shadow(0 0 0.5px black);
   }
 
   .card-sm {
     @apply p-4;
     position: relative;
-    background: black;
+    background-color: white;
+    background-image:
+      linear-gradient(135deg, transparent 5.66px, black 5.66px, black 7.66px, transparent 7.66px),
+      linear-gradient(135deg, transparent 3.66px, black 3.66px, black 5.66px, transparent 5.66px);
+    background-size: 8px 8px, 8px 8px;
+    background-position: top left, bottom right;
+    background-repeat: no-repeat;
+    background-origin: border-box;
+    box-shadow: inset 0 0 0 2px black;
     clip-path: polygon(
       var(--chamfer-sm) 0,
       100% 0,
@@ -118,29 +148,22 @@ body {
       0 100%,
       0 var(--chamfer-sm)
     );
+    filter: drop-shadow(0 0 0.5px black);
   }
 
-  .card-sm::before {
-    content: '';
-    position: absolute;
-    inset: 2px;
-    background: white;
-    clip-path: polygon(
-      calc(var(--chamfer-sm) - 2px) 0,
-      100% 0,
-      100% calc(100% - var(--chamfer-sm) + 2px),
-      calc(100% - var(--chamfer-sm) + 2px) 100%,
-      0 100%,
-      0 calc(var(--chamfer-sm) - 2px)
-    );
-    z-index: -1;
-  }
-
-  /* Card with alternate chamfer (TR + BL corners) - visual variety */
+  /* Card with alternate chamfer (TR + BL corners) */
   .card-alt {
     @apply p-6;
     position: relative;
-    background: black;
+    background-color: white;
+    background-image:
+      linear-gradient(225deg, transparent 11.31px, black 11.31px, black 13.31px, transparent 13.31px),
+      linear-gradient(45deg, transparent 11.31px, black 11.31px, black 13.31px, transparent 13.31px);
+    background-size: 16px 16px, 16px 16px;
+    background-position: top right, bottom left;
+    background-repeat: no-repeat;
+    background-origin: border-box;
+    box-shadow: inset 0 0 0 2px black;
     clip-path: polygon(
       0 0,
       calc(100% - var(--chamfer-md)) 0,
@@ -149,29 +172,24 @@ body {
       var(--chamfer-md) 100%,
       0 calc(100% - var(--chamfer-md))
     );
+    filter: drop-shadow(0 0 0.5px black);
   }
 
-  .card-alt::before {
-    content: '';
-    position: absolute;
-    inset: 2px;
-    background: white;
-    clip-path: polygon(
-      0 0,
-      calc(100% - var(--chamfer-md) + 2px) 0,
-      100% calc(var(--chamfer-md) - 2px),
-      100% 100%,
-      calc(var(--chamfer-md) - 2px) 100%,
-      0 calc(100% - var(--chamfer-md) + 2px)
-    );
-    z-index: -1;
-  }
-
-  /* Schematic panel - octagonal (all 4 corners chamfered, smaller 10px cut) */
+  /* Schematic panel - octagonal (all 4 corners chamfered, 10px) */
   .panel-schematic {
     @apply p-4;
     position: relative;
-    background: black;
+    background-color: white;
+    background-image:
+      linear-gradient(135deg, transparent 7.07px, black 7.07px, black 9.07px, transparent 9.07px),
+      linear-gradient(225deg, transparent 7.07px, black 7.07px, black 9.07px, transparent 9.07px),
+      linear-gradient(315deg, transparent 7.07px, black 7.07px, black 9.07px, transparent 9.07px),
+      linear-gradient(45deg, transparent 7.07px, black 7.07px, black 9.07px, transparent 9.07px);
+    background-size: 10px 10px, 10px 10px, 10px 10px, 10px 10px;
+    background-position: top left, top right, bottom right, bottom left;
+    background-repeat: no-repeat;
+    background-origin: border-box;
+    box-shadow: inset 0 0 0 2px black;
     clip-path: polygon(
       10px 0,
       calc(100% - 10px) 0,
@@ -182,31 +200,22 @@ body {
       0 calc(100% - 10px),
       0 10px
     );
+    filter: drop-shadow(0 0 0.5px black);
   }
 
-  .panel-schematic::before {
-    content: '';
-    position: absolute;
-    inset: 2px;
-    background: white;
-    clip-path: polygon(
-      8px 0,
-      calc(100% - 8px) 0,
-      100% 8px,
-      100% calc(100% - 8px),
-      calc(100% - 8px) 100%,
-      8px 100%,
-      0 calc(100% - 8px),
-      0 8px
-    );
-    z-index: -1;
-  }
-
-  /* Primary button - mech style */
+  /* Primary button - mech style (8px chamfer) */
   .btn-primary {
-    @apply px-4 py-2 font-medium transition-all;
+    @apply px-4 py-2 font-medium;
     position: relative;
-    background: black;
+    background-color: white;
+    background-image:
+      linear-gradient(135deg, transparent 5.66px, black 5.66px, black 7.66px, transparent 7.66px),
+      linear-gradient(135deg, transparent 3.66px, black 3.66px, black 5.66px, transparent 5.66px);
+    background-size: 8px 8px, 8px 8px;
+    background-position: top left, bottom right;
+    background-repeat: no-repeat;
+    background-origin: border-box;
+    box-shadow: inset 0 0 0 2px black;
     clip-path: polygon(
       var(--chamfer-sm) 0,
       100% 0,
@@ -215,38 +224,31 @@ body {
       0 100%,
       0 var(--chamfer-sm)
     );
+    transition: background-color 0.15s;
+    filter: drop-shadow(0 0 0.5px black);
   }
 
-  .btn-primary::before {
-    content: '';
-    position: absolute;
-    inset: 2px;
-    background: white;
-    clip-path: polygon(
-      calc(var(--chamfer-sm) - 2px) 0,
-      100% 0,
-      100% calc(100% - var(--chamfer-sm) + 2px),
-      calc(100% - var(--chamfer-sm) + 2px) 100%,
-      0 100%,
-      0 calc(var(--chamfer-sm) - 2px)
-    );
-    z-index: -1;
-    transition: background 0.15s;
-  }
-
-  .btn-primary:hover::before {
-    background: var(--accent-color);
+  .btn-primary:hover {
+    background-color: var(--accent-color);
   }
 
   .btn-primary:active {
     transform: translate(1px, 1px);
   }
 
-  /* Secondary button - mech style */
+  /* Secondary button - mech style (8px chamfer) */
   .btn-secondary {
-    @apply px-4 py-2 text-gray-700 transition-all;
+    @apply px-4 py-2 text-gray-700;
     position: relative;
-    background: black;
+    background-color: theme('colors.gray.100');
+    background-image:
+      linear-gradient(135deg, transparent 5.66px, black 5.66px, black 7.66px, transparent 7.66px),
+      linear-gradient(135deg, transparent 3.66px, black 3.66px, black 5.66px, transparent 5.66px);
+    background-size: 8px 8px, 8px 8px;
+    background-position: top left, bottom right;
+    background-repeat: no-repeat;
+    background-origin: border-box;
+    box-shadow: inset 0 0 0 2px black;
     clip-path: polygon(
       var(--chamfer-sm) 0,
       100% 0,
@@ -255,42 +257,32 @@ body {
       0 100%,
       0 var(--chamfer-sm)
     );
-  }
-
-  .btn-secondary::before {
-    content: '';
-    position: absolute;
-    inset: 2px;
-    background: theme('colors.gray.100');
-    clip-path: polygon(
-      calc(var(--chamfer-sm) - 2px) 0,
-      100% 0,
-      100% calc(100% - var(--chamfer-sm) + 2px),
-      calc(100% - var(--chamfer-sm) + 2px) 100%,
-      0 100%,
-      0 calc(var(--chamfer-sm) - 2px)
-    );
-    z-index: -1;
-    transition: background 0.15s;
+    transition: background-color 0.15s;
+    filter: drop-shadow(0 0 0.5px black);
   }
 
   .btn-secondary:hover {
     @apply text-black;
-  }
-
-  .btn-secondary:hover::before {
-    background: theme('colors.gray.200');
+    background-color: theme('colors.gray.200');
   }
 
   .btn-secondary:active {
     transform: translate(1px, 1px);
   }
 
-  /* Form inputs with chamfer */
+  /* Form inputs with chamfer (8px) */
   .input {
     @apply w-full px-4 py-2 focus:outline-none;
     position: relative;
-    background: black;
+    background-color: white;
+    background-image:
+      linear-gradient(135deg, transparent 5.66px, black 5.66px, black 7.66px, transparent 7.66px),
+      linear-gradient(135deg, transparent 3.66px, black 3.66px, black 5.66px, transparent 5.66px);
+    background-size: 8px 8px, 8px 8px;
+    background-position: top left, bottom right;
+    background-repeat: no-repeat;
+    background-origin: border-box;
+    box-shadow: inset 0 0 0 2px black;
     color: black;
     clip-path: polygon(
       var(--chamfer-sm) 0,
@@ -300,22 +292,7 @@ body {
       0 100%,
       0 var(--chamfer-sm)
     );
-  }
-
-  .input::before {
-    content: '';
-    position: absolute;
-    inset: 2px;
-    background: white;
-    clip-path: polygon(
-      calc(var(--chamfer-sm) - 2px) 0,
-      100% 0,
-      100% calc(100% - var(--chamfer-sm) + 2px),
-      calc(100% - var(--chamfer-sm) + 2px) 100%,
-      0 100%,
-      0 calc(var(--chamfer-sm) - 2px)
-    );
-    z-index: -1;
+    filter: drop-shadow(0 0 0.5px black);
   }
 
   /* Heading with accent background (Lego style) */
@@ -339,11 +316,19 @@ body {
     font-family: 'Banquise', sans-serif;
   }
 
-  /* Tags - mech style */
+  /* Tags - mech style (6px chamfer) */
   .tag {
     @apply inline-block px-3 py-1 text-xs uppercase tracking-wide text-gray-600;
     position: relative;
-    background: black;
+    background-color: theme('colors.gray.100');
+    background-image:
+      linear-gradient(135deg, transparent 4.24px, black 4.24px, black 6.24px, transparent 6.24px),
+      linear-gradient(135deg, transparent 2.24px, black 2.24px, black 4.24px, transparent 4.24px);
+    background-size: 6px 6px, 6px 6px;
+    background-position: top left, bottom right;
+    background-repeat: no-repeat;
+    background-origin: border-box;
+    box-shadow: inset 0 0 0 2px black;
     clip-path: polygon(
       6px 0,
       100% 0,
@@ -352,37 +337,27 @@ body {
       0 100%,
       0 6px
     );
-  }
-
-  .tag::before {
-    content: '';
-    position: absolute;
-    inset: 2px;
-    background: theme('colors.gray.100');
-    clip-path: polygon(
-      4px 0,
-      100% 0,
-      100% calc(100% - 4px),
-      calc(100% - 4px) 100%,
-      0 100%,
-      0 4px
-    );
-    z-index: -1;
-  }
-
-  .tag-accent::before {
-    background: var(--accent-color);
+    filter: drop-shadow(0 0 0.5px black);
   }
 
   .tag-accent {
     @apply text-black;
+    background-color: var(--accent-color);
   }
 
-  /* Progress bar - mech style */
+  /* Progress bar - mech style (4px chamfer) */
   .progress-bar {
     @apply h-3;
     position: relative;
-    background: black;
+    background-color: theme('colors.gray.200');
+    background-image:
+      linear-gradient(135deg, transparent 2.83px, black 2.83px, black 4.83px, transparent 4.83px),
+      linear-gradient(135deg, transparent 0.83px, black 0.83px, black 2.83px, transparent 2.83px);
+    background-size: 4px 4px, 4px 4px;
+    background-position: top left, bottom right;
+    background-repeat: no-repeat;
+    background-origin: border-box;
+    box-shadow: inset 0 0 0 2px black;
     clip-path: polygon(
       4px 0,
       100% 0,
@@ -391,22 +366,7 @@ body {
       0 100%,
       0 4px
     );
-  }
-
-  .progress-bar::before {
-    content: '';
-    position: absolute;
-    inset: 2px;
-    background: theme('colors.gray.200');
-    clip-path: polygon(
-      2px 0,
-      100% 0,
-      100% calc(100% - 2px),
-      calc(100% - 2px) 100%,
-      0 100%,
-      0 2px
-    );
-    z-index: -1;
+    filter: drop-shadow(0 0 0.5px black);
   }
 
   .progress-fill {
@@ -417,11 +377,20 @@ body {
     z-index: 1;
   }
 
-  /* Quest/List items - mech style */
+  /* Quest/List items - mech style (16px chamfer, accent border on hover) */
   .list-item {
-    @apply p-4 mb-4 transition-all;
+    @apply p-4 mb-4;
+    --border-color: black;
     position: relative;
-    background: black;
+    background-color: white;
+    background-image:
+      linear-gradient(135deg, transparent 11.31px, var(--border-color) 11.31px, var(--border-color) 13.31px, transparent 13.31px),
+      linear-gradient(135deg, transparent 9.31px, var(--border-color) 9.31px, var(--border-color) 11.31px, transparent 11.31px);
+    background-size: 16px 16px, 16px 16px;
+    background-position: top left, bottom right;
+    background-repeat: no-repeat;
+    background-origin: border-box;
+    box-shadow: inset 0 0 0 2px var(--border-color);
     clip-path: polygon(
       var(--chamfer-md) 0,
       100% 0,
@@ -430,27 +399,12 @@ body {
       0 100%,
       0 var(--chamfer-md)
     );
-  }
-
-  .list-item::before {
-    content: '';
-    position: absolute;
-    inset: 2px;
-    background: white;
-    clip-path: polygon(
-      calc(var(--chamfer-md) - 2px) 0,
-      100% 0,
-      100% calc(100% - var(--chamfer-md) + 2px),
-      calc(100% - var(--chamfer-md) + 2px) 100%,
-      0 100%,
-      0 calc(var(--chamfer-md) - 2px)
-    );
-    z-index: -1;
-    transition: background 0.15s;
+    transition: box-shadow 0.15s;
+    filter: drop-shadow(0 0 0.5px black);
   }
 
   .list-item:hover {
-    background: var(--accent-color);
+    --border-color: var(--accent-color);
   }
 
   /* Checkbox style */
@@ -486,11 +440,19 @@ body {
     @apply text-xs uppercase tracking-wider text-gray-500 mt-1;
   }
 
-  /* Badge - mech style base */
+  /* Badge - mech style base (5px chamfer) */
   .badge {
     @apply inline-block px-2 py-0.5 text-xs uppercase tracking-wide;
     position: relative;
-    background: black;
+    background-color: theme('colors.gray.100');
+    background-image:
+      linear-gradient(135deg, transparent 3.54px, black 3.54px, black 5.54px, transparent 5.54px),
+      linear-gradient(135deg, transparent 1.54px, black 1.54px, black 3.54px, transparent 3.54px);
+    background-size: 5px 5px, 5px 5px;
+    background-position: top left, bottom right;
+    background-repeat: no-repeat;
+    background-origin: border-box;
+    box-shadow: inset 0 0 0 2px black;
     clip-path: polygon(
       5px 0,
       100% 0,
@@ -499,44 +461,32 @@ body {
       0 100%,
       0 5px
     );
-  }
-
-  .badge::before {
-    content: '';
-    position: absolute;
-    inset: 2px;
-    clip-path: polygon(
-      3px 0,
-      100% 0,
-      100% calc(100% - 3px),
-      calc(100% - 3px) 100%,
-      0 100%,
-      0 3px
-    );
-    z-index: -1;
+    filter: drop-shadow(0 0 0.5px black);
   }
 
   .badge-default {
     @apply text-gray-600;
-  }
-
-  .badge-default::before {
-    background: theme('colors.gray.100');
+    background-color: theme('colors.gray.100');
   }
 
   .badge-accent {
     @apply text-black;
+    background-color: var(--accent-color);
   }
 
-  .badge-accent::before {
-    background: var(--accent-color);
-  }
-
-  /* Difficulty badges - mech style */
+  /* Difficulty badges - mech style (5px chamfer) */
   .badge-easy {
     @apply inline-block px-2 py-0.5 text-xs uppercase tracking-wide text-gray-700;
     position: relative;
-    background: black;
+    background-color: theme('colors.gray.100');
+    background-image:
+      linear-gradient(135deg, transparent 3.54px, black 3.54px, black 5.54px, transparent 5.54px),
+      linear-gradient(135deg, transparent 1.54px, black 1.54px, black 3.54px, transparent 3.54px);
+    background-size: 5px 5px, 5px 5px;
+    background-position: top left, bottom right;
+    background-repeat: no-repeat;
+    background-origin: border-box;
+    box-shadow: inset 0 0 0 2px black;
     clip-path: polygon(
       5px 0,
       100% 0,
@@ -545,28 +495,21 @@ body {
       0 100%,
       0 5px
     );
-  }
-
-  .badge-easy::before {
-    content: '';
-    position: absolute;
-    inset: 2px;
-    background: theme('colors.gray.100');
-    clip-path: polygon(
-      3px 0,
-      100% 0,
-      100% calc(100% - 3px),
-      calc(100% - 3px) 100%,
-      0 100%,
-      0 3px
-    );
-    z-index: -1;
+    filter: drop-shadow(0 0 0.5px black);
   }
 
   .badge-medium {
     @apply inline-block px-2 py-0.5 text-xs uppercase tracking-wide text-black;
     position: relative;
-    background: black;
+    background-color: var(--accent-color);
+    background-image:
+      linear-gradient(135deg, transparent 3.54px, black 3.54px, black 5.54px, transparent 5.54px),
+      linear-gradient(135deg, transparent 1.54px, black 1.54px, black 3.54px, transparent 3.54px);
+    background-size: 5px 5px, 5px 5px;
+    background-position: top left, bottom right;
+    background-repeat: no-repeat;
+    background-origin: border-box;
+    box-shadow: inset 0 0 0 2px black;
     clip-path: polygon(
       5px 0,
       100% 0,
@@ -575,28 +518,21 @@ body {
       0 100%,
       0 5px
     );
-  }
-
-  .badge-medium::before {
-    content: '';
-    position: absolute;
-    inset: 2px;
-    background: var(--accent-color);
-    clip-path: polygon(
-      3px 0,
-      100% 0,
-      100% calc(100% - 3px),
-      calc(100% - 3px) 100%,
-      0 100%,
-      0 3px
-    );
-    z-index: -1;
+    filter: drop-shadow(0 0 0.5px black);
   }
 
   .badge-hard {
     @apply inline-block px-2 py-0.5 text-xs uppercase tracking-wide text-white;
     position: relative;
-    background: black;
+    background-color: black;
+    background-image:
+      linear-gradient(135deg, transparent 3.54px, black 3.54px, black 5.54px, transparent 5.54px),
+      linear-gradient(135deg, transparent 1.54px, black 1.54px, black 3.54px, transparent 3.54px);
+    background-size: 5px 5px, 5px 5px;
+    background-position: top left, bottom right;
+    background-repeat: no-repeat;
+    background-origin: border-box;
+    box-shadow: inset 0 0 0 2px black;
     clip-path: polygon(
       5px 0,
       100% 0,
@@ -605,29 +541,22 @@ body {
       0 100%,
       0 5px
     );
+    filter: drop-shadow(0 0 0.5px black);
   }
 
-  .badge-hard::before {
-    content: '';
-    position: absolute;
-    inset: 2px;
-    background: black;
-    clip-path: polygon(
-      3px 0,
-      100% 0,
-      100% calc(100% - 3px),
-      calc(100% - 3px) 100%,
-      0 100%,
-      0 3px
-    );
-    z-index: -1;
-  }
-
-  /* Status badges - mech style */
+  /* Status badges - mech style (5px chamfer) */
   .badge-accepted {
     @apply inline-block px-2 py-0.5 text-xs uppercase tracking-wide text-black;
     position: relative;
-    background: black;
+    background-color: var(--accent-color);
+    background-image:
+      linear-gradient(135deg, transparent 3.54px, black 3.54px, black 5.54px, transparent 5.54px),
+      linear-gradient(135deg, transparent 1.54px, black 1.54px, black 3.54px, transparent 3.54px);
+    background-size: 5px 5px, 5px 5px;
+    background-position: top left, bottom right;
+    background-repeat: no-repeat;
+    background-origin: border-box;
+    box-shadow: inset 0 0 0 2px black;
     clip-path: polygon(
       5px 0,
       100% 0,
@@ -636,28 +565,21 @@ body {
       0 100%,
       0 5px
     );
-  }
-
-  .badge-accepted::before {
-    content: '';
-    position: absolute;
-    inset: 2px;
-    background: var(--accent-color);
-    clip-path: polygon(
-      3px 0,
-      100% 0,
-      100% calc(100% - 3px),
-      calc(100% - 3px) 100%,
-      0 100%,
-      0 3px
-    );
-    z-index: -1;
+    filter: drop-shadow(0 0 0.5px black);
   }
 
   .badge-failed {
     @apply inline-block px-2 py-0.5 text-xs uppercase tracking-wide text-gray-700;
     position: relative;
-    background: black;
+    background-color: theme('colors.gray.200');
+    background-image:
+      linear-gradient(135deg, transparent 3.54px, black 3.54px, black 5.54px, transparent 5.54px),
+      linear-gradient(135deg, transparent 1.54px, black 1.54px, black 3.54px, transparent 3.54px);
+    background-size: 5px 5px, 5px 5px;
+    background-position: top left, bottom right;
+    background-repeat: no-repeat;
+    background-origin: border-box;
+    box-shadow: inset 0 0 0 2px black;
     clip-path: polygon(
       5px 0,
       100% 0,
@@ -666,22 +588,7 @@ body {
       0 100%,
       0 5px
     );
-  }
-
-  .badge-failed::before {
-    content: '';
-    position: absolute;
-    inset: 2px;
-    background: theme('colors.gray.200');
-    clip-path: polygon(
-      3px 0,
-      100% 0,
-      100% calc(100% - 3px),
-      calc(100% - 3px) 100%,
-      0 100%,
-      0 3px
-    );
-    z-index: -1;
+    filter: drop-shadow(0 0 0.5px black);
   }
 
   /* Table styles */
@@ -726,7 +633,7 @@ body {
    SCHEMATIC DESIGN SYSTEM
    ============================================================================= */
 
-/* Registration marks - L-shaped corner marks (uses ::after only to not conflict with card::before) */
+/* Registration marks - L-shaped corner marks */
 .reg-corners {
   position: relative;
 }
@@ -747,7 +654,7 @@ body {
   opacity: 0.4;
 }
 
-/* Bracket corners - decorative frame (uses ::after only to not conflict with card::before) */
+/* Bracket corners - decorative frame */
 .bracket-corners {
   position: relative;
 }

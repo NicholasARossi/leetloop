@@ -13,7 +13,7 @@ type NavItem = {
 
 const leetcodeNav: NavItem[] = [
   { name: 'Dashboard', href: '/dashboard', icon: DashboardIcon },
-  { name: 'Objective', href: '/objective', icon: ObjectiveIcon },
+  { name: 'Win Rate', href: '/winrate', icon: WinRateIcon },
   { name: 'Path Progress', href: '/path', icon: PathIcon },
   { name: 'Mastery', href: '/mastery', icon: MasteryIcon },
   { name: 'System Design', href: '/system-design', icon: SystemDesignDashboardIcon },
@@ -118,10 +118,12 @@ function CoachIcon({ className }: { className?: string }) {
   )
 }
 
-function ObjectiveIcon({ className }: { className?: string }) {
+function WinRateIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+      <circle cx="12" cy="12" r="10" strokeWidth={2} />
+      <circle cx="12" cy="12" r="6" strokeWidth={2} />
+      <circle cx="12" cy="12" r="2" strokeWidth={2} />
     </svg>
   )
 }

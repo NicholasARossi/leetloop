@@ -105,11 +105,8 @@ class MissionGenerator:
         user_id_str = str(user_id)
         seven_days_ago = (datetime.utcnow() - timedelta(days=7)).isoformat()
         context = {
-            "target_company": None,
-            "target_role": None,
-            "target_deadline": None,
-            "weekly_commitment": 25,
-            "days_until_deadline": None,
+            "win_rate_targets": None,
+            "win_rate_current": None,
             "current_path": None,
             "skill_scores": [],
             "review_queue": [],
@@ -122,8 +119,11 @@ class MissionGenerator:
         }
 
         # --- Batch 1: All independent queries in parallel ---
-        def _q_objectives():
-            return self.supabase.table("meta_objectives").select("*").eq("user_id", user_id_str).eq("status", "active").limit(1).execute()
+        def _q_win_rate_targets():
+            return self.supabase.table("win_rate_targets").select("*").eq("user_id", user_id_str).limit(1).execute()
+
+        def _q_win_rate_snapshots():
+            return self.supabase.table("win_rate_snapshots").select("*").eq("user_id", user_id_str).order("snapshot_date", desc=True).limit(1).execute()
 
         def _q_settings():
             return self.supabase.table("user_settings").select("current_path_id").eq("user_id", user_id_str).execute()
@@ -150,7 +150,8 @@ class MissionGenerator:
             return self.supabase.table("problem_attempt_stats").select("problem_slug").eq("user_id", user_id_str).eq("is_slow_solve", True).order("last_attempt_at", desc=True).limit(5).execute()
 
         (
-            objective_response,
+            win_rate_targets_response,
+            win_rate_snapshots_response,
             settings_response,
             accepted_response,
             skills_response,
@@ -160,7 +161,8 @@ class MissionGenerator:
             failures_response,
             slow_response,
         ) = await asyncio.gather(
-            asyncio.to_thread(_q_objectives),
+            asyncio.to_thread(_q_win_rate_targets),
+            asyncio.to_thread(_q_win_rate_snapshots),
             asyncio.to_thread(_q_settings),
             asyncio.to_thread(_q_accepted),
             asyncio.to_thread(_q_skills),
@@ -189,19 +191,11 @@ class MissionGenerator:
 
         # --- Process results ---
 
-        # Objectives
-        if objective_response.data:
-            obj = objective_response.data[0]
-            context["target_company"] = obj.get("target_company")
-            context["target_role"] = obj.get("target_role")
-            context["weekly_commitment"] = obj.get("weekly_problem_target", 25)
-
-            deadline = obj.get("target_deadline")
-            if deadline:
-                if isinstance(deadline, str):
-                    deadline = datetime.fromisoformat(deadline).date()
-                context["target_deadline"] = deadline.isoformat()
-                context["days_until_deadline"] = (deadline - date.today()).days
+        # Win rate targets & snapshots
+        if win_rate_targets_response.data:
+            context["win_rate_targets"] = win_rate_targets_response.data[0]
+        if win_rate_snapshots_response.data:
+            context["win_rate_current"] = win_rate_snapshots_response.data[0]
 
         # Path progress + accepted submissions (consolidated)
         completed_problems = []
@@ -401,15 +395,22 @@ class MissionGenerator:
     ) -> str:
         """Build the Gemini prompt for mission generation."""
 
-        # Goal section
-        goal_section = "## User Goal\n"
-        if context.get("target_company"):
-            goal_section += f"Target: {context['target_company']} - {context.get('target_role', 'Software Engineer')}\n"
-            if context.get("days_until_deadline"):
-                goal_section += f"Days until deadline: {context['days_until_deadline']}\n"
-            goal_section += f"Weekly commitment: {context.get('weekly_commitment', 25)} problems\n"
+        # Goal section (win rate targets)
+        goal_section = "## Win Rate Targets\n"
+        wrt = context.get("win_rate_targets")
+        wrc = context.get("win_rate_current")
+        if wrt:
+            goal_section += f"Easy target: {wrt.get('easy_target', 0.9)*100:.0f}%\n"
+            goal_section += f"Medium target: {wrt.get('medium_target', 0.7)*100:.0f}%\n"
+            goal_section += f"Hard target: {wrt.get('hard_target', 0.5)*100:.0f}%\n"
+            goal_section += f"Optimality threshold: {wrt.get('optimality_threshold', 70.0):.0f} runtime percentile\n"
+            if wrc:
+                goal_section += "\nCurrent 30-day rates:\n"
+                goal_section += f"  Easy: {wrc.get('easy_rate_30d', 0)*100:.0f}% ({wrc.get('easy_optimal_30d', 0)}/{wrc.get('easy_attempts_30d', 0)})\n"
+                goal_section += f"  Medium: {wrc.get('medium_rate_30d', 0)*100:.0f}% ({wrc.get('medium_optimal_30d', 0)}/{wrc.get('medium_attempts_30d', 0)})\n"
+                goal_section += f"  Hard: {wrc.get('hard_rate_30d', 0)*100:.0f}% ({wrc.get('hard_optimal_30d', 0)}/{wrc.get('hard_attempts_30d', 0)})\n"
         else:
-            goal_section += "No specific goal set - focus on balanced skill development\n"
+            goal_section += "No win rate targets set - focus on balanced skill development\n"
 
         # Path section
         path_section = "## Current Learning Path\n"
@@ -606,17 +607,21 @@ Only output the JSON, nothing else."""
         else:
             objective = "Continue learning path progress"
 
-        # Calculate pacing
+        # Calculate pacing based on win rates
         pacing_status = "on_track"
         pacing_note = "Keep up the consistent practice!"
-        if context.get("days_until_deadline"):
-            days = context["days_until_deadline"]
-            if days < 14:
-                pacing_status = "critical"
-                pacing_note = f"Only {days} days until deadline - increase daily practice"
-            elif days < 30:
+        wrc = context.get("win_rate_current")
+        wrt = context.get("win_rate_targets")
+        if wrc and wrt:
+            # Check if any difficulty is significantly below target
+            below_count = 0
+            if wrc.get("medium_rate_30d", 0) < wrt.get("medium_target", 0.7) * 0.7:
+                below_count += 1
+            if wrc.get("hard_rate_30d", 0) < wrt.get("hard_target", 0.5) * 0.7:
+                below_count += 1
+            if below_count >= 2:
                 pacing_status = "behind"
-                pacing_note = f"{days} days remaining - stay focused"
+                pacing_note = "Win rates are below targets - focus on fundamentals"
 
         return {
             "daily_objective": objective,
@@ -696,8 +701,7 @@ Only output the JSON, nothing else."""
             "generated_at": datetime.utcnow().isoformat(),
             "gemini_response": gemini_response,
             "generation_context": {
-                "target_company": context.get("target_company"),
-                "days_until_deadline": context.get("days_until_deadline"),
+                "has_win_rate_targets": context.get("win_rate_targets") is not None,
             },
         }
 

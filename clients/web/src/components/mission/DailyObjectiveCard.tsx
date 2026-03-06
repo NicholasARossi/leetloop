@@ -1,6 +1,12 @@
 'use client'
 
-import { DailyObjective } from '@/lib/api'
+interface DailyObjective {
+  title: string
+  description: string
+  skill_tags: string[]
+  target_count: number
+  completed_count: number
+}
 
 interface DailyObjectiveCardProps {
   objective: DailyObjective
