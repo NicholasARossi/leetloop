@@ -232,9 +232,9 @@ export const leetloopApi = {
   getWinRateStats: (userId: string) =>
     api<WinRateStats>(`/api/winrate/${userId}/stats`),
 
-  // Daily Feed
+  // Daily Feed (longer timeout for cold start + Gemini generation)
   getDailyFeed: (userId: string) =>
-    api<DailyFeedResponse>(`/api/feed/${userId}`),
+    api<DailyFeedResponse>(`/api/feed/${userId}`, { timeout: 90000 }),
 
   regenerateFeed: (userId: string) =>
     api<DailyFeedResponse>(`/api/feed/${userId}/regenerate`, {
@@ -244,6 +244,15 @@ export const leetloopApi = {
   extendFeed: (userId: string) =>
     api<DailyFeedResponse>(`/api/feed/${userId}/extend`, {
       method: 'POST',
+    }),
+
+  getFocusNotes: (userId: string) =>
+    api<FocusNotesResponse>(`/api/feed/${userId}/notes`),
+
+  updateFocusNotes: (userId: string, focusNotes: string | null) =>
+    api<FocusNotesResponse>(`/api/feed/${userId}/notes`, {
+      method: 'PUT',
+      body: JSON.stringify({ focus_notes: focusNotes }),
     }),
 
   // Onboarding
@@ -748,6 +757,12 @@ export interface DailyFeedResponse {
   total_count: number
   practice_count: number
   metric_count: number
+}
+
+export interface FocusNotesResponse {
+  user_id: string
+  focus_notes: string | null
+  updated_at: string | null
 }
 
 // Onboarding Types

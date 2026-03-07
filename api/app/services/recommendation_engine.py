@@ -24,6 +24,7 @@ class RecommendationEngine:
         self,
         user_id: UUID,
         limit: int = 5,
+        focus_notes: Optional[str] = None,
     ) -> list[RecommendedProblem]:
         """Get prioritized problem recommendations."""
         recommendations = []
@@ -68,9 +69,36 @@ class RecommendationEngine:
             )
             recommendations.extend(progression)
 
+        # 5. Boost priority for problems matching focus notes
+        if focus_notes:
+            focus_tags = self._extract_focus_tags(user_id, focus_notes)
+            if focus_tags:
+                for rec in recommendations:
+                    if any(tag.lower() in [ft.lower() for ft in focus_tags] for tag in rec.tags):
+                        rec.priority += 20
+                        rec.reason = f"[Focus] {rec.reason}"
+
         # Sort by priority and return top N
         recommendations.sort(key=lambda x: x.priority, reverse=True)
         return recommendations[:limit]
+
+    def _extract_focus_tags(self, user_id: UUID, notes_text: str) -> list[str]:
+        """Extract skill tags from notes by matching against user's existing skill_scores tags."""
+        try:
+            skills_resp = (
+                self.supabase.table("skill_scores")
+                .select("tag")
+                .eq("user_id", str(user_id))
+                .execute()
+            )
+            if not skills_resp.data:
+                return []
+
+            all_tags = [s["tag"] for s in skills_resp.data]
+            notes_lower = notes_text.lower()
+            return [tag for tag in all_tags if tag.lower() in notes_lower]
+        except Exception:
+            return []
 
     async def _get_insight_recommendations(
         self,

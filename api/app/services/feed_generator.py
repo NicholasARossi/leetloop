@@ -34,16 +34,33 @@ class FeedGenerator:
 
         return await self.generate_feed(user_id, feed_date)
 
+    def _get_focus_notes(self, user_id: UUID) -> Optional[str]:
+        """Fetch user's focus notes from user_settings."""
+        try:
+            resp = (
+                self.supabase.table("user_settings")
+                .select("focus_notes")
+                .eq("user_id", str(user_id))
+                .limit(1)
+                .execute()
+            )
+            if resp.data and resp.data[0].get("focus_notes"):
+                return resp.data[0]["focus_notes"]
+        except Exception:
+            pass
+        return None
+
     async def generate_feed(self, user_id: UUID, feed_date: date = None) -> dict:
         if feed_date is None:
             feed_date = date.today()
 
         user_id_str = str(user_id)
+        focus_notes = self._get_focus_notes(user_id)
 
         # Get practice and metric problems in parallel
         practice_problems, metric_problems = await asyncio.gather(
-            self._get_practice_problems(user_id, self.PRACTICE_COUNT),
-            self._get_metric_problems(user_id, self.METRIC_COUNT),
+            self._get_practice_problems(user_id, self.PRACTICE_COUNT, focus_notes=focus_notes),
+            self._get_metric_problems(user_id, self.METRIC_COUNT, focus_notes=focus_notes),
         )
 
         # Build feed items
@@ -138,11 +155,13 @@ class FeedGenerator:
         return await self.generate_feed(user_id, feed_date)
 
     async def _get_practice_problems(
-        self, user_id: UUID, count: int, excluded: set = None
+        self, user_id: UUID, count: int, excluded: set = None, focus_notes: Optional[str] = None
     ) -> list[dict]:
         excluded = excluded or set()
 
-        recommendations = await self.recommendation_engine.get_recommendations(user_id, limit=count + 10)
+        recommendations = await self.recommendation_engine.get_recommendations(
+            user_id, limit=count + 10, focus_notes=focus_notes
+        )
 
         problems = []
         for rec in recommendations:
@@ -163,7 +182,7 @@ class FeedGenerator:
         return problems
 
     async def _get_metric_problems(
-        self, user_id: UUID, count: int, excluded: set = None
+        self, user_id: UUID, count: int, excluded: set = None, focus_notes: Optional[str] = None
     ) -> list[dict]:
         excluded = excluded or set()
         user_id_str = str(user_id)
@@ -215,7 +234,7 @@ class FeedGenerator:
             return self._fallback_metric_problems(count, all_excluded)
 
         prompt = self._build_metric_prompt(
-            count, list(all_excluded)[:200], skill_context, targets
+            count, list(all_excluded)[:200], skill_context, targets, focus_notes=focus_notes
         )
 
         try:
@@ -253,7 +272,8 @@ class FeedGenerator:
             return self._fallback_metric_problems(count, all_excluded)
 
     def _build_metric_prompt(
-        self, count: int, excluded_slugs: list, skill_context: list, targets: dict
+        self, count: int, excluded_slugs: list, skill_context: list, targets: dict,
+        focus_notes: Optional[str] = None,
     ) -> str:
         skills_text = ""
         if skill_context:
@@ -269,6 +289,10 @@ class FeedGenerator:
         medium_count = max(1, round(count * 0.5))
         hard_count = count - easy_count - medium_count
 
+        focus_section = ""
+        if focus_notes:
+            focus_section = f"\n## User Focus Notes\nThe user has requested the following focus areas. Prioritize problems that align with these notes:\n{focus_notes}\n"
+
         return f"""You are a LeetCode problem selector. Select {count} REAL LeetCode problems that the user has NOT seen before. These are "metric" problems to measure true ability on unseen problems.
 
 ## Requirements
@@ -280,7 +304,7 @@ class FeedGenerator:
 ## User Context
 {skills_text}
 Target win rates: Easy {targets.get('easy_target', 0.9)*100:.0f}%, Medium {targets.get('medium_target', 0.7)*100:.0f}%, Hard {targets.get('hard_target', 0.5)*100:.0f}%
-
+{focus_section}
 ## Output Format (JSON only)
 {{
   "problems": [

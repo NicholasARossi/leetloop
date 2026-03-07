@@ -100,8 +100,9 @@ class ReviewCompleteResponse(BaseModel):
     """Response after completing a review."""
 
     id: UUID
-    next_review: datetime
-    new_interval_days: int
+    next_review: Optional[datetime] = None
+    new_interval_days: Optional[int] = None
+    graduated: bool = False
 
 
 # ============ Progress/Stats Models ============
@@ -559,6 +560,20 @@ class DailyMissionResponseV2(BaseModel):
 
 
 # ============ Pattern Analysis Models ============
+
+
+class FocusNotesRequest(BaseModel):
+    """Request to update user's focus notes for feed steering."""
+
+    focus_notes: Optional[str] = Field(None, max_length=500)
+
+
+class FocusNotesResponse(BaseModel):
+    """Response containing user's focus notes."""
+
+    user_id: UUID
+    focus_notes: Optional[str] = None
+    updated_at: Optional[datetime] = None
 
 
 class PatternInsight(BaseModel):
