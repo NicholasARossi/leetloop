@@ -30,14 +30,14 @@ export function WinRateTrend({ stats }: WinRateTrendProps) {
 
   const data = stats.trend.map(t => ({
     date: t.date,
-    easy: Math.round(t.easy_rate * 100),
-    medium: Math.round(t.medium_rate * 100),
-    hard: Math.round(t.hard_rate * 100),
+    easy: parseFloat((t.easy_rate * 100).toFixed(1)),
+    medium: parseFloat((t.medium_rate * 100).toFixed(1)),
+    hard: parseFloat((t.hard_rate * 100).toFixed(1)),
   }))
 
-  const easyTarget = stats.targets ? Math.round(stats.targets.easy_target * 100) : 90
-  const mediumTarget = stats.targets ? Math.round(stats.targets.medium_target * 100) : 70
-  const hardTarget = stats.targets ? Math.round(stats.targets.hard_target * 100) : 50
+  const easyTarget = stats.targets ? parseFloat((stats.targets.easy_target * 100).toFixed(1)) : 90
+  const mediumTarget = stats.targets ? parseFloat((stats.targets.medium_target * 100).toFixed(1)) : 70
+  const hardTarget = stats.targets ? parseFloat((stats.targets.hard_target * 100).toFixed(1)) : 50
 
   return (
     <div className="card">
@@ -61,20 +61,20 @@ export function WinRateTrend({ stats }: WinRateTrendProps) {
               labelFormatter={(label) => `Date: ${label}`}
             />
             {/* Target reference lines */}
-            <ReferenceLine y={easyTarget} stroke="#22c55e" strokeDasharray="5 5" strokeWidth={1} />
-            <ReferenceLine y={mediumTarget} stroke="#eab308" strokeDasharray="5 5" strokeWidth={1} />
-            <ReferenceLine y={hardTarget} stroke="#ef4444" strokeDasharray="5 5" strokeWidth={1} />
+            <ReferenceLine y={easyTarget} stroke="#999" strokeDasharray="5 5" strokeWidth={1} />
+            <ReferenceLine y={mediumTarget} stroke="#999" strokeDasharray="5 5" strokeWidth={1} />
+            <ReferenceLine y={hardTarget} stroke="#999" strokeDasharray="5 5" strokeWidth={1} />
             {/* Data lines */}
-            <Line type="monotone" dataKey="easy" stroke="#22c55e" strokeWidth={2} dot={false} name="Easy" />
-            <Line type="monotone" dataKey="medium" stroke="#eab308" strokeWidth={2} dot={false} name="Medium" />
-            <Line type="monotone" dataKey="hard" stroke="#ef4444" strokeWidth={2} dot={false} name="Hard" />
+            <Line type="monotone" dataKey="easy" stroke="#FF8888" strokeWidth={2} dot={false} name="Easy" />
+            <Line type="monotone" dataKey="medium" stroke="#993333" strokeWidth={2} dot={false} name="Medium" />
+            <Line type="monotone" dataKey="hard" stroke="#1a1a1a" strokeWidth={2} dot={false} name="Hard" />
           </LineChart>
         </ResponsiveContainer>
       </div>
       <div className="flex items-center justify-center gap-4 mt-2 text-xs">
-        <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-green-500 inline-block" /> Easy</span>
-        <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-yellow-500 inline-block" /> Medium</span>
-        <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-red-500 inline-block" /> Hard</span>
+        <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-coral inline-block" /> Easy</span>
+        <span className="flex items-center gap-1"><span className="w-3 h-0.5 inline-block" style={{ backgroundColor: '#993333' }} /> Medium</span>
+        <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-black inline-block" /> Hard</span>
         <span className="flex items-center gap-1"><span className="w-3 h-0.5 border-t-2 border-dashed border-gray-400 inline-block" /> Target</span>
       </div>
     </div>

@@ -5,48 +5,74 @@ from datetime import datetime
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from supabase import Client
 
 from app.db.supabase import get_supabase
 from app.models.system_design_schemas import (
-    AttemptGrade,
-    AttemptHistoryItem,
-    AttemptHistoryResponse,
     CompleteReviewRequest,
     CompleteReviewResponse,
-    CreateAttemptRequest,
-    CreateSessionRequest,
-    DashboardQuestion,
-    GeminiGradingContext,
-    GeminiQuestionContext,
     NextTopicInfo,
-    QuestionGrade,
+    DimensionEvidence,
+    DimensionScore,
+    OralGradeResult,
+    OralSession,
+    OralSessionCreate,
+    OralSessionSummary,
+    OralSubQuestion,
     RubricWeights,
-    SessionGrade,
-    SessionHistoryItem,
-    SessionHistoryResponse,
-    SessionQuestion,
     SetActiveTrackRequest,
-    SubmitAttemptRequest,
-    SubmitResponseRequest,
-    SystemDesignAttempt,
     SystemDesignDashboardSummary,
     SystemDesignReviewItem,
-    SystemDesignSession,
     SystemDesignTrack,
     TopicInfo,
     TrackProgressResponse,
     TrackSummary,
     UserTrackProgress,
 )
-from app.services.system_design_service import BookContentContext, get_system_design_service
+from app.services.system_design_service import get_system_design_service
 
 router = APIRouter()
 
 # In-memory TTL cache for system-design dashboard: {user_id_str: (expiry_timestamp, response)}
 _sd_dashboard_cache: dict[str, tuple[float, SystemDesignDashboardSummary]] = {}
 _SD_DASHBOARD_CACHE_TTL = 300  # 5 minutes
+
+
+def _build_oral_sub_question(q: dict, include_full_grade: bool = True) -> OralSubQuestion:
+    """Build OralSubQuestion from a DB row. If include_full_grade, includes dimension_scores etc."""
+    base = dict(
+        id=q["id"],
+        part_number=q["part_number"],
+        question_text=q["question_text"],
+        focus_area=q["focus_area"],
+        key_concepts=q.get("key_concepts") or [],
+        suggested_duration_minutes=q.get("suggested_duration_minutes", 4),
+        status=q["status"],
+        overall_score=q.get("overall_score"),
+        verdict=q.get("verdict"),
+        transcript=q.get("transcript"),
+        feedback=q.get("feedback"),
+    )
+    if include_full_grade and q.get("status") == "graded":
+        raw_dims = q.get("dimension_scores") or []
+        base["dimension_scores"] = [
+            DimensionScore(
+                name=d.get("name", ""),
+                score=d.get("score", 0),
+                evidence=[
+                    DimensionEvidence(quote=e.get("quote", ""), analysis=e.get("analysis", ""))
+                    for e in (d.get("evidence") or [])
+                ],
+                summary=d.get("summary", ""),
+            )
+            for d in raw_dims
+        ]
+        base["missed_concepts"] = q.get("missed_concepts") or []
+        base["strongest_moment"] = q.get("strongest_moment")
+        base["weakest_moment"] = q.get("weakest_moment")
+        base["follow_up_questions"] = q.get("follow_up_questions") or []
+    return OralSubQuestion(**base)
 
 
 # ============ Tracks ============
@@ -183,419 +209,6 @@ async def get_track_progress(
         raise HTTPException(status_code=500, detail=f"Failed to get track progress: {str(e)}")
 
 
-# ============ Sessions ============
-
-
-@router.post("/system-design/{user_id}/sessions", response_model=SystemDesignSession)
-async def create_session(
-    user_id: UUID,
-    request: CreateSessionRequest,
-    supabase: Annotated[Client, Depends(get_supabase)] = None,
-):
-    """Start a new system design session and generate questions."""
-    try:
-        # Get track info
-        track_response = (
-            supabase.table("system_design_tracks")
-            .select("*")
-            .eq("id", str(request.track_id))
-            .single()
-            .execute()
-        )
-
-        if not track_response.data:
-            raise HTTPException(status_code=404, detail="Track not found")
-
-        track_data = track_response.data
-        topics = track_data.get("topics", [])
-
-        # Find topic info
-        topic_info = next((t for t in topics if t["name"] == request.topic), None)
-        example_systems = topic_info.get("example_systems", []) if topic_info else []
-
-        # Get user's previous weak areas from grades
-        weak_areas = []
-        grades_response = (
-            supabase.table("system_design_grades")
-            .select("gaps")
-            .eq("session_id", supabase.table("system_design_sessions")
-                .select("id")
-                .eq("user_id", str(user_id))
-                .order("completed_at", desc=True)
-                .limit(3))
-            .execute()
-        )
-        # Flatten gaps from recent sessions
-        if grades_response.data:
-            for g in grades_response.data:
-                weak_areas.extend(g.get("gaps", []))
-        weak_areas = list(set(weak_areas))[:5]  # Dedupe and limit
-
-        # Check for book content linked to this track/topic
-        book_content = None
-        try:
-            book_response = (
-                supabase.table("book_content")
-                .select("chapter_title, summary, key_concepts, case_studies")
-                .eq("track_id", str(request.track_id))
-                .eq("chapter_title", request.topic)
-                .limit(1)
-                .execute()
-            )
-            if book_response.data:
-                bc = book_response.data[0]
-                book_content = BookContentContext(
-                    chapter_title=bc.get("chapter_title", ""),
-                    summary=bc.get("summary", ""),
-                    key_concepts=bc.get("key_concepts", []),
-                    case_studies=bc.get("case_studies", []),
-                )
-        except Exception:
-            pass  # Book content is optional enhancement
-
-        # Generate questions via Gemini
-        service = get_system_design_service()
-        context = GeminiQuestionContext(
-            track_type=track_data["track_type"],
-            topic=request.topic,
-            example_systems=example_systems,
-            user_weak_areas=weak_areas,
-        )
-        generated = await service.generate_questions(context, book_content)
-
-        # Convert to storage format
-        questions_json = [
-            {
-                "id": q.id,
-                "text": q.text,
-                "focus_area": q.focus_area,
-                "key_concepts": q.key_concepts,
-            }
-            for q in generated
-        ]
-
-        # Create session
-        session_data = {
-            "user_id": str(user_id),
-            "track_id": str(request.track_id),
-            "topic": request.topic,
-            "questions": questions_json,
-            "session_type": request.session_type,
-            "status": "in_progress",
-        }
-
-        response = (
-            supabase.table("system_design_sessions")
-            .insert(session_data)
-            .execute()
-        )
-
-        if not response.data:
-            raise HTTPException(status_code=500, detail="Failed to create session")
-
-        session = response.data[0]
-        questions = [
-            SessionQuestion(
-                id=q["id"],
-                text=q["text"],
-                focus_area=q["focus_area"],
-                key_concepts=q.get("key_concepts", []),
-            )
-            for q in session.get("questions", [])
-        ]
-
-        return SystemDesignSession(
-            id=session["id"],
-            user_id=session["user_id"],
-            track_id=session.get("track_id"),
-            topic=session["topic"],
-            questions=questions,
-            session_type=session.get("session_type"),
-            status=session["status"],
-            started_at=session["started_at"],
-        )
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to create session: {str(e)}")
-
-
-@router.get("/system-design/sessions/{session_id}", response_model=SystemDesignSession)
-async def get_session(
-    session_id: UUID,
-    supabase: Annotated[Client, Depends(get_supabase)] = None,
-):
-    """Get session details with responses."""
-    try:
-        # Get session
-        session_response = (
-            supabase.table("system_design_sessions")
-            .select("*")
-            .eq("id", str(session_id))
-            .single()
-            .execute()
-        )
-
-        if not session_response.data:
-            raise HTTPException(status_code=404, detail="Session not found")
-
-        session = session_response.data
-
-        # Get responses
-        responses_response = (
-            supabase.table("system_design_responses")
-            .select("*")
-            .eq("session_id", str(session_id))
-            .execute()
-        )
-
-        responses_by_id = {r["question_id"]: r for r in (responses_response.data or [])}
-
-        # Build questions with responses
-        questions = []
-        for q in session.get("questions", []):
-            resp = responses_by_id.get(q["id"])
-            questions.append(SessionQuestion(
-                id=q["id"],
-                text=q["text"],
-                focus_area=q["focus_area"],
-                key_concepts=q.get("key_concepts", []),
-                response=resp.get("response_text") if resp else None,
-                word_count=resp.get("word_count") if resp else None,
-            ))
-
-        return SystemDesignSession(
-            id=session["id"],
-            user_id=session["user_id"],
-            track_id=session.get("track_id"),
-            topic=session["topic"],
-            questions=questions,
-            session_type=session.get("session_type"),
-            status=session["status"],
-            started_at=session["started_at"],
-            completed_at=session.get("completed_at"),
-        )
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get session: {str(e)}")
-
-
-@router.post("/system-design/sessions/{session_id}/response")
-async def submit_response(
-    session_id: UUID,
-    request: SubmitResponseRequest,
-    supabase: Annotated[Client, Depends(get_supabase)] = None,
-):
-    """Submit a response for a question."""
-    try:
-        # Verify session exists and is in progress
-        session_response = (
-            supabase.table("system_design_sessions")
-            .select("status")
-            .eq("id", str(session_id))
-            .single()
-            .execute()
-        )
-
-        if not session_response.data:
-            raise HTTPException(status_code=404, detail="Session not found")
-
-        if session_response.data["status"] != "in_progress":
-            raise HTTPException(status_code=400, detail="Session is not in progress")
-
-        word_count = len(request.response_text.split())
-
-        # Upsert response
-        response = (
-            supabase.table("system_design_responses")
-            .upsert({
-                "session_id": str(session_id),
-                "question_id": request.question_id,
-                "response_text": request.response_text,
-                "word_count": word_count,
-            }, on_conflict="session_id,question_id")
-            .execute()
-        )
-
-        return {
-            "success": True,
-            "question_id": request.question_id,
-            "word_count": word_count,
-        }
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to submit response: {str(e)}")
-
-
-@router.post("/system-design/sessions/{session_id}/complete", response_model=SessionGrade)
-async def complete_session(
-    session_id: UUID,
-    supabase: Annotated[Client, Depends(get_supabase)] = None,
-):
-    """Complete session and trigger grading."""
-    try:
-        # Get session with track info
-        session_response = (
-            supabase.table("system_design_sessions")
-            .select("*, system_design_tracks(*)")
-            .eq("id", str(session_id))
-            .single()
-            .execute()
-        )
-
-        if not session_response.data:
-            raise HTTPException(status_code=404, detail="Session not found")
-
-        session = session_response.data
-
-        if session["status"] == "completed":
-            # Return existing grade
-            grade_response = (
-                supabase.table("system_design_grades")
-                .select("*")
-                .eq("session_id", str(session_id))
-                .single()
-                .execute()
-            )
-            if grade_response.data:
-                return _parse_grade(grade_response.data)
-            raise HTTPException(status_code=400, detail="Session completed but no grade found")
-
-        # Get responses
-        responses_response = (
-            supabase.table("system_design_responses")
-            .select("*")
-            .eq("session_id", str(session_id))
-            .execute()
-        )
-
-        responses_by_id = {r["question_id"]: r["response_text"] for r in (responses_response.data or [])}
-
-        # Build grading context
-        track_data = session.get("system_design_tracks", {})
-        rubric_data = track_data.get("rubric", {})
-        rubric = RubricWeights(**rubric_data) if rubric_data else RubricWeights()
-
-        questions_with_responses = []
-        for q in session.get("questions", []):
-            questions_with_responses.append({
-                "text": q["text"],
-                "focus_area": q["focus_area"],
-                "key_concepts": q.get("key_concepts", []),
-                "response": responses_by_id.get(q["id"], ""),
-            })
-
-        # Grade via Gemini
-        service = get_system_design_service()
-        grading_context = GeminiGradingContext(
-            track_type=track_data.get("track_type", "traditional"),
-            topic=session["topic"],
-            rubric=rubric,
-            questions=questions_with_responses,
-        )
-        grading_result = await service.grade_session(grading_context)
-
-        # Convert question grades to storage format
-        question_grades_json = [
-            {
-                "question_id": qg.question_id,
-                "score": qg.score,
-                "feedback": qg.feedback,
-                "rubric_scores": [
-                    {"dimension": rs.dimension, "score": rs.score, "feedback": rs.feedback}
-                    for rs in qg.rubric_scores
-                ],
-                "missed_concepts": qg.missed_concepts,
-            }
-            for qg in grading_result.question_grades
-        ]
-
-        # Store grade
-        grade_data = {
-            "session_id": str(session_id),
-            "overall_score": grading_result.overall_score,
-            "overall_feedback": grading_result.overall_feedback,
-            "question_grades": question_grades_json,
-            "strengths": grading_result.strengths,
-            "gaps": grading_result.gaps,
-            "review_topics": grading_result.review_topics,
-            "would_hire": grading_result.would_hire,
-        }
-
-        grade_response = (
-            supabase.table("system_design_grades")
-            .insert(grade_data)
-            .execute()
-        )
-
-        if not grade_response.data:
-            raise HTTPException(status_code=500, detail="Failed to save grade")
-
-        grade = grade_response.data[0]
-
-        # Update session status
-        supabase.table("system_design_sessions").update({
-            "status": "completed",
-            "completed_at": datetime.utcnow().isoformat(),
-        }).eq("id", str(session_id)).execute()
-
-        # Add review topics to queue
-        user_id = session["user_id"]
-        track_id = session.get("track_id")
-        for topic in grading_result.review_topics:
-            try:
-                supabase.table("system_design_review_queue").upsert({
-                    "user_id": str(user_id),
-                    "track_id": str(track_id) if track_id else None,
-                    "topic": topic,
-                    "reason": f"Gap identified in session on {session['topic']}",
-                    "priority": 1,
-                    "interval_days": 1,
-                    "source_session_id": str(session_id),
-                }, on_conflict="user_id,topic").execute()
-            except Exception:
-                pass  # Ignore duplicates
-
-        # Update track progress
-        if track_id:
-            _update_track_progress(
-                supabase, user_id, track_id, session["topic"], grading_result.overall_score
-            )
-
-        return _parse_grade(grade)
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to complete session: {str(e)}")
-
-
-@router.get("/system-design/sessions/{session_id}/grade", response_model=SessionGrade)
-async def get_session_grade(
-    session_id: UUID,
-    supabase: Annotated[Client, Depends(get_supabase)] = None,
-):
-    """Get grade for a completed session."""
-    try:
-        response = (
-            supabase.table("system_design_grades")
-            .select("*")
-            .eq("session_id", str(session_id))
-            .single()
-            .execute()
-        )
-
-        if not response.data:
-            raise HTTPException(status_code=404, detail="Grade not found")
-
-        return _parse_grade(response.data)
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get grade: {str(e)}")
-
-
 # ============ Reviews ============
 
 
@@ -654,262 +267,6 @@ async def complete_review(
         raise HTTPException(status_code=500, detail=f"Failed to complete review: {str(e)}")
 
 
-# ============ History ============
-
-
-@router.get("/system-design/{user_id}/history", response_model=SessionHistoryResponse)
-async def get_session_history(
-    user_id: UUID,
-    limit: int = 20,
-    offset: int = 0,
-    supabase: Annotated[Client, Depends(get_supabase)] = None,
-):
-    """Get user's session history with grades."""
-    try:
-        # Get sessions with count
-        sessions_response = (
-            supabase.table("system_design_sessions")
-            .select("*, system_design_tracks(name), system_design_grades(overall_score)", count="exact")
-            .eq("user_id", str(user_id))
-            .order("started_at", desc=True)
-            .range(offset, offset + limit - 1)
-            .execute()
-        )
-
-        total = sessions_response.count or 0
-        sessions = []
-
-        for s in (sessions_response.data or []):
-            track = s.get("system_design_tracks")
-            grade = s.get("system_design_grades")
-
-            sessions.append(SessionHistoryItem(
-                id=s["id"],
-                track_name=track.get("name") if track else None,
-                topic=s["topic"],
-                session_type=s.get("session_type"),
-                status=s["status"],
-                overall_score=grade.get("overall_score") if grade else None,
-                started_at=s["started_at"],
-                completed_at=s.get("completed_at"),
-            ))
-
-        return SessionHistoryResponse(
-            sessions=sessions,
-            total=total,
-            has_more=offset + limit < total,
-        )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get history: {str(e)}")
-
-
-# ============ Helpers ============
-
-
-def _parse_grade(data: dict) -> SessionGrade:
-    """Parse grade data from database."""
-    question_grades = []
-    for qg in data.get("question_grades", []):
-        from app.models.system_design_schemas import RubricScore
-        rubric_scores = [
-            RubricScore(
-                dimension=rs["dimension"],
-                score=rs["score"],
-                feedback=rs.get("feedback", ""),
-            )
-            for rs in qg.get("rubric_scores", [])
-        ]
-        question_grades.append(QuestionGrade(
-            question_id=qg["question_id"],
-            score=qg["score"],
-            feedback=qg["feedback"],
-            rubric_scores=rubric_scores,
-            missed_concepts=qg.get("missed_concepts", []),
-        ))
-
-    return SessionGrade(
-        id=data["id"],
-        session_id=data["session_id"],
-        overall_score=data["overall_score"],
-        overall_feedback=data["overall_feedback"],
-        question_grades=question_grades,
-        strengths=data.get("strengths", []),
-        gaps=data.get("gaps", []),
-        review_topics=data.get("review_topics", []),
-        would_hire=data.get("would_hire"),
-        graded_at=data["graded_at"],
-    )
-
-
-async def _get_or_generate_daily_questions(
-    supabase: Client,
-    user_id: UUID,
-    track_data: dict,
-    topic_name: str,
-) -> list[DashboardQuestion]:
-    """Get cached daily questions or generate new ones.
-
-    Questions are structured as:
-    - One scenario with 3 focused sub-questions (2 concepts each)
-    - Day 1: Show parts 1 and 2
-    - Day 2: Show part 3
-    """
-    from uuid import UUID as UUIDType
-    import uuid
-
-    track_id = track_data["id"]
-    today = datetime.utcnow().date().isoformat()
-
-    # Check for existing questions for today
-    try:
-        cached_response = (
-            supabase.table("system_design_daily_questions")
-            .select("*")
-            .eq("user_id", str(user_id))
-            .eq("track_id", str(track_id))
-            .eq("topic", topic_name)
-            .eq("serve_date", today)
-            .order("part_number")
-            .execute()
-        )
-
-        if cached_response.data and len(cached_response.data) >= 2:
-            # Return cached questions
-            return [
-                DashboardQuestion(
-                    id=q["id"],
-                    scenario=q.get("scenario", ""),
-                    text=q["question_text"],
-                    focus_area=q.get("focus_area", "general"),
-                    key_concepts=q.get("key_concepts", []),
-                    topic=q["topic"],
-                    track_id=UUIDType(q["track_id"]),
-                    part_number=q.get("part_number", 1),
-                    total_parts=q.get("total_parts", 3),
-                    completed=q.get("completed", False),
-                )
-                for q in cached_response.data[:2]
-            ]
-    except Exception as e:
-        print(f"Failed to fetch cached questions: {e}")
-
-    # Check if there's a part 3 from yesterday's scenario to serve today
-    yesterday = (datetime.utcnow() - __import__('datetime').timedelta(days=1)).date().isoformat()
-    try:
-        leftover_response = (
-            supabase.table("system_design_daily_questions")
-            .select("*")
-            .eq("user_id", str(user_id))
-            .eq("track_id", str(track_id))
-            .eq("topic", topic_name)
-            .eq("serve_date", yesterday)
-            .eq("part_number", 3)
-            .eq("completed", False)
-            .limit(1)
-            .execute()
-        )
-
-        if leftover_response.data:
-            # Move yesterday's part 3 to today and generate 1 new sub-question
-            leftover = leftover_response.data[0]
-            supabase.table("system_design_daily_questions").update({
-                "serve_date": today,
-            }).eq("id", leftover["id"]).execute()
-
-            # Generate 1 new sub-question to pair with it
-            # (In practice, you might want a fresh scenario for variety)
-    except Exception as e:
-        print(f"Failed to check leftover questions: {e}")
-
-    # Generate new questions
-    try:
-        # Find topic info for example systems
-        topics = track_data.get("topics", [])
-        topic_info = next((t for t in topics if t["name"] == topic_name), None)
-        example_systems = topic_info.get("example_systems", []) if topic_info else []
-
-        service = get_system_design_service()
-        context = GeminiQuestionContext(
-            track_type=track_data["track_type"],
-            topic=topic_name,
-            example_systems=example_systems,
-            user_weak_areas=[],
-        )
-
-        # Generate scenario with 3 sub-questions total
-        # Today: serve parts 1 & 2, Tomorrow: serve part 3
-        generated = await service.generate_dashboard_questions(context, count=3)
-        scenario = generated.get("scenario", "")
-        sub_questions = generated.get("sub_questions", [])
-        total_parts = generated.get("total_parts", 3)
-        question_set_id = str(uuid.uuid4())
-        tomorrow = (datetime.utcnow() + __import__('datetime').timedelta(days=1)).date().isoformat()
-
-        # Cache all 3 sub-questions
-        questions = []
-        for i, sq in enumerate(sub_questions):
-            part_num = sq.get("part_number", i + 1)
-            # Parts 1-2 for today, part 3 for tomorrow
-            serve_date = today if part_num <= 2 else tomorrow
-
-            try:
-                insert_data = {
-                    "user_id": str(user_id),
-                    "track_id": str(track_id),
-                    "topic": topic_name,
-                    "scenario": scenario,
-                    "question_text": sq["text"],
-                    "focus_area": sq.get("focus_area", "general"),
-                    "key_concepts": sq.get("key_concepts", []),
-                    "part_number": part_num,
-                    "total_parts": total_parts,
-                    "question_set_id": question_set_id,
-                    "serve_date": serve_date,
-                }
-
-                insert_response = (
-                    supabase.table("system_design_daily_questions")
-                    .insert(insert_data)
-                    .execute()
-                )
-
-                if insert_response.data and part_num <= 2:
-                    q = insert_response.data[0]
-                    questions.append(DashboardQuestion(
-                        id=q["id"],
-                        scenario=q.get("scenario", ""),
-                        text=q["question_text"],
-                        focus_area=q.get("focus_area", "general"),
-                        key_concepts=q.get("key_concepts", []),
-                        topic=q["topic"],
-                        track_id=UUIDType(q["track_id"]),
-                        part_number=q.get("part_number", 1),
-                        total_parts=q.get("total_parts", 3),
-                        completed=False,
-                    ))
-            except Exception as e:
-                print(f"Failed to cache question: {e}")
-                # Create in-memory fallback for today's questions
-                if part_num <= 2:
-                    questions.append(DashboardQuestion(
-                        id=str(uuid.uuid4()),
-                        scenario=scenario,
-                        text=sq["text"],
-                        focus_area=sq.get("focus_area", "general"),
-                        key_concepts=sq.get("key_concepts", []),
-                        topic=topic_name,
-                        track_id=UUIDType(track_id),
-                        part_number=part_num,
-                        total_parts=total_parts,
-                        completed=False,
-                    ))
-
-        return questions[:2]
-    except Exception as e:
-        print(f"Failed to generate daily questions: {e}")
-        return []
-
-
 def _update_track_progress(
     supabase: Client,
     user_id: str,
@@ -956,292 +313,6 @@ def _update_track_progress(
             }).execute()
     except Exception as e:
         print(f"Failed to update track progress: {e}")
-
-
-# ============ Simplified Attempts (Single Question Flow) ============
-
-
-@router.post("/system-design/{user_id}/attempt", response_model=SystemDesignAttempt)
-async def create_attempt(
-    user_id: UUID,
-    request: CreateAttemptRequest,
-    supabase: Annotated[Client, Depends(get_supabase)] = None,
-):
-    """Create a new single-question system design attempt."""
-    try:
-        # Get track info
-        track_response = (
-            supabase.table("system_design_tracks")
-            .select("*")
-            .eq("id", str(request.track_id))
-            .single()
-            .execute()
-        )
-
-        if not track_response.data:
-            raise HTTPException(status_code=404, detail="Track not found")
-
-        track_data = track_response.data
-        topics = track_data.get("topics", [])
-
-        # Find topic info
-        topic_info = next((t for t in topics if t["name"] == request.topic), None)
-        example_systems = topic_info.get("example_systems", []) if topic_info else []
-
-        # Get user's previous weak areas from recent attempts
-        weak_areas = []
-        try:
-            recent_attempts = (
-                supabase.table("system_design_attempts")
-                .select("review_topics")
-                .eq("user_id", str(user_id))
-                .eq("status", "graded")
-                .order("graded_at", desc=True)
-                .limit(5)
-                .execute()
-            )
-            if recent_attempts.data:
-                for a in recent_attempts.data:
-                    weak_areas.extend(a.get("review_topics") or [])
-                weak_areas = list(set(weak_areas))[:5]
-        except Exception:
-            pass
-
-        # Generate single question via Gemini
-        service = get_system_design_service()
-        context = GeminiQuestionContext(
-            track_type=track_data["track_type"],
-            topic=request.topic,
-            example_systems=example_systems,
-            user_weak_areas=weak_areas,
-        )
-        generated = await service.generate_single_question(context)
-
-        # Create attempt
-        attempt_data = {
-            "user_id": str(user_id),
-            "track_id": str(request.track_id),
-            "topic": request.topic,
-            "question_text": generated.text,
-            "question_focus_area": generated.focus_area,
-            "question_key_concepts": generated.key_concepts,
-            "status": "pending",
-        }
-
-        response = (
-            supabase.table("system_design_attempts")
-            .insert(attempt_data)
-            .execute()
-        )
-
-        if not response.data:
-            raise HTTPException(status_code=500, detail="Failed to create attempt")
-
-        attempt = response.data[0]
-        return SystemDesignAttempt(
-            id=attempt["id"],
-            user_id=attempt["user_id"],
-            track_id=attempt.get("track_id"),
-            topic=attempt["topic"],
-            question_text=attempt["question_text"],
-            question_focus_area=attempt.get("question_focus_area"),
-            question_key_concepts=attempt.get("question_key_concepts") or [],
-            status=attempt["status"],
-            created_at=attempt["created_at"],
-        )
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to create attempt: {str(e)}")
-
-
-@router.post("/system-design/attempts/{attempt_id}/submit", response_model=AttemptGrade)
-async def submit_attempt(
-    attempt_id: UUID,
-    request: SubmitAttemptRequest,
-    supabase: Annotated[Client, Depends(get_supabase)] = None,
-):
-    """Submit response for an attempt and get AI grading."""
-    try:
-        # Get attempt with track info
-        attempt_response = (
-            supabase.table("system_design_attempts")
-            .select("*, system_design_tracks(*)")
-            .eq("id", str(attempt_id))
-            .single()
-            .execute()
-        )
-
-        if not attempt_response.data:
-            raise HTTPException(status_code=404, detail="Attempt not found")
-
-        attempt = attempt_response.data
-
-        if attempt["status"] == "graded":
-            # Return existing grade
-            return AttemptGrade(
-                score=attempt["score"],
-                verdict=attempt["verdict"],
-                feedback=attempt["feedback"],
-                missed_concepts=attempt.get("missed_concepts") or [],
-                review_topics=attempt.get("review_topics") or [],
-            )
-
-        # Calculate word count
-        word_count = len(request.response_text.split())
-
-        # Grade via Gemini
-        service = get_system_design_service()
-        track_data = attempt.get("system_design_tracks", {})
-
-        grading_result = await service.grade_attempt(
-            topic=attempt["topic"],
-            track_type=track_data.get("track_type", "traditional"),
-            question_text=attempt["question_text"],
-            focus_area=attempt.get("question_focus_area") or "general",
-            key_concepts=attempt.get("question_key_concepts") or [],
-            response_text=request.response_text,
-        )
-
-        # Update attempt with response and grade
-        update_data = {
-            "response_text": request.response_text,
-            "word_count": word_count,
-            "score": grading_result.score,
-            "verdict": grading_result.verdict,
-            "feedback": grading_result.feedback,
-            "missed_concepts": grading_result.missed_concepts,
-            "review_topics": grading_result.review_topics,
-            "status": "graded",
-            "graded_at": datetime.utcnow().isoformat(),
-        }
-
-        supabase.table("system_design_attempts").update(update_data).eq("id", str(attempt_id)).execute()
-
-        # Add review topics to queue if score < 7
-        if grading_result.score < 7:
-            user_id = attempt["user_id"]
-            track_id = attempt.get("track_id")
-            for topic in grading_result.review_topics:
-                try:
-                    supabase.table("system_design_review_queue").upsert({
-                        "user_id": str(user_id),
-                        "track_id": str(track_id) if track_id else None,
-                        "topic": topic,
-                        "reason": f"Weak area from attempt on {attempt['topic']}",
-                        "priority": 1,
-                        "interval_days": 1,
-                    }, on_conflict="user_id,topic").execute()
-                except Exception:
-                    pass
-
-        # Update track progress
-        track_id = attempt.get("track_id")
-        if track_id:
-            _update_track_progress(
-                supabase, attempt["user_id"], track_id, attempt["topic"], grading_result.score
-            )
-
-        return AttemptGrade(
-            score=grading_result.score,
-            verdict=grading_result.verdict,
-            feedback=grading_result.feedback,
-            missed_concepts=grading_result.missed_concepts,
-            review_topics=grading_result.review_topics,
-        )
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to submit attempt: {str(e)}")
-
-
-@router.get("/system-design/{user_id}/attempts", response_model=AttemptHistoryResponse)
-async def get_attempt_history(
-    user_id: UUID,
-    limit: int = 20,
-    offset: int = 0,
-    supabase: Annotated[Client, Depends(get_supabase)] = None,
-):
-    """Get user's attempt history."""
-    try:
-        # Get attempts with count
-        response = (
-            supabase.table("system_design_attempts")
-            .select("*, system_design_tracks(name)", count="exact")
-            .eq("user_id", str(user_id))
-            .order("created_at", desc=True)
-            .range(offset, offset + limit - 1)
-            .execute()
-        )
-
-        total = response.count or 0
-        attempts = []
-
-        for a in (response.data or []):
-            track = a.get("system_design_tracks")
-            attempts.append(AttemptHistoryItem(
-                id=a["id"],
-                topic=a["topic"],
-                question_text=a["question_text"],
-                score=a.get("score"),
-                verdict=a.get("verdict"),
-                status=a["status"],
-                created_at=a["created_at"],
-                graded_at=a.get("graded_at"),
-                track_name=track.get("name") if track else None,
-            ))
-
-        return AttemptHistoryResponse(
-            attempts=attempts,
-            total=total,
-            has_more=offset + limit < total,
-        )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get attempt history: {str(e)}")
-
-
-@router.get("/system-design/attempts/{attempt_id}", response_model=SystemDesignAttempt)
-async def get_attempt(
-    attempt_id: UUID,
-    supabase: Annotated[Client, Depends(get_supabase)] = None,
-):
-    """Get a specific attempt."""
-    try:
-        response = (
-            supabase.table("system_design_attempts")
-            .select("*")
-            .eq("id", str(attempt_id))
-            .single()
-            .execute()
-        )
-
-        if not response.data:
-            raise HTTPException(status_code=404, detail="Attempt not found")
-
-        attempt = response.data
-        return SystemDesignAttempt(
-            id=attempt["id"],
-            user_id=attempt["user_id"],
-            track_id=attempt.get("track_id"),
-            topic=attempt["topic"],
-            question_text=attempt["question_text"],
-            question_focus_area=attempt.get("question_focus_area"),
-            question_key_concepts=attempt.get("question_key_concepts") or [],
-            response_text=attempt.get("response_text"),
-            word_count=attempt.get("word_count") or 0,
-            score=attempt.get("score"),
-            verdict=attempt.get("verdict"),
-            feedback=attempt.get("feedback"),
-            missed_concepts=attempt.get("missed_concepts") or [],
-            review_topics=attempt.get("review_topics") or [],
-            status=attempt["status"],
-            created_at=attempt["created_at"],
-            graded_at=attempt.get("graded_at"),
-        )
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get attempt: {str(e)}")
 
 
 # ============ Dashboard Integration ============
@@ -1329,12 +400,89 @@ async def get_dashboard_summary(
                         )
                         break
 
-        # Get or generate daily questions
-        daily_questions = []
-        if next_topic and track_data:
-            daily_questions = await _get_or_generate_daily_questions(
-                supabase, user_id, track_data, next_topic.topic_name
-            )
+        # Get or create today's oral session
+        oral_session_model = None
+        if has_active_track and next_topic:
+            try:
+                today_start = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
+                existing_oral = (
+                    supabase.table("system_design_oral_sessions")
+                    .select("*")
+                    .eq("user_id", str(user_id))
+                    .gte("created_at", today_start)
+                    .in_("status", ["active", "completed"])
+                    .order("created_at", desc=True)
+                    .limit(1)
+                    .execute()
+                )
+
+                if existing_oral.data:
+                    os_data = existing_oral.data[0]
+                    oq_response = (
+                        supabase.table("system_design_oral_questions")
+                        .select("*")
+                        .eq("session_id", os_data["id"])
+                        .order("part_number")
+                        .execute()
+                    )
+                    oral_session_model = OralSession(
+                        id=os_data["id"],
+                        user_id=os_data["user_id"],
+                        track_id=os_data["track_id"],
+                        topic=os_data["topic"],
+                        scenario=os_data.get("scenario", ""),
+                        status=os_data["status"],
+                        questions=[_build_oral_sub_question(q) for q in (oq_response.data or [])],
+                        created_at=os_data["created_at"],
+                    )
+                else:
+                    # Auto-generate a new oral session for today
+                    import uuid as _uuid
+                    service = get_system_design_service()
+                    track_type = track_data.get("track_type", "mle") if track_data else "mle"
+                    scenario, sub_questions = await service.generate_oral_questions(
+                        next_topic.topic_name, track_type
+                    )
+
+                    session_data = {
+                        "user_id": str(user_id),
+                        "track_id": str(next_topic.track_id),
+                        "topic": next_topic.topic_name,
+                        "scenario": scenario,
+                        "status": "active",
+                    }
+                    new_session = supabase.table("system_design_oral_sessions").insert(session_data).execute()
+
+                    if new_session.data:
+                        ns = new_session.data[0]
+                        q_models = []
+                        for sq in sub_questions:
+                            q_data = {
+                                "session_id": ns["id"],
+                                "part_number": sq["part_number"],
+                                "question_text": sq["question_text"],
+                                "focus_area": sq["focus_area"],
+                                "key_concepts": sq["key_concepts"],
+                                "suggested_duration_minutes": sq.get("suggested_duration_minutes", 4),
+                                "status": "pending",
+                            }
+                            q_resp = supabase.table("system_design_oral_questions").insert(q_data).execute()
+                            if q_resp.data:
+                                q_models.append(_build_oral_sub_question(q_resp.data[0], include_full_grade=False))
+
+                        oral_session_model = OralSession(
+                            id=ns["id"],
+                            user_id=ns["user_id"],
+                            track_id=ns["track_id"],
+                            topic=ns["topic"],
+                            scenario=ns.get("scenario", ""),
+                            status=ns["status"],
+                            questions=q_models,
+                            created_at=ns["created_at"],
+                        )
+            except Exception:
+                # Don't fail the whole dashboard if oral session creation fails
+                pass
 
         # Get reviews due
         reviews_response = supabase.rpc(
@@ -1346,45 +494,45 @@ async def get_dashboard_summary(
         if reviews_response.data:
             reviews_due = [SystemDesignReviewItem(**r) for r in reviews_response.data]
 
-        # Get recent sessions this week
+        # Get recent oral sessions this week
         week_ago = (datetime.utcnow() - timedelta(days=7)).isoformat()
-        sessions_response = (
-            supabase.table("system_design_sessions")
+        oral_sessions_response = (
+            supabase.table("system_design_oral_sessions")
             .select("id", count="exact")
             .eq("user_id", str(user_id))
-            .gte("started_at", week_ago)
+            .gte("created_at", week_ago)
             .execute()
         )
-        sessions_this_week = sessions_response.count or 0
+        sessions_this_week = oral_sessions_response.count or 0
 
-        # Get most recent score
-        recent_grade_response = (
-            supabase.table("system_design_grades")
-            .select("overall_score, session_id")
+        # Get most recent oral score
+        recent_score = None
+        recent_oral_response = (
+            supabase.table("system_design_oral_questions")
+            .select("overall_score, graded_at, session_id")
+            .eq("status", "graded")
             .order("graded_at", desc=True)
             .limit(1)
             .execute()
         )
-        recent_score = None
-        if recent_grade_response.data:
-            # Verify this grade belongs to the user
-            grade = recent_grade_response.data[0]
-            session_check = (
-                supabase.table("system_design_sessions")
+        if recent_oral_response.data:
+            oral_q = recent_oral_response.data[0]
+            oral_session_check = (
+                supabase.table("system_design_oral_sessions")
                 .select("user_id")
-                .eq("id", grade["session_id"])
+                .eq("id", oral_q["session_id"])
                 .eq("user_id", str(user_id))
                 .limit(1)
                 .execute()
             )
-            if session_check.data:
-                recent_score = grade["overall_score"]
+            if oral_session_check.data:
+                recent_score = oral_q["overall_score"]
 
         response = SystemDesignDashboardSummary(
             has_active_track=has_active_track,
             active_track=active_track,
             next_topic=next_topic,
-            daily_questions=daily_questions,
+            oral_session=oral_session_model,
             reviews_due_count=len(reviews_due),
             reviews_due=reviews_due,
             recent_score=recent_score,
@@ -1394,110 +542,6 @@ async def get_dashboard_summary(
         return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get dashboard summary: {str(e)}")
-
-
-@router.post("/system-design/daily-questions/{question_id}/submit", response_model=AttemptGrade)
-async def submit_dashboard_question(
-    question_id: UUID,
-    request: SubmitAttemptRequest,
-    supabase: Annotated[Client, Depends(get_supabase)] = None,
-):
-    """Submit an answer for a dashboard question and get AI grading."""
-    try:
-        # Get the cached question
-        question_response = (
-            supabase.table("system_design_daily_questions")
-            .select("*, system_design_tracks(*)")
-            .eq("id", str(question_id))
-            .single()
-            .execute()
-        )
-
-        if not question_response.data:
-            raise HTTPException(status_code=404, detail="Question not found")
-
-        question = question_response.data
-        track_data = question.get("system_design_tracks", {})
-
-        # Build full question context with scenario
-        scenario = question.get("scenario", "")
-        sub_question = question["question_text"]
-        full_question = f"{scenario}\n\n{sub_question}" if scenario else sub_question
-
-        # Grade the response (focused on just 2 concepts)
-        service = get_system_design_service()
-        grading_result = await service.grade_attempt(
-            topic=question["topic"],
-            track_type=track_data.get("track_type", "traditional"),
-            question_text=full_question,
-            focus_area=question.get("focus_area") or "general",
-            key_concepts=question.get("key_concepts") or [],
-            response_text=request.response_text,
-        )
-
-        # Mark question as completed
-        supabase.table("system_design_daily_questions").update({
-            "completed": True,
-            "completed_at": datetime.utcnow().isoformat(),
-        }).eq("id", str(question_id)).execute()
-
-        # Create an attempt record for history
-        word_count = len(request.response_text.split())
-        attempt_data = {
-            "user_id": question["user_id"],
-            "track_id": question["track_id"],
-            "topic": question["topic"],
-            "question_text": question["question_text"],
-            "question_focus_area": question.get("focus_area"),
-            "question_key_concepts": question.get("key_concepts") or [],
-            "response_text": request.response_text,
-            "word_count": word_count,
-            "score": grading_result.score,
-            "verdict": grading_result.verdict,
-            "feedback": grading_result.feedback,
-            "missed_concepts": grading_result.missed_concepts,
-            "review_topics": grading_result.review_topics,
-            "status": "graded",
-            "graded_at": datetime.utcnow().isoformat(),
-        }
-
-        supabase.table("system_design_attempts").insert(attempt_data).execute()
-
-        # Add review topics to queue if score < 7
-        if grading_result.score < 7:
-            user_id = question["user_id"]
-            track_id = question.get("track_id")
-            for topic in grading_result.review_topics:
-                try:
-                    supabase.table("system_design_review_queue").upsert({
-                        "user_id": str(user_id),
-                        "track_id": str(track_id) if track_id else None,
-                        "topic": topic,
-                        "reason": f"Weak area from dashboard question on {question['topic']}",
-                        "priority": 1,
-                        "interval_days": 1,
-                    }, on_conflict="user_id,topic").execute()
-                except Exception:
-                    pass
-
-        # Update track progress
-        track_id = question.get("track_id")
-        if track_id:
-            _update_track_progress(
-                supabase, question["user_id"], track_id, question["topic"], grading_result.score
-            )
-
-        return AttemptGrade(
-            score=grading_result.score,
-            verdict=grading_result.verdict,
-            feedback=grading_result.feedback,
-            missed_concepts=grading_result.missed_concepts,
-            review_topics=grading_result.review_topics,
-        )
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to submit answer: {str(e)}")
 
 
 @router.put("/system-design/{user_id}/active-track")
@@ -1595,3 +639,415 @@ async def get_active_track(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get active track: {str(e)}")
+
+
+# ============ Oral System Design Sessions ============
+
+ALLOWED_AUDIO_TYPES = {
+    "audio/webm", "audio/mp4", "audio/x-m4a", "audio/mpeg",
+    "audio/wav", "audio/x-wav", "audio/ogg", "audio/m4a",
+}
+MAX_AUDIO_SIZE = 25 * 1024 * 1024  # 25MB
+
+
+@router.post("/system-design/{user_id}/oral-session", response_model=OralSession)
+async def create_oral_session(
+    user_id: UUID,
+    request: OralSessionCreate,
+    supabase: Annotated[Client, Depends(get_supabase)] = None,
+):
+    """Create a new oral practice session with 3 focused sub-questions."""
+    try:
+        # Get track info
+        track_response = (
+            supabase.table("system_design_tracks")
+            .select("*")
+            .eq("id", str(request.track_id))
+            .single()
+            .execute()
+        )
+
+        if not track_response.data:
+            raise HTTPException(status_code=404, detail="Track not found")
+
+        track_data = track_response.data
+
+        # Generate oral questions via Gemini
+        service = get_system_design_service()
+        scenario, sub_questions = await service.generate_oral_questions(
+            topic=request.topic,
+            track_type=track_data["track_type"],
+        )
+
+        # Insert session
+        session_data = {
+            "user_id": str(user_id),
+            "track_id": str(request.track_id),
+            "topic": request.topic,
+            "scenario": scenario,
+            "status": "active",
+        }
+
+        session_response = (
+            supabase.table("system_design_oral_sessions")
+            .insert(session_data)
+            .execute()
+        )
+
+        if not session_response.data:
+            raise HTTPException(status_code=500, detail="Failed to create oral session")
+
+        session = session_response.data[0]
+
+        # Insert sub-questions
+        question_models = []
+        for sq in sub_questions:
+            q_data = {
+                "session_id": session["id"],
+                "part_number": sq["part_number"],
+                "question_text": sq["question_text"],
+                "focus_area": sq["focus_area"],
+                "key_concepts": sq["key_concepts"],
+                "suggested_duration_minutes": sq.get("suggested_duration_minutes", 4),
+                "status": "pending",
+            }
+
+            q_response = (
+                supabase.table("system_design_oral_questions")
+                .insert(q_data)
+                .execute()
+            )
+
+            if q_response.data:
+                q = q_response.data[0]
+                question_models.append(OralSubQuestion(
+                    id=q["id"],
+                    part_number=q["part_number"],
+                    question_text=q["question_text"],
+                    focus_area=q["focus_area"],
+                    key_concepts=q.get("key_concepts") or [],
+                    suggested_duration_minutes=q.get("suggested_duration_minutes", 4),
+                    status=q["status"],
+                ))
+
+        return OralSession(
+            id=session["id"],
+            user_id=session["user_id"],
+            track_id=session["track_id"],
+            topic=session["topic"],
+            scenario=session.get("scenario", ""),
+            status=session["status"],
+            questions=question_models,
+            created_at=session["created_at"],
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to create oral session: {str(e)}")
+
+
+@router.get("/system-design/oral-sessions/{session_id}", response_model=OralSession)
+async def get_oral_session(
+    session_id: UUID,
+    supabase: Annotated[Client, Depends(get_supabase)] = None,
+):
+    """Get oral session with all questions and their grades."""
+    try:
+        session_response = (
+            supabase.table("system_design_oral_sessions")
+            .select("*")
+            .eq("id", str(session_id))
+            .single()
+            .execute()
+        )
+
+        if not session_response.data:
+            raise HTTPException(status_code=404, detail="Oral session not found")
+
+        session = session_response.data
+
+        # Get questions
+        questions_response = (
+            supabase.table("system_design_oral_questions")
+            .select("*")
+            .eq("session_id", str(session_id))
+            .order("part_number")
+            .execute()
+        )
+
+        question_models = [
+            _build_oral_sub_question(q, include_full_grade=True)
+            for q in (questions_response.data or [])
+        ]
+
+        return OralSession(
+            id=session["id"],
+            user_id=session["user_id"],
+            track_id=session["track_id"],
+            topic=session["topic"],
+            scenario=session.get("scenario", ""),
+            status=session["status"],
+            questions=question_models,
+            created_at=session["created_at"],
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get oral session: {str(e)}")
+
+
+@router.post("/system-design/oral-questions/{question_id}/submit-audio", response_model=OralGradeResult)
+async def submit_oral_audio(
+    question_id: UUID,
+    audio: UploadFile = File(...),
+    supabase: Annotated[Client, Depends(get_supabase)] = None,
+):
+    """Submit audio for an oral question and get Gemini multimodal grading."""
+    from app.services.oral_grading_service import get_oral_grading_service
+
+    try:
+        # Validate content type
+        content_type = audio.content_type or "audio/webm"
+        if content_type not in ALLOWED_AUDIO_TYPES:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Unsupported audio type: {content_type}. Allowed: {', '.join(ALLOWED_AUDIO_TYPES)}"
+            )
+
+        # Read audio bytes and validate size
+        audio_bytes = await audio.read()
+        if len(audio_bytes) > MAX_AUDIO_SIZE:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Audio file too large: {len(audio_bytes) / 1024 / 1024:.1f}MB. Max: 25MB"
+            )
+
+        # Get question with session info
+        question_response = (
+            supabase.table("system_design_oral_questions")
+            .select("*, system_design_oral_sessions(track_id, topic, system_design_tracks(track_type))")
+            .eq("id", str(question_id))
+            .single()
+            .execute()
+        )
+
+        if not question_response.data:
+            raise HTTPException(status_code=404, detail="Question not found")
+
+        question = question_response.data
+        session = question.get("system_design_oral_sessions", {})
+        track = session.get("system_design_tracks", {})
+        track_type = track.get("track_type", "traditional")
+
+        # Grade via Gemini multimodal
+        grading_service = get_oral_grading_service()
+        result = await grading_service.transcribe_and_grade(
+            audio_bytes=audio_bytes,
+            mime_type=content_type,
+            question_text=question["question_text"],
+            focus_area=question["focus_area"],
+            key_concepts=question.get("key_concepts") or [],
+            track_type=track_type,
+            suggested_duration=question.get("suggested_duration_minutes", 4),
+        )
+
+        # Update question row with grade data
+        update_data = {
+            "transcript": result.transcript,
+            "dimension_scores": [
+                {
+                    "name": d.name,
+                    "score": d.score,
+                    "evidence": [{"quote": e.quote, "analysis": e.analysis} for e in d.evidence],
+                    "summary": d.summary,
+                }
+                for d in result.dimensions
+            ],
+            "overall_score": result.overall_score,
+            "verdict": result.verdict,
+            "feedback": result.feedback,
+            "missed_concepts": result.missed_concepts,
+            "strongest_moment": result.strongest_moment,
+            "weakest_moment": result.weakest_moment,
+            "follow_up_questions": result.follow_up_questions,
+            "status": "graded",
+            "graded_at": datetime.utcnow().isoformat(),
+        }
+
+        supabase.table("system_design_oral_questions").update(update_data).eq("id", str(question_id)).execute()
+
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to grade audio: {str(e)}")
+
+
+@router.post("/system-design/oral-sessions/{session_id}/complete", response_model=OralSessionSummary)
+async def complete_oral_session(
+    session_id: UUID,
+    supabase: Annotated[Client, Depends(get_supabase)] = None,
+):
+    """Complete an oral session, compute aggregates, and update review queue."""
+    try:
+        # Get session
+        session_response = (
+            supabase.table("system_design_oral_sessions")
+            .select("*")
+            .eq("id", str(session_id))
+            .single()
+            .execute()
+        )
+
+        if not session_response.data:
+            raise HTTPException(status_code=404, detail="Oral session not found")
+
+        session = session_response.data
+
+        if session["status"] == "completed":
+            raise HTTPException(status_code=400, detail="Session already completed")
+
+        # Get all graded questions
+        questions_response = (
+            supabase.table("system_design_oral_questions")
+            .select("*")
+            .eq("session_id", str(session_id))
+            .eq("status", "graded")
+            .order("part_number")
+            .execute()
+        )
+
+        graded_questions = questions_response.data or []
+
+        if not graded_questions:
+            raise HTTPException(status_code=400, detail="No graded questions in this session")
+
+        # Compute dimension averages across all graded questions
+        dimension_totals: dict[str, list[float]] = {}
+        for q in graded_questions:
+            for dim in (q.get("dimension_scores") or []):
+                name = dim.get("name", "")
+                score = dim.get("score", 0)
+                if name not in dimension_totals:
+                    dimension_totals[name] = []
+                dimension_totals[name].append(float(score))
+
+        dimension_averages = {
+            name: round(sum(scores) / len(scores), 1)
+            for name, scores in dimension_totals.items()
+        }
+
+        # Compute overall score from dimension averages
+        from app.services.oral_grading_service import DIMENSION_WEIGHTS
+        weighted_sum = 0.0
+        total_weight = 0.0
+        for name, avg in dimension_averages.items():
+            weight = DIMENSION_WEIGHTS.get(name, 1.0)
+            weighted_sum += avg * weight
+            total_weight += weight
+
+        overall_score = round(weighted_sum / total_weight, 1) if total_weight > 0 else 0.0
+
+        if overall_score >= 7:
+            verdict = "pass"
+        elif overall_score >= 5:
+            verdict = "borderline"
+        else:
+            verdict = "fail"
+
+        # Update session status
+        supabase.table("system_design_oral_sessions").update({
+            "status": "completed",
+            "completed_at": datetime.utcnow().isoformat(),
+        }).eq("id", str(session_id)).execute()
+
+        # Add weak areas to review queue
+        review_topics_added = []
+        user_id = session["user_id"]
+        track_id = session.get("track_id")
+
+        for name, avg in dimension_averages.items():
+            if avg < 7:
+                topic_label = f"{session['topic']} - {name.replace('_', ' ').title()}"
+                try:
+                    supabase.table("system_design_review_queue").upsert({
+                        "user_id": str(user_id),
+                        "track_id": str(track_id) if track_id else None,
+                        "topic": topic_label,
+                        "reason": f"Weak area from oral session on {session['topic']} (avg score: {avg}/10)",
+                        "priority": 1,
+                        "interval_days": 1,
+                    }, on_conflict="user_id,topic").execute()
+                    review_topics_added.append(topic_label)
+                except Exception:
+                    pass
+
+        # Update track progress
+        if track_id:
+            _update_track_progress(
+                supabase, user_id, track_id, session["topic"], overall_score
+            )
+
+        return OralSessionSummary(
+            session_id=str(session_id),
+            topic=session["topic"],
+            questions_graded=len(graded_questions),
+            dimension_averages=dimension_averages,
+            overall_score=overall_score,
+            verdict=verdict,
+            review_topics_added=review_topics_added,
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to complete oral session: {str(e)}")
+
+
+@router.get("/system-design/{user_id}/oral-sessions", response_model=list[OralSession])
+async def list_oral_sessions(
+    user_id: UUID,
+    limit: int = 20,
+    offset: int = 0,
+    supabase: Annotated[Client, Depends(get_supabase)] = None,
+):
+    """List user's oral sessions with pagination."""
+    try:
+        response = (
+            supabase.table("system_design_oral_sessions")
+            .select("*")
+            .eq("user_id", str(user_id))
+            .order("created_at", desc=True)
+            .range(offset, offset + limit - 1)
+            .execute()
+        )
+
+        sessions = []
+        for s in (response.data or []):
+            # Get questions for each session (summary only for listing)
+            questions_response = (
+                supabase.table("system_design_oral_questions")
+                .select("*")
+                .eq("session_id", s["id"])
+                .order("part_number")
+                .execute()
+            )
+
+            question_models = [
+                _build_oral_sub_question(q, include_full_grade=False)
+                for q in (questions_response.data or [])
+            ]
+
+            sessions.append(OralSession(
+                id=s["id"],
+                user_id=s["user_id"],
+                track_id=s["track_id"],
+                topic=s["topic"],
+                scenario=s.get("scenario", ""),
+                status=s["status"],
+                questions=question_models,
+                created_at=s["created_at"],
+            ))
+
+        return sessions
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to list oral sessions: {str(e)}")

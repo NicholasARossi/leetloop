@@ -81,28 +81,32 @@ async def complete_review(
     If success=False, the interval resets to 1 day.
     """
     try:
-        # Use the RPC function
+        # Use the RPC function (may delete the row on graduation)
         response = supabase.rpc(
             "complete_review",
             {"p_review_id": str(review_id), "p_success": request.success}
         ).execute()
 
-        # Get updated review item
+        # Get updated review item (may not exist if graduated)
         updated = (
             supabase.table("review_queue")
             .select("*")
             .eq("id", str(review_id))
-            .single()
+            .limit(1)
             .execute()
         )
 
         if not updated.data:
-            raise HTTPException(status_code=404, detail="Review not found")
+            # Review was graduated (deleted) — problem mastered
+            return ReviewCompleteResponse(
+                id=review_id,
+                graduated=True,
+            )
 
         return ReviewCompleteResponse(
             id=review_id,
-            next_review=updated.data["next_review"],
-            new_interval_days=updated.data["interval_days"],
+            next_review=updated.data[0]["next_review"],
+            new_interval_days=updated.data[0]["interval_days"],
         )
     except HTTPException:
         raise
@@ -140,14 +144,17 @@ async def add_to_review_queue(
     try:
         response = (
             supabase.table("review_queue")
-            .insert({
-                "user_id": str(user_id),
-                "problem_slug": problem_slug,
-                "problem_title": problem_title,
-                "reason": reason,
-                "next_review": datetime.utcnow().isoformat(),
-                "interval_days": 1,
-            })
+            .upsert(
+                {
+                    "user_id": str(user_id),
+                    "problem_slug": problem_slug,
+                    "problem_title": problem_title,
+                    "reason": reason,
+                    "next_review": datetime.utcnow().isoformat(),
+                    "interval_days": 1,
+                },
+                on_conflict="user_id,problem_slug",
+            )
             .execute()
         )
 

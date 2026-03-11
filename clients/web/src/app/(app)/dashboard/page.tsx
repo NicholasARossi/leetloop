@@ -86,12 +86,8 @@ export default function DashboardPage() {
     loadDashboard()
   }, [loadDashboard, userId])
 
-  const handleStartSystemDesignSession = (trackId: string, topic: string) => {
-    router.push(`/system-design/session/new?track=${trackId}&topic=${encodeURIComponent(topic)}`)
-  }
-
   const handleStartSystemDesignReview = (review: SystemDesignReviewItem) => {
-    router.push(`/system-design/session/new?track=${review.track_id}&topic=${encodeURIComponent(review.topic)}&type=review`)
+    router.push(`/system-design?track=${review.track_id}&topic=${encodeURIComponent(review.topic)}`)
   }
 
   if (loading) {
@@ -187,7 +183,6 @@ export default function DashboardPage() {
           {systemDesignData && (
             <SystemDesignDashboardCard
               data={systemDesignData}
-              onStartSession={handleStartSystemDesignSession}
               onStartReview={handleStartSystemDesignReview}
             />
           )}
