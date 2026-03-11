@@ -306,32 +306,6 @@ export const leetloopApi = {
   getTrackProgress: (trackId: string, userId: string) =>
     api<TrackProgressResponse>(`/api/system-design/tracks/${trackId}/progress/${userId}`),
 
-  createSystemDesignSession: (userId: string, data: CreateSessionRequest) =>
-    api<SystemDesignSession>(`/api/system-design/${userId}/sessions`, {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
-
-  getSystemDesignSession: (sessionId: string) =>
-    api<SystemDesignSession>(`/api/system-design/sessions/${sessionId}`),
-
-  submitSystemDesignResponse: (sessionId: string, questionId: number, responseText: string) =>
-    api<{ success: boolean; question_id: number; word_count: number }>(
-      `/api/system-design/sessions/${sessionId}/response`,
-      {
-        method: 'POST',
-        body: JSON.stringify({ question_id: questionId, response_text: responseText }),
-      }
-    ),
-
-  completeSystemDesignSession: (sessionId: string) =>
-    api<SystemDesignGrade>(`/api/system-design/sessions/${sessionId}/complete`, {
-      method: 'POST',
-    }),
-
-  getSystemDesignGrade: (sessionId: string) =>
-    api<SystemDesignGrade>(`/api/system-design/sessions/${sessionId}/grade`),
-
   getSystemDesignReviews: (userId: string, limit = 10) =>
     api<SystemDesignReviewItem[]>(`/api/system-design/${userId}/reviews?limit=${limit}`),
 
@@ -342,11 +316,6 @@ export const leetloopApi = {
         method: 'POST',
         body: JSON.stringify({ success }),
       }
-    ),
-
-  getSystemDesignHistory: (userId: string, limit = 20, offset = 0) =>
-    api<SessionHistoryResponse>(
-      `/api/system-design/${userId}/history?limit=${limit}&offset=${offset}`
     ),
 
   // System Design Dashboard
@@ -365,33 +334,43 @@ export const leetloopApi = {
   getActiveSystemDesignTrack: (userId: string) =>
     api<ActiveTrackResponse>(`/api/system-design/${userId}/active-track`),
 
-  // System Design Attempts (Simplified Single-Question Flow)
-  createSystemDesignAttempt: (userId: string, data: CreateAttemptRequest) =>
-    api<SystemDesignAttempt>(`/api/system-design/${userId}/attempt`, {
+  // Oral System Design Sessions
+  createOralSession: (userId: string, data: { track_id: string; topic: string }) =>
+    api<OralSession>(`/api/system-design/${userId}/oral-session`, {
       method: 'POST',
       body: JSON.stringify(data),
     }),
 
-  submitSystemDesignAttempt: (attemptId: string, responseText: string) =>
-    api<AttemptGrade>(`/api/system-design/attempts/${attemptId}/submit`, {
+  getOralSession: (sessionId: string) =>
+    api<OralSession>(`/api/system-design/oral-sessions/${sessionId}`),
+
+  submitOralAudio: async (questionId: string, audioFile: Blob | File): Promise<OralGradeResult> => {
+    const formData = new FormData()
+    formData.append('audio', audioFile, audioFile instanceof File ? audioFile.name : 'recording.webm')
+
+    const url = `${API_URL}/api/system-design/oral-questions/${questionId}/submit-audio`
+    const response = await fetchWithTimeout(url, {
       method: 'POST',
-      body: JSON.stringify({ response_text: responseText }),
+      body: formData,
+      timeout: 120000, // 2 min timeout for audio processing
+      // Do NOT set Content-Type — browser sets it with boundary for FormData
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ detail: 'Unknown error' }))
+      throw new ApiError(response.status, error.detail || response.statusText)
+    }
+
+    return response.json()
+  },
+
+  completeOralSession: (sessionId: string) =>
+    api<OralSessionSummary>(`/api/system-design/oral-sessions/${sessionId}/complete`, {
+      method: 'POST',
     }),
 
-  getSystemDesignAttempt: (attemptId: string) =>
-    api<SystemDesignAttempt>(`/api/system-design/attempts/${attemptId}`),
-
-  getSystemDesignAttemptHistory: (userId: string, limit = 20, offset = 0) =>
-    api<AttemptHistoryResponse>(
-      `/api/system-design/${userId}/attempts?limit=${limit}&offset=${offset}`
-    ),
-
-  // Submit answer for a dashboard question
-  submitDashboardQuestion: (questionId: string, responseText: string) =>
-    api<AttemptGrade>(`/api/system-design/daily-questions/${questionId}/submit`, {
-      method: 'POST',
-      body: JSON.stringify({ response_text: responseText }),
-    }),
+  getOralSessions: (userId: string, limit = 20) =>
+    api<OralSession[]>(`/api/system-design/${userId}/oral-sessions?limit=${limit}`),
 
   // Language Learning
   getLanguageTracks: () =>
@@ -861,60 +840,6 @@ export interface TrackProgressResponse {
   next_topic?: string
 }
 
-export interface CreateSessionRequest {
-  track_id: string
-  topic: string
-  session_type?: string
-}
-
-export interface SessionQuestion {
-  id: number
-  text: string
-  focus_area: string
-  key_concepts: string[]
-  response?: string
-  word_count?: number
-}
-
-export interface SystemDesignSession {
-  id: string
-  user_id: string
-  track_id?: string
-  topic: string
-  questions: SessionQuestion[]
-  session_type?: string
-  status: string
-  started_at: string
-  completed_at?: string
-}
-
-export interface RubricScore {
-  dimension: string
-  score: number
-  feedback: string
-}
-
-export interface QuestionGrade {
-  question_id: number
-  score: number
-  feedback: string
-  rubric_scores: RubricScore[]
-  missed_concepts: string[]
-}
-
-export interface SystemDesignGrade {
-  id: string
-  session_id: string
-  overall_score: number
-  overall_feedback: string
-  question_grades: QuestionGrade[]
-  strengths: string[]
-  gaps: string[]
-  review_topics: string[]
-  would_hire?: boolean
-  graded_at: string
-}
-
 export interface SystemDesignReviewItem {
   id: string
   user_id: string
@@ -930,23 +855,6 @@ export interface SystemDesignReviewItem {
   created_at: string
 }
 
-export interface SessionHistoryItem {
-  id: string
-  track_name?: string
-  topic: string
-  session_type?: string
-  status: string
-  overall_score?: number
-  started_at: string
-  completed_at?: string
-}
-
-export interface SessionHistoryResponse {
-  sessions: SessionHistoryItem[]
-  total: number
-  has_more: boolean
-}
-
 // System Design Dashboard Types
 export interface NextTopicInfo {
   track_id: string
@@ -960,24 +868,11 @@ export interface NextTopicInfo {
   total_topics: number
 }
 
-export interface DashboardQuestion {
-  id: string
-  scenario: string  // Shared scenario context
-  text: string  // The focused sub-question (2 concepts)
-  focus_area: string
-  key_concepts: string[]  // Exactly 2 concepts to address
-  topic: string
-  track_id: string
-  part_number: number  // Which part (1, 2, or 3)
-  total_parts: number  // Total parts in full scenario
-  completed: boolean
-}
-
 export interface SystemDesignDashboardSummary {
   has_active_track: boolean
   active_track?: SystemDesignTrackSummary
   next_topic?: NextTopicInfo
-  daily_questions: DashboardQuestion[]
+  oral_session?: OralSession
   reviews_due_count: number
   reviews_due: SystemDesignReviewItem[]
   recent_score?: number
@@ -989,56 +884,69 @@ export interface ActiveTrackResponse {
   track?: SystemDesignTrackSummary
 }
 
-// System Design Simplified Attempt Types
-export interface CreateAttemptRequest {
-  track_id: string
-  topic: string
+// Oral System Design Types
+export interface OralSubQuestion {
+  id: string
+  part_number: number
+  question_text: string
+  focus_area: string
+  key_concepts: string[]
+  suggested_duration_minutes: number
+  status: 'pending' | 'graded'
+  overall_score?: number
+  verdict?: 'pass' | 'fail' | 'borderline'
+  transcript?: string
+  feedback?: string
+  dimension_scores?: DimensionScore[]
+  missed_concepts?: string[]
+  strongest_moment?: string
+  weakest_moment?: string
+  follow_up_questions?: string[]
 }
 
-export interface SystemDesignAttempt {
+export interface OralSession {
   id: string
   user_id: string
-  track_id?: string
+  track_id: string
   topic: string
-  question_text: string
-  question_focus_area?: string
-  question_key_concepts: string[]
-  response_text?: string
-  word_count: number
-  score?: number
-  verdict?: 'pass' | 'fail' | 'borderline'
-  feedback?: string
-  missed_concepts: string[]
-  review_topics: string[]
-  status: 'pending' | 'graded' | 'abandoned'
+  scenario: string
+  status: 'active' | 'completed' | 'abandoned'
+  questions: OralSubQuestion[]
   created_at: string
-  graded_at?: string
 }
 
-export interface AttemptGrade {
+export interface DimensionEvidence {
+  quote: string
+  analysis: string
+}
+
+export interface DimensionScore {
+  name: string
   score: number
-  verdict: 'pass' | 'fail' | 'borderline'
+  evidence: DimensionEvidence[]
+  summary: string
+}
+
+export interface OralGradeResult {
+  transcript: string
+  dimensions: DimensionScore[]
+  overall_score: number
+  verdict: 'pass' | 'borderline' | 'fail'
   feedback: string
   missed_concepts: string[]
-  review_topics: string[]
+  strongest_moment: string
+  weakest_moment: string
+  follow_up_questions: string[]
 }
 
-export interface AttemptHistoryItem {
-  id: string
+export interface OralSessionSummary {
+  session_id: string
   topic: string
-  question_text: string
-  score?: number
-  verdict?: 'pass' | 'fail' | 'borderline'
-  status: string
-  created_at: string
-  graded_at?: string
-  track_name?: string
-}
-
-export interface AttemptHistoryResponse {
-  attempts: AttemptHistoryItem[]
-  total: number
-  has_more: boolean
+  questions_graded: number
+  dimension_averages: Record<string, number>
+  overall_score: number
+  verdict: 'pass' | 'borderline' | 'fail'
+  review_topics_added: string[]
 }
 
 // Language Learning Types

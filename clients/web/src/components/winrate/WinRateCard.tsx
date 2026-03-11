@@ -16,8 +16,8 @@ const difficultyLabels: Record<string, string> = {
 
 function RateBar({ difficulty, data }: { difficulty: string; data: DifficultyWinRate }) {
   const label = difficultyLabels[difficulty] || 'Easy'
-  const ratePercent = Math.round(data.rate * 100)
-  const targetPercent = Math.round(data.target * 100)
+  const ratePercent = parseFloat((data.rate * 100).toFixed(1))
+  const targetPercent = parseFloat((data.target * 100).toFixed(1))
 
   return (
     <div className="mb-3 last:mb-0">

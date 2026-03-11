@@ -1,30 +1,38 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import {
   leetloopApi,
   type SystemDesignTrackSummary,
   type SystemDesignTrack,
-  type SystemDesignAttempt,
-  type AttemptGrade,
-  type AttemptHistoryItem,
   type UserTrackProgressData,
+  type OralSession,
+  type OralGradeResult,
+  type OralSessionSummary,
 } from '@/lib/api'
-import { TrackCard } from '@/components/system-design'
+import {
+  TrackCard,
+  AudioRecorder,
+  AudioUploader,
+  OralGradeDisplay,
+  SessionProgress,
+} from '@/components/system-design'
 import { clsx } from 'clsx'
 
-type FlowState = 'select' | 'question' | 'grading' | 'result'
+type FlowState = 'select' | 'session' | 'question' | 'grading' | 'result' | 'session-complete'
+type InputMode = 'record' | 'upload'
 
 export default function SystemDesignPage() {
   const { userId } = useAuth()
+  const searchParams = useSearchParams()
 
   // Data state
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [tracks, setTracks] = useState<SystemDesignTrackSummary[]>([])
   const [trackProgress, setTrackProgress] = useState<Record<string, UserTrackProgressData>>({})
-  const [history, setHistory] = useState<AttemptHistoryItem[]>([])
   const [activeTrackId, setActiveTrackId] = useState<string | null>(null)
 
   // Flow state
@@ -32,18 +40,21 @@ export default function SystemDesignPage() {
   const [selectedTrack, setSelectedTrack] = useState<SystemDesignTrack | null>(null)
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
 
-  // Attempt state
-  const [currentAttempt, setCurrentAttempt] = useState<SystemDesignAttempt | null>(null)
-  const [response, setResponse] = useState('')
-  const [wordCount, setWordCount] = useState(0)
-  const [grade, setGrade] = useState<AttemptGrade | null>(null)
+  // Oral session state
+  const [oralSession, setOralSession] = useState<OralSession | null>(null)
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+  const [currentGrade, setCurrentGrade] = useState<OralGradeResult | null>(null)
+  const [sessionSummary, setSessionSummary] = useState<OralSessionSummary | null>(null)
+  const [inputMode, setInputMode] = useState<InputMode>('record')
 
   // UI state
   const [settingActive, setSettingActive] = useState(false)
   const [generating, setGenerating] = useState(false)
-  const [submitting, setSubmitting] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [gradingTimeout, setGradingTimeout] = useState(false)
+  const [recentSessions, setRecentSessions] = useState<OralSession[]>([])
   const [showHistory, setShowHistory] = useState(false)
-  const [showQuestion, setShowQuestion] = useState(true)
+  const [lastAudioBlob, setLastAudioBlob] = useState<Blob | File | null>(null)
 
   // Load initial data
   useEffect(() => {
@@ -54,15 +65,15 @@ export default function SystemDesignPage() {
       setError(null)
 
       try {
-        const [tracksData, historyData, activeTrackData] = await Promise.all([
+        const [tracksData, activeTrackData, sessionsData] = await Promise.all([
           leetloopApi.getSystemDesignTracks(),
-          leetloopApi.getSystemDesignAttemptHistory(userId, 10),
           leetloopApi.getActiveSystemDesignTrack(userId).catch(() => null),
+          leetloopApi.getOralSessions(userId, 10).catch(() => []),
         ])
 
         setTracks(tracksData)
-        setHistory(historyData.attempts)
         setActiveTrackId(activeTrackData?.active_track_id || null)
+        setRecentSessions(sessionsData)
 
         // Load progress for each track
         const progressMap: Record<string, UserTrackProgressData> = {}
@@ -88,11 +99,22 @@ export default function SystemDesignPage() {
     loadData()
   }, [userId])
 
-  // Update word count
+  // Handle deep link from dashboard: ?session={id}&q={index}
   useEffect(() => {
-    const words = response.trim().split(/\s+/).filter(w => w.length > 0)
-    setWordCount(words.length)
-  }, [response])
+    const sessionId = searchParams.get('session')
+    const qIndex = searchParams.get('q')
+    if (sessionId && !oralSession) {
+      leetloopApi.getOralSession(sessionId).then((session) => {
+        setOralSession(session)
+        setCurrentQuestionIndex(qIndex ? parseInt(qIndex, 10) : 0)
+        setCurrentGrade(null)
+        setSessionSummary(null)
+        setFlowState('question')
+      }).catch(() => {
+        // Session not found, fall through to normal select view
+      })
+    }
+  }, [searchParams, oralSession])
 
   async function handleTrackSelect(track: SystemDesignTrackSummary) {
     try {
@@ -105,71 +127,113 @@ export default function SystemDesignPage() {
     }
   }
 
-  async function handleGetQuestion() {
+  async function handleStartOralSession() {
     if (!userId || !selectedTrack || !selectedTopic) return
 
     setGenerating(true)
     setError(null)
 
     try {
-      const attempt = await leetloopApi.createSystemDesignAttempt(userId, {
+      const session = await leetloopApi.createOralSession(userId, {
         track_id: selectedTrack.id,
         topic: selectedTopic,
       })
-      setCurrentAttempt(attempt)
-      setResponse('')
-      setGrade(null)
+      setOralSession(session)
+      setCurrentQuestionIndex(0)
+      setCurrentGrade(null)
+      setSessionSummary(null)
       setFlowState('question')
-      setShowQuestion(true)
+      setSelectedTrack(null) // Close modal
     } catch (err) {
-      console.error('Failed to generate question:', err)
-      setError('Failed to generate question. Please try again.')
+      console.error('Failed to create oral session:', err)
+      setError('Failed to create oral session. Please try again.')
     } finally {
       setGenerating(false)
     }
   }
 
-  async function handleSubmit() {
-    if (!currentAttempt || submitting || wordCount < 20) return
+  const handleAudioSubmit = useCallback(async (audioData: Blob | File) => {
+    if (!oralSession) return
 
-    setSubmitting(true)
+    const question = oralSession.questions[currentQuestionIndex]
+    if (!question) return
+
+    setLastAudioBlob(audioData)
+    setUploading(true)
     setFlowState('grading')
     setError(null)
+    setGradingTimeout(false)
+
+    // Show timeout message after 30s
+    const timeoutId = setTimeout(() => setGradingTimeout(true), 30000)
 
     try {
-      const gradeResult = await leetloopApi.submitSystemDesignAttempt(
-        currentAttempt.id,
-        response
-      )
-      setGrade(gradeResult)
+      const result = await leetloopApi.submitOralAudio(question.id, audioData)
+      setCurrentGrade(result)
       setFlowState('result')
-      setShowQuestion(false)
+      setLastAudioBlob(null)
 
-      // Refresh history
-      if (userId) {
-        const historyData = await leetloopApi.getSystemDesignAttemptHistory(userId, 10)
-        setHistory(historyData.attempts)
-      }
+      // Update the session's question status locally
+      setOralSession(prev => {
+        if (!prev) return prev
+        const updated = { ...prev, questions: [...prev.questions] }
+        updated.questions[currentQuestionIndex] = {
+          ...updated.questions[currentQuestionIndex],
+          status: 'graded' as const,
+          overall_score: result.overall_score,
+          verdict: result.verdict,
+        }
+        return updated
+      })
     } catch (err) {
-      console.error('Failed to submit:', err)
-      setError('Failed to submit response. Please try again.')
+      console.error('Failed to grade audio:', err)
+      setError('Failed to grade audio. Your recording is preserved — click Retry to try again.')
       setFlowState('question')
     } finally {
-      setSubmitting(false)
+      clearTimeout(timeoutId)
+      setUploading(false)
+      setGradingTimeout(false)
+    }
+  }, [oralSession, currentQuestionIndex])
+
+  function handleNextQuestion() {
+    if (!oralSession) return
+
+    const nextIndex = currentQuestionIndex + 1
+    if (nextIndex >= oralSession.questions.length) {
+      // Complete session
+      handleCompleteSession()
+    } else {
+      setCurrentQuestionIndex(nextIndex)
+      setCurrentGrade(null)
+      setFlowState('question')
     }
   }
 
-  function handleTryAnother() {
-    setCurrentAttempt(null)
-    setResponse('')
-    setGrade(null)
-    setFlowState('select')
-    setShowQuestion(true)
+  async function handleCompleteSession() {
+    if (!oralSession) return
+
+    try {
+      const summary = await leetloopApi.completeOralSession(oralSession.id)
+      setSessionSummary(summary)
+      setFlowState('session-complete')
+
+      // Refresh recent sessions
+      if (userId) {
+        const sessionsData = await leetloopApi.getOralSessions(userId, 10).catch(() => [])
+        setRecentSessions(sessionsData)
+      }
+    } catch (err) {
+      console.error('Failed to complete session:', err)
+      setError('Failed to complete session.')
+    }
   }
 
-  function handleCloseModal() {
-    setSelectedTrack(null)
-    setSelectedTopic(null)
+  function handleBackToTopics() {
+    setOralSession(null)
+    setCurrentGrade(null)
+    setSessionSummary(null)
+    setFlowState('select')
   }
 
   async function handleSetActiveTrack(trackId: string) {
@@ -181,43 +245,20 @@ export default function SystemDesignPage() {
       setActiveTrackId(trackId)
     } catch (err) {
       console.error('Failed to set active track:', err)
-      setError('Failed to set active track.')
     } finally {
       setSettingActive(false)
     }
   }
 
-  const getWordCountColor = () => {
-    if (wordCount < 50) return 'text-coral'
-    if (wordCount < 150) return 'text-gray-500'
-    return 'text-coral'
-  }
-
-  const getWordCountHint = () => {
-    if (wordCount < 20) return 'Min 20 words to submit'
-    if (wordCount < 50) return 'Need more detail'
-    if (wordCount < 150) return 'Good start'
-    if (wordCount < 300) return 'Solid response'
-    return 'Comprehensive'
+  function handleCloseModal() {
+    setSelectedTrack(null)
+    setSelectedTopic(null)
   }
 
   const getScoreColor = (score: number) => {
     if (score >= 7) return 'text-coral'
     if (score >= 5) return 'text-gray-600'
     return 'text-black'
-  }
-
-  const getVerdictBadge = (verdict: string) => {
-    switch (verdict) {
-      case 'pass':
-        return <span className="tag bg-coral-light text-coral border-coral">PASS</span>
-      case 'borderline':
-        return <span className="tag bg-gray-100 text-gray-700 border-gray-300">BORDERLINE</span>
-      case 'fail':
-        return <span className="tag bg-gray-200 text-black border-gray-400">FAIL</span>
-      default:
-        return null
-    }
   }
 
   if (loading) {
@@ -232,9 +273,7 @@ export default function SystemDesignPage() {
     return (
       <div className="card p-8 text-center">
         <p className="text-coral mb-4">{error}</p>
-        <p className="text-sm text-gray-500">
-          Make sure the backend API is running.
-        </p>
+        <p className="text-sm text-gray-500">Make sure the backend API is running.</p>
       </div>
     )
   }
@@ -248,163 +287,134 @@ export default function SystemDesignPage() {
           <h1 className="heading-accent text-xl">SYSTEM DESIGN</h1>
         </div>
         <p className="text-sm text-gray-600">
-          Practice system design with AI-generated questions and harsh grading.
-          Pick a topic, answer one question, get immediate feedback.
+          Practice system design orally. Record or upload your answer, get AI grading with cited evidence.
         </p>
       </div>
 
-      {/* Active Flow: Question + Answer + Grade */}
-      {(flowState === 'question' || flowState === 'grading' || flowState === 'result') && currentAttempt && (
+      {/* === ORAL SESSION FLOW === */}
+      {oralSession && flowState !== 'select' && flowState !== 'session-complete' && (
         <div className="space-y-4">
-          {/* Question Section */}
+          {/* Session header with scenario */}
           <div className="card">
-            <button
-              onClick={() => setShowQuestion(!showQuestion)}
-              className="w-full flex items-center justify-between mb-3"
-            >
-              <div className="flex items-center gap-3">
-                <span className="tag tag-accent">{currentAttempt.topic}</span>
-                {currentAttempt.question_focus_area && (
-                  <span className="text-xs text-gray-500 font-mono uppercase">
-                    {currentAttempt.question_focus_area}
-                  </span>
-                )}
-              </div>
-              <span className="text-gray-400 text-sm">
-                {showQuestion ? 'Hide' : 'Show'} question
-              </span>
-            </button>
-
-            {showQuestion && (
-              <>
-                <div className="p-4 bg-gray-50 border-l-4 border-black mb-4">
-                  <p className="text-sm leading-relaxed">
-                    {currentAttempt.question_text}
-                  </p>
-                </div>
-
-                {currentAttempt.question_key_concepts.length > 0 && (
-                  <div>
-                    <p className="text-xs text-gray-500 mb-2">Key concepts to address:</p>
-                    <div className="flex flex-wrap gap-1">
-                      {currentAttempt.question_key_concepts.map((concept, i) => (
-                        <span key={i} className="tag text-xs">
-                          {concept}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
+            <div className="flex items-center justify-between mb-3">
+              <span className="tag tag-accent">{oralSession.topic}</span>
+              <button
+                onClick={handleBackToTopics}
+                className="text-xs text-gray-400 hover:text-gray-600"
+              >
+                Back to topics
+              </button>
+            </div>
+            <p className="text-sm text-gray-700 leading-relaxed mb-4">
+              {oralSession.scenario}
+            </p>
+            <SessionProgress
+              questions={oralSession.questions}
+              currentIndex={currentQuestionIndex}
+            />
           </div>
 
-          {/* Answer Section */}
+          {/* Current question */}
           {(flowState === 'question' || flowState === 'grading') && (
             <div className="card">
-              <h3 className="text-sm font-semibold mb-3">Your Response</h3>
-              <textarea
-                value={response}
-                onChange={(e) => setResponse(e.target.value)}
-                disabled={flowState === 'grading'}
-                placeholder="Write your response here. Be specific about architecture decisions, tradeoffs, and scaling considerations..."
-                className={clsx(
-                  'w-full h-64 p-4 border-2 border-black bg-white',
-                  'text-sm leading-relaxed font-mono',
-                  'focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2',
-                  'placeholder:text-gray-400',
-                  'disabled:bg-gray-100 disabled:cursor-not-allowed',
-                  'resize-y min-h-[200px]'
-                )}
-              />
-
-              <div className="flex justify-between items-center mt-2 text-xs">
-                <span className={getWordCountColor()}>
-                  {wordCount} words - {getWordCountHint()}
-                </span>
-                <span className="text-gray-400">
-                  Aim for 200-400 words
+              <div className="flex items-center gap-2 mb-3">
+                <span className="coord-display">Q{currentQuestionIndex + 1}</span>
+                <span className="text-xs font-mono uppercase text-gray-500">
+                  {oralSession.questions[currentQuestionIndex]?.focus_area}
                 </span>
               </div>
 
-              <div className="flex justify-end mt-4">
-                <button
-                  onClick={handleSubmit}
-                  disabled={submitting || wordCount < 20}
-                  className={clsx(
-                    'btn btn-primary',
-                    (submitting || wordCount < 20) && 'opacity-50 cursor-not-allowed'
-                  )}
-                >
-                  {submitting ? 'Grading...' : 'Submit & Grade'}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Grade Section */}
-          {flowState === 'result' && grade && (
-            <div className="space-y-4">
-              {/* Score */}
-              <div className="card text-center py-6">
-                <div className="mb-2">
-                  <span className={clsx('stat-value text-5xl', getScoreColor(grade.score))}>
-                    {grade.score.toFixed(1)}
-                  </span>
-                  <span className="text-xl text-gray-400">/10</span>
-                </div>
-                {getVerdictBadge(grade.verdict)}
-              </div>
-
-              {/* Feedback */}
-              <div className="card">
-                <h3 className="font-semibold text-black mb-3">Feedback</h3>
-                <p className="text-sm text-gray-700 leading-relaxed">
-                  {grade.feedback}
+              <div className="p-4 bg-gray-50 border-l-4 border-black mb-4">
+                <p className="text-sm leading-relaxed">
+                  {oralSession.questions[currentQuestionIndex]?.question_text}
                 </p>
               </div>
 
-              {/* Missed Concepts & Review Topics */}
-              {(grade.missed_concepts.length > 0 || grade.review_topics.length > 0) && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {grade.missed_concepts.length > 0 && (
-                    <div className="card border-l-4 border-l-coral">
-                      <h3 className="font-semibold text-black mb-3">Missed Concepts</h3>
-                      <div className="flex flex-wrap gap-1">
-                        {grade.missed_concepts.map((concept, i) => (
-                          <span key={i} className="tag text-xs bg-gray-100 text-black border-gray-300">
-                            {concept}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+              {/* Key concepts */}
+              <div className="mb-4">
+                <p className="text-xs text-gray-500 mb-2">Key concepts to address:</p>
+                <div className="flex flex-wrap gap-1">
+                  {oralSession.questions[currentQuestionIndex]?.key_concepts.map((concept, i) => (
+                    <span key={i} className="tag text-xs">{concept}</span>
+                  ))}
+                </div>
+              </div>
 
-                  {grade.review_topics.length > 0 && (
-                    <div className="card border-l-4 border-l-gray-400">
-                      <h3 className="font-semibold text-black mb-3">Added to Review Queue</h3>
-                      <div className="flex flex-wrap gap-1">
-                        {grade.review_topics.map((topic, i) => (
-                          <span key={i} className="tag text-xs">
-                            {topic}
-                          </span>
-                        ))}
-                      </div>
-                      <p className="text-xs text-gray-500 mt-2">
-                        These will appear in spaced repetition.
-                      </p>
-                    </div>
+              {/* Audio input (only when not grading) */}
+              {flowState === 'question' && (
+                <>
+                  {/* Tab toggle */}
+                  <div className="flex gap-1 mb-4">
+                    <button
+                      onClick={() => setInputMode('record')}
+                      className={clsx(
+                        'px-4 py-1.5 text-xs font-mono uppercase border-2 transition-colors',
+                        inputMode === 'record'
+                          ? 'border-black bg-black text-white'
+                          : 'border-gray-200 text-gray-500 hover:border-gray-400'
+                      )}
+                    >
+                      Record
+                    </button>
+                    <button
+                      onClick={() => setInputMode('upload')}
+                      className={clsx(
+                        'px-4 py-1.5 text-xs font-mono uppercase border-2 transition-colors',
+                        inputMode === 'upload'
+                          ? 'border-black bg-black text-white'
+                          : 'border-gray-200 text-gray-500 hover:border-gray-400'
+                      )}
+                    >
+                      Upload File
+                    </button>
+                  </div>
+
+                  {inputMode === 'record' ? (
+                    <AudioRecorder
+                      suggestedDuration={oralSession.questions[currentQuestionIndex]?.suggested_duration_minutes || 4}
+                      onSubmit={handleAudioSubmit}
+                      isUploading={uploading}
+                    />
+                  ) : (
+                    <AudioUploader
+                      onSubmit={handleAudioSubmit}
+                      isUploading={uploading}
+                    />
+                  )}
+                </>
+              )}
+
+              {/* Grading state */}
+              {flowState === 'grading' && (
+                <div className="flex flex-col items-center gap-3 py-8">
+                  <div className="w-12 h-12 border-3 border-coral border-t-transparent rounded-full animate-spin" />
+                  <p className="text-sm font-mono text-gray-600">
+                    Gemini is evaluating your response...
+                  </p>
+                  {gradingTimeout && (
+                    <p className="text-xs text-gray-400">
+                      Still processing... audio evaluation can take up to a minute.
+                    </p>
                   )}
                 </div>
               )}
+            </div>
+          )}
 
-              {/* Try Another */}
+          {/* Grade result */}
+          {flowState === 'result' && currentGrade && (
+            <div className="space-y-4">
+              <OralGradeDisplay grade={currentGrade} />
+
               <div className="flex justify-center">
                 <button
-                  onClick={handleTryAnother}
-                  className="btn btn-primary"
+                  onClick={handleNextQuestion}
+                  className="btn-primary px-8 py-2"
                 >
-                  Try Another Question
+                  {currentQuestionIndex < oralSession.questions.length - 1
+                    ? 'Next Question'
+                    : 'Complete Session'
+                  }
                 </button>
               </div>
             </div>
@@ -414,29 +424,91 @@ export default function SystemDesignPage() {
           {error && (
             <div className="card border-l-4 border-l-coral">
               <p className="text-coral text-sm">{error}</p>
-            </div>
-          )}
-
-          {/* Grading Overlay */}
-          {flowState === 'grading' && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-              <div className="card text-center p-8">
-                <div className="animate-pulse mb-4">
-                  <div className="w-16 h-16 mx-auto border-4 border-black rounded-full flex items-center justify-center">
-                    <span className="text-2xl">AI</span>
-                  </div>
-                </div>
-                <h2 className="heading-accent mb-2">Grading Your Response</h2>
-                <p className="text-sm text-gray-600">
-                  Our harsh senior-level AI is reviewing your answer...
-                </p>
-              </div>
+              {lastAudioBlob && flowState === 'question' && (
+                <button
+                  onClick={() => handleAudioSubmit(lastAudioBlob)}
+                  className="btn-primary px-4 py-1.5 text-sm mt-3"
+                >
+                  Retry
+                </button>
+              )}
             </div>
           )}
         </div>
       )}
 
-      {/* Track Selection (when not in active flow) */}
+      {/* === SESSION COMPLETE === */}
+      {flowState === 'session-complete' && sessionSummary && (
+        <div className="space-y-4">
+          <div className="card text-center py-8">
+            <h2 className="heading-accent text-lg mb-4">Session Complete</h2>
+            <div className="mb-3">
+              <span className={clsx('stat-value text-5xl', getScoreColor(sessionSummary.overall_score))}>
+                {sessionSummary.overall_score}
+              </span>
+              <span className="text-xl text-gray-400">/10</span>
+            </div>
+            <span className={clsx(
+              'tag text-xs uppercase',
+              sessionSummary.verdict === 'pass' ? 'tag-accent' : ''
+            )}>
+              {sessionSummary.verdict}
+            </span>
+            <p className="text-sm text-gray-500 mt-2 font-mono">
+              {sessionSummary.topic} &middot; {sessionSummary.questions_graded} questions graded
+            </p>
+          </div>
+
+          {/* Dimension averages */}
+          {Object.keys(sessionSummary.dimension_averages).length > 0 && (
+            <div className="card">
+              <h3 className="section-title text-sm">Dimension Averages</h3>
+              <div className="space-y-2">
+                {Object.entries(sessionSummary.dimension_averages).map(([name, avg]) => (
+                  <div key={name} className="flex items-center justify-between">
+                    <span className="text-xs font-mono uppercase text-gray-600">
+                      {name.replace(/_/g, ' ')}
+                    </span>
+                    <span className={clsx('text-sm font-mono font-bold', getScoreColor(avg))}>
+                      {avg}/10
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Review topics added */}
+          {sessionSummary.review_topics_added.length > 0 && (
+            <div className="card-sm border-l-4 border-l-gray-400">
+              <span className="text-xs font-mono uppercase text-gray-400">Added to Review Queue</span>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {sessionSummary.review_topics_added.map((topic, i) => (
+                  <span key={i} className="tag text-xs">{topic}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="flex gap-3 justify-center">
+            <button onClick={handleBackToTopics} className="btn-secondary px-6 py-2">
+              Back to Topics
+            </button>
+            <button
+              onClick={() => {
+                setOralSession(null)
+                setSessionSummary(null)
+                setFlowState('select')
+              }}
+              className="btn-primary px-6 py-2"
+            >
+              Start New Session
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* === TRACK SELECTION === */}
       {flowState === 'select' && (
         <>
           <div>
@@ -454,14 +526,14 @@ export default function SystemDesignPage() {
             </div>
           </div>
 
-          {/* Recent Attempts */}
-          {history.length > 0 && (
+          {/* Recent Oral Sessions */}
+          {recentSessions.length > 0 && (
             <div>
               <button
                 onClick={() => setShowHistory(!showHistory)}
                 className="section-title flex items-center gap-2 cursor-pointer hover:text-gray-700"
               >
-                Recent Attempts
+                Recent Sessions
                 <span className="text-gray-400 text-xs font-normal">
                   ({showHistory ? 'hide' : 'show'})
                 </span>
@@ -469,38 +541,31 @@ export default function SystemDesignPage() {
 
               {showHistory && (
                 <div className="space-y-2">
-                  {history.map((attempt) => (
-                    <div
-                      key={attempt.id}
-                      className="list-item flex items-center justify-between"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className={clsx(
-                          'status-light',
-                          attempt.status === 'graded' ? 'status-light-active' : 'status-light-inactive'
-                        )} />
-                        <div>
-                          <span className="font-medium text-sm">{attempt.topic}</span>
-                          {attempt.track_name && (
+                  {recentSessions.map((session) => {
+                    const avgScore = session.questions.reduce((sum, q) => sum + (q.overall_score || 0), 0) /
+                      Math.max(session.questions.filter(q => q.status === 'graded').length, 1)
+                    return (
+                      <div key={session.id} className="list-item flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className={clsx(
+                            'status-light',
+                            session.status === 'completed' ? 'status-light-active' : 'status-light-inactive'
+                          )} />
+                          <div>
+                            <span className="font-medium text-sm">{session.topic}</span>
                             <span className="text-xs text-gray-500 ml-2">
-                              {attempt.track_name}
+                              {session.questions.filter(q => q.status === 'graded').length}/{session.questions.length} graded
                             </span>
-                          )}
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        {attempt.score && (
-                          <span className={clsx(
-                            'font-mono font-bold',
-                            getScoreColor(attempt.score)
-                          )}>
-                            {attempt.score.toFixed(1)}/10
+                        {session.status === 'completed' && (
+                          <span className={clsx('font-mono font-bold', getScoreColor(avgScore))}>
+                            {avgScore.toFixed(1)}/10
                           </span>
                         )}
-                        {attempt.verdict && getVerdictBadge(attempt.verdict)}
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               )}
             </div>
@@ -521,10 +586,7 @@ export default function SystemDesignPage() {
                   </span>
                 )}
               </div>
-              <button
-                onClick={handleCloseModal}
-                className="text-gray-500 hover:text-black"
-              >
+              <button onClick={handleCloseModal} className="text-gray-500 hover:text-black">
                 Close
               </button>
             </div>
@@ -540,9 +602,7 @@ export default function SystemDesignPage() {
             )}
 
             {selectedTrack.description && (
-              <p className="text-sm text-gray-600 mb-4">
-                {selectedTrack.description}
-              </p>
+              <p className="text-sm text-gray-600 mb-4">{selectedTrack.description}</p>
             )}
 
             <h3 className="text-sm font-semibold mb-3">Select a Topic</h3>
@@ -562,15 +622,10 @@ export default function SystemDesignPage() {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        {isCompleted && (
-                          <span className="text-coral text-sm">completed</span>
-                        )}
+                        {isCompleted && <span className="text-coral text-sm">completed</span>}
                         <span className="font-medium text-sm">{topic.name}</span>
                       </div>
-                      <span className={clsx(
-                        'tag text-xs',
-                        topic.difficulty === 'hard' && 'tag-accent'
-                      )}>
+                      <span className={clsx('tag text-xs', topic.difficulty === 'hard' && 'tag-accent')}>
                         {topic.difficulty}
                       </span>
                     </div>
@@ -585,14 +640,14 @@ export default function SystemDesignPage() {
             </div>
 
             <button
-              onClick={handleGetQuestion}
+              onClick={handleStartOralSession}
               disabled={!selectedTopic || generating}
               className={clsx(
-                'btn btn-primary w-full',
+                'btn-primary w-full py-3',
                 (!selectedTopic || generating) && 'opacity-50 cursor-not-allowed'
               )}
             >
-              {generating ? 'Generating Question...' : 'Get Question'}
+              {generating ? 'Generating Questions...' : 'Start Oral Session'}
             </button>
           </div>
         </div>
