@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { Suspense, useEffect, useState, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import {
@@ -25,6 +25,14 @@ type FlowState = 'select' | 'session' | 'question' | 'grading' | 'result' | 'ses
 type InputMode = 'record' | 'upload'
 
 export default function SystemDesignPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin h-8 w-8 border-2 border-current border-t-transparent rounded-full" /></div>}>
+      <SystemDesignPageInner />
+    </Suspense>
+  )
+}
+
+function SystemDesignPageInner() {
   const { userId } = useAuth()
   const searchParams = useSearchParams()
 
