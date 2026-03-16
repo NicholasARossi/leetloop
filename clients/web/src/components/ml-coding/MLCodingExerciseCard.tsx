@@ -55,11 +55,12 @@ export function MLCodingExerciseCard({ exercise, onSubmit }: MLCodingExerciseCar
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    const textarea = textareaRef.current
+    if (!textarea) return
+
     // Tab inserts 2 spaces
     if (e.key === 'Tab') {
       e.preventDefault()
-      const textarea = textareaRef.current
-      if (!textarea) return
       const start = textarea.selectionStart
       const end = textarea.selectionEnd
       const newValue = code.substring(0, start) + '  ' + code.substring(end)
@@ -67,11 +68,38 @@ export function MLCodingExerciseCard({ exercise, onSubmit }: MLCodingExerciseCar
       requestAnimationFrame(() => {
         textarea.selectionStart = textarea.selectionEnd = start + 2
       })
+      return
     }
+
     // Cmd/Ctrl+Enter submits
     if (e.key === 'Enter' && (e.metaKey || e.ctrlKey) && code.trim()) {
       e.preventDefault()
       handleSubmit()
+      return
+    }
+
+    // Enter: auto-indent — match current line's indent, add level after ':'
+    if (e.key === 'Enter' && !e.metaKey && !e.ctrlKey) {
+      e.preventDefault()
+      const pos = textarea.selectionStart
+      const before = code.substring(0, pos)
+      const after = code.substring(textarea.selectionEnd)
+
+      // Find the current line
+      const currentLine = before.substring(before.lastIndexOf('\n') + 1)
+      // Get leading whitespace
+      const indent = currentLine.match(/^\s*/)?.[0] || ''
+      // Check if line ends with colon (ignoring trailing whitespace/comments)
+      const trimmed = currentLine.replace(/#.*$/, '').trimEnd()
+      const extra = trimmed.endsWith(':') ? '  ' : ''
+
+      const insertion = '\n' + indent + extra
+      const newValue = before + insertion + after
+      setCode(newValue)
+      const newPos = pos + insertion.length
+      requestAnimationFrame(() => {
+        textarea.selectionStart = textarea.selectionEnd = newPos
+      })
     }
   }
 
