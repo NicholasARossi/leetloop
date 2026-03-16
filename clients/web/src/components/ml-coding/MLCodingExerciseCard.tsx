@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useRef, useMemo } from 'react'
+import { useState, useRef, useMemo, useCallback } from 'react'
 import { clsx } from 'clsx'
 import type { MLCodingDailyExercise } from '@/lib/api'
+import { highlightPython } from './python-highlight'
 
 interface MLCodingExerciseCardProps {
   exercise: MLCodingDailyExercise
@@ -27,6 +28,7 @@ export function MLCodingExerciseCard({ exercise, onSubmit }: MLCodingExerciseCar
   const [code, setCode] = useState(exercise.submitted_code || exercise.starter_code || '')
   const [expanded, setExpanded] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const highlightRef = useRef<HTMLPreElement>(null)
 
   const isPass = exercise.verdict === 'pass' || (exercise.score != null && exercise.score >= 7)
 
@@ -34,6 +36,16 @@ export function MLCodingExerciseCard({ exercise, onSubmit }: MLCodingExerciseCar
     const lines = code.split('\n').length
     return Math.max(lines, 15)
   }, [code])
+
+  const highlightedCode = useMemo(() => highlightPython(code), [code])
+
+  // Keep highlight layer scroll in sync with textarea
+  const handleScroll = useCallback(() => {
+    if (textareaRef.current && highlightRef.current) {
+      highlightRef.current.scrollTop = textareaRef.current.scrollTop
+      highlightRef.current.scrollLeft = textareaRef.current.scrollLeft
+    }
+  }, [])
 
   const handleCodeChange = (value: string) => {
     setCode(value)
@@ -52,7 +64,6 @@ export function MLCodingExerciseCard({ exercise, onSubmit }: MLCodingExerciseCar
       const end = textarea.selectionEnd
       const newValue = code.substring(0, start) + '  ' + code.substring(end)
       setCode(newValue)
-      // Restore cursor position after React re-render
       requestAnimationFrame(() => {
         textarea.selectionStart = textarea.selectionEnd = start + 2
       })
@@ -154,7 +165,7 @@ export function MLCodingExerciseCard({ exercise, onSubmit }: MLCodingExerciseCar
               </div>
             )}
 
-            {/* Submitted code */}
+            {/* Submitted code - with syntax highlighting */}
             {exercise.submitted_code && (
               <div>
                 <span className="text-[10px] uppercase tracking-wide text-gray-400">Your Code:</span>
@@ -163,7 +174,7 @@ export function MLCodingExerciseCard({ exercise, onSubmit }: MLCodingExerciseCar
                     <LineNumbers count={exercise.submitted_code.split('\n').length} />
                   </div>
                   <div className="code-display-content">
-                    <pre>{exercise.submitted_code}</pre>
+                    <pre dangerouslySetInnerHTML={{ __html: highlightPython(exercise.submitted_code) }} />
                   </div>
                 </div>
               </div>
@@ -217,25 +228,33 @@ export function MLCodingExerciseCard({ exercise, onSubmit }: MLCodingExerciseCar
         {exercise.prompt_text}
       </div>
 
-      {/* Editor body */}
+      {/* Editor body with syntax highlight overlay */}
       <div className="code-editor-body">
         <div className="code-editor-gutter">
           <LineNumbers count={lineCount} />
         </div>
-        <textarea
-          ref={textareaRef}
-          value={code}
-          onChange={(e) => handleCodeChange(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="# Write your Python solution here..."
-          disabled={state === 'submitting'}
-          rows={15}
-          spellCheck={false}
-          className={clsx(
-            'code-editor-textarea',
-            state === 'submitting' && 'opacity-50 cursor-not-allowed'
-          )}
-        />
+        <div className="code-editor-overlay">
+          <pre
+            ref={highlightRef}
+            className="code-editor-highlight"
+            aria-hidden="true"
+            dangerouslySetInnerHTML={{ __html: highlightedCode + '\n' }}
+          />
+          <textarea
+            ref={textareaRef}
+            value={code}
+            onChange={(e) => handleCodeChange(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onScroll={handleScroll}
+            placeholder="# Write your Python solution here..."
+            disabled={state === 'submitting'}
+            spellCheck={false}
+            className={clsx(
+              'code-editor-textarea',
+              state === 'submitting' && 'opacity-50 cursor-not-allowed'
+            )}
+          />
+        </div>
       </div>
 
       {/* Footer toolbar */}
