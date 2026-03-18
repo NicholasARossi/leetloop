@@ -3,12 +3,13 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
-import { leetloopApi, type WinRateStats, type DailyFeedResponse, type SystemDesignDashboardSummary, type SystemDesignReviewItem, type ProgressTrend, type UserStats } from '@/lib/api'
+import { leetloopApi, type WinRateStats, type DailyFeedResponse, type SystemDesignDashboardSummary, type SystemDesignReviewItem, type ProgressTrend, type UserStats, type MLCodingDashboardSummary } from '@/lib/api'
 import { WinRateCard } from '@/components/winrate/WinRateCard'
 import { FeedSection } from '@/components/feed/FeedSection'
 import { FocusNotesCard } from '@/components/feed/FocusNotesCard'
 import { MissionSkeleton } from '@/components/mission'
 import { SystemDesignDashboardCard } from '@/components/system-design/SystemDesignDashboardCard'
+import { MLCodingDashboardCard } from '@/components/ml-coding'
 import { SideQuestColumn } from '@/components/mission/SideQuestColumn'
 import { format } from 'date-fns'
 
@@ -20,6 +21,7 @@ export default function DashboardPage() {
   const [winRateStats, setWinRateStats] = useState<WinRateStats | null>(null)
   const [feed, setFeed] = useState<DailyFeedResponse | null>(null)
   const [systemDesignData, setSystemDesignData] = useState<SystemDesignDashboardSummary | null>(null)
+  const [mlCodingData, setMLCodingData] = useState<MLCodingDashboardSummary | null>(null)
   const [trends, setTrends] = useState<ProgressTrend[]>([])
   const [userStats, setUserStats] = useState<UserStats | null>(null)
   const [focusNotes, setFocusNotes] = useState<string | null>(null)
@@ -54,10 +56,11 @@ export default function DashboardPage() {
       }
 
       // Load remaining data in parallel (feed has longer timeout)
-      const [winRateData, feedData, sdData, progressData, focusNotesData] = await Promise.all([
+      const [winRateData, feedData, sdData, mlData, progressData, focusNotesData] = await Promise.all([
         leetloopApi.getWinRateStats(userId).catch(() => null),
         leetloopApi.getDailyFeed(userId).catch(() => null),
         leetloopApi.getSystemDesignDashboard(userId).catch(() => null),
+        leetloopApi.getMLCodingDashboard(userId).catch(() => null),
         leetloopApi.getProgress(userId, 91).catch(() => null),
         leetloopApi.getFocusNotes(userId).catch(() => null),
       ])
@@ -65,6 +68,7 @@ export default function DashboardPage() {
       setWinRateStats(winRateData)
       setFeed(feedData)
       setSystemDesignData(sdData)
+      setMLCodingData(mlData)
       if (progressData) {
         setTrends(progressData.trends)
         setUserStats(progressData.stats)
@@ -185,6 +189,10 @@ export default function DashboardPage() {
               data={systemDesignData}
               onStartReview={handleStartSystemDesignReview}
             />
+          )}
+
+          {mlCodingData && (
+            <MLCodingDashboardCard data={mlCodingData} />
           )}
         </div>
       </div>

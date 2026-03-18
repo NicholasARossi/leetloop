@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { Suspense, useEffect, useState, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import {
@@ -25,6 +25,14 @@ type FlowState = 'select' | 'session' | 'question' | 'grading' | 'result' | 'ses
 type InputMode = 'record' | 'upload'
 
 export default function SystemDesignPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="text-gray-500">Loading...</div></div>}>
+      <SystemDesignContent />
+    </Suspense>
+  )
+}
+
+function SystemDesignContent() {
   const { userId } = useAuth()
   const searchParams = useSearchParams()
 
@@ -404,7 +412,11 @@ export default function SystemDesignPage() {
           {/* Grade result */}
           {flowState === 'result' && currentGrade && (
             <div className="space-y-4">
-              <OralGradeDisplay grade={currentGrade} />
+              <OralGradeDisplay
+                grade={currentGrade}
+                questionId={oralSession.questions[currentQuestionIndex]?.id}
+                followUpResponses={oralSession.questions[currentQuestionIndex]?.follow_up_responses}
+              />
 
               <div className="flex justify-center">
                 <button

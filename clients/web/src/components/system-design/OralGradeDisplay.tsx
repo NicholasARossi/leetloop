@@ -1,10 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import type { OralGradeResult } from '@/lib/api'
+import type { OralGradeResult, OralFollowUpResponse } from '@/lib/api'
+import { FollowUpRecorder } from './FollowUpRecorder'
 
 interface OralGradeDisplayProps {
   grade: OralGradeResult
+  questionId?: string
+  followUpResponses?: OralFollowUpResponse[]
 }
 
 const DIMENSION_LABELS: Record<string, string> = {
@@ -34,7 +37,7 @@ function getVerdictBadge(verdict: string) {
   }
 }
 
-export function OralGradeDisplay({ grade }: OralGradeDisplayProps) {
+export function OralGradeDisplay({ grade, questionId, followUpResponses }: OralGradeDisplayProps) {
   const [showTranscript, setShowTranscript] = useState(true)
   const [expandedDimensions, setExpandedDimensions] = useState<Set<string>>(new Set())
 
@@ -144,14 +147,24 @@ export function OralGradeDisplay({ grade }: OralGradeDisplayProps) {
       {grade.follow_up_questions.length > 0 && (
         <div className="card-sm">
           <span className="text-xs font-mono uppercase text-gray-400">Follow-up Questions</span>
-          <ul className="mt-2 space-y-2">
+          <div className="mt-3 space-y-4">
             {grade.follow_up_questions.map((q, i) => (
-              <li key={i} className="text-sm font-mono text-gray-700 pl-4 relative">
-                <span className="absolute left-0 text-coral">{i + 1}.</span>
-                {q}
-              </li>
+              questionId ? (
+                <FollowUpRecorder
+                  key={i}
+                  questionId={questionId}
+                  followUpIndex={i}
+                  followUpText={q}
+                  existingResponse={followUpResponses?.find(r => r.follow_up_index === i)}
+                />
+              ) : (
+                <div key={i} className="text-sm font-mono text-gray-700 pl-4 relative">
+                  <span className="absolute left-0 text-coral">{i + 1}.</span>
+                  {q}
+                </div>
+              )
             ))}
-          </ul>
+          </div>
         </div>
       )}
 

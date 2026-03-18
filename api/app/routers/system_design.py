@@ -12,9 +12,11 @@ from app.db.supabase import get_supabase
 from app.models.system_design_schemas import (
     CompleteReviewRequest,
     CompleteReviewResponse,
+    FollowUpGradeResult,
     NextTopicInfo,
     DimensionEvidence,
     DimensionScore,
+    OralFollowUp,
     OralGradeResult,
     OralSession,
     OralSessionCreate,
@@ -39,7 +41,11 @@ _sd_dashboard_cache: dict[str, tuple[float, SystemDesignDashboardSummary]] = {}
 _SD_DASHBOARD_CACHE_TTL = 300  # 5 minutes
 
 
-def _build_oral_sub_question(q: dict, include_full_grade: bool = True) -> OralSubQuestion:
+def _build_oral_sub_question(
+    q: dict,
+    include_full_grade: bool = True,
+    follow_ups: list[dict] | None = None,
+) -> OralSubQuestion:
     """Build OralSubQuestion from a DB row. If include_full_grade, includes dimension_scores etc."""
     base = dict(
         id=q["id"],
@@ -72,6 +78,25 @@ def _build_oral_sub_question(q: dict, include_full_grade: bool = True) -> OralSu
         base["strongest_moment"] = q.get("strongest_moment")
         base["weakest_moment"] = q.get("weakest_moment")
         base["follow_up_questions"] = q.get("follow_up_questions") or []
+
+    # Attach follow-up responses if provided
+    if follow_ups is not None:
+        base["follow_up_responses"] = [
+            OralFollowUp(
+                id=fu["id"],
+                question_id=fu["question_id"],
+                follow_up_index=fu["follow_up_index"],
+                follow_up_text=fu["follow_up_text"],
+                status=fu["status"],
+                transcript=fu.get("transcript"),
+                score=fu.get("score"),
+                feedback=fu.get("feedback"),
+                addressed_gap=fu.get("addressed_gap"),
+                graded_at=fu.get("graded_at"),
+            )
+            for fu in follow_ups
+        ]
+
     return OralSubQuestion(**base)
 
 
@@ -775,9 +800,30 @@ async def get_oral_session(
             .execute()
         )
 
+        questions_data = questions_response.data or []
+
+        # Batch-fetch all follow-ups for this session's questions
+        question_ids = [q["id"] for q in questions_data]
+        follow_ups_by_question: dict[str, list[dict]] = {qid: [] for qid in question_ids}
+
+        if question_ids:
+            follow_ups_response = (
+                supabase.table("system_design_oral_follow_ups")
+                .select("*")
+                .in_("question_id", question_ids)
+                .order("follow_up_index")
+                .execute()
+            )
+            for fu in (follow_ups_response.data or []):
+                follow_ups_by_question[fu["question_id"]].append(fu)
+
         question_models = [
-            _build_oral_sub_question(q, include_full_grade=True)
-            for q in (questions_response.data or [])
+            _build_oral_sub_question(
+                q,
+                include_full_grade=True,
+                follow_ups=follow_ups_by_question.get(q["id"]),
+            )
+            for q in questions_data
         ]
 
         return OralSession(
@@ -881,6 +927,98 @@ async def submit_oral_audio(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to grade audio: {str(e)}")
+
+
+@router.post(
+    "/system-design/oral-questions/{question_id}/follow-ups/{follow_up_index}/submit-audio",
+    response_model=FollowUpGradeResult,
+)
+async def submit_follow_up_audio(
+    question_id: UUID,
+    follow_up_index: int,
+    audio: UploadFile = File(...),
+    supabase: Annotated[Client, Depends(get_supabase)] = None,
+):
+    """Submit audio for a follow-up question and get simplified grading."""
+    from app.services.oral_grading_service import get_oral_grading_service
+
+    try:
+        # Validate content type
+        content_type = audio.content_type or "audio/webm"
+        if content_type not in ALLOWED_AUDIO_TYPES:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Unsupported audio type: {content_type}. Allowed: {', '.join(ALLOWED_AUDIO_TYPES)}"
+            )
+
+        # Read audio bytes and validate size
+        audio_bytes = await audio.read()
+        if len(audio_bytes) > MAX_AUDIO_SIZE:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Audio file too large: {len(audio_bytes) / 1024 / 1024:.1f}MB. Max: 25MB"
+            )
+
+        # Fetch parent question — must be graded
+        question_response = (
+            supabase.table("system_design_oral_questions")
+            .select("*")
+            .eq("id", str(question_id))
+            .single()
+            .execute()
+        )
+
+        if not question_response.data:
+            raise HTTPException(status_code=404, detail="Question not found")
+
+        question = question_response.data
+
+        if question["status"] != "graded":
+            raise HTTPException(status_code=400, detail="Question must be graded before answering follow-ups")
+
+        # Validate follow-up index is in bounds
+        follow_up_questions = question.get("follow_up_questions") or []
+        if follow_up_index < 0 or follow_up_index >= len(follow_up_questions):
+            raise HTTPException(
+                status_code=400,
+                detail=f"Follow-up index {follow_up_index} out of range (0-{len(follow_up_questions) - 1})"
+            )
+
+        follow_up_text = follow_up_questions[follow_up_index]
+
+        # Grade via Gemini multimodal
+        grading_service = get_oral_grading_service()
+        result = await grading_service.transcribe_and_grade_follow_up(
+            audio_bytes=audio_bytes,
+            mime_type=content_type,
+            original_question_text=question["question_text"],
+            original_transcript=question.get("transcript") or "",
+            follow_up_question=follow_up_text,
+        )
+
+        # Upsert row into system_design_oral_follow_ups
+        follow_up_data = {
+            "question_id": str(question_id),
+            "follow_up_index": follow_up_index,
+            "follow_up_text": follow_up_text,
+            "transcript": result.transcript,
+            "score": result.score,
+            "feedback": result.feedback,
+            "addressed_gap": result.addressed_gap,
+            "status": "graded",
+            "graded_at": datetime.utcnow().isoformat(),
+        }
+
+        supabase.table("system_design_oral_follow_ups").upsert(
+            follow_up_data,
+            on_conflict="question_id,follow_up_index",
+        ).execute()
+
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to grade follow-up audio: {str(e)}")
 
 
 @router.post("/system-design/oral-sessions/{session_id}/complete", response_model=OralSessionSummary)

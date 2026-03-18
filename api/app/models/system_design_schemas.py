@@ -176,6 +176,7 @@ class OralSubQuestion(BaseModel):
     strongest_moment: Optional[str] = None
     weakest_moment: Optional[str] = None
     follow_up_questions: Optional[list[str]] = None
+    follow_up_responses: Optional[list["OralFollowUp"]] = None
 
 
 class OralSession(BaseModel):
@@ -233,6 +234,35 @@ class OralSessionSummary(BaseModel):
     review_topics_added: list[str] = []
 
 
+# ============ Follow-Up Models ============
+
+
+class FollowUpGradeResult(BaseModel):
+    """Simplified grading result for a follow-up question response."""
+
+    transcript: str
+    score: int = Field(ge=1, le=10)
+    feedback: str
+    addressed_gap: bool
+
+
+class OralFollowUp(BaseModel):
+    """A follow-up question response within an oral session."""
+
+    id: str
+    question_id: str
+    follow_up_index: int
+    follow_up_text: str
+    status: str = "pending"
+    transcript: Optional[str] = None
+    score: Optional[int] = None
+    feedback: Optional[str] = None
+    addressed_gap: Optional[bool] = None
+    graded_at: Optional[str] = None
+
+
 # Resolve forward references
 OralSubQuestion.model_rebuild()
+OralFollowUp.model_rebuild()
+FollowUpGradeResult.model_rebuild()
 SystemDesignDashboardSummary.model_rebuild()

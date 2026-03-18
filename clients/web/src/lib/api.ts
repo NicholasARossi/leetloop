@@ -364,6 +364,25 @@ export const leetloopApi = {
     return response.json()
   },
 
+  submitFollowUpAudio: async (questionId: string, followUpIndex: number, audioFile: Blob | File): Promise<FollowUpGradeResult> => {
+    const formData = new FormData()
+    formData.append('audio', audioFile, audioFile instanceof File ? audioFile.name : 'recording.webm')
+
+    const url = `${API_URL}/api/system-design/oral-questions/${questionId}/follow-ups/${followUpIndex}/submit-audio`
+    const response = await fetchWithTimeout(url, {
+      method: 'POST',
+      body: formData,
+      timeout: 120000,
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ detail: 'Unknown error' }))
+      throw new ApiError(response.status, error.detail || response.statusText)
+    }
+
+    return response.json()
+  },
+
   completeOralSession: (sessionId: string) =>
     api<OralSessionSummary>(`/api/system-design/oral-sessions/${sessionId}/complete`, {
       method: 'POST',
@@ -444,6 +463,41 @@ export const leetloopApi = {
   // Book Progress
   getBookProgress: (trackId: string, userId: string) =>
     api<BookProgressResponse>(`/api/language/tracks/${trackId}/book-progress/${userId}`),
+
+  // ML Coding Drills
+  getMLCodingProblems: () =>
+    api<MLCodingProblem[]>('/api/ml-coding/problems'),
+
+  getMLCodingDailyExercises: (userId: string) =>
+    api<MLCodingDailyBatch>(`/api/ml-coding/${userId}/daily-exercises`, { timeout: 90000 }),
+
+  submitMLCodingExercise: (exerciseId: string, submittedCode: string) =>
+    api<MLCodingExerciseGrade>(`/api/ml-coding/daily-exercises/${exerciseId}/submit`, {
+      method: 'POST',
+      body: JSON.stringify({ submitted_code: submittedCode }),
+      timeout: 120000,
+    }),
+
+  regenerateMLCodingExercises: (userId: string) =>
+    api<MLCodingDailyBatch>(`/api/ml-coding/${userId}/daily-exercises/regenerate`, {
+      method: 'POST',
+      timeout: 90000,
+    }),
+
+  getMLCodingReviews: (userId: string, limit = 10) =>
+    api<MLCodingReviewItem[]>(`/api/ml-coding/${userId}/reviews?limit=${limit}`),
+
+  completeMLCodingReview: (reviewId: string, success: boolean) =>
+    api<{ id: string; next_review: string; new_interval_days: number }>(
+      `/api/ml-coding/reviews/${reviewId}/complete`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ success }),
+      }
+    ),
+
+  getMLCodingDashboard: (userId: string) =>
+    api<MLCodingDashboardSummary>(`/api/ml-coding/${userId}/dashboard`),
 }
 
 // Types (matching backend schemas)
@@ -885,6 +939,26 @@ export interface ActiveTrackResponse {
 }
 
 // Oral System Design Types
+export interface OralFollowUpResponse {
+  id: string
+  question_id: string
+  follow_up_index: number
+  follow_up_text: string
+  status: 'pending' | 'graded'
+  transcript?: string
+  score?: number
+  feedback?: string
+  addressed_gap?: boolean
+  graded_at?: string
+}
+
+export interface FollowUpGradeResult {
+  transcript: string
+  score: number
+  feedback: string
+  addressed_gap: boolean
+}
+
 export interface OralSubQuestion {
   id: string
   part_number: number
@@ -902,6 +976,7 @@ export interface OralSubQuestion {
   strongest_moment?: string
   weakest_moment?: string
   follow_up_questions?: string[]
+  follow_up_responses?: OralFollowUpResponse[]
 }
 
 export interface OralSession {
@@ -1175,6 +1250,84 @@ export interface BookProgressResponse {
   completion_percentage: number
   average_score: number
   chapters: ChapterProgressItem[]
+}
+
+// ML Coding Types
+export interface MLCodingProblem {
+  id: string
+  slug: string
+  title: string
+  description: string
+  difficulty: 'easy' | 'medium' | 'hard'
+  category: string
+  key_concepts: string[]
+  math_concepts: string[]
+  estimated_minutes: number
+  sort_order: number
+}
+
+export interface MLCodingDailyExercise {
+  id: string
+  problem_id?: string
+  problem_slug?: string
+  problem_title?: string
+  prompt_text: string
+  starter_code?: string
+  status: 'pending' | 'completed' | 'skipped'
+  is_review: boolean
+  sort_order: number
+  submitted_code?: string
+  score?: number
+  verdict?: 'pass' | 'borderline' | 'fail'
+  feedback?: string
+  correctness_score?: number
+  code_quality_score?: number
+  math_understanding_score?: number
+  missed_concepts: string[]
+  suggested_improvements: string[]
+  completed_at?: string
+}
+
+export interface MLCodingDailyBatch {
+  generated_date: string
+  exercises: MLCodingDailyExercise[]
+  completed_count: number
+  total_count: number
+  average_score: number | null
+}
+
+export interface MLCodingExerciseGrade {
+  score: number
+  verdict: 'pass' | 'borderline' | 'fail'
+  feedback: string
+  correctness_score: number
+  code_quality_score: number
+  math_understanding_score: number
+  missed_concepts: string[]
+  suggested_improvements: string[]
+}
+
+export interface MLCodingReviewItem {
+  id: string
+  user_id: string
+  problem_slug: string
+  reason?: string
+  priority: number
+  next_review: string
+  interval_days: number
+  review_count: number
+  last_reviewed?: string
+  created_at: string
+}
+
+export interface MLCodingDashboardSummary {
+  problems_attempted: number
+  problems_total: number
+  today_exercise_count: number
+  today_completed_count: number
+  average_score: number | null
+  reviews_due_count: number
+  recent_scores: number[]
 }
 
 export { ApiError }

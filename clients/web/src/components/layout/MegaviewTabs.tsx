@@ -32,6 +32,7 @@ const routeToMegaview: Record<string, Megaview> = {
   '/coach': 'leetcode',
   '/language': 'languages',
   '/system-design': 'leetcode',
+  '/ml-coding': 'leetcode',
 }
 
 export function getMegaviewFromPath(pathname: string): Megaview {

@@ -12,6 +12,7 @@ from app.config import get_settings
 from app.models.system_design_schemas import (
     DimensionEvidence,
     DimensionScore,
+    FollowUpGradeResult,
     OralGradeResult,
 )
 
@@ -282,6 +283,104 @@ Grade now:"""
             return "borderline"
         else:
             return "fail"
+
+    async def transcribe_and_grade_follow_up(
+        self,
+        audio_bytes: bytes,
+        mime_type: str,
+        original_question_text: str,
+        original_transcript: str,
+        follow_up_question: str,
+    ) -> FollowUpGradeResult:
+        """
+        Grade a follow-up question response with a simplified rubric.
+
+        Uses the same Gemini upload pattern but with a lighter prompt:
+        just transcript, score (1-10), feedback, and whether the gap was addressed.
+        """
+        if not self.configured:
+            raise RuntimeError("Gemini API key not configured")
+
+        prompt = self._build_follow_up_prompt(
+            original_question_text, original_transcript, follow_up_question
+        )
+
+        suffix = _mime_to_extension(mime_type)
+        uploaded_file = None
+        try:
+            with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
+                tmp.write(audio_bytes)
+                tmp_path = tmp.name
+
+            uploaded_file = await asyncio.to_thread(
+                genai.upload_file, tmp_path, mime_type=mime_type
+            )
+
+            response = await asyncio.to_thread(
+                self.model.generate_content, [prompt, uploaded_file]
+            )
+
+            return self._parse_follow_up_response(response.text)
+
+        finally:
+            if uploaded_file:
+                try:
+                    await asyncio.to_thread(genai.delete_file, uploaded_file.name)
+                except Exception:
+                    pass
+
+    def _build_follow_up_prompt(
+        self,
+        original_question_text: str,
+        original_transcript: str,
+        follow_up_question: str,
+    ) -> str:
+        """Build a simplified prompt for grading a follow-up response."""
+        return f"""You are a senior system design interviewer evaluating a FOLLOW-UP response.
+
+The candidate was originally asked:
+"{original_question_text}"
+
+Their original response (transcript):
+"{original_transcript}"
+
+Based on gaps in their answer, this follow-up was asked:
+"{follow_up_question}"
+
+First, transcribe the audio response verbatim (include filler words).
+
+Then evaluate:
+1. Did the candidate adequately address the gap that prompted this follow-up?
+2. Score the response 1-10 (1=no useful content, 5=partial answer, 7=solid answer, 10=exceptional depth)
+3. Provide 1-2 sentences of direct feedback
+
+Respond in this exact JSON format (no markdown code fences, just raw JSON):
+{{
+  "transcript": "full verbatim transcription",
+  "score": 6,
+  "feedback": "1-2 sentences of actionable feedback",
+  "addressed_gap": true
+}}
+
+Grade now:"""
+
+    def _parse_follow_up_response(self, text: str) -> FollowUpGradeResult:
+        """Parse Gemini's JSON response for a follow-up grading."""
+        json_match = re.search(r'\{[\s\S]*\}', text)
+        if not json_match:
+            raise ValueError(f"Could not parse JSON from Gemini response: {text[:200]}")
+
+        data = json.loads(json_match.group())
+
+        score = int(data.get("score", 1))
+        score = max(1, min(10, score))
+
+        return FollowUpGradeResult(
+            transcript=data.get("transcript", ""),
+            score=score,
+            feedback=data.get("feedback", ""),
+            addressed_gap=bool(data.get("addressed_gap", False)),
+        )
 
 
 def _mime_to_extension(mime_type: str) -> str:

@@ -249,7 +249,11 @@ export default function SessionDetailPage() {
                 </div>
 
                 {q.status === 'graded' && gradeResult ? (
-                  <OralGradeDisplay grade={gradeResult} />
+                  <OralGradeDisplay
+                    grade={gradeResult}
+                    questionId={q.id}
+                    followUpResponses={q.follow_up_responses}
+                  />
                 ) : (
                   <div className="card-sm text-center py-6">
                     <p className="text-gray-400 text-sm mb-3">Not yet answered</p>

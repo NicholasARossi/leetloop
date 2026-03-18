@@ -56,32 +56,48 @@ const TOKEN_RE = new RegExp([
 ].join('|'), 'g')
 
 export function highlightPython(code: string): string {
-  // Track whether previous meaningful token was 'def' or 'class'
   let expectFnName = false
+  let result = ''
+  let lastIndex = 0
 
-  return code.replace(TOKEN_RE, (match, tripleStr, singleStr, comment, decorator, number, ident) => {
-    if (tripleStr) { expectFnName = false; return `<span class="py-str">${esc(tripleStr)}</span>` }
-    if (singleStr) { expectFnName = false; return `<span class="py-str">${esc(singleStr)}</span>` }
-    if (comment)   { return `<span class="py-cmt">${esc(comment)}</span>` }
-    if (decorator) { expectFnName = false; return `<span class="py-dec">${esc(decorator)}</span>` }
-    if (number)    { expectFnName = false; return `<span class="py-num">${esc(number)}</span>` }
+  // Reset regex state for each call
+  TOKEN_RE.lastIndex = 0
+  let m: RegExpExecArray | null
+  while ((m = TOKEN_RE.exec(code)) !== null) {
+    // Escape any plain text between the previous match and this one
+    if (m.index > lastIndex) {
+      result += esc(code.substring(lastIndex, m.index))
+    }
+    lastIndex = TOKEN_RE.lastIndex
+
+    const [, tripleStr, singleStr, comment, decorator, number, ident] = m
+
+    if (tripleStr)  { expectFnName = false; result += `<span class="py-str">${esc(tripleStr)}</span>`; continue }
+    if (singleStr)  { expectFnName = false; result += `<span class="py-str">${esc(singleStr)}</span>`; continue }
+    if (comment)    { result += `<span class="py-cmt">${esc(comment)}</span>`; continue }
+    if (decorator)  { expectFnName = false; result += `<span class="py-dec">${esc(decorator)}</span>`; continue }
+    if (number)     { expectFnName = false; result += `<span class="py-num">${esc(number)}</span>`; continue }
     if (ident) {
       if (expectFnName) {
         expectFnName = false
-        return `<span class="py-fn">${esc(ident)}</span>`
-      }
-      if (ident === 'def' || ident === 'class') {
+        result += `<span class="py-fn">${esc(ident)}</span>`
+      } else if (ident === 'def' || ident === 'class') {
         expectFnName = true
-        return `<span class="py-kw">${esc(ident)}</span>`
+        result += `<span class="py-kw">${esc(ident)}</span>`
+      } else if (KEYWORDS.has(ident)) {
+        result += `<span class="py-kw">${esc(ident)}</span>`
+      } else if (BUILTINS.has(ident)) {
+        result += `<span class="py-bi">${esc(ident)}</span>`
+      } else {
+        result += esc(ident)
       }
-      if (KEYWORDS.has(ident)) {
-        return `<span class="py-kw">${esc(ident)}</span>`
-      }
-      if (BUILTINS.has(ident)) {
-        return `<span class="py-bi">${esc(ident)}</span>`
-      }
-      return esc(ident)
     }
-    return esc(match)
-  })
+  }
+
+  // Escape any remaining text after the last match
+  if (lastIndex < code.length) {
+    result += esc(code.substring(lastIndex))
+  }
+
+  return result
 }
