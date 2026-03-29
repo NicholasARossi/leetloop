@@ -1,0 +1,103 @@
+<mxfile>
+  <diagram name="DPO Architecture" id="dpo-arch">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="800" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Title -->
+        <mxCell id="title" value="&lt;b&gt;DPO (Direct Preference Optimization)&lt;/b&gt;&lt;br&gt;No RL at all — directly optimizes on preference pairs with a supervised loss" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="200" y="15" width="800" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Prerequisite callout -->
+        <mxCell id="prereq" value="⚠️ &lt;b&gt;Requires pre-collected preference dataset&lt;/b&gt;: (prompt, preferred_query, rejected_query) triples" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;strokeWidth=2;fontSize=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="200" y="70" width="650" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Dataset -->
+        <mxCell id="dataset" value="&lt;b&gt;Preference Dataset&lt;/b&gt;&lt;br&gt;&lt;br&gt;(P₁, Q_good₁, Q_bad₁)&lt;br&gt;(P₂, Q_good₂, Q_bad₂)&lt;br&gt;(P₃, Q_good₃, Q_bad₃)&lt;br&gt;...&lt;br&gt;(P_N, Q_good_N, Q_bad_N)" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=0.15;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="80" y="150" width="200" height="170" as="geometry"/>
+        </mxCell>
+
+        <!-- Policy Model -->
+        <mxCell id="policy" value="&lt;b&gt;POLICY π_θ&lt;/b&gt;&lt;br&gt;Llama 3.2 3B&lt;br&gt;(being trained)&lt;br&gt;&lt;br&gt;Computes:&lt;br&gt;log π(Q_good | P)&lt;br&gt;log π(Q_bad | P)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="400" y="150" width="180" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- Reference Model -->
+        <mxCell id="ref" value="&lt;b&gt;REFERENCE π_ref&lt;/b&gt;&lt;br&gt;Llama 3.2 3B&lt;br&gt;(frozen)&lt;br&gt;&lt;br&gt;Computes:&lt;br&gt;log π_ref(Q_good | P)&lt;br&gt;log π_ref(Q_bad | P)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;strokeWidth=2;strokeDasharray=8 4;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="680" y="150" width="180" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- Arrows from dataset -->
+        <mxCell id="a1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;" edge="1" source="dataset" target="policy" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="a2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;dashed=1;dashPattern=6 3;" edge="1" source="dataset" target="ref" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- DPO Loss -->
+        <mxCell id="loss" value="&lt;b&gt;DPO Loss&lt;/b&gt;&lt;br&gt;&lt;br&gt;L = −log σ( β · [ (log π(Q_good) − log π_ref(Q_good))&lt;br&gt;                             − (log π(Q_bad) − log π_ref(Q_bad)) ] )&lt;br&gt;&lt;br&gt;&lt;i&gt;Increase the log-prob gap between winner and loser,&lt;br&gt;relative to how the reference model scored them.&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#E91E63;strokeWidth=2;fontSize=12;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="280" y="370" width="500" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- Arrows to loss -->
+        <mxCell id="a3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;" edge="1" source="policy" target="loss" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="a4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;dashed=1;dashPattern=6 3;" edge="1" source="ref" target="loss" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- What's missing box -->
+        <mxCell id="missing_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEBEE;strokeColor=#C62828;strokeWidth=2;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="80" y="560" width="460" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="missing_title" value="&lt;b&gt;Why DPO Doesn't Fit Query Generation&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontColor=#C62828;" vertex="1" parent="1">
+          <mxGeometry x="120" y="570" width="320" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="missing1" value="✗ &lt;b&gt;No exploration&lt;/b&gt; — model never tries new queries during training" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="100" y="605" width="410" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="missing2" value="✗ &lt;b&gt;Offline only&lt;/b&gt; — can't learn from retrieval system in real-time" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="100" y="630" width="400" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="missing3" value="✗ &lt;b&gt;Needs preference pairs&lt;/b&gt; — must pre-generate (good, bad) pairs" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="100" y="655" width="400" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="missing4" value="✗ &lt;b&gt;Distribution drift&lt;/b&gt; — stale data as policy improves" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="100" y="680" width="370" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="missing5" value="✓ &lt;b&gt;Could work as warm-start&lt;/b&gt; from logged query pairs before online RL" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;fontColor=#2E7D32;" vertex="1" parent="1">
+          <mxGeometry x="100" y="710" width="420" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- Pros box -->
+        <mxCell id="pros_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#4CAF50;strokeWidth=2;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="600" y="560" width="340" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="pros_title" value="&lt;b&gt;What DPO Does Well&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontColor=#2E7D32;" vertex="1" parent="1">
+          <mxGeometry x="680" y="570" width="180" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="pro1" value="✓ No reward model needed" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="620" y="605" width="180" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="pro2" value="✓ No sampling during training" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="620" y="630" width="200" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="pro3" value="✓ Extremely stable (just SFT)" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="620" y="655" width="210" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="pro4" value="✓ Few hyperparameters (β, LR)" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="620" y="680" width="220" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="pro5" value="✓ Memory: 2x model (no critic)" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="620" y="705" width="220" height="25" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

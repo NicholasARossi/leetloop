@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
-from app.routers import auth, coaching, feed, health, language, mastery, mission, ml_coding, onboarding, paths, progress, recommendations, reviews, submissions, system_design, today, winrate
+from app.routers import auth, coaching, feed, health, language, lifeops, mastery, mission, ml_coding, onboarding, onsite_prep, paths, progress, recommendations, reviews, submissions, system_design, telegram, today, winrate
 
 
 @asynccontextmanager
@@ -15,8 +15,27 @@ async def lifespan(app: FastAPI):
     # Startup
     settings = get_settings()
     print(f"Starting {settings.app_name} in {settings.environment} mode")
+
+    # Initialize Telegram bot if configured
+    bot_app = None
+    if settings.telegram_bot_token:
+        try:
+            from app.services.telegram_bot import get_bot_application
+            bot_app = get_bot_application()
+            if bot_app:
+                await bot_app.initialize()
+                print("Telegram bot initialized")
+        except Exception as e:
+            print(f"Telegram bot init failed (non-fatal): {e}")
+
     yield
+
     # Shutdown
+    if bot_app:
+        try:
+            await bot_app.shutdown()
+        except Exception:
+            pass
     print("Shutting down...")
 
 
@@ -60,6 +79,9 @@ def create_app() -> FastAPI:
     app.include_router(system_design.router, prefix="/api", tags=["system-design"])
     app.include_router(language.router, prefix="/api", tags=["language"])
     app.include_router(ml_coding.router, prefix="/api", tags=["ml-coding"])
+    app.include_router(lifeops.router, prefix="/api", tags=["life-ops"])
+    app.include_router(telegram.router, prefix="/api", tags=["telegram"])
+    app.include_router(onsite_prep.router, prefix="/api", tags=["onsite-prep"])
 
     return app
 

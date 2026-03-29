@@ -9,7 +9,7 @@ Each LP has a primary and backup story in STAR format. No story is reused across
 | 1 | GenAI Fluency | Generative Retrieval Pipeline | VALIDATED |
 | 2 | Insist on Highest Standards | LLM-as-Judge Evaluation Framework | VALIDATED |
 | 3 | Bias for Action | Post-A/B Metrics Dashboard | VALIDATED |
-| 4 | Ownership | Built All Data Pipelines for Another Team | VALIDATED |
+| 4 | Ownership | Redesigning the DS/MLOps Operating Model | DRAFT |
 | 5 | Earn Trust | Embedding Pipeline Bug — Owning a Mistake | VALIDATED |
 | 6 | Have Backbone; Disagree & Commit | LLM-Based vs Pure Embedding Architecture Debate | VALIDATED |
 | 7 | Learn & Be Curious | Papers to Production (DeepRetrieval, ComiRec, Choppy) | VALIDATED |
@@ -51,7 +51,7 @@ Separately, I evaluated GenAI for search bar query expansion. We prototyped it, 
 
 ### Primary: LLM-as-Judge Evaluation Framework
 
-**Situation:** When I joined Walmart's International Personalization team, there was no offline evaluation pipeline. The team was shipping models straight to A/B tests with only anecdotal evidence and sparse engagement summaries. The consequences were visible: consistent A/B failures, models underperforming heuristic baselines, and in some cases underperforming third-party baseline models. At least three launches had failed before I arrived.
+**Situation:** When I joined Walmart's International Personalization team, the team was iterating fast on models but lacked a scalable way to predict A/B outcomes offline. Models were going straight to live traffic with engagement summaries as the primary signal, and the feedback loop was slow — a failed A/B test meant weeks of lost experimentation time. Several recent launches had underperformed, and the team recognized the gap but hadn't had bandwidth to build a systematic evaluation layer while simultaneously shipping features across three markets.
 
 **Task:** I needed to establish an evaluation standard so the team could predict whether a model would succeed before committing live traffic to it.
 
@@ -74,13 +74,13 @@ I backtested the framework against two previous launches that had failed in A/B 
 
 ### Primary: Post-A/B Metrics Dashboard
 
-**Situation:** At Walmart, the team's post-A/B analysis relied on Adobe dashboards managed by the analytics team. The dashboards were tabular only — no graphs, no way to cleanly view GMV lift over time, no ability to break down results by step in the user journey or by module. There was no clean way to do head-to-head A/B comparison. We were making launch decisions based on incomplete data views, and the analytics team didn't have the bandwidth or incentive to improve the tooling.
+**Situation:** At Walmart, the team's post-A/B analysis relied on Adobe dashboards managed by the analytics team. The dashboards were tabular only — no graphs, no way to cleanly view GMV lift over time, no ability to break down results by step in the user journey or by module. There was no clean way to do head-to-head A/B comparison. We were making launch decisions based on incomplete data views. The analytics team had their own roadmap and priorities across multiple orgs — our ML-specific visualization needs weren't their top priority, and reasonably so.
 
 **Task:** I needed a way to properly evaluate whether our model launches were working — not just top-line metrics, but granular breakdowns that would tell me where gains were coming from and where regressions were hiding.
 
-**Action:** Without asking permission or waiting for the analytics team's roadmap, I built a full metrics dashboard from scratch. It tracked revenue per customer, click-through rate broken down by step in the user journey and by module, with filtering by A/B experiment key for head-to-head comparison. I built it for myself first, then shared it with the team. This was squarely the analytics team's domain, not mine — my job was ML science — but the existing tooling was blocking our ability to make good decisions.
+**Action:** Rather than waiting on another team's roadmap, I built a full metrics dashboard from scratch. It tracked revenue per customer, click-through rate broken down by step in the user journey and by module, with filtering by A/B experiment key for head-to-head comparison. I built it for myself first, then shared it with the team. This was squarely the analytics team's domain, not mine — my job was ML science — but I had a specific need and the skills to address it quickly.
 
-**Result:** The dashboard became the team's primary tool for evaluating launches. It gave us visibility we'd never had — we could see exactly which user journey steps were driving lift and which were flat. This directly informed model iteration decisions and helped us diagnose issues that the tabular Adobe reports would have hidden. Building first and asking permission later saved months of waiting on another team's roadmap.
+**Result:** The dashboard became the team's primary tool for evaluating launches. It gave us granular visibility — we could see exactly which user journey steps were driving lift and which were flat. This directly informed model iteration decisions and helped us diagnose issues that the tabular Adobe reports would have missed. Building it myself turned what would have been months of cross-team coordination into a weekend project.
 
 ### Backup: <!-- TO FILL -->
 
@@ -93,17 +93,27 @@ I backtested the framework against two previous launches that had failed in A/B 
 
 ## 4. Ownership — VALIDATED
 
-### Primary: Built All Data Pipelines for Another Team
+### Primary: Redesigning the DS/MLOps Operating Model
 
-**Situation:** On Walmart's International Personalization team, data engineering was formally another team's responsibility. But the pipelines weren't getting built. My model artifacts would be ready, and I'd spend two or more weeks pinging the DE team with no progress. Features were blocked — we had models ready to deploy but no production data pipelines to serve them. Some pipelines that did exist were being run out of band by data scientists from Jupyter notebooks, with embeddings going a month or more without being refreshed.
+**Situation:** On Walmart's International Personalization team, there was a structural split between data scientists who built models and MLOps engineers who brought them to production. On the US search team I'd come from, there was no such distinction — scientists owned everything end-to-end, which meant no gaps in ownership. On the international team, the workflow was: DS builds a prototype in isolation, hands off a finished artifact, and MLOps reverse-engineers production pipeline code from it. This created two systematic failure modes. First, MLOps would introduce bugs during the translation — they lacked context on design decisions, so subtle things broke. Second, MLOps couldn't focus on their actual core job — uptime, KTLO, refactoring existing signals — because they were buried in rewrite work for new launches. The problem wasn't people, it was the workflow.
 
-**Task:** I needed to get our models into production. Waiting on the data engineering team's timeline would have meant features sitting on the shelf for months.
+**Task:** I needed to change how DS and MLOps collaborated so that new models could ship reliably without drowning the MLOps team in translation work. This wasn't about one pipeline — the same failure mode was repeating across the similar items index, the embedding pipelines, and other signals.
+
+**Action:** I started by demonstrating the end-to-end model on my own projects — writing production pipeline code myself in Airflow with Spark and PyTorch Lightning, carrying it through to production as a single code owner. Once I had concrete evidence that the pattern worked, I proposed a process change to the team: DS owns the pipeline code from day one, not prototype code that gets rewritten. I introduced three elements. First, a joint design review early — DS and MLOps align on pipeline architecture, GPU provisioning, and data volumes before anyone writes code, not after the prototype is locked in. Second, a single design doc that both sides contribute to — a shared source of truth so context isn't lost in handoff. Third, a validation contract upfront — agreed-upon success criteria like inference throughput targets, data freshness expectations, and monitoring plans, so "production-ready" has a shared definition before the project starts. DS tests end-to-end and gets sign-off. MLOps reviews code and focuses on what they're actually good at: reliability, monitoring, infrastructure, and improving existing signals.
+
+There was natural tension because redefining the handoff boundary felt like scope erosion to the MLOps side. I framed it differently: this wasn't taking scope from MLOps, it was removing translation work that was drowning them so they could focus on higher-value work. The projects that went through this process validated the approach — design reviews caught issues like GPU provisioning mismatches in week one instead of week eight.
+
+**Result:** The projects that went through the unified design review process had zero handoff failures. The pattern — scientist owns the pipeline, MLOps owns reliability — became the team's default for new launches. It worked because it respected what each side was actually good at: scientists had the model context to write correct pipeline code, MLOps had the production expertise to ensure uptime and infrastructure quality. MLOps capacity freed up from rewrite work went back into KTLO and refactoring existing signals that needed attention.
+
+### Backup: Built All Data Pipelines for Another Team (L5 execution version)
+
+**Situation:** On Walmart's International Personalization team, the DE team was loaded with competing priorities across multiple orgs — our personalization pipelines were one of many workstreams they supported. Model artifacts would be ready and then sit for weeks waiting on pipeline work. As the team scaled from one market to three, the gap between model development velocity and production deployment capacity kept widening. Some pipelines had been prototyped by data scientists in notebooks as stopgaps, but those weren't production-grade — embeddings could go weeks without refresh.
+
+**Task:** I needed to get our models into production. Waiting on the data engineering team's timeline — which was constrained by their own legitimate priorities — would have meant features sitting on the shelf for months.
 
 **Action:** I built all of the data pipelines myself. I had experience from my previous role on US search where I'd built similar infrastructure, so I knew the stack. I designed the pipelines in Airflow with Spark for data processing and PyTorch Lightning for GPU inference, separating out the compute-intensive model inference from the data transformation steps. I carried each pipeline from development through to production as the single code owner. The DE team remained responsible for code review, so it worked politically — I wasn't stepping on toes, I was unblocking myself.
 
-**Result:** Every model I built shipped to production without being blocked by the data engineering bottleneck. The pipelines ran reliably across all three markets. The pattern I established — scientist owns the full pipeline, DE reviews — became the team's default operating model. The reward for working hard is more work, but the alternative was watching good models sit on a shelf.
-
-### Backup: <!-- TO FILL -->
+**Result:** Every model I built shipped to production without being blocked by the resourcing constraint. The pipelines ran reliably across all three markets. The pattern I established — scientist owns the full pipeline, DE reviews — became the team's default operating model. It worked because it played to each team's strengths: scientists had the model context, DE had the production standards.
 
 ### Question Angles:
 - "Tell me about a time you took ownership of something outside your scope."
@@ -158,7 +168,7 @@ I backtested the framework against two previous launches that had failed in A/B 
 
 ### Primary: Papers to Production — Implementing Cutting-Edge Research
 
-**Situation:** At Walmart, the personalization and search teams were building recommendation and retrieval systems that needed to perform at scale across three markets. The existing approaches were either too simple (heuristic baselines, basic collaborative filtering) or hadn't been rigorously compared. There was no culture of reading current research and implementing state-of-the-art methods — the team tended to use whatever was already in the codebase.
+**Situation:** At Walmart, the personalization and search teams were building recommendation and retrieval systems that needed to perform at scale across three markets. The team had been heads-down shipping product for two years straight — they'd built a working system across three markets, which was a real achievement. But there was a gap between what the research community was publishing and what we were deploying. Existing approaches hadn't been rigorously compared against newer methods, and there hadn't been bandwidth to close that loop while simultaneously keeping the lights on across US, CA, and MX.
 
 **Task:** I wanted to push the technical frontier of what we could build by going directly to the research literature, implementing promising methods, and empirically comparing them against our existing approaches.
 
@@ -179,13 +189,13 @@ I backtested the framework against two previous launches that had failed in A/B 
 
 ### Primary: Similar Items Pipeline — Full Stack Investigation
 
-**Situation:** When I joined Walmart's International Personalization team, I started by reviewing what pipelines were actually running in production. I noticed persistent failures in Airflow — a lot of red. The similar items pipeline was one of the worst: it was provisioned on A100s for a text encoder that didn't need them, was doing inference on Spark CPU workers instead of GPU, had image embeddings added for secondary filtering with no documentation or evidence they were necessary, and was fundamentally unable to run reliably in production. It was only partially working in Mexico on limited provisioning, and failing in the other markets. The team's solution was to run things out of band. There was also a handoff failure mode: data scientists would build the model, MLOps would deploy it, and quality died in the transition — an ownership graveyard.
+**Situation:** When I joined Walmart's International Personalization team, I started by reviewing what pipelines were actually running in production. The similar items pipeline had been built as a proof of concept and successfully launched in Mexico — that was the foundation that showed the approach worked. But as the team tried to scale it to all three markets, the architecture hit limits. It was provisioned on A100s for a text encoder that didn't need that much compute, was doing inference on Spark CPU workers instead of GPU, and had image embeddings added for secondary filtering that had never been evaluated for impact. The pipeline ran partially in Mexico but was failing in the other markets. There was also a structural challenge: data scientists built models and MLOps deployed them, and context was lost in that handoff — neither side felt fully accountable for end-to-end reliability.
 
-**Task:** Everyone on the team knew there were issues but felt they didn't have the bandwidth to fix it. I believed a production pipeline shouldn't have red in Airflow, full stop. I needed to understand what was actually wrong, fix it, and get it running in all three markets.
+**Task:** The team recognized the issues but was stretched across multiple workstreams. I believed a production pipeline shouldn't have persistent failures, and I had the cross-stack skills to investigate. I needed to understand what was actually wrong, fix it, and get it running in all three markets.
 
-**Action:** I dug into every layer. First, I wrote an LLM-judge evaluation rubric specifically for similar items so I could actually measure quality — no such metric existed before. Then I used that rubric to systematically test assumptions: I removed the image embedding filtering and replaced it with a lighter-weight filter, and the rubric showed quality was equivalent — the image embeddings had been adding complexity with no measurable benefit. I rewrote the embedding generation code in PyTorch Lightning with native multi-GPU support, separating data processing from GPU inference tasks and running on V100s in parallel instead of the A100s they couldn't reliably provision. I carried the pipeline from rewrite through to production as a single code owner — eliminating the DS-to-MLOps handoff that had been the failure point.
+**Action:** I dug into every layer. First, I wrote an LLM-judge evaluation rubric specifically for similar items so I could actually measure quality — no such metric existed before. Then I used that rubric to systematically test assumptions: I removed the image embedding filtering and replaced it with a lighter-weight filter, and the rubric showed quality was equivalent — the image embeddings had been adding complexity with no measurable benefit. I rewrote the embedding generation code in PyTorch Lightning with native multi-GPU support, separating data processing from GPU inference tasks and running on V100s in parallel instead of the A100s they couldn't reliably provision. I carried the pipeline from rewrite through to production as a single code owner — closing the DS-to-MLOps handoff gap by owning both sides.
 
-**Result:** The rewritten pipeline went from non-functional in two markets to running reliably across all three (US, CA, MX) with roughly 100x throughput improvement. The evaluation rubric gave the team a way to systematically navigate the design space for the first time — making evidence-based decisions about what to include or remove rather than adding complexity based on PM conversations.
+**Result:** The rewritten pipeline went from partially working in one market to running reliably across all three (US, CA, MX) with roughly 100x throughput improvement. The evaluation rubric gave the team a systematic way to navigate the design space — making evidence-based decisions about what to include or remove rather than relying on intuition about which components were contributing.
 
 ### Backup: <!-- TO FILL -->
 

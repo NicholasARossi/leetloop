@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { clsx } from 'clsx'
 import { useAuth } from '@/contexts/AuthContext'
 
-export type Megaview = 'leetcode' | 'languages'
+export type Megaview = 'leetcode' | 'languages' | 'onsite-prep' | 'life-ops'
 
 const megaviews: { id: Megaview; label: string; href: string; icon: React.ReactNode }[] = [
   {
@@ -20,6 +20,18 @@ const megaviews: { id: Megaview; label: string; href: string; icon: React.ReactN
     href: '/language',
     icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" /></svg>,
   },
+  {
+    id: 'onsite-prep',
+    label: 'Onsite Prep',
+    href: '/onsite-prep',
+    icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>,
+  },
+  {
+    id: 'life-ops',
+    label: 'Life Ops',
+    href: '/life-ops',
+    icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>,
+  },
 ]
 
 const routeToMegaview: Record<string, Megaview> = {
@@ -33,6 +45,8 @@ const routeToMegaview: Record<string, Megaview> = {
   '/language': 'languages',
   '/system-design': 'leetcode',
   '/ml-coding': 'leetcode',
+  '/onsite-prep': 'onsite-prep',
+  '/life-ops': 'life-ops',
 }
 
 export function getMegaviewFromPath(pathname: string): Megaview {

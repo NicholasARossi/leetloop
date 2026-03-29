@@ -1,0 +1,175 @@
+<mxfile>
+  <diagram name="GRPO Architecture" id="grpo-arch">
+    <mxGraphModel dx="1400" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Title -->
+        <mxCell id="title" value="&lt;b&gt;GRPO (Group Relative Policy Optimization)&lt;/b&gt;&lt;br&gt;No critic network — uses group statistics as baseline • DeepSeek-R1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="250" y="15" width="900" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Key Insight callout -->
+        <mxCell id="insight" value="💡 &lt;b&gt;Key Insight&lt;/b&gt;: Instead of training a separate critic to estimate &quot;how good is this state&quot;,&lt;br&gt;sample a GROUP of outputs and use the group's mean reward as the baseline." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#4CAF50;strokeWidth=2;fontSize=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="200" y="70" width="680" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Policy Model -->
+        <mxCell id="policy" value="&lt;b&gt;POLICY π_θ&lt;/b&gt;&lt;br&gt;Llama 3.2 3B&lt;br&gt;~6 GB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="80" y="180" width="160" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Prompt -->
+        <mxCell id="prompt_label" value="Prompt P" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="150" width="80" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- Fan out: G=8 samples -->
+        <mxCell id="fanout_label" value="&lt;b&gt;Sample G = 8 queries&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="300" y="150" width="170" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- 8 query boxes -->
+        <mxCell id="q1" value="Q₁" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#FF9800;fontSize=11;arcSize=30;" vertex="1" parent="1">
+          <mxGeometry x="300" y="185" width="50" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="q2" value="Q₂" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#FF9800;fontSize=11;arcSize=30;" vertex="1" parent="1">
+          <mxGeometry x="360" y="185" width="50" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="q3" value="Q₃" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#FF9800;fontSize=11;arcSize=30;" vertex="1" parent="1">
+          <mxGeometry x="420" y="185" width="50" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="q4" value="Q₄" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#FF9800;fontSize=11;arcSize=30;" vertex="1" parent="1">
+          <mxGeometry x="480" y="185" width="50" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="q5" value="Q₅" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#FF9800;fontSize=11;arcSize=30;" vertex="1" parent="1">
+          <mxGeometry x="300" y="230" width="50" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="q6" value="Q₆" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#FF9800;fontSize=11;arcSize=30;" vertex="1" parent="1">
+          <mxGeometry x="360" y="230" width="50" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="q7" value="Q₇" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#FF9800;fontSize=11;arcSize=30;" vertex="1" parent="1">
+          <mxGeometry x="420" y="230" width="50" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="q8" value="Q₈" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#FF9800;fontSize=11;arcSize=30;" vertex="1" parent="1">
+          <mxGeometry x="480" y="230" width="50" height="35" as="geometry"/>
+        </mxCell>
+
+        <!-- Arrow from policy to queries -->
+        <mxCell id="a_fan" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;" edge="1" source="policy" target="q1" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Retrieval -->
+        <mxCell id="retrieval" value="&lt;b&gt;Execute Retrieval&lt;/b&gt;&lt;br&gt;(8 separate queries&lt;br&gt;against FAISS index)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#F8CECC;strokeColor=#B85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="600" y="185" width="170" height="90" as="geometry"/>
+        </mxCell>
+
+        <!-- Arrow queries to retrieval -->
+        <mxCell id="a_ret" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;" edge="1" source="q4" target="retrieval" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Rewards column -->
+        <mxCell id="rewards_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#4CAF50;strokeWidth=2;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="830" y="160" width="220" height="270" as="geometry"/>
+        </mxCell>
+        <mxCell id="rewards_title" value="&lt;b&gt;Rewards&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontColor=#2E7D32;" vertex="1" parent="1">
+          <mxGeometry x="900" y="165" width="80" height="30" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="r1" value="Q₁ → R₁ = &lt;b&gt;0.72&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="855" y="195" width="120" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="r2" value="Q₂ → R₂ = &lt;b&gt;0.31&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;fontColor=#C62828;" vertex="1" parent="1">
+          <mxGeometry x="855" y="218" width="120" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="r3" value="Q₃ → R₃ = &lt;b&gt;0.85&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;fontColor=#2E7D32;" vertex="1" parent="1">
+          <mxGeometry x="855" y="241" width="120" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="r4" value="Q₄ → R₄ = &lt;b&gt;0.12&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;fontColor=#C62828;" vertex="1" parent="1">
+          <mxGeometry x="855" y="264" width="120" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="r5" value="Q₅ → R₅ = &lt;b&gt;0.68&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="855" y="287" width="120" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="r6" value="Q₆ → R₆ = &lt;b&gt;0.45&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="855" y="310" width="120" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="r7" value="Q₇ → R₇ = &lt;b&gt;0.91&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;fontColor=#2E7D32;" vertex="1" parent="1">
+          <mxGeometry x="855" y="333" width="120" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="r8" value="Q₈ → R₈ = &lt;b&gt;0.29&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;fontColor=#C62828;" vertex="1" parent="1">
+          <mxGeometry x="855" y="356" width="120" height="25" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="stats" value="&lt;b&gt;μ = 0.54 &amp;nbsp; σ = 0.28&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=12;fontColor=#2E7D32;" vertex="1" parent="1">
+          <mxGeometry x="865" y="390" width="160" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- Arrow retrieval to rewards -->
+        <mxCell id="a_rew" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;" edge="1" source="retrieval" target="rewards_box" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Normalized Advantages -->
+        <mxCell id="adv_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#F9A825;strokeWidth=2;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="530" y="500" width="520" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="adv_title" value="&lt;b&gt;Normalized Advantages: Â_i = (R_i - μ) / σ&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontColor=#F57F17;" vertex="1" parent="1">
+          <mxGeometry x="600" y="510" width="340" height="30" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="adv_good1" value="Q₃: Â = (0.85−0.54)/0.28 = &lt;b&gt;+1.11&lt;/b&gt; → &lt;font color='#2E7D32'&gt;&lt;b&gt;↑ reinforce&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="560" y="545" width="380" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="adv_good2" value="Q₇: Â = (0.91−0.54)/0.28 = &lt;b&gt;+1.32&lt;/b&gt; → &lt;font color='#2E7D32'&gt;&lt;b&gt;↑ reinforce&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="560" y="572" width="380" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="adv_bad1" value="Q₄: Â = (0.12−0.54)/0.28 = &lt;b&gt;−1.50&lt;/b&gt; → &lt;font color='#C62828'&gt;&lt;b&gt;↓ suppress&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="560" y="600" width="380" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="adv_bad2" value="Q₂: Â = (0.31−0.54)/0.28 = &lt;b&gt;−0.82&lt;/b&gt; → &lt;font color='#C62828'&gt;&lt;b&gt;↓ suppress&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="560" y="627" width="380" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- Arrow rewards to advantages -->
+        <mxCell id="a_adv" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;" edge="1" source="rewards_box" target="adv_box" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Clipped Update -->
+        <mxCell id="clip_update" value="&lt;b&gt;Clipped Policy Update&lt;/b&gt;&lt;br&gt;&lt;br&gt;Same PPO clipping: min(r(θ)·Â, clip(r(θ),0.8,1.2)·Â)&lt;br&gt;+ β·KL(π_θ || π_ref) penalty&lt;br&gt;&lt;br&gt;But &lt;b&gt;NO critic backward pass&lt;/b&gt; needed!" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#E91E63;strokeWidth=2;fontSize=12;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="100" y="510" width="340" height="130" as="geometry"/>
+        </mxCell>
+
+        <!-- Arrow advantages to update -->
+        <mxCell id="a_clip" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;" edge="1" source="adv_box" target="clip_update" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Loop back -->
+        <mxCell id="a_loop" value="Updated π_θ" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;dashed=1;dashPattern=8 4;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;" edge="1" source="clip_update" target="policy" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="50" y="575"/>
+              <mxPoint x="50" y="260"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Memory callout -->
+        <mxCell id="memory" value="&lt;b&gt;Total GPU Memory: ~12 GB (bf16)&lt;/b&gt;&lt;br&gt;Policy (6GB) + Reference (6GB) — &lt;b&gt;NO CRITIC&lt;/b&gt;&lt;br&gt;~33% less than PPO" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=12;arcSize=6;fontColor=#1B5E20;" vertex="1" parent="1">
+          <mxGeometry x="140" y="700" width="320" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Tradeoff callout -->
+        <mxCell id="tradeoff" value="&lt;b&gt;Tradeoff&lt;/b&gt;: G=8 forward passes per prompt&lt;br&gt;(+ 8 retrieval calls) instead of 1 critic backward pass.&lt;br&gt;Worth it when retrieval is fast (FAISS)." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;fontSize=11;arcSize=6;fontColor=#BF360C;" vertex="1" parent="1">
+          <mxGeometry x="540" y="700" width="340" height="60" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

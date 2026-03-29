@@ -1,0 +1,183 @@
+<mxfile>
+  <diagram name="Tradeoff Comparison" id="tradeoff-comparison">
+    <mxGraphModel dx="1400" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Title -->
+        <mxCell id="title" value="&lt;b&gt;RL Algorithm Tradeoff Map for Query Generation&lt;/b&gt;&lt;br&gt;Why we chose online RL (PPO/GRPO) with dual reward signal" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="300" y="15" width="800" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Decision Tree -->
+        <mxCell id="start" value="&lt;b&gt;Train Llama 3.2 3B&lt;br&gt;to generate queries&lt;/b&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=2;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="520" y="80" width="200" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- Decision 1: Online vs Offline -->
+        <mxCell id="d1" value="&lt;b&gt;Do we have labeled&lt;br&gt;preference pairs?&lt;/b&gt;" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#FF9800;strokeWidth=2;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="490" y="190" width="260" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="a_d1" style="rounded=1;strokeWidth=2;" edge="1" source="start" target="d1" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- No → Online RL -->
+        <mxCell id="no_pairs" value="&lt;b&gt;No&lt;/b&gt; — no labeled pairs,&lt;br&gt;but we have a retrieval&lt;br&gt;system + LLM judge" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#4CAF50;strokeWidth=2;fontSize=11;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="200" y="210" width="200" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="a_no" value="No" style="rounded=1;strokeWidth=2;fontSize=11;fontStyle=1;" edge="1" source="d1" target="no_pairs" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Yes → DPO path -->
+        <mxCell id="yes_pairs" value="&lt;b&gt;Yes&lt;/b&gt; — have pairs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;strokeWidth=2;fontSize=11;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="840" y="210" width="160" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="a_yes" value="Yes" style="rounded=1;strokeWidth=2;fontSize=11;fontStyle=1;" edge="1" source="d1" target="yes_pairs" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- DPO -->
+        <mxCell id="dpo_box" value="&lt;b&gt;DPO&lt;/b&gt;&lt;br&gt;Fast, stable, cheap&lt;br&gt;BUT: offline, no exploration&lt;br&gt;&lt;br&gt;➜ Use as &lt;b&gt;warm-start only&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;strokeDasharray=6 3;fontSize=11;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="810" y="300" width="220" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="a_dpo" style="rounded=1;strokeWidth=2;dashed=1;dashPattern=6 3;" edge="1" source="yes_pairs" target="dpo_box" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Online RL path continues -->
+        <mxCell id="d2" value="&lt;b&gt;GPU budget&lt;br&gt;constraint?&lt;/b&gt;" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#FF9800;strokeWidth=2;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="200" y="330" width="200" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="a_d2" style="rounded=1;strokeWidth=2;" edge="1" source="no_pairs" target="d2" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Tight budget → GRPO -->
+        <mxCell id="grpo_path" value="&lt;b&gt;Tight budget&lt;/b&gt;&lt;br&gt;(≤ 2x A100)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#4CAF50;fontSize=11;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="60" y="365" width="120" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="a_grpo_p" style="rounded=1;strokeWidth=2;" edge="1" source="d2" target="grpo_path" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Ample budget → PPO -->
+        <mxCell id="ppo_path" value="&lt;b&gt;Ample budget&lt;/b&gt;&lt;br&gt;(4+ A100s)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1565C0;fontSize=11;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="430" y="365" width="120" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="a_ppo_p" style="rounded=1;strokeWidth=2;" edge="1" source="d2" target="ppo_path" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- GRPO Box -->
+        <mxCell id="grpo_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;strokeWidth=3;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="20" y="460" width="300" height="280" as="geometry"/>
+        </mxCell>
+        <mxCell id="grpo_title" value="&lt;b&gt;GRPO&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=16;fontColor=#1B5E20;" vertex="1" parent="1">
+          <mxGeometry x="120" y="468" width="60" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="grpo_mem" value="&lt;b&gt;Memory:&lt;/b&gt; ~12 GB (no critic)" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="500" width="200" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="grpo_comp" value="&lt;b&gt;Compute:&lt;/b&gt; G fwd passes/prompt" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="523" width="220" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="grpo_hyp" value="&lt;b&gt;Hyperparams:&lt;/b&gt; LR, ε, KL, G" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="546" width="210" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="grpo_pro_title" value="&lt;font color='#2E7D32'&gt;&lt;b&gt;Pros:&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="580" width="50" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="grpo_p1" value="✓ 33% less memory than PPO" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="600" width="200" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="grpo_p2" value="✓ Simpler — no critic to train" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="620" width="200" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="grpo_p3" value="✓ Natural fit: already sampling N queries" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="640" width="270" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="grpo_con_title" value="&lt;font color='#C62828'&gt;&lt;b&gt;Cons:&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="670" width="50" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="grpo_c1" value="✗ G retrieval calls per prompt" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="690" width="210" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="grpo_c2" value="✗ Newer, fewer best practices" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="710" width="200" height="25" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="a_grpo" style="rounded=1;strokeWidth=2;" edge="1" source="grpo_path" target="grpo_box" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- PPO Box -->
+        <mxCell id="ppo_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1565C0;strokeWidth=3;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="370" y="460" width="300" height="280" as="geometry"/>
+        </mxCell>
+        <mxCell id="ppo_title" value="&lt;b&gt;PPO&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=16;fontColor=#0D47A1;" vertex="1" parent="1">
+          <mxGeometry x="480" y="468" width="50" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="ppo_mem" value="&lt;b&gt;Memory:&lt;/b&gt; ~18 GB (actor+critic+ref)" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="390" y="500" width="260" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="ppo_comp" value="&lt;b&gt;Compute:&lt;/b&gt; 3 models fwd+bwd" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="390" y="523" width="210" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="ppo_hyp" value="&lt;b&gt;Hyperparams:&lt;/b&gt; LR×2, ε, KL, GAE λ" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="390" y="546" width="240" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="ppo_pro_title" value="&lt;font color='#2E7D32'&gt;&lt;b&gt;Pros:&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="390" y="580" width="50" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="ppo_p1" value="✓ Per-token value → lower variance" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="390" y="600" width="240" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="ppo_p2" value="✓ Proven: ChatGPT, InstructGPT, DeepRetrieval" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="390" y="620" width="280" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="ppo_p3" value="✓ 1 fwd pass per prompt (not G)" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="390" y="640" width="220" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="ppo_con_title" value="&lt;font color='#C62828'&gt;&lt;b&gt;Cons:&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="390" y="670" width="50" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="ppo_c1" value="✗ 50% more memory (critic)" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="390" y="690" width="200" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="ppo_c2" value="✗ More hyperparameters to tune" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="390" y="710" width="220" height="25" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="a_ppo" style="rounded=1;strokeWidth=2;" edge="1" source="ppo_path" target="ppo_box" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Rejection Sampling Box -->
+        <mxCell id="rs_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#F9A825;strokeWidth=2;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="730" y="460" width="280" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="rs_title" value="&lt;b&gt;Rejection Sampling&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=14;fontColor=#F57F17;" vertex="1" parent="1">
+          <mxGeometry x="780" y="468" width="170" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="rs_desc" value="Generate N → keep best → SFT&lt;br&gt;&lt;br&gt;&lt;i&gt;What the LLM-as-judge loop&lt;br&gt;was closest to in practice.&lt;br&gt;Honest framing for interview.&lt;/i&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="760" y="500" width="220" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="rs_pro" value="✓ Dead simple, very stable&lt;br&gt;✓ No policy gradients at all" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;fontColor=#2E7D32;" vertex="1" parent="1">
+          <mxGeometry x="750" y="585" width="200" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="rs_con" value="✗ Wasteful — no learning from failures&lt;br&gt;✗ Slow convergence" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;fontColor=#C62828;" vertex="1" parent="1">
+          <mxGeometry x="750" y="620" width="260" height="35" as="geometry"/>
+        </mxCell>
+
+        <!-- Bottom summary -->
+        <mxCell id="summary" value="&lt;b&gt;Our approach:&lt;/b&gt; Online RL (PPO/GRPO) with dual reward (retrieval metrics + LLM judge).&lt;br&gt;DPO considered for warm-start. Rejection sampling as the honest baseline of what the judge loop approximated." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#7B1FA2;strokeWidth=2;fontSize=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="170" y="800" width="740" height="60" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

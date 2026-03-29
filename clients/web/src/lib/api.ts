@@ -498,6 +498,121 @@ export const leetloopApi = {
 
   getMLCodingDashboard: (userId: string) =>
     api<MLCodingDashboardSummary>(`/api/ml-coding/${userId}/dashboard`),
+
+  // Onsite Prep
+  getOnsitePrepQuestions: (category?: string) =>
+    api<OnsitePrepQuestion[]>(`/api/onsite-prep/questions${category ? `?category=${category}` : ''}`),
+
+  getOnsitePrepQuestion: (questionId: string) =>
+    api<OnsitePrepQuestion>(`/api/onsite-prep/questions/${questionId}`),
+
+  submitOnsitePrepAudio: async (questionId: string, audioFile: Blob | File): Promise<OnsitePrepGradeResult> => {
+    const formData = new FormData()
+    formData.append('audio', audioFile, audioFile instanceof File ? audioFile.name : 'recording.webm')
+
+    const url = `${API_URL}/api/onsite-prep/questions/${questionId}/submit-audio`
+    const response = await fetchWithTimeout(url, {
+      method: 'POST',
+      body: formData,
+      timeout: 120000,
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ detail: 'Unknown error' }))
+      throw new ApiError(response.status, error.detail || response.statusText)
+    }
+
+    return response.json()
+  },
+
+  getOnsitePrepAttempt: (attemptId: string) =>
+    api<OnsitePrepAttempt>(`/api/onsite-prep/attempts/${attemptId}`),
+
+  generateOnsitePrepFollowUps: (attemptId: string) =>
+    api<OnsitePrepFollowUp[]>(`/api/onsite-prep/attempts/${attemptId}/generate-follow-ups`, {
+      method: 'POST',
+      timeout: 60000,
+    }),
+
+  submitOnsitePrepFollowUpAudio: async (followUpId: string, audioFile: Blob | File): Promise<OnsitePrepFollowUpResult> => {
+    const formData = new FormData()
+    formData.append('audio', audioFile, audioFile instanceof File ? audioFile.name : 'recording.webm')
+
+    const url = `${API_URL}/api/onsite-prep/follow-ups/${followUpId}/submit-audio`
+    const response = await fetchWithTimeout(url, {
+      method: 'POST',
+      body: formData,
+      timeout: 120000,
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ detail: 'Unknown error' }))
+      throw new ApiError(response.status, error.detail || response.statusText)
+    }
+
+    return response.json()
+  },
+
+  getOnsitePrepDashboard: (userId: string) =>
+    api<OnsitePrepDashboard>(`/api/onsite-prep/dashboard/${userId}`),
+
+  getOnsitePrepHistory: (userId: string, limit = 20) =>
+    api<OnsitePrepAttemptHistory[]>(`/api/onsite-prep/history/${userId}?limit=${limit}`),
+
+  // Life Ops
+  getLifeOpsCategories: (userId: string) =>
+    api<LifeOpsCategory[]>(`/api/life-ops/${userId}/categories`),
+
+  createLifeOpsCategory: (userId: string, data: CreateLifeOpsCategoryRequest) =>
+    api<LifeOpsCategory>(`/api/life-ops/${userId}/categories`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  updateLifeOpsCategory: (categoryId: string, data: UpdateLifeOpsCategoryRequest) =>
+    api<LifeOpsCategory>(`/api/life-ops/categories/${categoryId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+
+  deleteLifeOpsCategory: (categoryId: string) =>
+    api<{ success: boolean }>(`/api/life-ops/categories/${categoryId}`, {
+      method: 'DELETE',
+    }),
+
+  getLifeOpsTasks: (userId: string) =>
+    api<LifeOpsTask[]>(`/api/life-ops/${userId}/tasks`),
+
+  createLifeOpsTask: (userId: string, data: CreateLifeOpsTaskRequest) =>
+    api<LifeOpsTask>(`/api/life-ops/${userId}/tasks`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  updateLifeOpsTask: (taskId: string, data: UpdateLifeOpsTaskRequest) =>
+    api<LifeOpsTask>(`/api/life-ops/tasks/${taskId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+
+  deleteLifeOpsTask: (taskId: string) =>
+    api<{ success: boolean }>(`/api/life-ops/tasks/${taskId}`, {
+      method: 'DELETE',
+    }),
+
+  getLifeOpsChecklist: (userId: string) =>
+    api<LifeOpsChecklistResponse>(`/api/life-ops/${userId}/checklist`),
+
+  getLifeOpsChecklistForDate: (userId: string, date: string) =>
+    api<LifeOpsChecklistResponse>(`/api/life-ops/${userId}/checklist/${date}`),
+
+  toggleLifeOpsItem: (itemId: string) =>
+    api<LifeOpsToggleResponse>(`/api/life-ops/items/${itemId}/toggle`, {
+      method: 'POST',
+    }),
+
+  getLifeOpsStats: (userId: string) =>
+    api<LifeOpsStatsResponse>(`/api/life-ops/${userId}/stats`),
 }
 
 // Types (matching backend schemas)
@@ -1328,6 +1443,209 @@ export interface MLCodingDashboardSummary {
   average_score: number | null
   reviews_due_count: number
   recent_scores: number[]
+}
+
+// Life Ops Types
+export interface LifeOpsCategory {
+  id: string
+  user_id: string
+  name: string
+  color: string
+  sort_order: number
+  created_at?: string
+}
+
+export interface CreateLifeOpsCategoryRequest {
+  name: string
+  color?: string
+  sort_order?: number
+}
+
+export interface UpdateLifeOpsCategoryRequest {
+  name?: string
+  color?: string
+  sort_order?: number
+}
+
+export interface LifeOpsTask {
+  id: string
+  user_id: string
+  category_id?: string
+  title: string
+  description?: string
+  recurrence_days: number
+  sort_order: number
+  is_active: boolean
+  created_at?: string
+}
+
+export interface CreateLifeOpsTaskRequest {
+  category_id: string
+  title: string
+  description?: string
+  recurrence_days?: number
+  sort_order?: number
+}
+
+export interface UpdateLifeOpsTaskRequest {
+  category_id?: string
+  title?: string
+  description?: string
+  recurrence_days?: number
+  sort_order?: number
+  is_active?: boolean
+}
+
+export interface LifeOpsDailyItem {
+  id: string
+  user_id: string
+  task_id?: string
+  checklist_date: string
+  is_completed: boolean
+  completed_at?: string
+  sort_order: number
+  task_title: string
+  category_id?: string
+  category_name?: string
+}
+
+export interface LifeOpsChecklistResponse {
+  user_id: string
+  checklist_date: string
+  items: LifeOpsDailyItem[]
+  completed_count: number
+  total_count: number
+}
+
+export interface LifeOpsToggleResponse {
+  id: string
+  is_completed: boolean
+  completed_at?: string
+}
+
+export interface LifeOpsCompletionRate {
+  period: string
+  completed: number
+  total: number
+  rate: number
+}
+
+export interface LifeOpsStreak {
+  current_streak: number
+  longest_streak: number
+  last_completed_date?: string
+  total_perfect_days: number
+}
+
+export interface LifeOpsStatsResponse {
+  streak: LifeOpsStreak
+  weekly_rates: LifeOpsCompletionRate[]
+  monthly_rates: LifeOpsCompletionRate[]
+  today_completed: number
+  today_total: number
+}
+
+// Onsite Prep Types
+export interface OnsitePrepRubricDimension {
+  name: string
+  label: string
+  description: string
+}
+
+export interface OnsitePrepQuestion {
+  id: string
+  category: 'lp' | 'breadth' | 'depth' | 'design'
+  subcategory?: string
+  prompt_text: string
+  context_hint?: string
+  rubric_dimensions: OnsitePrepRubricDimension[]
+  target_duration_seconds: number
+  sort_order: number
+}
+
+export interface OnsitePrepDimensionEvidence {
+  quote: string
+  analysis: string
+}
+
+export interface OnsitePrepDimensionScore {
+  name: string
+  score: number
+  evidence: OnsitePrepDimensionEvidence[]
+  summary: string
+}
+
+export interface OnsitePrepGradeResult {
+  transcript: string
+  dimensions: OnsitePrepDimensionScore[]
+  overall_score: number
+  verdict: 'pass' | 'borderline' | 'fail'
+  feedback: string
+  strongest_moment: string
+  weakest_moment: string
+  follow_up_questions: string[]
+}
+
+export interface OnsitePrepFollowUpResult {
+  transcript: string
+  score: number
+  feedback: string
+  addressed_gap: boolean
+}
+
+export interface OnsitePrepFollowUp {
+  id: string
+  attempt_id: string
+  question_text: string
+  transcript?: string
+  score?: number
+  feedback?: string
+  addressed_gap: boolean
+  sort_order: number
+}
+
+export interface OnsitePrepAttempt {
+  id: string
+  user_id: string
+  question_id: string
+  transcript?: string
+  dimensions?: OnsitePrepDimensionScore[]
+  overall_score?: number
+  verdict?: 'pass' | 'borderline' | 'fail'
+  feedback?: string
+  strongest_moment?: string
+  weakest_moment?: string
+  duration_seconds?: number
+  follow_up_questions: string[]
+  follow_ups: OnsitePrepFollowUp[]
+  created_at?: string
+}
+
+export interface OnsitePrepCategoryStats {
+  category: string
+  label: string
+  total: number
+  practiced: number
+  avg_score?: number
+}
+
+export interface OnsitePrepDashboard {
+  total_questions: number
+  practiced_count: number
+  avg_score?: number
+  avg_duration?: number
+  categories: OnsitePrepCategoryStats[]
+}
+
+export interface OnsitePrepAttemptHistory {
+  id: string
+  question_id: string
+  prompt_text: string
+  category: string
+  overall_score?: number
+  verdict?: string
+  duration_seconds?: number
+  created_at?: string
 }
 
 export { ApiError }

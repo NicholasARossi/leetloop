@@ -1,0 +1,116 @@
+<mxfile>
+  <diagram name="PPO Architecture" id="ppo-arch">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Title -->
+        <mxCell id="title" value="&lt;b&gt;PPO (Proximal Policy Optimization)&lt;/b&gt;&lt;br&gt;Actor-Critic with clipped surrogate objective • Used by DeepRetrieval, ChatGPT, InstructGPT" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="250" y="15" width="900" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Actor Box -->
+        <mxCell id="actor_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EDE7F6;strokeColor=#7E57C2;strokeWidth=2;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="60" y="90" width="280" height="260" as="geometry"/>
+        </mxCell>
+        <mxCell id="actor_title" value="&lt;b&gt;ACTOR (Policy π_θ)&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontColor=#7E57C2;" vertex="1" parent="1">
+          <mxGeometry x="110" y="100" width="170" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="actor_model" value="&lt;b&gt;Llama 3.2 3B&lt;/b&gt;&lt;br&gt;~6 GB (bf16)&lt;br&gt;&lt;br&gt;Generates queries&lt;br&gt;Token by token" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D1C4E9;strokeColor=#7E57C2;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="100" y="140" width="200" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="actor_lr" value="LR = 1e-6" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;fontStyle=2;fontColor=#7E57C2;" vertex="1" parent="1">
+          <mxGeometry x="150" y="250" width="90" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="actor_update" value="Updated via clipped&lt;br&gt;policy gradient" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;fontColor=#666;" vertex="1" parent="1">
+          <mxGeometry x="120" y="280" width="130" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Critic Box -->
+        <mxCell id="critic_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;strokeWidth=2;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="400" y="90" width="280" height="260" as="geometry"/>
+        </mxCell>
+        <mxCell id="critic_title" value="&lt;b&gt;CRITIC (Value V_ϕ)&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontColor=#1976D2;" vertex="1" parent="1">
+          <mxGeometry x="450" y="100" width="170" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="critic_model" value="&lt;b&gt;Separate 3B model&lt;/b&gt;&lt;br&gt;~6 GB (bf16)&lt;br&gt;&lt;br&gt;Estimates &quot;how good&lt;br&gt;is this state?&quot;&lt;br&gt;V(s) ≈ expected return" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="440" y="140" width="200" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="critic_lr" value="LR = 1e-5 (10x actor)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;fontStyle=2;fontColor=#1976D2;" vertex="1" parent="1">
+          <mxGeometry x="460" y="250" width="160" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="critic_update" value="Updated via MSE loss&lt;br&gt;on value predictions" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;fontColor=#666;" vertex="1" parent="1">
+          <mxGeometry x="455" y="280" width="140" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Reference Model Box -->
+        <mxCell id="ref_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;strokeWidth=2;strokeDasharray=8 4;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="740" y="90" width="280" height="260" as="geometry"/>
+        </mxCell>
+        <mxCell id="ref_title" value="&lt;b&gt;REFERENCE (π_ref)&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontColor=#757575;" vertex="1" parent="1">
+          <mxGeometry x="800" y="100" width="160" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="ref_model" value="&lt;b&gt;Frozen copy of&lt;br&gt;Llama 3.2 3B&lt;/b&gt;&lt;br&gt;~6 GB (bf16)&lt;br&gt;&lt;br&gt;Never updated.&lt;br&gt;Anchor for KL penalty." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEEEE;strokeColor=#9E9E9E;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="780" y="140" width="200" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="ref_note" value="KL(π_θ || π_ref) &lt; ε&lt;br&gt;Coeff = 0.001" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;fontStyle=2;fontColor=#9E9E9E;" vertex="1" parent="1">
+          <mxGeometry x="820" y="250" width="130" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ref_purpose" value="Prevents policy from&lt;br&gt;drifting into gibberish" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;fontColor=#666;" vertex="1" parent="1">
+          <mxGeometry x="800" y="290" width="140" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Advantage Computation -->
+        <mxCell id="advantage" value="&lt;b&gt;Advantage Estimation&lt;/b&gt;&lt;br&gt;&lt;br&gt;A = R - V(s)&lt;br&gt;&lt;br&gt;&quot;Was this query better&lt;br&gt;or worse than expected?&quot;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#FB8C00;strokeWidth=2;fontSize=12;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="250" y="430" width="240" height="130" as="geometry"/>
+        </mxCell>
+
+        <!-- Clipped Update -->
+        <mxCell id="clip" value="&lt;b&gt;Clipped Surrogate Loss&lt;/b&gt;&lt;br&gt;&lt;br&gt;L = min( r(θ)·A, clip(r(θ), 0.8, 1.2)·A )&lt;br&gt;&lt;br&gt;r(θ) = π_new / π_old&lt;br&gt;&lt;br&gt;Prevents policy from changing&lt;br&gt;more than 20% per step" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#E91E63;strokeWidth=2;fontSize=11;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="570" y="420" width="280" height="150" as="geometry"/>
+        </mxCell>
+
+        <!-- Memory cost callout -->
+        <mxCell id="memory" value="&lt;b&gt;Total GPU Memory: ~18 GB (bf16)&lt;/b&gt;&lt;br&gt;Actor (6GB) + Critic (6GB) + Reference (6GB)&lt;br&gt;+ optimizer states + activations ≈ 2× A100 80GB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEBEE;strokeColor=#C62828;fontSize=12;arcSize=6;fontColor=#C62828;" vertex="1" parent="1">
+          <mxGeometry x="250" y="620" width="380" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- Arrows -->
+        <mxCell id="a1" value="R (reward)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;fontSize=10;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" target="advantage">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="200" y="400" as="sourcePoint"/>
+            <Array as="points">
+              <mxPoint x="200" y="400"/>
+              <mxPoint x="370" y="400"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="a2" value="V(s)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;fontSize=10;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" target="advantage">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="540" y="400" as="sourcePoint"/>
+            <Array as="points">
+              <mxPoint x="540" y="400"/>
+              <mxPoint x="370" y="400"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="a3" value="A" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;fontSize=11;" edge="1" source="advantage" target="clip" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="a4" value="KL" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;dashed=1;dashPattern=8 4;fontSize=10;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" source="ref_box" target="clip" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Reward from environment -->
+        <mxCell id="env_reward" value="&lt;b&gt;From retrieval&lt;br&gt;system + judge&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;fontStyle=2;fontColor=#999;" vertex="1" parent="1">
+          <mxGeometry x="80" y="380" width="110" height="40" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

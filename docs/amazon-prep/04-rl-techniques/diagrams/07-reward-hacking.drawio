@@ -1,0 +1,103 @@
+<mxfile>
+  <diagram name="Reward Hacking Mitigations" id="reward-hacking">
+    <mxGraphModel dx="1200" dy="850" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Title -->
+        <mxCell id="title" value="&lt;b&gt;Reward Hacking: The Central Risk &amp; Your Mitigations&lt;/b&gt;&lt;br&gt;What happens when the model exploits the reward function instead of genuinely improving" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="200" y="15" width="800" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- The Problem -->
+        <mxCell id="problem_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEBEE;strokeColor=#C62828;strokeWidth=2;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="60" y="80" width="500" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="problem_title" value="&lt;b&gt;THE PROBLEM&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=14;fontColor=#C62828;" vertex="1" parent="1">
+          <mxGeometry x="230" y="90" width="130" height="30" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="hack1" value="&lt;b&gt;Judge-only reward&lt;/b&gt;: Model learns Llama 70B prefers&lt;br&gt;verbose queries with certain phrasings → generates&lt;br&gt;wordy queries that score well but retrieve poorly" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E57373;fontSize=11;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="80" y="125" width="230" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="hack2" value="&lt;b&gt;Retrieval-only reward&lt;/b&gt;: Model learns keyword&lt;br&gt;stuffing tricks that game recall but produce&lt;br&gt;nonsensical, non-generalizable queries" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#E57373;fontSize=11;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="320" y="125" width="220" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="hack3" value="&lt;b&gt;Goodhart's Law:&lt;/b&gt; &quot;When a measure becomes a target,&lt;br&gt;it ceases to be a good measure.&quot;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=12;fontStyle=2;fontColor=#C62828;" vertex="1" parent="1">
+          <mxGeometry x="110" y="210" width="380" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Detection signals -->
+        <mxCell id="detect_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;strokeWidth=2;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="620" y="80" width="320" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="detect_title" value="&lt;b&gt;HOW TO DETECT IT&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=14;fontColor=#E65100;" vertex="1" parent="1">
+          <mxGeometry x="700" y="90" width="170" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="detect1" value="📈 Reward keeps climbing but&lt;br&gt;     human eval scores plateau or drop" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="640" y="125" width="270" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="detect2" value="📉 KL divergence from reference&lt;br&gt;     grows large (policy drifting far)" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="640" y="165" width="270" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="detect3" value="🔁 Generated queries become&lt;br&gt;     repetitive or formulaic" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="640" y="205" width="240" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="detect4" value="⚡ Judge-retrieval score divergence&lt;br&gt;     (judge says great, retrieval says bad)" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="640" y="240" width="280" height="35" as="geometry"/>
+        </mxCell>
+
+        <!-- Three Mitigations -->
+        <mxCell id="mit_title" value="&lt;b&gt;YOUR THREE MITIGATIONS&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=14;fontColor=#1B5E20;" vertex="1" parent="1">
+          <mxGeometry x="400" y="310" width="230" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- Mitigation 1: Dual Reward -->
+        <mxCell id="mit1_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;strokeWidth=2;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="60" y="360" width="320" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="mit1_title" value="&lt;b&gt;1. Dual Reward Signal&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontColor=#1B5E20;" vertex="1" parent="1">
+          <mxGeometry x="130" y="370" width="180" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="mit1_diagram" value="R = α · R_retrieval + (1-α) · R_judge" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=#2E7D32;fillColor=#C8E6C9;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="405" width="280" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="mit1_explain" value="&lt;b&gt;Retrieval metrics&lt;/b&gt; = ground truth anchor.&lt;br&gt;Can't be gamed by style alone.&lt;br&gt;&lt;br&gt;&lt;b&gt;LLM judge&lt;/b&gt; = semantic nuance.&lt;br&gt;Catches quality retrieval metrics miss.&lt;br&gt;&lt;br&gt;Each guards against the other's&lt;br&gt;failure mode." style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="90" y="445" width="270" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- Mitigation 2: Human Spot Checks -->
+        <mxCell id="mit2_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;strokeWidth=2;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="430" y="360" width="300" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="mit2_title" value="&lt;b&gt;2. Periodic Human Eval&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontColor=#1B5E20;" vertex="1" parent="1">
+          <mxGeometry x="495" y="370" width="180" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="mit2_content" value="Every N training steps:&lt;br&gt;&lt;br&gt;1. Sample 50-100 generated queries&lt;br&gt;2. Human raters score relevance&lt;br&gt;3. Compute Cohen's kappa (κ)&lt;br&gt;    between judge and humans&lt;br&gt;4. If κ drops below threshold →&lt;br&gt;    &lt;b&gt;stop training, investigate&lt;/b&gt;&lt;br&gt;&lt;br&gt;This is the &quot;canary in the coal mine&quot;&lt;br&gt;for judge-model collusion." style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="445" y="400" width="260" height="170" as="geometry"/>
+        </mxCell>
+
+        <!-- Mitigation 3: KL Penalty -->
+        <mxCell id="mit3_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;strokeWidth=2;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="780" y="360" width="280" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="mit3_title" value="&lt;b&gt;3. KL Divergence Penalty&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontColor=#1B5E20;" vertex="1" parent="1">
+          <mxGeometry x="830" y="370" width="200" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="mit3_formula" value="L = L_RL − β · KL(π_θ || π_ref)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=#2E7D32;fillColor=#C8E6C9;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="810" y="405" width="240" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="mit3_content" value="Penalizes the policy for drifting&lt;br&gt;far from pretrained distribution.&lt;br&gt;&lt;br&gt;β = 0.001 (DeepRetrieval)&lt;br&gt;&lt;br&gt;Effect: model can &lt;b&gt;improve&lt;/b&gt; queries&lt;br&gt;but can't &lt;b&gt;degenerate&lt;/b&gt; into gibberish&lt;br&gt;or exploit-only patterns.&lt;br&gt;&lt;br&gt;Think of it as a leash — the model&lt;br&gt;can explore, but not wander off." style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="800" y="440" width="240" height="130" as="geometry"/>
+        </mxCell>
+
+        <!-- Interview Sound Bite -->
+        <mxCell id="soundbite" value="&lt;b&gt;Interview sound bite:&lt;/b&gt; &quot;We mitigated reward hacking three ways: combining hard retrieval metrics with the LLM judge&lt;br&gt;so the model can't game semantics alone, periodic human evaluation to detect judge-model divergence,&lt;br&gt;and a KL penalty to keep the policy close to its pretrained distribution.&quot;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#7B1FA2;strokeWidth=2;fontSize=12;arcSize=6;fontColor=#4A148C;" vertex="1" parent="1">
+          <mxGeometry x="130" y="630" width="800" height="70" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

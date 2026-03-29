@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amazon Onsite Prep — LeetLoop Mockup</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --accent-color: #FF8888;
+    --accent-dark: #993333;
+    --accent-20: rgba(255,136,136,0.2);
+    --accent-40: rgba(255,136,136,0.4);
+    --chamfer-sm: 8px;
+    --chamfer-md: 16px;
+    --gray-50: #fafafa;
+    --gray-100: #f5f5f5;
+    --gray-200: #e5e5e5;
+    --gray-300: #d3d3d3;
+    --gray-400: #a3a3a3;
+    --gray-500: #737373;
+    --gray-600: #525252;
+    --gray-700: #404040;
+    --gray-800: #262626;
+    --gray-900: #171717;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    background: var(--gray-300);
+    color: var(--gray-900);
+  }
+
+  /* ── Top Bar ── */
+  .topbar {
+    background: var(--gray-500);
+    border-bottom: 3px solid black;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    height: 48px;
+  }
+  .topbar-brand {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 14px;
+    color: white;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-right: 32px;
+  }
+  .topbar-tabs {
+    display: flex;
+    gap: 0;
+    height: 100%;
+  }
+  .topbar-tab {
+    padding: 0 20px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    color: var(--gray-200);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -3px;
+  }
+  .topbar-tab:hover { color: white; }
+  .topbar-tab.active {
+    color: white;
+    border-bottom-color: var(--accent-color);
+  }
+
+  /* ── Layout ── */
+  .layout {
+    display: flex;
+    min-height: calc(100vh - 48px);
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 200px;
+    background: white;
+    border-right: 3px solid black;
+    padding: 20px 0;
+    flex-shrink: 0;
+  }
+  .sidebar-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--gray-600);
+    padding: 0 16px;
+    margin-bottom: 12px;
+  }
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    font-size: 12px;
+    color: var(--gray-600);
+    cursor: pointer;
+    border-left: 4px solid transparent;
+  }
+  .sidebar-item:hover { background: var(--gray-50); }
+  .sidebar-item.active {
+    background: var(--accent-20);
+    border-left-color: var(--accent-color);
+    color: var(--gray-900);
+    font-weight: 500;
+  }
+  .sidebar-item .icon { font-size: 14px; width: 18px; text-align: center; }
+  .sidebar-badge {
+    margin-left: auto;
+    font-size: 10px;
+    background: var(--gray-100);
+    color: var(--gray-600);
+    padding: 1px 6px;
+    clip-path: polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%);
+  }
+  .sidebar-badge.has-items {
+    background: var(--accent-color);
+    color: black;
+  }
+
+  /* ── Main Content ── */
+  .main {
+    flex: 1;
+    padding: 32px 48px;
+    max-width: 960px;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: white;
+    padding: 24px;
+    margin-bottom: 16px;
+    clip-path: polygon(
+      var(--chamfer-md) 0, calc(100% - var(--chamfer-md)) 0,
+      100% var(--chamfer-md), 100% calc(100% - var(--chamfer-md)),
+      calc(100% - var(--chamfer-md)) 100%, var(--chamfer-md) 100%,
+      0 calc(100% - var(--chamfer-md)), 0 var(--chamfer-md)
+    );
+    filter: drop-shadow(0 0 0.5px black);
+    position: relative;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    clip-path: polygon(
+      var(--chamfer-md) 0, calc(100% - var(--chamfer-md)) 0,
+      100% var(--chamfer-md), 100% calc(100% - var(--chamfer-md)),
+      calc(100% - var(--chamfer-md)) 100%, var(--chamfer-md) 100%,
+      0 calc(100% - var(--chamfer-md)), 0 var(--chamfer-md)
+    );
+    box-shadow: inset 0 0 0 2px black;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .card-sm {
+    background: white;
+    padding: 16px;
+    margin-bottom: 12px;
+    clip-path: polygon(
+      var(--chamfer-sm) 0, calc(100% - var(--chamfer-sm)) 0,
+      100% var(--chamfer-sm), 100% calc(100% - var(--chamfer-sm)),
+      calc(100% - var(--chamfer-sm)) 100%, var(--chamfer-sm) 100%,
+      0 calc(100% - var(--chamfer-sm)), 0 var(--chamfer-sm)
+    );
+    filter: drop-shadow(0 0 0.5px black);
+    position: relative;
+  }
+  .card-sm::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    clip-path: polygon(
+      var(--chamfer-sm) 0, calc(100% - var(--chamfer-sm)) 0,
+      100% var(--chamfer-sm), 100% calc(100% - var(--chamfer-sm)),
+      calc(100% - var(--chamfer-sm)) 100%, var(--chamfer-sm) 100%,
+      0 calc(100% - var(--chamfer-sm)), 0 var(--chamfer-sm)
+    );
+    box-shadow: inset 0 0 0 2px black;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* ── Heading Accent (Banquise-style block) ── */
+  .heading-accent {
+    display: inline-block;
+    background: var(--accent-color);
+    color: white;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 4px 14px;
+    clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+    text-shadow: 1px 1px 0 black, -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--gray-600);
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+    border-bottom: 2px solid black;
+  }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 2px 10px;
+    clip-path: polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%);
+  }
+  .badge-default { background: var(--gray-100); color: var(--gray-600); }
+  .badge-accent { background: var(--accent-color); color: black; }
+  .badge-pass { background: #d4edda; color: #155724; }
+  .badge-fail { background: #f8d7da; color: #721c24; }
+  .badge-warn { background: #fff3cd; color: #856404; }
+
+  /* ── Buttons ── */
+  .btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    padding: 8px 20px;
+    cursor: pointer;
+    border: 2px solid black;
+    clip-path: polygon(
+      var(--chamfer-sm) 0, calc(100% - var(--chamfer-sm)) 0,
+      100% var(--chamfer-sm), 100% calc(100% - var(--chamfer-sm)),
+      calc(100% - var(--chamfer-sm)) 100%, var(--chamfer-sm) 100%,
+      0 calc(100% - var(--chamfer-sm)), 0 var(--chamfer-sm)
+    );
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.1s;
+  }
+  .btn:hover { transform: translate(-1px, -1px); }
+  .btn:active { transform: translate(1px, 1px); }
+  .btn-primary { background: white; color: black; }
+  .btn-primary:hover { background: var(--accent-color); }
+  .btn-record { background: var(--accent-color); color: black; font-weight: 600; }
+  .btn-record:hover { background: var(--accent-dark); color: white; }
+  .btn-stop { background: var(--gray-800); color: white; }
+
+  /* ── Page Header ── */
+  .page-header { margin-bottom: 24px; }
+  .page-date { font-size: 12px; color: var(--gray-400); margin-bottom: 4px; }
+  .page-title { font-size: 20px; font-weight: 600; }
+
+  /* ── Topic Grid ── */
+  .topic-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  /* ── Topic Card ── */
+  .topic-card {
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .topic-card:hover {
+    filter: drop-shadow(3px 3px 0 var(--gray-600));
+    transform: translate(-1px, -1px);
+  }
+  .topic-card .card-sm { margin-bottom: 0; }
+  .topic-count { font-size: 24px; font-weight: 600; letter-spacing: -1px; }
+  .topic-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gray-500); margin-top: 2px; }
+  .topic-sublabel { font-size: 11px; color: var(--gray-400); margin-top: 8px; }
+
+  /* ── Question List ── */
+  .question-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-left: 4px solid transparent;
+    cursor: pointer;
+    transition: all 0.1s;
+  }
+  .question-item:hover {
+    background: var(--gray-50);
+    border-left-color: var(--accent-color);
+  }
+  .question-item.practiced {
+    border-left-color: var(--gray-200);
+    color: var(--gray-500);
+  }
+  .question-text { flex: 1; font-size: 13px; }
+  .question-meta { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; }
+
+  /* ── Recording Interface ── */
+  .recorder {
+    text-align: center;
+    padding: 32px 24px;
+  }
+  .recorder-prompt {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.7;
+    margin-bottom: 24px;
+    padding: 0 24px;
+  }
+  .recorder-timer {
+    font-size: 36px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    font-variant-numeric: tabular-nums;
+  }
+  .recorder-timer.recording { color: var(--accent-dark); }
+  .recorder-timer-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--gray-400);
+    margin-bottom: 24px;
+  }
+  .recorder-timer-label.warn { color: #856404; }
+  .recorder-timer-label.over { color: var(--accent-dark); font-weight: 600; }
+  .mic-ring {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid black;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin-bottom: 16px;
+    background: white;
+    transition: all 0.2s;
+  }
+  .mic-ring.active {
+    border-color: var(--accent-dark);
+    background: var(--accent-20);
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 var(--accent-40); }
+    50% { box-shadow: 0 0 0 12px transparent; }
+  }
+  .recorder-category {
+    display: inline-block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--gray-400);
+    margin-bottom: 12px;
+  }
+
+  /* ── Rubric / Grade ── */
+  .rubric-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .rubric-item {
+    padding: 12px;
+    background: var(--gray-50);
+    border-left: 3px solid var(--gray-200);
+  }
+  .rubric-item.pass { border-left-color: #28a745; }
+  .rubric-item.warn { border-left-color: #ffc107; }
+  .rubric-item.fail { border-left-color: var(--accent-dark); }
+  .rubric-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gray-500); margin-bottom: 4px; }
+  .rubric-score { font-size: 20px; font-weight: 600; }
+  .rubric-note { font-size: 11px; color: var(--gray-500); margin-top: 4px; }
+
+  .transcript-block {
+    background: var(--gray-50);
+    border-left: 3px solid var(--gray-300);
+    padding: 16px;
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--gray-700);
+    margin: 16px 0;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .feedback-block {
+    background: var(--accent-20);
+    border-left: 3px solid var(--accent-color);
+    padding: 16px;
+    font-size: 12px;
+    line-height: 1.8;
+    margin: 16px 0;
+  }
+  .feedback-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent-dark);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  /* ── Progress Bar ── */
+  .progress-bar {
+    height: 6px;
+    background: var(--gray-200);
+    clip-path: polygon(3px 0, 100% 0, calc(100% - 3px) 100%, 0 100%);
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent-color);
+    transition: width 0.3s;
+  }
+
+  /* ── Stats Row ── */
+  .stats-row {
+    display: flex;
+    gap: 24px;
+    margin: 16px 0;
+  }
+  .stat { text-align: center; }
+  .stat-value { font-size: 28px; font-weight: 600; letter-spacing: -1px; }
+  .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gray-500); }
+
+  /* ── Utilities ── */
+  .flex { display: flex; }
+  .items-center { align-items: center; }
+  .justify-between { justify-content: space-between; }
+  .gap-8 { gap: 8px; }
+  .gap-12 { gap: 12px; }
+  .gap-16 { gap: 16px; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-16 { margin-bottom: 16px; }
+  .mb-24 { margin-bottom: 24px; }
+  .mt-16 { margin-top: 16px; }
+  .text-muted { color: var(--gray-400); }
+  .text-sm { font-size: 11px; }
+
+  /* ── Screen Tabs ── */
+  .screen-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 32px;
+    border-bottom: 2px solid var(--gray-200);
+    padding-bottom: 0;
+  }
+  .screen-tab {
+    padding: 8px 16px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gray-400);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+  }
+  .screen-tab.active {
+    color: var(--gray-900);
+    border-bottom-color: var(--accent-color);
+  }
+
+  /* ── Separator between mockup screens ── */
+  .screen-separator {
+    border: none;
+    border-top: 3px dashed var(--gray-400);
+    margin: 64px 0;
+  }
+  .screen-label {
+    text-align: center;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--gray-400);
+    margin-bottom: 32px;
+    margin-top: -8px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- TOP BAR                                        -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="topbar">
+  <div class="topbar-brand">LeetLoop</div>
+  <div class="topbar-tabs">
+    <div class="topbar-tab">LeetCode</div>
+    <div class="topbar-tab">Languages</div>
+    <div class="topbar-tab">ML Coding</div>
+    <div class="topbar-tab active">Onsite Prep</div>
+    <div class="topbar-tab">Life Ops</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SCREEN 1: TOPIC SELECTION (landing page)       -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-title">Onsite Prep</div>
+    <div class="sidebar-item active">
+      <span class="icon">&#9678;</span> Dashboard
+    </div>
+    <div class="sidebar-item">
+      <span class="icon">&#9733;</span> LP Stories
+      <span class="sidebar-badge has-items">27</span>
+    </div>
+    <div class="sidebar-item">
+      <span class="icon">&#9881;</span> ML Breadth
+      <span class="sidebar-badge has-items">30</span>
+    </div>
+    <div class="sidebar-item">
+      <span class="icon">&#9670;</span> ML Depth
+      <span class="sidebar-badge has-items">15</span>
+    </div>
+    <div class="sidebar-item">
+      <span class="icon">&#9632;</span> System Design
+      <span class="sidebar-badge has-items">2</span>
+    </div>
+    <div class="sidebar-item">
+      <span class="icon">&#9744;</span> History
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="page-header">
+      <div class="page-date">April 5, 2026 &mdash; 3 days until onsite</div>
+      <div class="page-title">Amazon Onsite Prep</div>
+    </div>
+
+    <!-- Loop Info Banner -->
+    <div class="card-sm" style="background: var(--accent-20); margin-bottom: 20px;">
+      <div style="font-size: 11px; color: var(--gray-700); line-height: 1.8;">
+        <strong>5-slot split loop:</strong> 2 Alexa ASCI &bull; 2 Prime Video Search &bull; 1 Bar Raiser (external org)<br>
+        <strong>Slot assignments TBD</strong> &mdash; expect details ~3 days before
+      </div>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="card">
+      <div class="stats-row" style="justify-content: space-around;">
+        <div class="stat">
+          <div class="stat-value">14</div>
+          <div class="stat-label">Practiced</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" style="color: var(--accent-dark);">60</div>
+          <div class="stat-label">Remaining</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">3.2</div>
+          <div class="stat-label">Avg Score</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">1:48</div>
+          <div class="stat-label">Avg Time</div>
+        </div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: 19%;"></div>
+      </div>
+    </div>
+
+    <!-- Category Cards -->
+    <div class="section-title">Pick a Category</div>
+    <div class="topic-grid" style="grid-template-columns: 1fr 1fr;">
+
+      <div class="topic-card">
+        <div class="card-sm">
+          <div class="badge badge-accent" style="margin-bottom: 12px;">Behavioral</div>
+          <div class="topic-count">27</div>
+          <div class="topic-label">LP Stories</div>
+          <div class="topic-sublabel">STAR stories for 11 leadership principles</div>
+          <div class="topic-sublabel">5 of 27 practiced</div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 18.5%;"></div></div>
+        </div>
+      </div>
+
+      <div class="topic-card">
+        <div class="card-sm">
+          <div class="badge badge-default" style="margin-bottom: 12px;">General ML</div>
+          <div class="topic-count">30</div>
+          <div class="topic-label">ML Breadth</div>
+          <div class="topic-sublabel">NLP, search, reco, production systems</div>
+          <div class="topic-sublabel">7 of 30 practiced</div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 23%;"></div></div>
+        </div>
+      </div>
+
+      <div class="topic-card">
+        <div class="card-sm">
+          <div class="badge badge-default" style="margin-bottom: 12px;">Your Projects</div>
+          <div class="topic-count">15</div>
+          <div class="topic-label">ML Depth</div>
+          <div class="topic-sublabel">Your tech stack: RL, LLM-as-judge, two-tower, cross-encoder, FAISS</div>
+          <div class="topic-sublabel">2 of 15 practiced</div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 13%;"></div></div>
+        </div>
+      </div>
+
+      <div class="topic-card">
+        <div class="card-sm">
+          <div class="badge badge-default" style="margin-bottom: 12px;">Application</div>
+          <div class="topic-count">2</div>
+          <div class="topic-label">System Design</div>
+          <div class="topic-sublabel">Alexa trust & safety &bull; PV search & reco</div>
+          <div class="topic-sublabel">0 of 2 practiced</div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Recent Practice -->
+    <div class="section-title">Recent Practice</div>
+    <div class="card-sm">
+      <div class="question-item practiced">
+        <span class="badge badge-pass">4.1</span>
+        <span class="question-text">Tell me about a time you took ownership of something outside your area.</span>
+        <span class="question-meta">LP &bull; 1:52 &bull; 2h ago</span>
+      </div>
+      <div class="question-item practiced">
+        <span class="badge badge-warn">2.8</span>
+        <span class="question-text">Explain the bias-variance tradeoff with a concrete example.</span>
+        <span class="question-meta">Breadth &bull; 2:34 &bull; 2h ago</span>
+      </div>
+      <div class="question-item practiced">
+        <span class="badge badge-pass">3.6</span>
+        <span class="question-text">Walk through your RL training pipeline end-to-end.</span>
+        <span class="question-meta">Depth &bull; 1:47 &bull; 3h ago</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="screen-separator">
+<div class="screen-label">Screen 2 &mdash; Question List (LP Stories selected)</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SCREEN 2: QUESTION LIST within a category      -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-title">Onsite Prep</div>
+    <div class="sidebar-item">
+      <span class="icon">&#9678;</span> Dashboard
+    </div>
+    <div class="sidebar-item active">
+      <span class="icon">&#9733;</span> LP Stories
+      <span class="sidebar-badge has-items">27</span>
+    </div>
+    <div class="sidebar-item">
+      <span class="icon">&#9881;</span> ML Breadth
+      <span class="sidebar-badge has-items">30</span>
+    </div>
+    <div class="sidebar-item">
+      <span class="icon">&#9670;</span> ML Depth
+      <span class="sidebar-badge has-items">15</span>
+    </div>
+    <div class="sidebar-item">
+      <span class="icon">&#9632;</span> System Design
+      <span class="sidebar-badge has-items">2</span>
+    </div>
+    <div class="sidebar-item">
+      <span class="icon">&#9744;</span> History
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="page-header">
+      <div class="flex items-center gap-8">
+        <span style="color: var(--gray-400); cursor: pointer;">&larr; Dashboard</span>
+      </div>
+      <div class="page-title" style="margin-top: 8px;">LP Stories</div>
+      <div style="font-size: 12px; color: var(--gray-500); margin-top: 4px;">
+        5 of 27 practiced &bull; Average score: 3.4 / 5
+      </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="screen-tabs">
+      <div class="screen-tab active">All (27)</div>
+      <div class="screen-tab">Not Practiced (22)</div>
+      <div class="screen-tab">Needs Work (&lt;3) (4)</div>
+      <div class="screen-tab">By LP</div>
+    </div>
+
+    <!-- Slot Context Banner -->
+    <div class="card-sm" style="background: var(--accent-20); margin-bottom: 20px;">
+      <div style="font-size: 11px; color: var(--gray-700);">
+        <strong>Slot #1:</strong> Behavioral-only &mdash; Ownership + Have Backbone + Bias for Action &nbsp;
+        <strong>Slot #2-5:</strong> Each slot pairs a technical topic with 2 LPs
+      </div>
+    </div>
+
+    <!-- Question List -->
+    <div class="card">
+      <div class="section-title">Ownership</div>
+
+      <div class="question-item practiced">
+        <span class="badge badge-pass" style="flex-shrink: 0;">4.1</span>
+        <div>
+          <div class="question-text">Tell me about a time you took ownership of something outside your area of responsibility.</div>
+          <div class="question-meta" style="margin-top: 4px;">Story: Search Embedding Migration &bull; Last: 1:52</div>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <span class="badge badge-default" style="flex-shrink: 0;">&mdash;</span>
+        <div>
+          <div class="question-text">Describe a situation where you saw a problem and decided to fix it rather than waiting for someone else.</div>
+          <div class="question-meta" style="margin-top: 4px;">Story: Content Safety Pipeline &bull; Not practiced</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 24px;"></div>
+      <div class="section-title">Have Backbone; Disagree & Commit</div>
+
+      <div class="question-item practiced">
+        <span class="badge badge-warn" style="flex-shrink: 0;">2.8</span>
+        <div>
+          <div class="question-text">Tell me about a time you disagreed with your manager or team and how you handled it.</div>
+          <div class="question-meta" style="margin-top: 4px;">Story: Cross-encoder vs DistilBERT debate &bull; Last: 2:41 <span style="color: var(--accent-dark);">(over 2:00)</span></div>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <span class="badge badge-default" style="flex-shrink: 0;">&mdash;</span>
+        <div>
+          <div class="question-text">Describe a time you had to convince others to go along with a decision they disagreed with.</div>
+          <div class="question-meta" style="margin-top: 4px;">Story: RL approach pushback &bull; Not practiced</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 24px;"></div>
+      <div class="section-title">Bias for Action</div>
+
+      <div class="question-item">
+        <span class="badge badge-default" style="flex-shrink: 0;">&mdash;</span>
+        <div>
+          <div class="question-text">Tell me about a time you had to make a decision quickly with incomplete information.</div>
+          <div class="question-meta" style="margin-top: 4px;">Story: MX launch safety threshold &bull; Not practiced</div>
+        </div>
+      </div>
+
+      <div style="padding: 12px 16px; color: var(--gray-400); font-size: 12px; font-style: italic;">
+        + 21 more questions across remaining LPs...
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="screen-separator">
+<div class="screen-label">Screen 3 &mdash; Recording (question selected, pre-record state)</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SCREEN 3: RECORDING INTERFACE (pre-record)     -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-title">Onsite Prep</div>
+    <div class="sidebar-item">
+      <span class="icon">&#9678;</span> Dashboard
+    </div>
+    <div class="sidebar-item active">
+      <span class="icon">&#9733;</span> LP Stories
+    </div>
+    <div class="sidebar-item">
+      <span class="icon">&#9881;</span> ML Breadth
+    </div>
+    <div class="sidebar-item">
+      <span class="icon">&#9670;</span> ML Depth
+    </div>
+    <div class="sidebar-item">
+      <span class="icon">&#9632;</span> System Design
+    </div>
+    <div class="sidebar-item">
+      <span class="icon">&#9744;</span> History
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="page-header">
+      <div class="flex items-center gap-8">
+        <span style="color: var(--gray-400); cursor: pointer;">&larr; LP Stories</span>
+        <span class="badge badge-accent">Ownership</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="recorder">
+        <div class="recorder-category">LP Story &bull; Ownership</div>
+        <div class="recorder-prompt">
+          "Tell me about a time you disagreed with your manager or team and how you handled it."
+        </div>
+
+        <div style="background: var(--gray-50); padding: 12px 16px; margin: 0 auto 24px; max-width: 480px; border-left: 3px solid var(--gray-300); text-align: left;">
+          <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gray-400); margin-bottom: 4px;">Mapped Story</div>
+          <div style="font-size: 12px; color: var(--gray-700);">Cross-encoder vs DistilBERT debate &mdash; pushed for accuracy over latency, proved out with A/B test</div>
+        </div>
+
+        <div class="mic-ring">&#127908;</div>
+        <div class="recorder-timer">0:00</div>
+        <div class="recorder-timer-label">Target: under 2:00</div>
+
+        <div class="flex items-center gap-16" style="justify-content: center; margin-top: 16px;">
+          <button class="btn btn-record">Start Recording</button>
+          <button class="btn btn-primary" style="opacity: 0.4;">Skip</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rubric Preview -->
+    <div class="card-sm" style="background: var(--gray-50);">
+      <div class="section-title" style="border-bottom-color: var(--gray-300);">Grading Rubric</div>
+      <div class="rubric-grid">
+        <div>
+          <div class="rubric-label">STAR Structure</div>
+          <div style="font-size: 11px; color: var(--gray-500);">Situation, Task, Action, Result &mdash; each clearly present</div>
+        </div>
+        <div>
+          <div class="rubric-label">Specificity</div>
+          <div style="font-size: 11px; color: var(--gray-500);">Concrete numbers, dates, team sizes &mdash; not vague</div>
+        </div>
+        <div>
+          <div class="rubric-label">"I" vs "We"</div>
+          <div style="font-size: 11px; color: var(--gray-500);">Personal contributions clear, not hiding behind team</div>
+        </div>
+        <div>
+          <div class="rubric-label">LP Signal</div>
+          <div style="font-size: 11px; color: var(--gray-500);">Answer clearly demonstrates the target principle</div>
+        </div>
+        <div>
+          <div class="rubric-label">Timing</div>
+          <div style="font-size: 11px; color: var(--gray-500);">Under 2 minutes, paced well, not rushing</div>
+        </div>
+        <div>
+          <div class="rubric-label">Impact</div>
+          <div style="font-size: 11px; color: var(--gray-500);">Result is quantified and meaningful</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="screen-separator">
+<div class="screen-label">Screen 3b &mdash; Recording in progress</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SCREEN 3b: RECORDING IN PROGRESS               -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-title">Onsite Prep</div>
+    <div class="sidebar-item"><span class="icon">&#9678;</span> Dashboard</div>
+    <div class="sidebar-item active"><span class="icon">&#9733;</span> LP Stories</div>
+    <div class="sidebar-item"><span class="icon">&#9881;</span> ML Breadth</div>
+    <div class="sidebar-item"><span class="icon">&#9670;</span> ML Depth</div>
+    <div class="sidebar-item"><span class="icon">&#9632;</span> History</div>
+  </div>
+
+  <div class="main">
+    <div class="page-header">
+      <div class="flex items-center gap-8">
+        <span style="color: var(--gray-400); cursor: pointer;">&larr; LP Stories</span>
+        <span class="badge badge-accent">Ownership</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="recorder">
+        <div class="recorder-category">LP Story &bull; Ownership</div>
+        <div class="recorder-prompt">
+          "Tell me about a time you disagreed with your manager or team and how you handled it."
+        </div>
+
+        <div class="mic-ring active">&#127908;</div>
+        <div class="recorder-timer recording">1:34</div>
+        <div class="recorder-timer-label">26 seconds remaining</div>
+
+        <div class="flex items-center gap-16" style="justify-content: center; margin-top: 16px;">
+          <button class="btn btn-stop">Stop & Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="screen-separator">
+<div class="screen-label">Screen 4 &mdash; Grading Result</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SCREEN 4: GRADE RESULT                         -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-title">Onsite Prep</div>
+    <div class="sidebar-item"><span class="icon">&#9678;</span> Dashboard</div>
+    <div class="sidebar-item active"><span class="icon">&#9733;</span> LP Stories</div>
+    <div class="sidebar-item"><span class="icon">&#9881;</span> ML Breadth</div>
+    <div class="sidebar-item"><span class="icon">&#9670;</span> ML Depth</div>
+    <div class="sidebar-item"><span class="icon">&#9632;</span> History</div>
+  </div>
+
+  <div class="main">
+    <div class="page-header">
+      <div class="flex items-center gap-8">
+        <span style="color: var(--gray-400); cursor: pointer;">&larr; LP Stories</span>
+        <span class="badge badge-accent">Ownership</span>
+      </div>
+    </div>
+
+    <!-- Overall Score -->
+    <div class="card">
+      <div class="flex items-center justify-between mb-16">
+        <div>
+          <div style="font-size: 11px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 1px;">Overall Score</div>
+          <div style="font-size: 36px; font-weight: 600;">3.4<span style="font-size: 16px; color: var(--gray-400);"> / 5</span></div>
+        </div>
+        <div style="text-align: right;">
+          <span class="badge badge-warn">Needs Polish</span>
+          <div style="font-size: 11px; color: var(--gray-400); margin-top: 4px;">Duration: 2:14 <span style="color: var(--accent-dark);">(14s over)</span></div>
+        </div>
+      </div>
+
+      <!-- Rubric Scores -->
+      <div class="rubric-grid">
+        <div class="rubric-item pass">
+          <div class="rubric-label">STAR Structure</div>
+          <div class="rubric-score">4.0</div>
+          <div class="rubric-note">All four sections present and clear</div>
+        </div>
+        <div class="rubric-item pass">
+          <div class="rubric-label">Specificity</div>
+          <div class="rubric-score">4.2</div>
+          <div class="rubric-note">Good: mentioned NDCG delta, A/B duration</div>
+        </div>
+        <div class="rubric-item warn">
+          <div class="rubric-label">"I" vs "We"</div>
+          <div class="rubric-score">2.5</div>
+          <div class="rubric-note">Used "we" 8 times, "I" only 3 &mdash; clarify your role</div>
+        </div>
+        <div class="rubric-item pass">
+          <div class="rubric-label">LP Signal</div>
+          <div class="rubric-score">3.8</div>
+          <div class="rubric-note">Ownership clear in the decision to investigate</div>
+        </div>
+        <div class="rubric-item fail">
+          <div class="rubric-label">Timing</div>
+          <div class="rubric-score">2.5</div>
+          <div class="rubric-note">14 seconds over target &mdash; tighten the Situation</div>
+        </div>
+        <div class="rubric-item pass">
+          <div class="rubric-label">Impact</div>
+          <div class="rubric-score">3.6</div>
+          <div class="rubric-note">+0.192 NDCG cited &mdash; add business metric too</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Feedback -->
+    <div class="card">
+      <div class="feedback-label">AI Coach Feedback</div>
+      <div class="feedback-block">
+        <strong>What worked:</strong> Strong opening — you immediately framed the disagreement about model architecture. The A/B test result was a great "proof" moment. Mentioning the NDCG delta shows you think in measurable outcomes.<br><br>
+        <strong>What to improve:</strong><br>
+        &bull; <strong>Situation is too long</strong> (~45s). Try: "On the search ranking team, we needed to improve relevance. I proposed upgrading from DistilBERT to a cross-encoder, but my manager preferred the cheaper option." (15s)<br>
+        &bull; <strong>"We" overuse:</strong> Replace "we ran an A/B test" with "I designed and ran an A/B test." Replace "we saw the lift" with "the test showed..."<br>
+        &bull; <strong>Missing the commit:</strong> For "Disagree & Commit" — add what happened after: did you commit to a timeline? Did the manager support the rollout?<br>
+        &bull; <strong>Add the business number:</strong> You said +0.192 NDCG but didn't translate to GMV. Add "which translated to 18bps GMV lift" for the impact section.
+      </div>
+    </div>
+
+    <!-- Transcript -->
+    <div class="card">
+      <div class="flex items-center justify-between mb-8">
+        <div class="section-title" style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">Transcript</div>
+        <span class="text-sm text-muted">2:14 duration &bull; 312 words</span>
+      </div>
+      <div class="transcript-block">
+        So on the search ranking team at Walmart, we had been using DistilBERT for our cross-market relevance model, and it was working okay — we were seeing reasonable NDCG scores. But I had been looking at the research on cross-encoder architectures and I believed we could get a significant quality improvement. My manager was skeptical because cross-encoders are much more computationally expensive and we had latency constraints...
+        <br><br>
+        I decided to run the analysis myself. I pulled a test set of 50,000 queries across our three markets — US, Canada, and Mexico — and benchmarked the cross-encoder against our existing model. The results showed a +0.192 NDCG improvement, which was way beyond what we expected...
+        <br><br>
+        The tricky part was we had a hard p99 latency requirement of 200ms. I proposed a two-stage architecture where we'd use the lightweight model for initial retrieval and then rerank the top 100 results with the cross-encoder. We ran an A/B test over two weeks and we saw the lift translate to real business impact...
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex gap-12" style="margin-top: 16px;">
+      <button class="btn btn-record">Re-record This Answer</button>
+      <button class="btn btn-primary" style="background: var(--accent-color);">Follow-up Probes &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<hr class="screen-separator">
+<div class="screen-label">Screen 4b &mdash; LP Follow-up Probes (dynamically generated from your answer)</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SCREEN 4b: LP FOLLOW-UP PROBES                 -->
+<!-- Generated from transcript weaknesses            -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-title">Onsite Prep</div>
+    <div class="sidebar-item"><span class="icon">&#9678;</span> Dashboard</div>
+    <div class="sidebar-item active"><span class="icon">&#9733;</span> LP Stories</div>
+    <div class="sidebar-item"><span class="icon">&#9881;</span> ML Breadth</div>
+    <div class="sidebar-item"><span class="icon">&#9670;</span> ML Depth</div>
+    <div class="sidebar-item"><span class="icon">&#9632;</span> System Design</div>
+    <div class="sidebar-item"><span class="icon">&#9744;</span> History</div>
+  </div>
+
+  <div class="main">
+    <div class="page-header">
+      <div class="flex items-center gap-8">
+        <span style="color: var(--gray-400); cursor: pointer;">&larr; Grade Result</span>
+        <span class="badge badge-accent">Ownership</span>
+        <span class="badge badge-default">Follow-ups</span>
+      </div>
+      <div class="page-title" style="margin-top: 8px;">Follow-up Probes</div>
+      <div style="font-size: 12px; color: var(--gray-500); margin-top: 4px;">
+        Generated from your answer &bull; These target gaps the interviewer would dig into
+      </div>
+    </div>
+
+    <!-- Context: what the AI noticed -->
+    <div class="card-sm" style="background: var(--accent-20); margin-bottom: 20px;">
+      <div style="font-size: 11px; color: var(--gray-700); line-height: 1.8;">
+        <strong>Based on your answer:</strong> You used "we" too often, the Situation ran long, you didn't explain what happened after the disagreement resolved, and you cited NDCG but not business impact. These probes target those gaps.
+      </div>
+    </div>
+
+    <!-- Follow-up Queue -->
+    <div class="card">
+      <div class="section-title">Probe Queue &mdash; 6 follow-ups</div>
+
+      <!-- Probe 1: Completed -->
+      <div class="question-item practiced" style="border-left-color: #28a745;">
+        <span class="badge badge-pass" style="flex-shrink: 0;">4.2</span>
+        <div style="flex: 1;">
+          <div class="question-text">"You said 'we ran an A/B test.' What was your specific role in designing and running that test?"</div>
+          <div class="question-meta" style="margin-top: 4px;">Targets: "I" vs "we" &bull; 0:38</div>
+        </div>
+      </div>
+
+      <!-- Probe 2: Completed -->
+      <div class="question-item practiced" style="border-left-color: #28a745;">
+        <span class="badge badge-warn" style="flex-shrink: 0;">2.9</span>
+        <div style="flex: 1;">
+          <div class="question-text">"You mentioned your manager was skeptical. How did you get buy-in to even run the experiment?"</div>
+          <div class="question-meta" style="margin-top: 4px;">Targets: Disagree & Commit process &bull; 1:12 <span style="color: var(--accent-dark);">(over 1:00)</span></div>
+        </div>
+      </div>
+
+      <!-- Probe 3: Active (recording) -->
+      <div class="question-item" style="border-left-color: var(--accent-color); background: var(--accent-20);">
+        <span class="badge badge-accent" style="flex-shrink: 0;">REC</span>
+        <div style="flex: 1;">
+          <div class="question-text">"What was the business impact? You said +0.192 NDCG &mdash; how did that translate to revenue or engagement?"</div>
+          <div class="question-meta" style="margin-top: 4px;">Targets: Impact quantification &bull; <span style="color: var(--accent-dark);">Recording 0:22...</span></div>
+        </div>
+      </div>
+
+      <!-- Probe 4: Pending -->
+      <div class="question-item">
+        <span class="badge badge-default" style="flex-shrink: 0;">4</span>
+        <div style="flex: 1;">
+          <div class="question-text">"After the A/B test confirmed the lift, what was the rollout plan? Any issues in production?"</div>
+          <div class="question-meta" style="margin-top: 4px;">Targets: Deliver Results, production ownership</div>
+        </div>
+      </div>
+
+      <!-- Probe 5: Pending -->
+      <div class="question-item">
+        <span class="badge badge-default" style="flex-shrink: 0;">5</span>
+        <div style="flex: 1;">
+          <div class="question-text">"You mentioned latency constraints. How did you handle the cross-encoder latency in production at p99?"</div>
+          <div class="question-meta" style="margin-top: 4px;">Targets: Technical depth, Dive Deep</div>
+        </div>
+      </div>
+
+      <!-- Probe 6: Pending -->
+      <div class="question-item">
+        <span class="badge badge-default" style="flex-shrink: 0;">6</span>
+        <div style="flex: 1;">
+          <div class="question-text">"If you could redo this project, what would you do differently?"</div>
+          <div class="question-meta" style="margin-top: 4px;">Targets: Learn & Be Curious, self-awareness</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inline Recorder for active probe -->
+    <div class="card">
+      <div class="recorder" style="padding: 24px;">
+        <div class="recorder-category">Follow-up #3 of 6</div>
+        <div class="recorder-prompt" style="font-size: 14px;">
+          "What was the business impact? You said +0.192 NDCG &mdash; how did that translate to revenue or engagement?"
+        </div>
+        <div class="mic-ring active" style="width: 60px; height: 60px; font-size: 24px;">&#127908;</div>
+        <div class="recorder-timer recording" style="font-size: 28px;">0:22</div>
+        <div class="recorder-timer-label">Target: under 1:00</div>
+        <div style="margin-top: 12px;">
+          <button class="btn btn-stop">Stop & Grade</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overall Follow-up Summary (shown after all complete) -->
+    <div class="card-sm" style="background: var(--gray-50); margin-top: 16px;">
+      <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gray-500); margin-bottom: 8px;">Session Summary (updates as you go)</div>
+      <div class="flex" style="gap: 24px;">
+        <div>
+          <div style="font-size: 11px; color: var(--gray-400);">Completed</div>
+          <div style="font-size: 18px; font-weight: 600;">2 / 6</div>
+        </div>
+        <div>
+          <div style="font-size: 11px; color: var(--gray-400);">Avg Score</div>
+          <div style="font-size: 18px; font-weight: 600;">3.6</div>
+        </div>
+        <div>
+          <div style="font-size: 11px; color: var(--gray-400);">Weakest Area</div>
+          <div style="font-size: 11px; font-weight: 500; margin-top: 2px;">Buy-in process (2.9)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="screen-separator">
+<div class="screen-label">Screen 5 &mdash; ML Breadth Grade (general ML knowledge)</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SCREEN 5: ML BREADTH GRADE                     -->
+<!-- General ML: NLP, search, reco, prod systems    -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-title">Onsite Prep</div>
+    <div class="sidebar-item"><span class="icon">&#9678;</span> Dashboard</div>
+    <div class="sidebar-item"><span class="icon">&#9733;</span> LP Stories</div>
+    <div class="sidebar-item active"><span class="icon">&#9881;</span> ML Breadth</div>
+    <div class="sidebar-item"><span class="icon">&#9670;</span> ML Depth</div>
+    <div class="sidebar-item"><span class="icon">&#9632;</span> System Design</div>
+    <div class="sidebar-item"><span class="icon">&#9744;</span> History</div>
+  </div>
+
+  <div class="main">
+    <div class="page-header">
+      <div class="flex items-center gap-8">
+        <span style="color: var(--gray-400); cursor: pointer;">&larr; ML Breadth</span>
+        <span class="badge badge-default">General ML</span>
+      </div>
+    </div>
+
+    <!-- Score Card -->
+    <div class="card">
+      <div class="flex items-center justify-between mb-16">
+        <div>
+          <div style="font-size: 11px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 1px;">Overall Score</div>
+          <div style="font-size: 36px; font-weight: 600;">4.1<span style="font-size: 16px; color: var(--gray-400);"> / 5</span></div>
+        </div>
+        <div style="text-align: right;">
+          <span class="badge badge-pass">Strong</span>
+          <div style="font-size: 11px; color: var(--gray-400); margin-top: 4px;">Duration: 1:42</div>
+        </div>
+      </div>
+
+      <div style="font-size: 12px; color: var(--gray-600); margin-bottom: 16px; font-style: italic;">
+        "Explain the bias-variance tradeoff. Give a concrete example from your work."
+      </div>
+
+      <!-- ML Breadth Rubric: general ML knowledge -->
+      <div class="rubric-grid">
+        <div class="rubric-item pass">
+          <div class="rubric-label">Definition</div>
+          <div class="rubric-score">4.5</div>
+          <div class="rubric-note">Clear, correct mathematical intuition</div>
+        </div>
+        <div class="rubric-item pass">
+          <div class="rubric-label">Intuition</div>
+          <div class="rubric-score">4.0</div>
+          <div class="rubric-note">Good analogy with model complexity</div>
+        </div>
+        <div class="rubric-item pass">
+          <div class="rubric-label">Failure Modes</div>
+          <div class="rubric-score">3.8</div>
+          <div class="rubric-note">Mentioned overfitting &mdash; add underfitting example too</div>
+        </div>
+        <div class="rubric-item pass">
+          <div class="rubric-label">Practical Connection</div>
+          <div class="rubric-score">4.2</div>
+          <div class="rubric-note">Good: tied to DistilBERT vs cross-encoder tradeoff</div>
+        </div>
+        <div class="rubric-item pass">
+          <div class="rubric-label">Timing</div>
+          <div class="rubric-score">4.5</div>
+          <div class="rubric-note">Well within 2 minutes, good pacing</div>
+        </div>
+        <div class="rubric-item warn">
+          <div class="rubric-label">Completeness</div>
+          <div class="rubric-score">3.5</div>
+          <div class="rubric-note">Didn't mention regularization as a solution</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feedback -->
+    <div class="card">
+      <div class="feedback-label">AI Coach Feedback</div>
+      <div class="feedback-block">
+        <strong>What worked:</strong> Crisp definition, immediately grounded with your cross-encoder example. Good instinct to connect theory to practice &mdash; interviewers love this pattern.<br><br>
+        <strong>What to improve:</strong><br>
+        &bull; <strong>Add the fix:</strong> After explaining the tradeoff, mention how to address it &mdash; "In practice, I use regularization, cross-validation, and ensemble methods to find the sweet spot."<br>
+        &bull; <strong>Mention both directions:</strong> You focused on high variance (overfitting). Briefly mention high bias too &mdash; "A linear model on our ranking data would underfit because the feature interactions are non-linear."
+      </div>
+    </div>
+
+    <div class="flex gap-12" style="margin-top: 16px;">
+      <button class="btn btn-record">Re-record</button>
+      <button class="btn btn-primary">Next Question &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<hr class="screen-separator">
+<div class="screen-label">Screen 6 &mdash; ML Depth Grade (your projects & tech stack)</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SCREEN 6: ML DEPTH GRADE                       -->
+<!-- Your projects: RL, LLM-as-judge, two-tower,    -->
+<!-- cross-encoder, FAISS, content safety            -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-title">Onsite Prep</div>
+    <div class="sidebar-item"><span class="icon">&#9678;</span> Dashboard</div>
+    <div class="sidebar-item"><span class="icon">&#9733;</span> LP Stories</div>
+    <div class="sidebar-item"><span class="icon">&#9881;</span> ML Breadth</div>
+    <div class="sidebar-item active"><span class="icon">&#9670;</span> ML Depth</div>
+    <div class="sidebar-item"><span class="icon">&#9632;</span> System Design</div>
+    <div class="sidebar-item"><span class="icon">&#9744;</span> History</div>
+  </div>
+
+  <div class="main">
+    <div class="page-header">
+      <div class="flex items-center gap-8">
+        <span style="color: var(--gray-400); cursor: pointer;">&larr; ML Depth</span>
+        <span class="badge badge-default">Your Projects</span>
+      </div>
+    </div>
+
+    <!-- Score Card -->
+    <div class="card">
+      <div class="flex items-center justify-between mb-16">
+        <div>
+          <div style="font-size: 11px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 1px;">Overall Score</div>
+          <div style="font-size: 36px; font-weight: 600;">3.1<span style="font-size: 16px; color: var(--gray-400);"> / 5</span></div>
+        </div>
+        <div style="text-align: right;">
+          <span class="badge badge-warn">Needs Polish</span>
+          <div style="font-size: 11px; color: var(--gray-400); margin-top: 4px;">Duration: 2:38 <span style="color: var(--accent-dark);">(38s over)</span></div>
+        </div>
+      </div>
+
+      <div style="font-size: 12px; color: var(--gray-600); margin-bottom: 16px; font-style: italic;">
+        "Walk me through your RL training pipeline. What was the reward signal, and why did you choose PPO over alternatives?"
+      </div>
+
+      <!-- ML Depth Rubric: YOUR work, deep technical probe -->
+      <div class="rubric-grid">
+        <div class="rubric-item pass">
+          <div class="rubric-label">Architecture Clarity</div>
+          <div class="rubric-score">3.8</div>
+          <div class="rubric-note">Pipeline described end-to-end: 3B model &rarr; query gen &rarr; retrieval &rarr; reward</div>
+        </div>
+        <div class="rubric-item warn">
+          <div class="rubric-label">Technical Depth</div>
+          <div class="rubric-score">2.5</div>
+          <div class="rubric-note">Vague on PPO specifics &mdash; mention clipping, KL penalty, value head</div>
+        </div>
+        <div class="rubric-item pass">
+          <div class="rubric-label">Design Decisions</div>
+          <div class="rubric-score">3.5</div>
+          <div class="rubric-note">Explained "why PPO over DPO" but didn't mention GRPO as alternative</div>
+        </div>
+        <div class="rubric-item warn">
+          <div class="rubric-label">Honest Framing</div>
+          <div class="rubric-score">2.8</div>
+          <div class="rubric-note">Overstepped &mdash; said "classical RL" but closer to RL-inspired iterative improvement</div>
+        </div>
+        <div class="rubric-item fail">
+          <div class="rubric-label">Timing</div>
+          <div class="rubric-score">2.0</div>
+          <div class="rubric-note">38s over target &mdash; reward signal explanation took too long</div>
+        </div>
+        <div class="rubric-item pass">
+          <div class="rubric-label">Metrics & Impact</div>
+          <div class="rubric-score">4.0</div>
+          <div class="rubric-note">Cited 46% relevance lift and retrieval recall improvement</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feedback -->
+    <div class="card">
+      <div class="feedback-label">AI Coach Feedback</div>
+      <div class="feedback-block">
+        <strong>What worked:</strong> Good end-to-end flow &mdash; you walked through the pipeline in logical order. Citing the 46% number and explaining how the 70B judge evaluates queries shows measurable thinking.<br><br>
+        <strong>What to improve:</strong><br>
+        &bull; <strong>Honest framing is critical:</strong> Don't say "classical RL." Say: "We used RL-inspired optimization &mdash; a 3B model generates search queries, and we use a composite reward from retrieval metrics + a 70B LLM judge. The optimization uses PPO, so the model learns through trial and error." This is honest and still impressive.<br>
+        &bull; <strong>PPO details:</strong> When asked "why PPO?" have a crisp answer: "PPO gives us stable training with clipped surrogate objectives &mdash; important because our reward signal from the LLM judge is noisy. DPO requires preference pairs we didn't have. GRPO removes the value network but we found PPO's baseline reduction helped with our high-variance rewards."<br>
+        &bull; <strong>Tighten the reward explanation:</strong> You spent ~50s on the reward signal. Try: "Composite reward: 40% retrieval recall, 30% query diversity from the LLM judge, 30% relevance score. The LLM judge evaluates query quality on a 1-5 scale." (15s)<br>
+        &bull; <strong>Anticipate the follow-up:</strong> "What would you do differently?" &mdash; have this ready: "I'd explore GRPO to remove the value network complexity, and investigate offline RL with our accumulated trajectory data."
+      </div>
+    </div>
+
+    <!-- Transcript -->
+    <div class="card">
+      <div class="flex items-center justify-between mb-8">
+        <div class="section-title" style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">Transcript</div>
+        <span class="text-sm text-muted">2:38 duration &bull; 387 words</span>
+      </div>
+      <div class="transcript-block">
+        So the core idea was to train a 3 billion parameter language model to generate search queries that would improve product retrieval. The setup was inspired by DeepRetrieval &mdash; we used online RL where the model generates candidate queries, and then we evaluate those queries against the retrieval system to get a reward signal...
+        <br><br>
+        The reward itself was composite. We had retrieval recall as one component &mdash; did the generated query actually retrieve relevant products? And then we had the LLM judge, a 70B model that scored query quality on multiple dimensions: relevance, diversity, and specificity. We combined these into a single scalar reward...
+        <br><br>
+        For the optimization, we used PPO because we needed stable training. The reward signal from the LLM judge is inherently noisy &mdash; it's a large model making judgments, and there's variance in those judgments. PPO's clipped surrogate objective helps prevent the policy from making too-large updates based on noisy rewards...
+      </div>
+    </div>
+
+    <div class="flex gap-12" style="margin-top: 16px;">
+      <button class="btn btn-record">Re-record</button>
+      <button class="btn btn-primary">Next Question &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<hr class="screen-separator">
+<div class="screen-label">Screen 7 &mdash; System Design: Topic Selection</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SCREEN 7: SYSTEM DESIGN — TOPIC SELECTION      -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-title">Onsite Prep</div>
+    <div class="sidebar-item"><span class="icon">&#9678;</span> Dashboard</div>
+    <div class="sidebar-item"><span class="icon">&#9733;</span> LP Stories</div>
+    <div class="sidebar-item"><span class="icon">&#9881;</span> ML Breadth</div>
+    <div class="sidebar-item"><span class="icon">&#9670;</span> ML Depth</div>
+    <div class="sidebar-item active"><span class="icon">&#9632;</span> System Design</div>
+    <div class="sidebar-item"><span class="icon">&#9744;</span> History</div>
+  </div>
+
+  <div class="main">
+    <div class="page-header">
+      <div class="page-title">System Design</div>
+      <div style="font-size: 12px; color: var(--gray-500); margin-top: 4px;">
+        Longer-form practice &bull; Target: 5-8 minutes &bull; End-to-end ML system walkthrough
+      </div>
+    </div>
+
+    <!-- Info banner -->
+    <div class="card-sm" style="background: var(--accent-20); margin-bottom: 20px;">
+      <div style="font-size: 11px; color: var(--gray-700); line-height: 1.8;">
+        These map to the <strong>ML Application slot (#5)</strong>. The interviewer will give a broad problem and expect you to structure a solution: problem framing &rarr; data signals &rarr; architecture &rarr; training &rarr; evaluation &rarr; deployment. Record yourself doing the full walkthrough.
+      </div>
+    </div>
+
+    <!-- Design Problem Cards -->
+    <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
+
+      <div class="card" style="cursor: pointer;">
+        <div class="flex items-center justify-between mb-8">
+          <div class="badge badge-accent">Alexa ASCI</div>
+          <span class="badge badge-default">&mdash; Not practiced</span>
+        </div>
+        <div style="font-size: 15px; font-weight: 500; margin-bottom: 8px;">
+          "Design a trust & safety evaluation system for Alexa+ LLM responses"
+        </div>
+        <div style="font-size: 11px; color: var(--gray-500); line-height: 1.7;">
+          Scope: safety taxonomy, multi-layer filtering, LLM-as-judge for safety scoring, real-time vs batch evaluation, drift monitoring, locale-specific compliance, rollback triggers
+        </div>
+        <div style="font-size: 11px; color: var(--gray-400); margin-top: 8px;">
+          Your edge: 3-layer content safety architecture at Walmart, locale-specific compliance (CA/MX), drift detection
+        </div>
+      </div>
+
+      <div class="card" style="cursor: pointer;">
+        <div class="flex items-center justify-between mb-8">
+          <div class="badge badge-accent">Prime Video</div>
+          <span class="badge badge-default">&mdash; Not practiced</span>
+        </div>
+        <div style="font-size: 15px; font-weight: 500; margin-bottom: 8px;">
+          "Improve video discovery for Prime Video through personalized search & recommendation"
+        </div>
+        <div style="font-size: 11px; color: var(--gray-500); line-height: 1.7;">
+          Scope: candidate generation (two-tower), ranking (cross-encoder), embedding strategy, cold-start, multi-objective optimization, A/B testing, online/offline eval gap
+        </div>
+        <div style="font-size: 11px; color: var(--gray-400); margin-top: 8px;">
+          Your edge: two-tower retrieval, cross-encoder reranking (+0.192 NDCG), FAISS GPU eval, 8 model launches, multilingual
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<hr class="screen-separator">
+<div class="screen-label">Screen 8 &mdash; System Design: Grade Result</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SCREEN 8: SYSTEM DESIGN GRADE                  -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-title">Onsite Prep</div>
+    <div class="sidebar-item"><span class="icon">&#9678;</span> Dashboard</div>
+    <div class="sidebar-item"><span class="icon">&#9733;</span> LP Stories</div>
+    <div class="sidebar-item"><span class="icon">&#9881;</span> ML Breadth</div>
+    <div class="sidebar-item"><span class="icon">&#9670;</span> ML Depth</div>
+    <div class="sidebar-item active"><span class="icon">&#9632;</span> System Design</div>
+    <div class="sidebar-item"><span class="icon">&#9744;</span> History</div>
+  </div>
+
+  <div class="main">
+    <div class="page-header">
+      <div class="flex items-center gap-8">
+        <span style="color: var(--gray-400); cursor: pointer;">&larr; System Design</span>
+        <span class="badge badge-accent">Alexa ASCI</span>
+      </div>
+    </div>
+
+    <!-- Score Card -->
+    <div class="card">
+      <div class="flex items-center justify-between mb-16">
+        <div>
+          <div style="font-size: 11px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 1px;">Overall Score</div>
+          <div style="font-size: 36px; font-weight: 600;">3.6<span style="font-size: 16px; color: var(--gray-400);"> / 5</span></div>
+        </div>
+        <div style="text-align: right;">
+          <span class="badge badge-warn">Solid Start</span>
+          <div style="font-size: 11px; color: var(--gray-400); margin-top: 4px;">Duration: 6:12</div>
+        </div>
+      </div>
+
+      <div style="font-size: 12px; color: var(--gray-600); margin-bottom: 16px; font-style: italic;">
+        "Design a trust & safety evaluation system for Alexa+ LLM responses"
+      </div>
+
+      <!-- System Design Rubric -->
+      <div class="rubric-grid">
+        <div class="rubric-item pass">
+          <div class="rubric-label">Problem Framing</div>
+          <div class="rubric-score">4.2</div>
+          <div class="rubric-note">Good clarifying questions: latency, scope of "harmful", regulatory</div>
+        </div>
+        <div class="rubric-item pass">
+          <div class="rubric-label">Architecture</div>
+          <div class="rubric-score">3.8</div>
+          <div class="rubric-note">3-layer approach (rule &rarr; classifier &rarr; LLM judge) well motivated</div>
+        </div>
+        <div class="rubric-item warn">
+          <div class="rubric-label">Data & Training</div>
+          <div class="rubric-score">2.8</div>
+          <div class="rubric-note">Mentioned training data but didn't discuss labeling strategy or active learning</div>
+        </div>
+        <div class="rubric-item pass">
+          <div class="rubric-label">Evaluation</div>
+          <div class="rubric-score">3.5</div>
+          <div class="rubric-note">Precision/recall good &mdash; add FN cost vs FP cost discussion</div>
+        </div>
+        <div class="rubric-item warn">
+          <div class="rubric-label">Production</div>
+          <div class="rubric-score">3.0</div>
+          <div class="rubric-note">Monitoring mentioned but missed: shadow mode, staged rollout, A/B for thresholds</div>
+        </div>
+        <div class="rubric-item pass">
+          <div class="rubric-label">Timing & Structure</div>
+          <div class="rubric-score">4.0</div>
+          <div class="rubric-note">Good pacing across 6 min, covered all major sections</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feedback -->
+    <div class="card">
+      <div class="feedback-label">AI Coach Feedback</div>
+      <div class="feedback-block">
+        <strong>What worked:</strong> Opening with clarifying questions was smart &mdash; shows you don't jump to solutions. The 3-layer architecture maps directly from your Walmart experience: "rule-based for known bad patterns, ML classifier for gray areas, LLM judge for nuanced contextual evaluation."<br><br>
+        <strong>What to improve:</strong><br>
+        &bull; <strong>Data strategy gap:</strong> "How do you get labeled safety data?" Options: red-teaming, production sampling, synthetic generation from adversarial prompts. Add: "We'd prioritize labeling examples near the decision boundary using active learning."<br>
+        &bull; <strong>Cost asymmetry:</strong> A false negative (harmful content reaching users) is catastrophic. A false positive (over-filtering) is merely annoying. Build this framing into your threshold discussion.<br>
+        &bull; <strong>Missing production depth:</strong> Add: "I'd deploy the LLM judge in shadow mode first, then staged rollout &mdash; 1% &rarr; 10% &rarr; 100% &mdash; with automated rollback if flagging rate spikes beyond 2 standard deviations."<br>
+        &bull; <strong>Locale angle:</strong> You have direct experience here. Say proactively: "Safety norms vary by market &mdash; at Walmart we maintained separate thresholds for US, CA, MX. Alexa would need locale-specific classifiers or locale-conditioned prompts for the LLM judge."
+      </div>
+    </div>
+
+    <!-- Transcript (long-form) -->
+    <div class="card">
+      <div class="flex items-center justify-between mb-8">
+        <div class="section-title" style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">Transcript</div>
+        <span class="text-sm text-muted">6:12 duration &bull; 892 words</span>
+      </div>
+      <div class="transcript-block">
+        Okay, so first I want to make sure I understand the scope. When we say trust and safety for Alexa+ LLM responses, are we talking about filtering the generated text before it reaches the user? And is this for all Alexa+ interactions or a specific domain like shopping or health?...
+        <br><br>
+        Assuming it's a general-purpose safety system, I'd approach this with a multi-layer architecture, similar to what I built at Walmart for product content safety. The key insight is that you want fast, cheap filters for obvious violations and then increasingly sophisticated evaluation for edge cases...
+        <br><br>
+        Layer one is rule-based: regex patterns, blocklists, known harmful content signatures. This catches maybe 80% of clearly bad content with sub-millisecond latency. Layer two is a lightweight classifier &mdash; a fine-tuned BERT model that scores responses across safety dimensions: toxicity, misinformation, bias, privacy...
+        <br><br>
+        Layer three is the LLM judge &mdash; a larger model that evaluates the conversation context, not just the individual response. This is where you catch subtle issues like a response that's individually fine but problematic in context...
+      </div>
+    </div>
+
+    <div class="flex gap-12" style="margin-top: 16px;">
+      <button class="btn btn-record">Re-record</button>
+      <button class="btn btn-primary" style="background: var(--accent-color);">Follow-up Probes &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<hr class="screen-separator">
+<div class="screen-label">Screen 8b &mdash; System Design Follow-up Probes (dynamically generated)</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SCREEN 8b: SYSTEM DESIGN FOLLOW-UP PROBES      -->
+<!-- Generated from your design walkthrough          -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-title">Onsite Prep</div>
+    <div class="sidebar-item"><span class="icon">&#9678;</span> Dashboard</div>
+    <div class="sidebar-item"><span class="icon">&#9733;</span> LP Stories</div>
+    <div class="sidebar-item"><span class="icon">&#9881;</span> ML Breadth</div>
+    <div class="sidebar-item"><span class="icon">&#9670;</span> ML Depth</div>
+    <div class="sidebar-item active"><span class="icon">&#9632;</span> System Design</div>
+    <div class="sidebar-item"><span class="icon">&#9744;</span> History</div>
+  </div>
+
+  <div class="main">
+    <div class="page-header">
+      <div class="flex items-center gap-8">
+        <span style="color: var(--gray-400); cursor: pointer;">&larr; Grade Result</span>
+        <span class="badge badge-accent">Alexa ASCI</span>
+        <span class="badge badge-default">Follow-ups</span>
+      </div>
+      <div class="page-title" style="margin-top: 8px;">Design Follow-up Probes</div>
+      <div style="font-size: 12px; color: var(--gray-500); margin-top: 4px;">
+        Generated from your design walkthrough &bull; Simulates interviewer deep-dives into weak areas
+      </div>
+    </div>
+
+    <!-- Context -->
+    <div class="card-sm" style="background: var(--accent-20); margin-bottom: 20px;">
+      <div style="font-size: 11px; color: var(--gray-700); line-height: 1.8;">
+        <strong>Based on your design:</strong> You didn't address how to get labeled safety data, skipped the cost asymmetry of FN vs FP, had shallow production/deployment details, and didn't mention your locale experience proactively. These probes dig into those gaps.
+      </div>
+    </div>
+
+    <!-- Follow-up Queue -->
+    <div class="card">
+      <div class="section-title">Probe Queue &mdash; 8 follow-ups</div>
+
+      <!-- Probe 1: Completed -->
+      <div class="question-item practiced" style="border-left-color: #28a745;">
+        <span class="badge badge-pass" style="flex-shrink: 0;">4.0</span>
+        <div style="flex: 1;">
+          <div class="question-text">"You proposed a 3-layer architecture. How would you get the initial labeled data to train Layer 2's classifier?"</div>
+          <div class="question-meta" style="margin-top: 4px;">Targets: Data & Training gap &bull; 1:08</div>
+        </div>
+      </div>
+
+      <!-- Probe 2: Completed -->
+      <div class="question-item practiced" style="border-left-color: #28a745;">
+        <span class="badge badge-pass" style="flex-shrink: 0;">3.7</span>
+        <div style="flex: 1;">
+          <div class="question-text">"A user asks Alexa a medical question and the response is technically accurate but could be dangerous if misapplied. How does your system handle this?"</div>
+          <div class="question-meta" style="margin-top: 4px;">Targets: Edge case reasoning &bull; 1:22</div>
+        </div>
+      </div>
+
+      <!-- Probe 3: Completed -->
+      <div class="question-item practiced" style="border-left-color: #ffc107;">
+        <span class="badge badge-warn" style="flex-shrink: 0;">2.5</span>
+        <div style="flex: 1;">
+          <div class="question-text">"Your LLM judge adds latency. How do you handle the tradeoff between safety thoroughness and response time for real-time Alexa interactions?"</div>
+          <div class="question-meta" style="margin-top: 4px;">Targets: Latency/quality tradeoff &bull; 1:45 <span style="color: var(--accent-dark);">(over 1:00)</span></div>
+        </div>
+      </div>
+
+      <!-- Probe 4: Active -->
+      <div class="question-item" style="border-left-color: var(--accent-color); background: var(--accent-20);">
+        <span class="badge badge-accent" style="flex-shrink: 0;">REC</span>
+        <div style="flex: 1;">
+          <div class="question-text">"How would you measure whether your safety system is working? What metrics would you track, and how would you detect if it's degrading over time?"</div>
+          <div class="question-meta" style="margin-top: 4px;">Targets: Evaluation + monitoring &bull; <span style="color: var(--accent-dark);">Recording 0:34...</span></div>
+        </div>
+      </div>
+
+      <!-- Probe 5: Pending -->
+      <div class="question-item">
+        <span class="badge badge-default" style="flex-shrink: 0;">5</span>
+        <div style="flex: 1;">
+          <div class="question-text">"What's different about safety for a voice-first interface versus text? Does your architecture change?"</div>
+          <div class="question-meta" style="margin-top: 4px;">Targets: Alexa-specific thinking</div>
+        </div>
+      </div>
+
+      <!-- Probe 6: Pending -->
+      <div class="question-item">
+        <span class="badge badge-default" style="flex-shrink: 0;">6</span>
+        <div style="flex: 1;">
+          <div class="question-text">"You mentioned locale-specific compliance at Walmart. How would you adapt that for Alexa operating in 20+ countries?"</div>
+          <div class="question-meta" style="margin-top: 4px;">Targets: Scale + your direct experience</div>
+        </div>
+      </div>
+
+      <!-- Probe 7: Pending -->
+      <div class="question-item">
+        <span class="badge badge-default" style="flex-shrink: 0;">7</span>
+        <div style="flex: 1;">
+          <div class="question-text">"An adversarial user is trying to jailbreak Alexa to produce harmful content. How does your system defend against this?"</div>
+          <div class="question-meta" style="margin-top: 4px;">Targets: Adversarial robustness</div>
+        </div>
+      </div>
+
+      <!-- Probe 8: Pending -->
+      <div class="question-item">
+        <span class="badge badge-default" style="flex-shrink: 0;">8</span>
+        <div style="flex: 1;">
+          <div class="question-text">"If you had to ship a v1 in 4 weeks, what would you cut from your design and what would you keep?"</div>
+          <div class="question-meta" style="margin-top: 4px;">Targets: Prioritization, Bias for Action</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inline Recorder -->
+    <div class="card">
+      <div class="recorder" style="padding: 24px;">
+        <div class="recorder-category">Follow-up #4 of 8</div>
+        <div class="recorder-prompt" style="font-size: 14px;">
+          "How would you measure whether your safety system is working? What metrics would you track?"
+        </div>
+        <div class="mic-ring active" style="width: 60px; height: 60px; font-size: 24px;">&#127908;</div>
+        <div class="recorder-timer recording" style="font-size: 28px;">0:34</div>
+        <div class="recorder-timer-label">Target: under 1:30</div>
+        <div style="margin-top: 12px;">
+          <button class="btn btn-stop">Stop & Grade</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Session Summary -->
+    <div class="card-sm" style="background: var(--gray-50); margin-top: 16px;">
+      <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gray-500); margin-bottom: 8px;">Session Summary</div>
+      <div class="flex" style="gap: 24px;">
+        <div>
+          <div style="font-size: 11px; color: var(--gray-400);">Completed</div>
+          <div style="font-size: 18px; font-weight: 600;">3 / 8</div>
+        </div>
+        <div>
+          <div style="font-size: 11px; color: var(--gray-400);">Avg Score</div>
+          <div style="font-size: 18px; font-weight: 600;">3.4</div>
+        </div>
+        <div>
+          <div style="font-size: 11px; color: var(--gray-400);">Weakest Area</div>
+          <div style="font-size: 11px; font-weight: 500; margin-top: 2px;">Latency/quality tradeoff (2.5)</div>
+        </div>
+        <div>
+          <div style="font-size: 11px; color: var(--gray-400);">Total Session</div>
+          <div style="font-size: 11px; font-weight: 500; margin-top: 2px;">Design: 6:12 + Probes: 4:15</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

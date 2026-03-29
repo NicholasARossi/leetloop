@@ -1,0 +1,92 @@
+<mxfile>
+  <diagram name="Training Loop" id="training-loop">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="700" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Title -->
+        <mxCell id="title" value="&lt;b&gt;RL Training Loop for Query Generation&lt;/b&gt;&lt;br&gt;All methods share this outer structure — they differ only in the weight update step" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="200" y="20" width="800" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Step 1: Prompt -->
+        <mxCell id="prompt" value="&lt;b&gt;Anchor Item&lt;/b&gt;&lt;br&gt;(product to find&lt;br&gt;complements for)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="80" y="120" width="160" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Step 2: Model -->
+        <mxCell id="model" value="&lt;b&gt;Llama 3.2 3B&lt;/b&gt;&lt;br&gt;(policy π_θ)&lt;br&gt;&lt;br&gt;Generates semantic&lt;br&gt;search query" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="320" y="100" width="180" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- Step 3: Generated Query -->
+        <mxCell id="query" value="&lt;b&gt;Generated Query&lt;/b&gt;&lt;br&gt;&lt;i&gt;&quot;wireless noise-canceling&lt;br&gt;headphones compatible&lt;br&gt;with iPhone charging&quot;&lt;/i&gt;" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=0.15;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="590" y="105" width="200" height="110" as="geometry"/>
+        </mxCell>
+
+        <!-- Step 4: Retrieval System -->
+        <mxCell id="retrieval" value="&lt;b&gt;Retrieval System&lt;/b&gt;&lt;br&gt;Two-Tower / FAISS&lt;br&gt;&lt;br&gt;Returns top-K items" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="870" y="100" width="170" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- Step 5: Reward Computation -->
+        <mxCell id="reward" value="&lt;b&gt;Compute Reward&lt;/b&gt;&lt;br&gt;&lt;br&gt;Retrieval metrics:&lt;br&gt;• Recall @ K&lt;br&gt;• Relevance score&lt;br&gt;&lt;br&gt;+ LLM Judge (70B):&lt;br&gt;• Semantic quality&lt;br&gt;• Intent alignment" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="730" y="320" width="180" height="170" as="geometry"/>
+        </mxCell>
+
+        <!-- Step 6: Update -->
+        <mxCell id="update" value="&lt;b&gt;Update Model Weights&lt;/b&gt;&lt;br&gt;&lt;br&gt;⬅ THIS IS WHERE&lt;br&gt;ALGORITHMS DIFFER&lt;br&gt;&lt;br&gt;PPO / GRPO / DPO /&lt;br&gt;Rejection Sampling" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#FF6600;strokeWidth=3;fontSize=12;arcSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="280" y="340" width="200" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- Reward signal label -->
+        <mxCell id="reward_val" value="&lt;b&gt;R = 0.73&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="590" y="380" width="90" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Arrows -->
+        <mxCell id="a1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;fontSize=11;" edge="1" source="prompt" target="model" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="a2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;fontSize=11;" edge="1" source="model" target="query" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="a3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;fontSize=11;" edge="1" source="query" target="retrieval" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="a4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;fontSize=11;" edge="1" source="retrieval" target="reward" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="a5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;fontSize=11;" edge="1" source="reward" target="reward_val" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="a6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;fontSize=11;" edge="1" source="reward_val" target="update" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Loop-back arrow -->
+        <mxCell id="a7" value="&lt;b&gt;Updated π_θ&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;fontSize=11;dashed=1;dashPattern=8 4;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" source="update" target="model" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="160" y="410"/>
+              <mxPoint x="160" y="280"/>
+              <mxPoint x="410" y="280"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Epoch label -->
+        <mxCell id="epoch" value="Repeat for N epochs&lt;br&gt;(DeepRetrieval: 5 epochs)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;fontStyle=2;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="70" y="280" width="170" height="40" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
