@@ -1,0 +1,237 @@
+# Amazon Onsite — LP Stories (9 Confirmed)
+
+Each LP has a primary and backup story in STAR format. No story is reused across LPs.
+
+## Review Status
+
+| # | LP | Primary Story | Status |
+|---|-----|--------------|--------|
+| 1 | GenAI Fluency | Generative Retrieval Pipeline | VALIDATED |
+| 2 | Insist on Highest Standards | LLM-as-Judge Evaluation Framework | VALIDATED |
+| 3 | Bias for Action | Post-A/B Metrics Dashboard | VALIDATED |
+| 4 | Ownership | Built All Data Pipelines for Another Team | VALIDATED |
+| 5 | Earn Trust | Embedding Pipeline Bug — Owning a Mistake | VALIDATED |
+| 6 | Have Backbone; Disagree & Commit | LLM-Based vs Pure Embedding Architecture Debate | VALIDATED |
+| 7 | Learn & Be Curious | Papers to Production (DeepRetrieval, ComiRec, Choppy) | VALIDATED |
+| 8 | Dive Deep | Similar Items Pipeline — Full Stack Investigation | VALIDATED |
+| 9 | Deliver Results | EBR Model Iteration Campaign + CIKM 2024 | VALIDATED |
+
+**VALIDATED** = reviewed with Nick in interactive session, based on real details.
+
+---
+
+## 1. GenAI Fluency — VALIDATED
+
+### Primary: Generative Retrieval Pipeline
+
+**Situation:** At Walmart, our international personalization team faced a fundamental cold-start challenge. In mature markets like the US, over 90% of catalog items had never been purchased — the catalog was massively underexplored. In emerging markets like Mexico, the problem was even more extreme: virtually no engagement data existed, meaning nearly 100% of items had zero signal. Traditional collaborative filtering was a non-starter — you can't recommend based on co-purchase patterns when purchase data doesn't exist. Leadership had identified GenAI as a strategic priority, but there was no concrete architecture for how to apply it to recommendation at scale.
+
+**Task:** I needed to design a GenAI-powered recommendation architecture that could generate personalized recommendations for any item or user — including cold-start scenarios — across all three North American markets (US, CA, MX).
+
+**Action:** I designed a generative retrieval pipeline: for each anchor (user or item), an LLM generates shopping intents and semantic queries, which then feed into our existing search infrastructure (Solr, FAISS) to retrieve a ranked list of recommendations. This was a fundamentally different approach from collaborative filtering — instead of learning from past purchase patterns, we were generating the reasoning about what a user might want next. The system runs as an offline batch signal with daily delta updates across 3M anchor items, prioritizing the most popular items for freshness.
+
+I also shipped a second GenAI feature, Item Compare, where an LLM generates use cases and highlights for ~300K items in high-traffic categories across CA and MX, letting customers compare products side-by-side — a capability that didn't exist before.
+
+After launch, our PM flagged that results weren't price-aware — a critical gap for our cost-conscious customers. I executed a two-phase fix: a reranking hotfix in 2 weeks to inject price sensitivity, then a 6-week effort to retrain the retrieval model on price-aware queries for a permanent solution.
+
+Separately, I evaluated GenAI for search bar query expansion. We prototyped it, but the combination of latency, cost, and degrading relevance lift as user queries shifted toward grocery made it unviable. We killed it based on the data.
+
+**Result:** The generative retrieval pipeline serves all three NA markets, providing personalized recommendations with full catalog coverage — including items with zero purchase history. Item Compare launched in CA/MX. The query expansion kill saved ongoing cost with no relevance loss. The key insight: GenAI's biggest value in recommendation isn't replacing traditional ML — it's solving problems traditional ML fundamentally can't, like cold start at scale.
+
+### Backup: <!-- TO FILL -->
+
+### Question Angles:
+- "Tell me about a time you applied generative AI to solve a real business problem."
+- "How do you evaluate whether a GenAI approach is the right solution vs traditional ML?"
+- "Tell me about a time you had to manage the risks or limitations of a GenAI system."
+
+---
+
+## 2. Insist on the Highest Standards — VALIDATED
+
+### Primary: LLM-as-Judge Evaluation Framework
+
+**Situation:** When I joined Walmart's International Personalization team, there was no offline evaluation pipeline. The team was shipping models straight to A/B tests with only anecdotal evidence and sparse engagement summaries. The consequences were visible: consistent A/B failures, models underperforming heuristic baselines, and in some cases underperforming third-party baseline models. At least three launches had failed before I arrived.
+
+**Task:** I needed to establish an evaluation standard so the team could predict whether a model would succeed before committing live traffic to it.
+
+**Action:** I built an LLM-as-judge evaluation framework with 6 specialized rubrics — one per carousel type (similar items, complementary items, user-item engagement, etc.). Each rubric was validated against engagement data, with scores monotonically predicting engagement rate. A key design decision was keeping rubrics aligned with each carousel's purpose, not just raw engagement. For example, the complementary items rubric rates similar/alternative items low even when users click on them — because if every carousel optimizes the same engagement signal, they converge on the same items and cannibalize each other. Defining distinct objectives per carousel achieves diversity across the full page, a global optimum rather than a local one.
+
+I backtested the framework against two previous launches that had failed in A/B — the LLM judge correctly identified both as relevance-negative. I put together a deck showing this evidence, presented it to my manager, and he mandated adoption across the team.
+
+**Result:** All four model launches shipped after the evaluation framework — Recommended For You, Intent-Based Recommendation, Continue Your Shopping, and the Arbitration Engine — were positive on A/B, each delivering 10-15 bps GMV lift. No more surprises. The framework became the standard evaluation step before any launch on the team.
+
+### Backup: <!-- TO FILL -->
+
+### Question Angles:
+- "Tell me about a time you pushed back on shipping something because it didn't meet your quality bar."
+- "Tell me about a time you raised the bar for your team."
+- "Tell me about a time your standards were too high and it caused problems."
+
+---
+
+## 3. Bias for Action — VALIDATED
+
+### Primary: Post-A/B Metrics Dashboard
+
+**Situation:** At Walmart, the team's post-A/B analysis relied on Adobe dashboards managed by the analytics team. The dashboards were tabular only — no graphs, no way to cleanly view GMV lift over time, no ability to break down results by step in the user journey or by module. There was no clean way to do head-to-head A/B comparison. We were making launch decisions based on incomplete data views, and the analytics team didn't have the bandwidth or incentive to improve the tooling.
+
+**Task:** I needed a way to properly evaluate whether our model launches were working — not just top-line metrics, but granular breakdowns that would tell me where gains were coming from and where regressions were hiding.
+
+**Action:** Without asking permission or waiting for the analytics team's roadmap, I built a full metrics dashboard from scratch. It tracked revenue per customer, click-through rate broken down by step in the user journey and by module, with filtering by A/B experiment key for head-to-head comparison. I built it for myself first, then shared it with the team. This was squarely the analytics team's domain, not mine — my job was ML science — but the existing tooling was blocking our ability to make good decisions.
+
+**Result:** The dashboard became the team's primary tool for evaluating launches. It gave us visibility we'd never had — we could see exactly which user journey steps were driving lift and which were flat. This directly informed model iteration decisions and helped us diagnose issues that the tabular Adobe reports would have hidden. Building first and asking permission later saved months of waiting on another team's roadmap.
+
+### Backup: <!-- TO FILL -->
+
+### Question Angles:
+- "Tell me about a time you made a decision quickly without all the data."
+- "Tell me about a time you took a calculated risk that paid off."
+- "Tell me about a time you acted too quickly and had to course-correct."
+
+---
+
+## 4. Ownership — VALIDATED
+
+### Primary: Built All Data Pipelines for Another Team
+
+**Situation:** On Walmart's International Personalization team, data engineering was formally another team's responsibility. But the pipelines weren't getting built. My model artifacts would be ready, and I'd spend two or more weeks pinging the DE team with no progress. Features were blocked — we had models ready to deploy but no production data pipelines to serve them. Some pipelines that did exist were being run out of band by data scientists from Jupyter notebooks, with embeddings going a month or more without being refreshed.
+
+**Task:** I needed to get our models into production. Waiting on the data engineering team's timeline would have meant features sitting on the shelf for months.
+
+**Action:** I built all of the data pipelines myself. I had experience from my previous role on US search where I'd built similar infrastructure, so I knew the stack. I designed the pipelines in Airflow with Spark for data processing and PyTorch Lightning for GPU inference, separating out the compute-intensive model inference from the data transformation steps. I carried each pipeline from development through to production as the single code owner. The DE team remained responsible for code review, so it worked politically — I wasn't stepping on toes, I was unblocking myself.
+
+**Result:** Every model I built shipped to production without being blocked by the data engineering bottleneck. The pipelines ran reliably across all three markets. The pattern I established — scientist owns the full pipeline, DE reviews — became the team's default operating model. The reward for working hard is more work, but the alternative was watching good models sit on a shelf.
+
+### Backup: <!-- TO FILL -->
+
+### Question Angles:
+- "Tell me about a time you took ownership of something outside your scope."
+- "Tell me about a time you saw a problem and fixed it without being asked."
+- "Tell me about a time an initiative you owned failed."
+
+---
+
+## 5. Earn Trust — VALIDATED
+
+### Primary: Embedding Pipeline Bug — Owning a Mistake
+
+**Situation:** Earlier in my time at Walmart, I built an embedding pipeline for our search retrieval system. The pipeline computed MD5 hashes to determine which items needed re-embedding. I had a bug: when a catalog attribute key changed — for example, a product title was updated — items already in the index wouldn't get new embeddings because the hash logic didn't account for the attribute change. The bug went through code review and made it to production.
+
+**Task:** Three weeks later, a colleague was doing a root cause analysis on a separate evaluation issue. While diving deep into my pipeline, they discovered the stale embedding bug. It wasn't causing the degradation they were investigating, but they flagged it. Less than 1% of items were affected, but at scale with dense retrieval, incorrect embeddings matter — search results were degraded for those items.
+
+**Action:** I owned the mistake immediately. I ran a blameless post-mortem within the team and drafted shareout emails to the wider org explaining what happened, the impact, and the fix. I didn't downplay it or blame the code reviewers who had also missed it. The deeper issue was that I had a "fire and forget" approach to shipped features — I built it, deployed it, and moved on without monitoring for exactly this class of silent degradation.
+
+**Result:** The team didn't hold it against me — mistakes happen, especially with a junior engineer learning production systems. But the experience fundamentally changed how I work. I learned that ownership doesn't end at launch. After this, I built monitoring into every pipeline I shipped and established the habit of continuous observation post-release. I also gained deep trust for the colleague who found the bug — they earned my respect by diving deep into someone else's code without hesitation.
+
+### Backup: <!-- TO FILL -->
+
+### Question Angles:
+- "Tell me about a time you delivered difficult feedback."
+- "Tell me about a time you had to rebuild trust after a mistake."
+- "Tell me about a time you were vocally self-critical."
+
+---
+
+## 6. Have Backbone; Disagree & Commit — VALIDATED
+
+### Primary: LLM-Based vs Pure Embedding Architecture Debate
+
+**Situation:** For our generative retrieval pipeline at Walmart, I designed an architecture that uses natural language as an intermediary: item attributes go into an LLM which generates text queries, those queries feed into a text encoder for dense retrieval, and the results are evaluated by an LLM judge. Peers on the team thought this was bizarre — why generate natural language text as a middle step when you could stay entirely in embedding space?
+
+**Task:** I anticipated this opposition. The alternative architecture was a pure embedding approach: item embeddings feed into a ComiRec retrieval model trained on LLM-generated relevance labels, with multiple embedding probes for diversity, followed by dense retrieval and reranking. It was faster, cheaper, and avoided the "bizarre" text generation step. I needed to defend why the LLM-based architecture was superior for our use case.
+
+**Action:** Before the debate even happened, I built both architectures and trained them. When peers raised concerns during our weekly experimental shareout, I presented comparative results. Architecture 1 (LLM-based) outperformed on both diversity and relevance because it leveraged the LLM's world knowledge directly — a one-shot dense retrieval model only gets a clustering of similar items, but for complementary signal you need genuine diversity (gaming chair and gaming mouse are both good complements for gaming keyboard). I also showed that interpretability was better — the generated queries are human-readable versus opaque embedding probes. And the speed objection didn't apply because this was an offline batch signal, not real-time serving. Finally, the LLM-based pipeline produced modular components — the query generation and retrieval models could be reused separately on other projects. The label data I generated was used by other teams for hard negatives in similar items retrieval.
+
+**Result:** People were surprised I'd preempted the objection by building both. The data made the case. We shipped the LLM-based architecture, and I continued pushing this development loop despite ongoing pressure to "just do SFT." The generated label data became a shared asset across multiple team projects.
+
+### Backup: <!-- TO FILL -->
+
+### Question Angles:
+- "Tell me about a time you disagreed with a senior leader."
+- "Tell me about a time you committed to a decision you disagreed with."
+- "Tell me about a time the team went against your recommendation and you had to support it."
+
+---
+
+## 7. Learn & Be Curious — VALIDATED
+
+### Primary: Papers to Production — Implementing Cutting-Edge Research
+
+**Situation:** At Walmart, the personalization and search teams were building recommendation and retrieval systems that needed to perform at scale across three markets. The existing approaches were either too simple (heuristic baselines, basic collaborative filtering) or hadn't been rigorously compared. There was no culture of reading current research and implementing state-of-the-art methods — the team tended to use whatever was already in the codebase.
+
+**Task:** I wanted to push the technical frontier of what we could build by going directly to the research literature, implementing promising methods, and empirically comparing them against our existing approaches.
+
+**Action:** I systematically read papers and implemented them from scratch for production use. I implemented DeepRetrieval's approach to RL-based query generation — LoRA fine-tuning Llama 3.2 with PPO and GRPO using explicit reward functions. This required building substantial infrastructure: I optimized vLLM for inference at scale, taking throughput from about 1 inference per second to 10 through KV cache tuning, batch size optimization, and tensor parallelism across 8 GPUs. I built a custom SQLite caching layer for the RL reward loop that scaled to billions of pairwise predictions — this cache data was then reusable for SFT on other models. I implemented ComiRec (both DR and SA variants) for sequential recommendation with diversity, SASRec, and Choppy for ranked list truncation. In total I compared 10+ architectures with full hyperparameter sweeps. I'm currently implementing uncertainty-based active learning in the RL training loop — measuring conflicting signals about the model's understanding of specific items to actively explore the space where the model is least confident.
+
+**Result:** ComiRec-SA won the architecture comparison for user-item retrieval — strong retrieval for engaged items with good diversity. The RL-trained query generation model powers the generative retrieval pipeline serving all three NA markets. The billions of cached pairwise predictions became a shared data asset for SFT across multiple team projects. Each paper I implemented expanded the team's technical toolkit and raised the bar for what we considered "good enough."
+
+### Backup: <!-- TO FILL -->
+
+### Question Angles:
+- "Tell me about a time you learned a new domain or skill rapidly."
+- "Tell me about a time your curiosity led to a breakthrough."
+- "Tell me about a recent technology you explored on your own."
+
+---
+
+## 8. Dive Deep — VALIDATED
+
+### Primary: Similar Items Pipeline — Full Stack Investigation
+
+**Situation:** When I joined Walmart's International Personalization team, I started by reviewing what pipelines were actually running in production. I noticed persistent failures in Airflow — a lot of red. The similar items pipeline was one of the worst: it was provisioned on A100s for a text encoder that didn't need them, was doing inference on Spark CPU workers instead of GPU, had image embeddings added for secondary filtering with no documentation or evidence they were necessary, and was fundamentally unable to run reliably in production. It was only partially working in Mexico on limited provisioning, and failing in the other markets. The team's solution was to run things out of band. There was also a handoff failure mode: data scientists would build the model, MLOps would deploy it, and quality died in the transition — an ownership graveyard.
+
+**Task:** Everyone on the team knew there were issues but felt they didn't have the bandwidth to fix it. I believed a production pipeline shouldn't have red in Airflow, full stop. I needed to understand what was actually wrong, fix it, and get it running in all three markets.
+
+**Action:** I dug into every layer. First, I wrote an LLM-judge evaluation rubric specifically for similar items so I could actually measure quality — no such metric existed before. Then I used that rubric to systematically test assumptions: I removed the image embedding filtering and replaced it with a lighter-weight filter, and the rubric showed quality was equivalent — the image embeddings had been adding complexity with no measurable benefit. I rewrote the embedding generation code in PyTorch Lightning with native multi-GPU support, separating data processing from GPU inference tasks and running on V100s in parallel instead of the A100s they couldn't reliably provision. I carried the pipeline from rewrite through to production as a single code owner — eliminating the DS-to-MLOps handoff that had been the failure point.
+
+**Result:** The rewritten pipeline went from non-functional in two markets to running reliably across all three (US, CA, MX) with roughly 100x throughput improvement. The evaluation rubric gave the team a way to systematically navigate the design space for the first time — making evidence-based decisions about what to include or remove rather than adding complexity based on PM conversations.
+
+### Backup: <!-- TO FILL -->
+
+### Question Angles:
+- "Tell me about a time you found a root cause others missed."
+- "Tell me about a time the data told a different story than expected."
+- "Tell me about a time you had to go deep into unfamiliar code or systems."
+
+---
+
+## 9. Deliver Results — VALIDATED
+
+### Primary: EBR Model Iteration Campaign + CIKM 2024
+
+**Situation:** At Walmart, the US search embedding-based retrieval (EBR) system was the primary model powering product search. While the initial EBR deployment had improved relevance over traditional methods, there were significant gaps: training data noise causing relevance degradation, poor handling of misspelled queries, and no systematic approach to iterating on the model.
+
+**Task:** I needed to deliver sustained, measurable improvements to the core search retrieval model — the system that powers all US product search.
+
+**Action:** I led a series of iterative improvements to the EBR model over multiple launch cycles. Each iteration targeted a specific weakness: a relevance reward model trained on human feedback to filter noisy training data, hard negative mining to improve fine-grained discrimination, in-batch negatives for training efficiency, dual loss optimization, price-aware retrieval, typo-aware training for query robustness, and semi-positive generation for edge cases. Each launch went through offline evaluation, A/B testing, and phased rollout. I published the methodology as first author at CIKM 2024, documenting the relevance reward model and multi-objective learning approach.
+
+**Result:** Across these launches, each iteration delivered approximately 10 bps GMV lift in A/B testing — at Walmart's search scale, each launch represents roughly $100M in annual impact. The cumulative improvements made EBR the foundation of Walmart's search relevance stack.
+
+### Backup: <!-- TO FILL -->
+
+### Question Angles:
+- "Tell me about the most impactful project you delivered."
+- "Tell me about a time you delivered results despite significant obstacles."
+- "Tell me about a time you had to make tradeoffs to deliver on time."
+
+---
+
+## Backup Story Bank (unused validated stories)
+
+These stories are available as backups for any LP. Each has been validated in interactive sessions.
+
+| Story | Best Backup For |
+|-------|----------------|
+| Arbitration engine + near/far intent framework | Ownership, Dive Deep, GenAI Fluency |
+| Eval viewer (internal model comparison tool) | Bias for Action, Highest Standards |
+| Embedding pipeline rescue (stale Jupyter → Airflow) | Bias for Action, Ownership |
+| 10+ model architecture comparison | Highest Standards, Dive Deep |
+| End-to-end observability (dashboards, drift, RCA) | Ownership, Dive Deep |
+| Embedding similarity cost reduction | Bias for Action |
+| Chile migration + trust building | Earn Trust, Ownership |
+| Direct report development — mixed results | Earn Trust |
+| PM trust through tooling | Earn Trust |
+| Team crisis — onboarding, docs, scope expansion | Ownership |
+| Content safety threshold incident | Bias for Action (UNREVIEWED) |
+| Query rewriting feedback | Earn Trust (UNREVIEWED) |
