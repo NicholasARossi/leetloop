@@ -1,12 +1,16 @@
 'use client'
 
-import type { OnsitePrepGradeResult, OnsitePrepQuestion } from '@/lib/api'
+import { useState } from 'react'
+import type { OnsitePrepGradeResult, OnsitePrepQuestion, IdealResponse } from '@/lib/api'
 
 interface GradeResultProps {
   result: OnsitePrepGradeResult
   question: OnsitePrepQuestion
   onReRecord: () => void
   onFollowUps: () => void
+  idealResponse?: IdealResponse | null
+  idealLoading?: boolean
+  followUpsReady?: boolean
 }
 
 const DIMENSION_LABELS: Record<string, string> = {
@@ -58,7 +62,9 @@ function getVerdictLabel(verdict: string): string {
   }
 }
 
-export function GradeResult({ result, question, onReRecord, onFollowUps }: GradeResultProps) {
+export function GradeResult({ result, question, onReRecord, onFollowUps, idealResponse, idealLoading, followUpsReady }: GradeResultProps) {
+  const [showFullResponse, setShowFullResponse] = useState(false)
+
   return (
     <div>
       {/* Overall Score Card */}
@@ -122,6 +128,55 @@ export function GradeResult({ result, question, onReRecord, onFollowUps }: Grade
         )}
       </div>
 
+      {/* What You Should Have Said */}
+      <div className="card">
+        <div className="text-[10px] uppercase tracking-widest text-blue-600 font-semibold mb-3">
+          What You Should Have Said
+        </div>
+
+        {idealLoading && (
+          <div className="flex items-center gap-2 text-sm text-gray-400 py-4">
+            <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+            Generating ideal L6 response...
+          </div>
+        )}
+
+        {idealResponse && (
+          <>
+            <div className="bg-blue-50 border-l-[3px] border-blue-400 p-4 text-xs leading-relaxed text-blue-900 mb-3">
+              {idealResponse.summary}
+            </div>
+
+            <div className="mb-3">
+              <div className="text-[10px] uppercase tracking-widest text-gray-500 mb-2">Ideal Outline</div>
+              <ol className="list-decimal list-inside space-y-1">
+                {idealResponse.outline.map((point, i) => (
+                  <li key={i} className="text-xs text-gray-700 leading-relaxed">{point}</li>
+                ))}
+              </ol>
+            </div>
+
+            <div>
+              <button
+                onClick={() => setShowFullResponse(!showFullResponse)}
+                className="text-xs text-blue-600 hover:text-blue-800 uppercase tracking-wide"
+              >
+                {showFullResponse ? 'Hide' : 'Show'} Full Model Answer {showFullResponse ? '\u25B2' : '\u25BC'}
+              </button>
+              {showFullResponse && (
+                <div className="bg-gray-50 border-l-[3px] border-blue-300 p-4 text-xs leading-relaxed text-gray-700 mt-2 max-h-64 overflow-y-auto">
+                  {idealResponse.full_response}
+                </div>
+              )}
+            </div>
+          </>
+        )}
+
+        {!idealLoading && !idealResponse && (
+          <div className="text-xs text-gray-400 py-2">Ideal response will appear here after grading.</div>
+        )}
+      </div>
+
       {/* Transcript */}
       {result.transcript && (
         <div className="card">
@@ -139,8 +194,19 @@ export function GradeResult({ result, question, onReRecord, onFollowUps }: Grade
         <button onClick={onReRecord} className="btn-secondary px-4 py-2 text-sm">
           Re-record
         </button>
-        <button onClick={onFollowUps} className="btn-primary px-6 py-2 text-sm">
-          Follow-up Probes &rarr;
+        <button
+          onClick={onFollowUps}
+          disabled={followUpsReady === false}
+          className="btn-primary px-6 py-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {followUpsReady === false ? (
+            <span className="flex items-center gap-2">
+              <span className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              Loading Follow-ups...
+            </span>
+          ) : (
+            'Start Follow-ups \u2192'
+          )}
         </button>
       </div>
     </div>

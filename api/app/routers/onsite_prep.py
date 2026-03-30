@@ -11,7 +11,9 @@ from supabase import Client
 from app.db.supabase import get_supabase
 from app.models.onsite_prep_schemas import (
     CategoryStats,
+    ConversationalFollowUpResult,
     DimensionScore,
+    IdealResponse,
     OnsitePrepAttempt,
     OnsitePrepAttemptHistory,
     OnsitePrepDashboard,
@@ -20,6 +22,7 @@ from app.models.onsite_prep_schemas import (
     OnsitePrepGradeResult,
     OnsitePrepQuestion,
     RubricDimension,
+    SubmitAudioResponse,
 )
 
 router = APIRouter()
@@ -89,7 +92,7 @@ async def get_question(
         raise HTTPException(status_code=500, detail=f"Failed to get question: {str(e)}")
 
 
-@router.post("/onsite-prep/questions/{question_id}/submit-audio", response_model=OnsitePrepGradeResult)
+@router.post("/onsite-prep/questions/{question_id}/submit-audio", response_model=SubmitAudioResponse)
 async def submit_audio(
     question_id: UUID,
     audio: UploadFile = File(...),
@@ -148,12 +151,13 @@ async def submit_audio(
             "follow_up_questions": result.follow_up_questions,
             "created_at": datetime.utcnow().isoformat(),
         }
-        supabase.table("onsite_prep_attempts").insert(attempt_data).execute()
+        insert_result = supabase.table("onsite_prep_attempts").insert(attempt_data).execute()
+        attempt_id = insert_result.data[0]["id"]
 
         # Invalidate dashboard cache
         _dashboard_cache.clear()
 
-        return result
+        return SubmitAudioResponse(attempt_id=attempt_id, grade=result)
     except HTTPException:
         raise
     except Exception as e:
@@ -195,11 +199,24 @@ async def get_attempt(
                 transcript=fu.get("transcript"),
                 score=fu.get("score"),
                 feedback=fu.get("feedback"),
+                ideal_answer=fu.get("ideal_answer"),
                 addressed_gap=fu.get("addressed_gap", False),
                 sort_order=fu.get("sort_order", 0),
+                parent_follow_up_id=fu.get("parent_follow_up_id"),
             )
             for fu in fu_result.data
         ]
+
+        # Parse ideal_response if present
+        ideal_response = None
+        if a.get("ideal_response"):
+            ir = a["ideal_response"]
+            from app.models.onsite_prep_schemas import IdealResponse as IR
+            ideal_response = IR(
+                summary=ir.get("summary", ""),
+                outline=ir.get("outline", []),
+                full_response=ir.get("full_response", ""),
+            )
 
         return OnsitePrepAttempt(
             id=a["id"],
@@ -215,12 +232,73 @@ async def get_attempt(
             duration_seconds=a.get("duration_seconds"),
             follow_up_questions=a.get("follow_up_questions", []),
             follow_ups=follow_ups,
+            ideal_response=ideal_response,
             created_at=a.get("created_at"),
         )
     except HTTPException:
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get attempt: {str(e)}")
+
+
+@router.post("/onsite-prep/attempts/{attempt_id}/ideal-response", response_model=IdealResponse)
+async def generate_ideal_response(
+    attempt_id: UUID,
+    supabase: Annotated[Client, Depends(get_supabase)] = None,
+):
+    """Generate (or return cached) ideal L6 response for an attempt."""
+    from app.services.onsite_prep_service import get_onsite_prep_grading_service
+
+    try:
+        # Get attempt
+        a_result = supabase.table("onsite_prep_attempts").select("*").eq("id", str(attempt_id)).execute()
+        if not a_result.data:
+            raise HTTPException(status_code=404, detail="Attempt not found")
+        attempt = a_result.data[0]
+
+        # Return cached if already generated
+        if attempt.get("ideal_response"):
+            data = attempt["ideal_response"]
+            return IdealResponse(
+                summary=data.get("summary", ""),
+                outline=data.get("outline", []),
+                full_response=data.get("full_response", ""),
+            )
+
+        if not attempt.get("transcript"):
+            raise HTTPException(status_code=400, detail="Attempt has no transcript")
+
+        # Get question for context
+        q_result = supabase.table("onsite_prep_questions").select("*").eq("id", attempt["question_id"]).execute()
+        if not q_result.data:
+            raise HTTPException(status_code=404, detail="Question not found")
+        question = q_result.data[0]
+
+        # Generate
+        service = get_onsite_prep_grading_service()
+        ideal = await service.generate_ideal_response(
+            question_text=question["prompt_text"],
+            category=question["category"],
+            subcategory=question.get("subcategory"),
+            context_hint=question.get("context_hint"),
+            transcript=attempt["transcript"],
+            feedback=attempt.get("feedback", ""),
+        )
+
+        # Save to DB for caching
+        supabase.table("onsite_prep_attempts").update({
+            "ideal_response": {
+                "summary": ideal.summary,
+                "outline": ideal.outline,
+                "full_response": ideal.full_response,
+            }
+        }).eq("id", str(attempt_id)).execute()
+
+        return ideal
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to generate ideal response: {str(e)}")
 
 
 @router.post("/onsite-prep/attempts/{attempt_id}/generate-follow-ups", response_model=list[OnsitePrepFollowUp])
@@ -295,13 +373,13 @@ async def generate_follow_ups(
         raise HTTPException(status_code=500, detail=f"Failed to generate follow-ups: {str(e)}")
 
 
-@router.post("/onsite-prep/follow-ups/{follow_up_id}/submit-audio", response_model=OnsitePrepFollowUpResult)
+@router.post("/onsite-prep/follow-ups/{follow_up_id}/submit-audio", response_model=ConversationalFollowUpResult)
 async def submit_follow_up_audio(
     follow_up_id: UUID,
     audio: UploadFile = File(...),
     supabase: Annotated[Client, Depends(get_supabase)] = None,
 ):
-    """Submit audio for a follow-up probe, transcribe + grade."""
+    """Submit audio for a follow-up probe, transcribe + grade, and optionally generate next probe."""
     from app.services.onsite_prep_service import get_onsite_prep_grading_service
 
     try:
@@ -321,7 +399,8 @@ async def submit_follow_up_audio(
         follow_up = fu_result.data[0]
 
         # Get attempt
-        a_result = supabase.table("onsite_prep_attempts").select("*").eq("id", follow_up["attempt_id"]).execute()
+        attempt_id = follow_up["attempt_id"]
+        a_result = supabase.table("onsite_prep_attempts").select("*").eq("id", attempt_id).execute()
         if not a_result.data:
             raise HTTPException(status_code=404, detail="Attempt not found")
         attempt = a_result.data[0]
@@ -330,26 +409,70 @@ async def submit_follow_up_audio(
         q_result = supabase.table("onsite_prep_questions").select("*").eq("id", attempt["question_id"]).execute()
         question = q_result.data[0] if q_result.data else {"prompt_text": "", "category": "lp"}
 
-        # Grade
+        # Get all previous follow-ups for conversation context
+        all_fus = supabase.table("onsite_prep_follow_ups").select("*").eq(
+            "attempt_id", attempt_id
+        ).order("sort_order").execute()
+        previous_follow_ups = [
+            fu for fu in all_fus.data if fu["id"] != str(follow_up_id) and fu.get("transcript")
+        ]
+
+        # Grade with conversational context
         service = get_onsite_prep_grading_service()
-        result = await service.transcribe_and_grade_follow_up(
+        result = await service.transcribe_and_grade_follow_up_conversational(
             audio_bytes=audio_bytes,
             mime_type=content_type,
             original_question=question["prompt_text"],
             original_transcript=attempt.get("transcript", ""),
             follow_up_question=follow_up["question_text"],
             category=question["category"],
+            previous_follow_ups=previous_follow_ups,
         )
 
         # Update follow-up record
-        supabase.table("onsite_prep_follow_ups").update({
-            "transcript": result.transcript,
-            "score": result.score,
-            "feedback": result.feedback,
-            "addressed_gap": result.addressed_gap,
-        }).eq("id", str(follow_up_id)).execute()
+        update_data = {
+            "transcript": result["transcript"],
+            "score": result["score"],
+            "feedback": result["feedback"],
+            "addressed_gap": result["addressed_gap"],
+        }
+        # ideal_answer column may not exist yet if migration hasn't been applied
+        try:
+            supabase.table("onsite_prep_follow_ups").update({
+                **update_data,
+                "ideal_answer": result.get("ideal_answer", ""),
+            }).eq("id", str(follow_up_id)).execute()
+        except Exception:
+            supabase.table("onsite_prep_follow_ups").update(update_data).eq("id", str(follow_up_id)).execute()
 
-        return result
+        # If next_probe returned and under cap, insert new follow-up
+        next_follow_up = None
+        if result.get("next_probe") and len(all_fus.data) < 8:
+            max_sort = max((fu.get("sort_order", 0) for fu in all_fus.data), default=0)
+            new_fu_data = {
+                "attempt_id": attempt_id,
+                "question_text": result["next_probe"],
+                "sort_order": max_sort + 1,
+                "parent_follow_up_id": str(follow_up_id),
+            }
+            new_fu_result = supabase.table("onsite_prep_follow_ups").insert(new_fu_data).execute()
+            nfu = new_fu_result.data[0]
+            next_follow_up = OnsitePrepFollowUp(
+                id=nfu["id"],
+                attempt_id=nfu["attempt_id"],
+                question_text=nfu["question_text"],
+                sort_order=nfu.get("sort_order", 0),
+                parent_follow_up_id=str(follow_up_id),
+            )
+
+        return ConversationalFollowUpResult(
+            transcript=result["transcript"],
+            score=result["score"],
+            feedback=result["feedback"],
+            addressed_gap=result["addressed_gap"],
+            ideal_answer=result.get("ideal_answer", ""),
+            next_follow_up=next_follow_up,
+        )
     except HTTPException:
         raise
     except Exception as e:

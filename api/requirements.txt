@@ -28,6 +28,9 @@ anyio>=4.2.0
 # JWT (with cryptography for ES256 support)
 PyJWT[crypto]>=2.10.1
 
+# Telegram bot
+python-telegram-bot>=21.0,<22.0
+
 # Utilities
 python-dotenv==1.0.1
 python-multipart==0.0.9

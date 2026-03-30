@@ -43,11 +43,31 @@ class OnsitePrepGradeResult(BaseModel):
     follow_up_questions: list[str] = []
 
 
+class IdealResponse(BaseModel):
+    summary: str
+    outline: list[str]
+    full_response: str
+
+
+class SubmitAudioResponse(BaseModel):
+    attempt_id: str
+    grade: OnsitePrepGradeResult
+
+
 class OnsitePrepFollowUpResult(BaseModel):
     transcript: str
     score: int
     feedback: str
     addressed_gap: bool
+
+
+class ConversationalFollowUpResult(BaseModel):
+    transcript: str
+    score: int
+    feedback: str
+    addressed_gap: bool
+    ideal_answer: str = ""
+    next_follow_up: "OnsitePrepFollowUp | None" = None
 
 
 class OnsitePrepFollowUp(BaseModel):
@@ -57,8 +77,10 @@ class OnsitePrepFollowUp(BaseModel):
     transcript: str | None = None
     score: float | None = None
     feedback: str | None = None
+    ideal_answer: str | None = None
     addressed_gap: bool = False
     sort_order: int = 0
+    parent_follow_up_id: str | None = None
 
 
 class OnsitePrepAttempt(BaseModel):
@@ -75,6 +97,7 @@ class OnsitePrepAttempt(BaseModel):
     duration_seconds: int | None = None
     follow_up_questions: list[str] = []
     follow_ups: list[OnsitePrepFollowUp] = []
+    ideal_response: IdealResponse | None = None
     created_at: str | None = None
 
 

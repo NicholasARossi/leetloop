@@ -2,12 +2,12 @@
 
 import { useState } from 'react'
 import { AudioRecorder } from '@/components/system-design/AudioRecorder'
-import type { OnsitePrepQuestion, OnsitePrepGradeResult } from '@/lib/api'
+import type { OnsitePrepQuestion, SubmitAudioResponse } from '@/lib/api'
 import { leetloopApi } from '@/lib/api'
 
 interface RecordingViewProps {
   question: OnsitePrepQuestion
-  onGraded: (result: OnsitePrepGradeResult) => void
+  onGraded: (response: SubmitAudioResponse) => void
 }
 
 const CATEGORY_LABELS: Record<string, string> = {

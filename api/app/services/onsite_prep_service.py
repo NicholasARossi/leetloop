@@ -10,8 +10,11 @@ import google.generativeai as genai
 
 from app.config import get_settings
 from app.models.onsite_prep_schemas import (
+    ConversationalFollowUpResult,
     DimensionEvidence,
     DimensionScore,
+    IdealResponse,
+    OnsitePrepFollowUp,
     OnsitePrepFollowUpResult,
     OnsitePrepGradeResult,
 )
@@ -134,7 +137,7 @@ CANDIDATE'S TRANSCRIPT:
 WEAK DIMENSIONS: {weak_summary}
 FEEDBACK: {feedback}
 
-Generate 5-8 targeted follow-up probes that an interviewer would naturally ask to dig deeper into the gaps. Each probe should:
+Generate 2-3 targeted follow-up probes that an interviewer would naturally ask to dig deeper into the gaps. Each probe should:
 1. Reference something specific the candidate said (or didn't say)
 2. Target a specific weakness or gap
 3. Be phrased as a direct question the interviewer would ask
@@ -229,6 +232,188 @@ Grade now:"""
             )
 
             return self._parse_follow_up_response(response.text)
+
+        finally:
+            if uploaded_file:
+                try:
+                    await asyncio.to_thread(genai.delete_file, uploaded_file.name)
+                except Exception:
+                    pass
+
+    async def generate_ideal_response(
+        self,
+        question_text: str,
+        category: str,
+        subcategory: str | None,
+        context_hint: str | None,
+        transcript: str,
+        feedback: str,
+    ) -> IdealResponse:
+        """Generate a personalized L6 ideal response using text-only Gemini call."""
+        if not self.configured:
+            raise RuntimeError("Gemini API key not configured")
+
+        category_instruction = {
+            "lp": "Write the ideal STAR-format answer. Situation should set clear context, Task should specify the candidate's responsibility, Action should use 'I' statements with specific details, and Result should quantify impact with numbers.",
+            "breadth": "Write the ideal ML breadth explanation. Start with a precise definition, build intuition with an analogy, cover failure modes and when NOT to use it, and connect to a practical application.",
+            "depth": "Write the ideal deep technical walkthrough. Cover architecture clearly enough to whiteboard, explain design decisions with tradeoffs, be honest about limitations, and quantify metrics/impact.",
+            "design": "Write the ideal system design walkthrough. Start with problem framing and clarifying questions, lay out architecture, cover data/training strategy, discuss evaluation metrics, and address production concerns.",
+        }.get(category, "Write the ideal answer.")
+
+        prompt = f"""You are a senior Amazon L6 Applied Scientist who just gave a perfect interview answer.
+
+QUESTION: "{question_text}"
+CATEGORY: {category.upper()}
+{f'SUBCATEGORY: {subcategory}' if subcategory else ''}
+{f'CANDIDATE CONTEXT (use their actual project/story): {context_hint}' if context_hint else ''}
+
+The candidate gave this answer (use their context but improve it):
+"{transcript[:2000]}"
+
+Coach feedback on their answer: {feedback}
+
+{category_instruction}
+
+Write THREE things:
+1. A 1-2 sentence summary of the key improvement
+2. A 4-6 point outline of what the ideal answer covers
+3. The full ideal spoken response (2-3 minutes of natural speech, written as the candidate would say it)
+
+IMPORTANT: Use the candidate's ACTUAL project/story/context from the transcript. Don't invent a different scenario — show how THEIR story should be told better.
+
+Respond in this exact JSON format (no markdown code fences):
+{{
+  "summary": "The key improvement is...",
+  "outline": ["Point 1", "Point 2", "Point 3", "Point 4"],
+  "full_response": "The full ideal spoken response..."
+}}"""
+
+        response = await asyncio.to_thread(
+            self.model.generate_content, [prompt]
+        )
+
+        json_match = re.search(r'\{[\s\S]*\}', response.text)
+        if not json_match:
+            return IdealResponse(
+                summary="Could not generate ideal response.",
+                outline=[],
+                full_response="",
+            )
+
+        data = json.loads(json_match.group())
+        return IdealResponse(
+            summary=data.get("summary", ""),
+            outline=data.get("outline", []),
+            full_response=data.get("full_response", ""),
+        )
+
+    async def transcribe_and_grade_follow_up_conversational(
+        self,
+        audio_bytes: bytes,
+        mime_type: str,
+        original_question: str,
+        original_transcript: str,
+        follow_up_question: str,
+        category: str,
+        previous_follow_ups: list[dict],
+    ) -> dict:
+        """Grade a follow-up response AND decide whether another probe is needed.
+
+        Returns dict with: transcript, score, feedback, addressed_gap, next_probe (str|None)
+        """
+        if not self.configured:
+            raise RuntimeError("Gemini API key not configured")
+
+        category_context = {
+            "lp": "Amazon behavioral interview",
+            "breadth": "ML breadth knowledge check",
+            "depth": "deep technical probe on candidate's own projects",
+            "design": "system design deep-dive",
+        }.get(category, "technical interview")
+
+        # Build conversation context from previous follow-ups
+        conversation_ctx = ""
+        if previous_follow_ups:
+            conversation_ctx = "\n\nPREVIOUS FOLLOW-UP EXCHANGE:\n"
+            for pfu in previous_follow_ups[-4:]:  # Last 4 for context window
+                conversation_ctx += f'Q: "{pfu.get("question_text", "")}"\n'
+                if pfu.get("transcript"):
+                    conversation_ctx += f'A: "{pfu["transcript"][:500]}"\n'
+                    conversation_ctx += f'Score: {pfu.get("score", "?")}/5\n\n'
+
+        total_follow_ups = len(previous_follow_ups) + 1  # Including current
+
+        prompt = f"""You are a senior Amazon interviewer conducting a follow-up conversation in a {category_context}.
+
+The candidate was originally asked:
+"{original_question}"
+
+Their original response (transcript):
+"{original_transcript[:1000]}"
+{conversation_ctx}
+NOW this follow-up was asked:
+"{follow_up_question}"
+
+First, transcribe the audio response verbatim (include filler words).
+
+Then evaluate:
+1. Did the candidate adequately address the gap that prompted this follow-up?
+2. Score the response 1-5 (1=no useful content, 2=vague attempt, 3=partial answer, 4=solid answer, 5=exceptional depth)
+3. Provide 1-2 sentences of direct feedback
+4. Write what the IDEAL answer to this follow-up would be — a concise, strong response (3-5 sentences) that directly addresses the gap. Use the candidate's own context/project but show the polished version.
+
+Finally, decide if ANOTHER follow-up probe is needed:
+- If the answer reveals a new gap or was incomplete, generate one more probing question
+- If the answer was solid (4-5) or we've done {total_follow_ups} follow-ups already (max 8), set next_probe to null
+- The next probe should build on what the candidate just said, not repeat earlier questions
+
+Respond in this exact JSON format (no markdown code fences, just raw JSON):
+{{
+  "transcript": "full verbatim transcription",
+  "score": 3,
+  "feedback": "1-2 sentences of actionable feedback",
+  "addressed_gap": true,
+  "ideal_answer": "3-5 sentence ideal response to this specific follow-up, using the candidate's context",
+  "next_probe": "A follow-up question based on their answer, or null if conversation should end"
+}}
+
+Grade now:"""
+
+        suffix = _mime_to_extension(mime_type)
+        uploaded_file = None
+        try:
+            with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
+                tmp.write(audio_bytes)
+                tmp_path = tmp.name
+
+            uploaded_file = await asyncio.to_thread(
+                genai.upload_file, tmp_path, mime_type=mime_type
+            )
+
+            response = await asyncio.to_thread(
+                self.model.generate_content, [prompt, uploaded_file]
+            )
+
+            json_match = re.search(r'\{[\s\S]*\}', response.text)
+            if not json_match:
+                raise ValueError(f"Could not parse JSON from Gemini response: {response.text[:200]}")
+
+            data = json.loads(json_match.group())
+            score = max(1, min(5, int(data.get("score", 1))))
+
+            next_probe = data.get("next_probe")
+            # Cap at 8 total follow-ups
+            if total_follow_ups >= 8:
+                next_probe = None
+
+            return {
+                "transcript": data.get("transcript", ""),
+                "score": score,
+                "feedback": data.get("feedback", ""),
+                "addressed_gap": bool(data.get("addressed_gap", False)),
+                "ideal_answer": data.get("ideal_answer", ""),
+                "next_probe": next_probe,
+            }
 
         finally:
             if uploaded_file:

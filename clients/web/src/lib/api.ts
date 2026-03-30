@@ -506,7 +506,7 @@ export const leetloopApi = {
   getOnsitePrepQuestion: (questionId: string) =>
     api<OnsitePrepQuestion>(`/api/onsite-prep/questions/${questionId}`),
 
-  submitOnsitePrepAudio: async (questionId: string, audioFile: Blob | File): Promise<OnsitePrepGradeResult> => {
+  submitOnsitePrepAudio: async (questionId: string, audioFile: Blob | File): Promise<SubmitAudioResponse> => {
     const formData = new FormData()
     formData.append('audio', audioFile, audioFile instanceof File ? audioFile.name : 'recording.webm')
 
@@ -534,7 +534,7 @@ export const leetloopApi = {
       timeout: 60000,
     }),
 
-  submitOnsitePrepFollowUpAudio: async (followUpId: string, audioFile: Blob | File): Promise<OnsitePrepFollowUpResult> => {
+  submitOnsitePrepFollowUpAudio: async (followUpId: string, audioFile: Blob | File): Promise<ConversationalFollowUpResult> => {
     const formData = new FormData()
     formData.append('audio', audioFile, audioFile instanceof File ? audioFile.name : 'recording.webm')
 
@@ -552,6 +552,12 @@ export const leetloopApi = {
 
     return response.json()
   },
+
+  generateOnsitePrepIdealResponse: (attemptId: string) =>
+    api<IdealResponse>(`/api/onsite-prep/attempts/${attemptId}/ideal-response`, {
+      method: 'POST',
+      timeout: 60000,
+    }),
 
   getOnsitePrepDashboard: (userId: string) =>
     api<OnsitePrepDashboard>(`/api/onsite-prep/dashboard/${userId}`),
@@ -1593,6 +1599,26 @@ export interface OnsitePrepFollowUpResult {
   addressed_gap: boolean
 }
 
+export interface IdealResponse {
+  summary: string
+  outline: string[]
+  full_response: string
+}
+
+export interface SubmitAudioResponse {
+  attempt_id: string
+  grade: OnsitePrepGradeResult
+}
+
+export interface ConversationalFollowUpResult {
+  transcript: string
+  score: number
+  feedback: string
+  addressed_gap: boolean
+  ideal_answer: string
+  next_follow_up: OnsitePrepFollowUp | null
+}
+
 export interface OnsitePrepFollowUp {
   id: string
   attempt_id: string
@@ -1600,8 +1626,10 @@ export interface OnsitePrepFollowUp {
   transcript?: string
   score?: number
   feedback?: string
+  ideal_answer?: string
   addressed_gap: boolean
   sort_order: number
+  parent_follow_up_id?: string
 }
 
 export interface OnsitePrepAttempt {
@@ -1618,6 +1646,7 @@ export interface OnsitePrepAttempt {
   duration_seconds?: number
   follow_up_questions: string[]
   follow_ups: OnsitePrepFollowUp[]
+  ideal_response?: IdealResponse
   created_at?: string
 }
 

@@ -29,7 +29,7 @@ LP_RUBRIC = [
     {"name": "specificity", "label": "Specificity", "description": "Concrete numbers, dates, team sizes — not vague"},
     {"name": "i_vs_we", "label": "\"I\" vs \"We\"", "description": "Personal contributions clear, not hiding behind team"},
     {"name": "lp_signal", "label": "LP Signal", "description": "Answer clearly demonstrates the target principle"},
-    {"name": "timing", "label": "Timing", "description": "Under 2 minutes, paced well, not rushing"},
+    {"name": "timing", "label": "Timing", "description": "4-5 minutes, paced well, not rushing or rambling"},
     {"name": "impact", "label": "Impact", "description": "Result is quantified and meaningful"},
 ]
 
@@ -65,104 +65,49 @@ DESIGN_RUBRIC = [
 questions = []
 sort_order = 0
 
-# ── LP Stories (from onsite-stories.md — 9 validated stories × 3 angles each = 27) ──
+# ── LP Stories (from onsite-stories.md — 9 validated stories, 1 prompt each) ──
 
 lp_stories = [
-    # Story 1: GenAI Fluency
-    ("GenAI Fluency", [
-        ("Tell me about a time you applied generative AI to solve a real business problem.",
-         "Generative Retrieval Pipeline — LLM generates shopping intents and queries for cold-start items across 3 NA markets"),
-        ("How do you evaluate whether a GenAI approach is the right solution vs traditional ML?",
-         "Compared GenAI retrieval vs collaborative filtering for cold-start. Killed GenAI query expansion when data showed it wasn't viable."),
-        ("Tell me about a time you had to manage the risks or limitations of a GenAI system.",
-         "Price-aware fix: 2-week hotfix + 6-week permanent solution. Also killed non-viable query expansion."),
-    ]),
-    # Story 2: Insist on Highest Standards
-    ("Insist on Highest Standards", [
-        ("Tell me about a time you pushed back on shipping something because it didn't meet your quality bar.",
-         "LLM-as-Judge Evaluation Framework — built 6 specialized rubrics validated against engagement data"),
-        ("Tell me about a time you raised the bar for your team.",
-         "LLM-as-Judge framework became mandatory before any launch. Backtested against 2 failed launches."),
-        ("Tell me about a time your standards were too high and it caused problems.",
-         "LLM-as-Judge — consider if the evaluation rigor delayed any launches unnecessarily"),
-    ]),
-    # Story 3: Bias for Action
-    ("Bias for Action", [
-        ("Tell me about a time you had to make a decision and move forward quickly without all the data.",
-         "Post-A/B Metrics Dashboard — built full analytics dashboard in a weekend instead of waiting on analytics team's roadmap"),
-        ("Tell me about a time you took a calculated risk that paid off.",
-         "Built dashboard outside your job scope. Squarely analytics team's domain."),
-        ("Tell me about a time you acted too quickly and had to course-correct.",
-         "Dashboard built quickly — consider if any shortcuts needed fixing later"),
-    ]),
-    # Story 4: Ownership
-    ("Ownership", [
-        ("Describe a time when you took ownership of a problem that was outside your direct area of responsibility.",
-         "Built All Data Pipelines — DE team was loaded, so built Airflow+Spark+PyTorch Lightning pipelines yourself"),
-        ("Tell me about a time you saw a problem and fixed it without being asked.",
-         "Saw model deployment blocked by DE resourcing, built all pipelines as single code owner"),
-        ("Tell me about a time an initiative you owned failed. What did you learn?",
-         "Data pipeline ownership — consider any pipeline failures or iteration lessons"),
-    ]),
-    # Story 5: Earn Trust
-    ("Earn Trust", [
-        ("Describe a time you had to deliver difficult or unpopular feedback to a stakeholder.",
-         "Embedding Pipeline Bug — owned mistake immediately, ran blameless post-mortem, drafted org-wide shareout"),
-        ("Tell me about a time you had to rebuild trust after a mistake.",
-         "MD5 hash bug in embedding pipeline. Didn't downplay or blame reviewers who also missed it."),
-        ("Tell me about a time you were vocally self-critical.",
-         "Embedding pipeline: 'fire and forget' approach was the deeper issue. Changed how you work."),
-    ]),
-    # Story 6: Have Backbone; Disagree & Commit
-    ("Have Backbone; Disagree & Commit", [
-        ("Tell me about a time you disagreed with your manager or team on a technical direction.",
-         "LLM-based vs pure embedding architecture. Built both preemptively, presented comparative results."),
-        ("Tell me about a time you committed to a decision you disagreed with.",
-         "Architecture debate — even if team had gone the other way, would have committed"),
-        ("Tell me about a time the team went against your recommendation and you had to support it.",
-         "Consider pressure to 'just do SFT' that you pushed back against"),
-    ]),
-    # Story 7: Learn & Be Curious
-    ("Learn & Be Curious", [
-        ("Tell me about a time you had to learn a completely new domain or skill set.",
-         "Papers to Production — implemented DeepRetrieval, ComiRec, SASRec, Choppy from research papers"),
-        ("Tell me about a time your curiosity led to a breakthrough.",
-         "RL-based query generation from DeepRetrieval paper → generative retrieval pipeline serving 3 markets"),
-        ("Tell me about a recent technology you explored on your own.",
-         "Uncertainty-based active learning in RL training loop — measuring conflicting signals"),
-    ]),
-    # Story 8: Dive Deep
-    ("Dive Deep", [
-        ("Tell me about a time you found a root cause that others had missed.",
-         "Similar Items Pipeline — reviewed production, found image embeddings added complexity with no quality benefit"),
-        ("Tell me about a time the data told a different story than expected.",
-         "Removed image embeddings, quality was equivalent. LLM-judge rubric proved it."),
-        ("Tell me about a time you had to go deep into unfamiliar code or systems.",
-         "Investigated every layer: embedding generation, Spark processing, GPU provisioning, evaluation metrics"),
-    ]),
-    # Story 9: Deliver Results
-    ("Deliver Results", [
-        ("Tell me about the most impactful project you've delivered in measurable business results.",
-         "EBR Model Iteration — series of improvements each delivering ~10bps GMV (~$100M annual each). Published at CIKM 2024."),
-        ("Tell me about a time you delivered results despite significant obstacles.",
-         "EBR iterations: noisy training data, misspelled queries, each requiring different solutions"),
-        ("Tell me about a time you had to make tradeoffs to deliver on time.",
-         "EBR iteration cycle — phased approach targeting one weakness per launch"),
-    ]),
+    ("GenAI Fluency",
+     "Tell me about a time you applied generative AI to solve a real business problem.",
+     "Generative Retrieval Pipeline — LLM generates shopping intents and queries for cold-start items across 3 NA markets"),
+    ("Insist on Highest Standards",
+     "Tell me about a time you pushed back on shipping something because it didn't meet your quality bar.",
+     "LLM-as-Judge Evaluation Framework — built 6 specialized rubrics validated against engagement data"),
+    ("Bias for Action",
+     "Tell me about a time you had to make a decision and move forward quickly without all the data.",
+     "Post-A/B Metrics Dashboard — built full analytics dashboard in a weekend instead of waiting on analytics team's roadmap"),
+    ("Ownership",
+     "Tell me about a time you took ownership of something outside your scope.",
+     "Redesigning the DS/MLOps Operating Model — changed handoff workflow so DS owns pipeline code, MLOps owns reliability. Joint design reviews, shared design docs, validation contracts."),
+    ("Earn Trust",
+     "Describe a time you had to deliver difficult or unpopular feedback to a stakeholder.",
+     "Embedding Pipeline Bug — owned mistake immediately, ran blameless post-mortem, drafted org-wide shareout"),
+    ("Have Backbone; Disagree & Commit",
+     "Tell me about a time you disagreed with your manager or team on a technical direction.",
+     "LLM-based vs pure embedding architecture. Built both preemptively, presented comparative results."),
+    ("Learn & Be Curious",
+     "Tell me about a time you had to learn a completely new domain or skill set.",
+     "Papers to Production — implemented DeepRetrieval, ComiRec, SASRec, Choppy from research papers"),
+    ("Dive Deep",
+     "Tell me about a time you found a root cause that others had missed.",
+     "Similar Items Pipeline — reviewed production, found image embeddings added complexity with no quality benefit"),
+    ("Deliver Results",
+     "Tell me about the most impactful project you've delivered in measurable business results.",
+     "EBR Model Iteration — series of improvements each delivering ~10bps GMV (~$100M annual each). Published at CIKM 2024."),
 ]
 
-for lp_name, prompts in lp_stories:
-    for prompt_text, context_hint in prompts:
-        questions.append({
-            "category": "lp",
-            "subcategory": lp_name,
-            "prompt_text": prompt_text,
-            "context_hint": context_hint,
-            "rubric_dimensions": LP_RUBRIC,
-            "target_duration_seconds": 120,
-            "sort_order": sort_order,
-        })
-        sort_order += 1
+for lp_name, prompt_text, context_hint in lp_stories:
+    questions.append({
+        "category": "lp",
+        "subcategory": lp_name,
+        "prompt_text": prompt_text,
+        "context_hint": context_hint,
+        "rubric_dimensions": LP_RUBRIC,
+        "target_duration_seconds": 270,
+        "sort_order": sort_order,
+    })
+    sort_order += 1
 
 # ── ML Breadth (20 questions from questions.md) ──
 

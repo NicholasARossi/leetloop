@@ -47,6 +47,11 @@ class Settings(BaseSettings):
     # Cron job authentication
     cron_secret: Optional[str] = None
 
+    # Telegram bot
+    telegram_bot_token: Optional[str] = None
+    telegram_webhook_secret: Optional[str] = None
+    telegram_owner_user_id: Optional[str] = None  # Your LeetLoop user_id for single-user bot
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"

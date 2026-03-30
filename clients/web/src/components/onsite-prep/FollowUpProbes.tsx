@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { AudioRecorder } from '@/components/system-design/AudioRecorder'
-import { leetloopApi, type OnsitePrepFollowUp, type OnsitePrepFollowUpResult } from '@/lib/api'
+import { leetloopApi, type OnsitePrepFollowUp, type ConversationalFollowUpResult } from '@/lib/api'
 
 interface FollowUpProbesProps {
   attemptId: string
@@ -23,8 +23,11 @@ export function FollowUpProbes({ attemptId, followUps: initialFollowUps, categor
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [conversationComplete, setConversationComplete] = useState(false)
+  const [expandedIdeal, setExpandedIdeal] = useState<Set<number>>(new Set())
 
   const completedCount = followUps.filter(fu => fu.score !== undefined && fu.score !== null).length
+  const allAnswered = completedCount === followUps.length && followUps.length > 0
   const avgScore = completedCount > 0
     ? followUps.filter(fu => fu.score != null).reduce((sum, fu) => sum + (fu.score || 0), 0) / completedCount
     : null
@@ -35,12 +38,29 @@ export function FollowUpProbes({ attemptId, followUps: initialFollowUps, categor
     setIsUploading(true)
     setError(null)
     try {
-      const result: OnsitePrepFollowUpResult = await leetloopApi.submitOnsitePrepFollowUpAudio(followUpId, blob)
-      setFollowUps(prev => prev.map((fu, i) =>
-        i === index ? { ...fu, transcript: result.transcript, score: result.score, feedback: result.feedback, addressed_gap: result.addressed_gap } : fu
-      ))
+      const result: ConversationalFollowUpResult = await leetloopApi.submitOnsitePrepFollowUpAudio(followUpId, blob)
+
+      // Update the graded follow-up
+      setFollowUps(prev => {
+        const updated = prev.map((fu, i) =>
+          i === index ? { ...fu, transcript: result.transcript, score: result.score, feedback: result.feedback, addressed_gap: result.addressed_gap, ideal_answer: result.ideal_answer } : fu
+        )
+
+        // Append next follow-up if generated
+        if (result.next_follow_up) {
+          updated.push(result.next_follow_up)
+        }
+
+        return updated
+      })
+
       setActiveIndex(null)
       setIsUploading(false)
+
+      // Mark conversation complete if no next probe
+      if (!result.next_follow_up) {
+        setConversationComplete(true)
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to grade follow-up')
       setIsUploading(false)
@@ -53,7 +73,7 @@ export function FollowUpProbes({ attemptId, followUps: initialFollowUps, categor
         <div className="text-sm text-gray-400 mb-2">&larr; Grade Result</div>
         <h1 className="text-xl font-semibold">Follow-up Probes</h1>
         <p className="text-sm text-gray-500 mt-1">
-          Generated from your answer &bull; These target gaps the interviewer would dig into
+          Generated from your answer &bull; New probes appear as you answer
         </p>
       </div>
 
@@ -64,36 +84,71 @@ export function FollowUpProbes({ attemptId, followUps: initialFollowUps, categor
         {followUps.map((fu, i) => {
           const isGraded = fu.score != null
           const isActive = activeIndex === i
+          const isChained = !!fu.parent_follow_up_id
 
           return (
-            <div
-              key={fu.id}
-              className={`flex items-start gap-3 px-4 py-3 border-l-4 transition-all ${
-                isGraded ? 'border-l-green-500 text-gray-500' :
-                isActive ? 'border-l-coral bg-coral/5' :
-                'border-transparent'
-              }`}
-            >
-              <span className={`badge ${isGraded ? getScoreBadge(fu.score) : isActive ? 'badge-accent' : 'badge-default'} flex-shrink-0 mt-0.5`}>
-                {isGraded ? fu.score?.toFixed(1) : isActive ? 'REC' : i + 1}
-              </span>
-              <div className="flex-1 min-w-0">
-                <div className="text-sm">&ldquo;{fu.question_text}&rdquo;</div>
-                {isGraded && fu.feedback && (
-                  <div className="text-xs text-gray-400 mt-1">{fu.feedback}</div>
-                )}
-                {!isGraded && !isActive && (
-                  <button
-                    onClick={() => setActiveIndex(i)}
-                    className="text-xs text-coral hover:text-coral/80 mt-1 uppercase tracking-wide"
-                  >
-                    Record answer
-                  </button>
-                )}
+            <div key={fu.id}>
+              {isChained && (
+                <div className="flex items-center gap-2 px-4 py-1">
+                  <div className="h-4 w-px bg-blue-300 ml-3" />
+                  <span className="text-[10px] text-blue-500 uppercase tracking-wide">Generated from your previous answer</span>
+                </div>
+              )}
+              <div
+                className={`flex items-start gap-3 px-4 py-3 border-l-4 transition-all ${
+                  isGraded ? 'border-l-green-500 text-gray-500' :
+                  isActive ? 'border-l-coral bg-coral/5' :
+                  'border-transparent'
+                }`}
+              >
+                <span className={`badge ${isGraded ? getScoreBadge(fu.score) : isActive ? 'badge-accent' : 'badge-default'} flex-shrink-0 mt-0.5`}>
+                  {isGraded ? fu.score?.toFixed(1) : isActive ? 'REC' : i + 1}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm">&ldquo;{fu.question_text}&rdquo;</div>
+                  {isGraded && fu.feedback && (
+                    <div className="text-xs text-gray-400 mt-1">{fu.feedback}</div>
+                  )}
+                  {isGraded && fu.ideal_answer && (
+                    <div className="mt-2">
+                      <button
+                        onClick={() => setExpandedIdeal(prev => {
+                          const next = new Set(prev)
+                          if (next.has(i)) next.delete(i)
+                          else next.add(i)
+                          return next
+                        })}
+                        className="text-[10px] text-blue-600 hover:text-blue-800 uppercase tracking-wide"
+                      >
+                        {expandedIdeal.has(i) ? 'Hide' : 'Show'} Ideal Answer {expandedIdeal.has(i) ? '\u25B2' : '\u25BC'}
+                      </button>
+                      {expandedIdeal.has(i) && (
+                        <div className="bg-blue-50 border-l-[3px] border-blue-400 p-3 text-xs leading-relaxed text-blue-900 mt-1">
+                          {fu.ideal_answer}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {!isGraded && !isActive && (
+                    <button
+                      onClick={() => setActiveIndex(i)}
+                      className="text-xs text-coral hover:text-coral/80 mt-1 uppercase tracking-wide"
+                    >
+                      Record answer
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           )
         })}
+
+        {/* Conversation complete message */}
+        {conversationComplete && allAnswered && (
+          <div className="px-4 py-3 bg-green-50 border-l-4 border-green-500 text-sm text-green-800">
+            Conversation complete &mdash; all gaps have been probed.
+          </div>
+        )}
       </div>
 
       {/* Inline recorder for active probe */}
