@@ -7,7 +7,7 @@ Each LP has a primary and backup story in STAR format. No story is reused across
 | # | LP | Primary Story | Status |
 |---|-----|--------------|--------|
 | 1 | GenAI Fluency | Generative Retrieval Pipeline | VALIDATED |
-| 2 | Insist on Highest Standards | LLM-as-Judge Evaluation Framework | VALIDATED |
+| 2 | Insist on Highest Standards | Intent-Based Index Cannibalization Pushback | VALIDATED |
 | 3 | Bias for Action | Post-A/B Metrics Dashboard | VALIDATED |
 | 4 | Ownership | Redesigning the DS/MLOps Operating Model | DRAFT |
 | 5 | Earn Trust | Embedding Pipeline Bug — Owning a Mistake | VALIDATED |
@@ -49,19 +49,19 @@ Separately, I evaluated GenAI for search bar query expansion. We prototyped it, 
 
 ## 2. Insist on the Highest Standards — VALIDATED
 
-### Primary: LLM-as-Judge Evaluation Framework
+### Primary: Intent-Based Index Cannibalization Pushback
 
-**Situation:** When I joined Walmart's International Personalization team, the team was iterating fast on models but lacked a scalable way to predict A/B outcomes offline. Models were going straight to live traffic with engagement summaries as the primary signal, and the feedback loop was slow — a failed A/B test meant weeks of lost experimentation time. Several recent launches had underperformed, and the team recognized the gap but hadn't had bandwidth to build a systematic evaluation layer while simultaneously shipping features across three markets.
+**Situation:** At Walmart, PMs wanted to launch an intent-based recommendation index in international markets by replicating what existed in the US. The approach was essentially copy-paste — port the US model to CA/MX and ship it. The problem was twofold: they had no offline metric to validate whether the index actually worked correctly in these markets, and when I evaluated it using the LLM-as-judge framework I'd built, I found the intent-based index was generating recommendations nearly identical to the existing complementary items carousel. Two carousels on the same page were cannibalizing each other rather than providing distinct value to customers.
 
-**Task:** I needed to establish an evaluation standard so the team could predict whether a model would succeed before committing live traffic to it.
+**Task:** I needed to block the launch and show the team why shipping an undifferentiated index would hurt the overall page experience — even if the individual carousel looked "fine" in isolation.
 
-**Action:** I built an LLM-as-judge evaluation framework with 6 specialized rubrics — one per carousel type (similar items, complementary items, user-item engagement, etc.). Each rubric was validated against engagement data, with scores monotonically predicting engagement rate. A key design decision was keeping rubrics aligned with each carousel's purpose, not just raw engagement. For example, the complementary items rubric rates similar/alternative items low even when users click on them — because if every carousel optimizes the same engagement signal, they converge on the same items and cannibalize each other. Defining distinct objectives per carousel achieves diversity across the full page, a global optimum rather than a local one.
+**Action:** First, I used the LLM-as-judge evaluation framework to demonstrate the cannibalization quantitatively — the intent-based results overlapped heavily with complementary items, meaning customers would see near-identical recommendations in multiple carousels. The PMs didn't have any offline success metric; they were relying on the US version having worked as justification. I showed that "it worked in the US" wasn't evidence it would work here — especially when the page composition was different and the index was duplicating an existing signal.
 
-I backtested the framework against two previous launches that had failed in A/B — the LLM judge correctly identified both as relevance-negative. I put together a deck showing this evidence, presented it to my manager, and he mandated adoption across the team.
+But diagnosing the problem wasn't enough — I needed to provide the path forward. I developed a vector entropy orthogonality metric that measured how differentiated two recommendation indices were in embedding space. This gave the team a concrete, measurable target: we could see exactly how much the indices overlapped and set a threshold for acceptable differentiation. The metric guided the fix — we retrained the intent-based index with objectives that explicitly pushed it toward distinct recommendation territory, ensuring each carousel served a different purpose on the page.
 
-**Result:** All four model launches shipped after the evaluation framework — Recommended For You, Intent-Based Recommendation, Continue Your Shopping, and the Arbitration Engine — were positive on A/B, each delivering 10-15 bps GMV lift. No more surprises. The framework became the standard evaluation step before any launch on the team.
+**Result:** The differentiated intent-based index shipped about 2-4 weeks later with 10-15 bps GMV lift. Without the pushback, we would have launched an index that cannibalized existing recommendations — wasting weeks of A/B experimentation time and potentially degrading the overall page experience. The orthogonality metric became a reusable tool for evaluating any new index against existing ones before committing to A/B.
 
-### Backup: <!-- TO FILL -->
+### Backup: LLM-as-Judge Evaluation Framework (see backup bank)
 
 ### Question Angles:
 - "Tell me about a time you pushed back on shipping something because it didn't meet your quality bar."
@@ -233,6 +233,7 @@ These stories are available as backups for any LP. Each has been validated in in
 
 | Story | Best Backup For |
 |-------|----------------|
+| LLM-as-Judge Evaluation Framework | Highest Standards, Dive Deep |
 | Arbitration engine + near/far intent framework | Ownership, Dive Deep, GenAI Fluency |
 | Eval viewer (internal model comparison tool) | Bias for Action, Highest Standards |
 | Embedding pipeline rescue (stale Jupyter → Airflow) | Bias for Action, Ownership |

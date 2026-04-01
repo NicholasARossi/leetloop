@@ -73,7 +73,7 @@ lp_stories = [
      "Generative Retrieval Pipeline — LLM generates shopping intents and queries for cold-start items across 3 NA markets"),
     ("Insist on Highest Standards",
      "Tell me about a time you pushed back on shipping something because it didn't meet your quality bar.",
-     "LLM-as-Judge Evaluation Framework — built 6 specialized rubrics validated against engagement data"),
+     "Intent-Based Index Cannibalization Pushback — blocked PM copy-paste launch, showed cannibalization with LLM judge, built vector entropy orthogonality metric to guide fix"),
     ("Bias for Action",
      "Tell me about a time you had to make a decision and move forward quickly without all the data.",
      "Post-A/B Metrics Dashboard — built full analytics dashboard in a weekend instead of waiting on analytics team's roadmap"),
