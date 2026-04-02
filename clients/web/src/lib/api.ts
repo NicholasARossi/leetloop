@@ -514,7 +514,7 @@ export const leetloopApi = {
     const response = await fetchWithTimeout(url, {
       method: 'POST',
       body: formData,
-      timeout: 120000,
+      timeout: 180000, // 3 min — Gemini upload + transcribe + grade for long recordings
     })
 
     if (!response.ok) {
@@ -542,7 +542,7 @@ export const leetloopApi = {
     const response = await fetchWithTimeout(url, {
       method: 'POST',
       body: formData,
-      timeout: 120000,
+      timeout: 180000,
     })
 
     if (!response.ok) {
@@ -1567,6 +1567,7 @@ export interface OnsitePrepQuestion {
   rubric_dimensions: OnsitePrepRubricDimension[]
   target_duration_seconds: number
   sort_order: number
+  ideal_answer?: IdealResponse | null
 }
 
 export interface OnsitePrepDimensionEvidence {

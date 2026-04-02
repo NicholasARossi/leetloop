@@ -18,6 +18,7 @@ class OnsitePrepQuestion(BaseModel):
     rubric_dimensions: list[RubricDimension] = []
     target_duration_seconds: int = 120
     sort_order: int = 0
+    ideal_answer: "IdealResponse | None" = None
 
 
 class DimensionEvidence(BaseModel):
@@ -98,6 +99,7 @@ class OnsitePrepAttempt(BaseModel):
     follow_up_questions: list[str] = []
     follow_ups: list[OnsitePrepFollowUp] = []
     ideal_response: IdealResponse | None = None
+    audio_gcs_path: str | None = None
     created_at: str | None = None
 
 

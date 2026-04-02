@@ -1,9 +1,12 @@
 """Onsite Prep endpoints — questions, audio grading, follow-ups, dashboard."""
 
+import logging
 import time
 from datetime import datetime
 from typing import Annotated
 from uuid import UUID
+
+logger = logging.getLogger(__name__)
 
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File
 from supabase import Client
@@ -58,6 +61,7 @@ async def get_questions(
                 rubric_dimensions=[RubricDimension(**d) for d in (q.get("rubric_dimensions") or [])],
                 target_duration_seconds=q.get("target_duration_seconds", 120),
                 sort_order=q.get("sort_order", 0),
+                ideal_answer=IdealResponse(**q["ideal_answer"]) if q.get("ideal_answer") else None,
             )
             for q in result.data
         ]
@@ -85,6 +89,7 @@ async def get_question(
             rubric_dimensions=[RubricDimension(**d) for d in (q.get("rubric_dimensions") or [])],
             target_duration_seconds=q.get("target_duration_seconds", 120),
             sort_order=q.get("sort_order", 0),
+            ideal_answer=IdealResponse(**q["ideal_answer"]) if q.get("ideal_answer") else None,
         )
     except HTTPException:
         raise
@@ -154,6 +159,21 @@ async def submit_audio(
         insert_result = supabase.table("onsite_prep_attempts").insert(attempt_data).execute()
         attempt_id = insert_result.data[0]["id"]
 
+        # Best-effort GCS upload (non-blocking for grading response)
+        from app.services.gcs_upload import upload_audio_to_gcs
+
+        gcs_path = await upload_audio_to_gcs(
+            audio_bytes=audio_bytes,
+            user_id="00000000-0000-0000-0000-000000000001",
+            question_id=str(question_id),
+            attempt_id=attempt_id,
+            mime_type=content_type,
+        )
+        if gcs_path:
+            supabase.table("onsite_prep_attempts").update(
+                {"audio_gcs_path": gcs_path}
+            ).eq("id", attempt_id).execute()
+
         # Invalidate dashboard cache
         _dashboard_cache.clear()
 
@@ -161,6 +181,7 @@ async def submit_audio(
     except HTTPException:
         raise
     except Exception as e:
+        logger.exception("Failed to grade audio for question %s", question_id)
         raise HTTPException(status_code=500, detail=f"Failed to grade audio: {str(e)}")
 
 
@@ -233,6 +254,7 @@ async def get_attempt(
             follow_up_questions=a.get("follow_up_questions", []),
             follow_ups=follow_ups,
             ideal_response=ideal_response,
+            audio_gcs_path=a.get("audio_gcs_path"),
             created_at=a.get("created_at"),
         )
     except HTTPException:
@@ -256,7 +278,7 @@ async def generate_ideal_response(
             raise HTTPException(status_code=404, detail="Attempt not found")
         attempt = a_result.data[0]
 
-        # Return cached if already generated
+        # Return cached if already generated on the attempt
         if attempt.get("ideal_response"):
             data = attempt["ideal_response"]
             return IdealResponse(
@@ -265,16 +287,34 @@ async def generate_ideal_response(
                 full_response=data.get("full_response", ""),
             )
 
-        if not attempt.get("transcript"):
-            raise HTTPException(status_code=400, detail="Attempt has no transcript")
-
-        # Get question for context
+        # Get question for context (and pre-stored ideal_answer)
         q_result = supabase.table("onsite_prep_questions").select("*").eq("id", attempt["question_id"]).execute()
         if not q_result.data:
             raise HTTPException(status_code=404, detail="Question not found")
         question = q_result.data[0]
 
-        # Generate
+        # If question has a validated ideal_answer, return it directly
+        if question.get("ideal_answer"):
+            ia = question["ideal_answer"]
+            ideal = IdealResponse(
+                summary=ia.get("summary", ""),
+                outline=ia.get("outline", []),
+                full_response=ia.get("full_response", ""),
+            )
+            # Cache on the attempt for future lookups
+            supabase.table("onsite_prep_attempts").update({
+                "ideal_response": {
+                    "summary": ideal.summary,
+                    "outline": ideal.outline,
+                    "full_response": ideal.full_response,
+                }
+            }).eq("id", str(attempt_id)).execute()
+            return ideal
+
+        if not attempt.get("transcript"):
+            raise HTTPException(status_code=400, detail="Attempt has no transcript")
+
+        # Generate via Gemini for non-LP questions
         service = get_onsite_prep_grading_service()
         ideal = await service.generate_ideal_response(
             question_text=question["prompt_text"],

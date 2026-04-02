@@ -100,7 +100,7 @@ export default function PracticePage() {
         follow_up_questions: attempt.follow_up_questions || [],
       })
 
-      setIdealResponse(attempt.ideal_response || null)
+      setIdealResponse(attempt.ideal_response || question?.ideal_answer || null)
       setFollowUps(attempt.follow_ups || [])
       setFollowUpsReady(attempt.follow_ups.length > 0)
       setState('grading')
@@ -116,15 +116,21 @@ export default function PracticePage() {
     setAttemptId(response.attempt_id)
     setState('grading')
 
-    // Fire ideal response + follow-ups generation in parallel
-    setIdealLoading(true)
+    // If question has a pre-stored ideal answer (LP stories), use it directly
+    if (question?.ideal_answer) {
+      setIdealResponse(question.ideal_answer)
+      setIdealLoading(false)
+    } else {
+      // Fire Gemini generation for non-LP categories
+      setIdealLoading(true)
+      leetloopApi.generateOnsitePrepIdealResponse(response.attempt_id)
+        .then(ideal => setIdealResponse(ideal))
+        .catch(e => console.error('Failed to generate ideal response:', e))
+        .finally(() => setIdealLoading(false))
+    }
+
+    // Fire follow-ups generation
     setFollowUpsReady(false)
-
-    leetloopApi.generateOnsitePrepIdealResponse(response.attempt_id)
-      .then(ideal => setIdealResponse(ideal))
-      .catch(e => console.error('Failed to generate ideal response:', e))
-      .finally(() => setIdealLoading(false))
-
     leetloopApi.generateOnsitePrepFollowUps(response.attempt_id)
       .then(fus => {
         setFollowUps(fus)
