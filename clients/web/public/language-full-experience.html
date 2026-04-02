@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeetLoop — Language Learning Experience</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET + VARIABLES ===== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --accent-color: #FF8888;
+  --accent-rgb: 255 136 136;
+  --accent-color-dark: #993333;
+  --accent-color-20: #FF888833;
+  --accent-color-40: #FF888866;
+  --pass-color: var(--accent-color);
+  --pass-dark: var(--accent-color-dark);
+  --pass-bg: #fff5f5;
+  --pass-border: #ffd6d6;
+  --fail-color: #b0b0b0;
+  --fail-dark: #737373;
+  --fail-bg: #f5f5f5;
+  --fail-border: #d4d4d4;
+  --chamfer-sm: 8px;
+  --chamfer-md: 16px;
+  --sidebar-w: 260px;
+  --topbar-h: 44px;
+}
+body {
+  font-family: 'IBM Plex Mono', 'Consolas', monospace;
+  background-color: #d3d3d3;
+  background-size: 50px 50px;
+  background-image: linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent);
+  color: #171717;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow: hidden;
+  height: 100vh;
+}
+
+/* ===== TOP BAR ===== */
+.topbar {
+  display: flex;
+  align-items: stretch;
+  background: #fff;
+  height: var(--topbar-h);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  border-bottom: 2px solid #e0e0e0;
+}
+.topbar .logo {
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 3px;
+  color: #171717;
+  border-right: 1px solid #e0e0e0;
+}
+.topbar .tabs { display: flex; flex: 1; }
+.topbar .tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 22px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #a3a3a3;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+  text-decoration: none;
+  font-family: inherit;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+.topbar .tab:hover { color: #525252; background: #fafafa; }
+.topbar .tab.active { color: #171717; border-bottom-color: var(--accent-color); background: var(--pass-bg); }
+.topbar .tab .icon { font-size: 15px; }
+.topbar .tab .count {
+  background: var(--accent-color);
+  color: #000;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+}
+
+/* ===== APP SHELL ===== */
+.app-shell {
+  display: flex;
+  height: calc(100vh - var(--topbar-h));
+  margin-top: var(--topbar-h);
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  width: var(--sidebar-w);
+  background: #fff;
+  border-right: 2px solid #e0e0e0;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: #ccc; }
+
+.sidebar-section-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #a3a3a3;
+  font-weight: 600;
+  padding: 16px 20px 8px;
+}
+
+/* Book selector */
+.book-selector {
+  margin: 0 12px 8px;
+  padding: 10px 12px;
+  background: #fafafa;
+  border: 2px solid #e0e0e0;
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+}
+.book-selector:hover { border-color: #000; }
+.book-selector .book-cover-mini {
+  width: 28px;
+  height: 36px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: -1px -1px 0 rgba(0,0,0,0.3);
+}
+.book-selector .book-info {
+  flex: 1;
+  min-width: 0;
+}
+.book-selector .book-title-mini {
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.book-selector .book-meta-mini {
+  font-size: 10px;
+  color: #a3a3a3;
+}
+.book-selector .chevron {
+  font-size: 10px;
+  color: #a3a3a3;
+  transition: transform 0.2s;
+}
+.book-selector.open .chevron { transform: rotate(180deg); }
+
+/* Book dropdown */
+.book-dropdown {
+  position: absolute;
+  top: 100%;
+  left: -2px;
+  right: -2px;
+  background: #fff;
+  border: 2px solid #d4d4d4;
+  border-top: none;
+  z-index: 50;
+  display: none;
+  max-height: 240px;
+  overflow-y: auto;
+}
+.book-dropdown.visible { display: block; }
+.book-dropdown-item {
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.1s;
+}
+.book-dropdown-item:last-child { border-bottom: none; }
+.book-dropdown-item:hover { background: var(--accent-color-20); }
+.book-dropdown-item.active { background: var(--accent-color-20); }
+.book-dropdown-item .dd-title {
+  font-size: 11px;
+  font-weight: 500;
+}
+.book-dropdown-item .dd-meta {
+  font-size: 10px;
+  color: #a3a3a3;
+}
+
+/* Sidebar nav */
+.sidebar-nav { margin-top: 4px; }
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  font-size: 12px;
+  color: #737373;
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: all 0.12s;
+  cursor: pointer;
+}
+.sidebar-nav a:hover { background: #fafafa; color: #171717; }
+.sidebar-nav a.active {
+  border-left-color: var(--accent-color);
+  color: #171717;
+  font-weight: 600;
+  background: var(--accent-color-20);
+}
+.sidebar-nav a .nav-icon { width: 16px; text-align: center; font-size: 13px; }
+.sidebar-nav a .nav-count {
+  margin-left: auto;
+  background: var(--accent-color);
+  color: #000;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+}
+
+/* Chapter list */
+.chapter-list { padding-bottom: 12px; }
+.chapter-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 20px;
+  font-size: 11px;
+  color: #a3a3a3;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+.chapter-item:hover { color: #171717; background: #fafafa; }
+.chapter-item.completed { color: #737373; }
+.chapter-item.current { color: #171717; font-weight: 600; }
+.chapter-item.current .ch-icon { color: var(--accent-color-dark); }
+.chapter-item .ch-icon { width: 14px; text-align: center; font-size: 10px; flex-shrink: 0; }
+
+/* Sidebar stats */
+.sidebar-stats {
+  margin-top: auto;
+  padding: 0;
+  border-top: 2px solid #e0e0e0;
+  display: flex;
+  gap: 1px;
+  background: #e0e0e0;
+}
+.sidebar-stat {
+  flex: 1;
+  background: #fff;
+  padding: 12px 8px;
+  text-align: center;
+}
+.sidebar-stat .val { font-size: 18px; font-weight: 600; }
+.sidebar-stat .val-accent { color: var(--accent-color-dark); }
+.sidebar-stat .lbl { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: #a3a3a3; margin-top: 2px; }
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 28px 32px 60px;
+}
+.main-content::-webkit-scrollbar { width: 6px; }
+.main-content::-webkit-scrollbar-thumb { background: #bbb; border-radius: 3px; }
+.main-inner { max-width: 820px; }
+
+/* ===== VIEWS ===== */
+.view { display: none; }
+.view.active { display: block; animation: fadeIn 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ===== CARD SYSTEM ===== */
+.card {
+  padding: 24px;
+  position: relative;
+  background: black;
+  clip-path: polygon(var(--chamfer-md) 0, 100% 0, 100% calc(100% - var(--chamfer-md)), calc(100% - var(--chamfer-md)) 100%, 0 100%, 0 var(--chamfer-md));
+  margin-bottom: 16px;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  background: white;
+  clip-path: polygon(calc(var(--chamfer-md) - 2px) 0, 100% 0, 100% calc(100% - var(--chamfer-md) + 2px), calc(100% - var(--chamfer-md) + 2px) 100%, 0 100%, 0 calc(var(--chamfer-md) - 2px));
+  z-index: -1;
+}
+
+.card-alt {
+  padding: 24px;
+  position: relative;
+  background: black;
+  clip-path: polygon(0 0, calc(100% - var(--chamfer-md)) 0, 100% var(--chamfer-md), 100% 100%, var(--chamfer-md) 100%, 0 calc(100% - var(--chamfer-md)));
+  margin-bottom: 16px;
+}
+.card-alt::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  background: white;
+  clip-path: polygon(0 0, calc(100% - var(--chamfer-md) + 2px) 0, 100% calc(var(--chamfer-md) - 2px), 100% 100%, calc(var(--chamfer-md) - 2px) 100%, 0 calc(100% - var(--chamfer-md) + 2px));
+  z-index: -1;
+}
+
+.card-sm {
+  padding: 16px;
+  position: relative;
+  background: black;
+  clip-path: polygon(var(--chamfer-sm) 0, 100% 0, 100% calc(100% - var(--chamfer-sm)), calc(100% - var(--chamfer-sm)) 100%, 0 100%, 0 var(--chamfer-sm));
+  margin-bottom: 12px;
+}
+.card-sm::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  background: white;
+  clip-path: polygon(calc(var(--chamfer-sm) - 2px) 0, 100% 0, 100% calc(100% - var(--chamfer-sm) + 2px), calc(100% - var(--chamfer-sm) + 2px) 100%, 0 100%, 0 calc(var(--chamfer-sm) - 2px));
+  z-index: -1;
+}
+
+/* ===== PANEL SCHEMATIC ===== */
+.panel-schematic {
+  padding: 16px;
+  position: relative;
+  background: black;
+  clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);
+  margin-bottom: 16px;
+}
+.panel-schematic::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  background: white;
+  clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px);
+  z-index: -1;
+}
+
+/* ===== TAG ===== */
+.tag {
+  display: inline-block;
+  padding: 4px 12px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #525252;
+  position: relative;
+  background: black;
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+}
+.tag::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  background: #f0f0f0;
+  clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+  z-index: -1;
+}
+.tag-accent::before { background: var(--accent-color); }
+.tag-accent { color: black; font-weight: 600; }
+.tag-green::before { background: var(--pass-border); }
+.tag-green { color: var(--pass-dark); }
+
+/* ===== BADGE ===== */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  position: relative;
+  background: black;
+  clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+}
+.badge::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  clip-path: polygon(3px 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px);
+  z-index: -1;
+}
+.badge-accent { color: black; }
+.badge-accent::before { background: var(--accent-color); }
+.badge-default { color: #525252; }
+.badge-default::before { background: #f0f0f0; }
+.badge-pass { color: var(--pass-dark); }
+.badge-pass::before { background: var(--pass-border); }
+.badge-fail { color: var(--fail-dark); }
+.badge-fail::before { background: var(--fail-border); }
+
+/* ===== BUTTONS ===== */
+.btn-primary {
+  padding: 8px 18px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  position: relative;
+  background: black;
+  color: black;
+  clip-path: polygon(var(--chamfer-sm) 0, 100% 0, 100% calc(100% - var(--chamfer-sm)), calc(100% - var(--chamfer-sm)) 100%, 0 100%, 0 var(--chamfer-sm));
+  transition: transform 0.1s;
+}
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  background: white;
+  clip-path: polygon(calc(var(--chamfer-sm) - 2px) 0, 100% 0, 100% calc(100% - var(--chamfer-sm) + 2px), calc(100% - var(--chamfer-sm) + 2px) 100%, 0 100%, 0 calc(var(--chamfer-sm) - 2px));
+  z-index: -1;
+  transition: background 0.15s;
+}
+.btn-primary:hover::before { background: var(--accent-color); }
+.btn-primary:active { transform: translate(1px, 1px); }
+
+.btn-accent {
+  padding: 8px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  position: relative;
+  background: black;
+  color: black;
+  clip-path: polygon(var(--chamfer-sm) 0, 100% 0, 100% calc(100% - var(--chamfer-sm)), calc(100% - var(--chamfer-sm)) 100%, 0 100%, 0 var(--chamfer-sm));
+}
+.btn-accent::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  background: var(--accent-color);
+  clip-path: polygon(calc(var(--chamfer-sm) - 2px) 0, 100% 0, 100% calc(100% - var(--chamfer-sm) + 2px), calc(100% - var(--chamfer-sm) + 2px) 100%, 0 100%, 0 calc(var(--chamfer-sm) - 2px));
+  z-index: -1;
+  transition: background 0.15s;
+}
+.btn-accent:hover::before { background: #ff6b6b; }
+
+.btn-ghost {
+  padding: 8px 18px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  border: 2px solid #d4d4d4;
+  background: transparent;
+  color: #737373;
+  transition: all 0.15s;
+}
+.btn-ghost:hover { border-color: #000; color: #000; }
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar {
+  height: 12px;
+  position: relative;
+  background: black;
+  clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+}
+.progress-bar::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  background: #e5e5e5;
+  clip-path: polygon(2px 0, 100% 0, 100% calc(100% - 2px), calc(100% - 2px) 100%, 0 100%, 0 2px);
+  z-index: -1;
+}
+.progress-fill {
+  background: var(--accent-color);
+  position: absolute;
+  inset: 2px;
+  right: auto;
+  z-index: 1;
+}
+
+.progress-bar-sm {
+  height: 6px;
+  position: relative;
+  background: black;
+  clip-path: polygon(3px 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px);
+}
+.progress-bar-sm::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  background: #e5e5e5;
+  clip-path: polygon(1px 0, 100% 0, 100% calc(100% - 1px), calc(100% - 1px) 100%, 0 100%, 0 1px);
+  z-index: -1;
+}
+.progress-bar-sm .progress-fill { inset: 2px; right: auto; }
+
+/* ===== STATUS LIGHT ===== */
+.status-light {
+  width: 10px;
+  height: 10px;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  flex-shrink: 0;
+}
+.status-light-active { background-color: var(--accent-color); }
+.status-light-inactive { background-color: #d4d4d4; }
+.status-light-green { background-color: var(--pass-color); }
+
+/* ===== HEADING ACCENT ===== */
+.heading-accent {
+  text-transform: uppercase;
+  background-color: var(--accent-color);
+  color: #fff;
+  padding: 4px 12px;
+  display: inline-block;
+  font-weight: 600;
+  font-size: 13px;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+/* ===== SECTION TITLE ===== */
+.section-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #525252;
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid black;
+}
+
+/* ===== SECTION ID ===== */
+.section-id {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #a3a3a3;
+}
+.section-id::before { content: '\00A7\00A0'; color: var(--accent-color); }
+
+/* ===== STAT VALUE ===== */
+.stat-value { font-size: 32px; color: black; }
+.stat-value-accent { color: var(--accent-color-dark); }
+.stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: #737373; margin-top: 2px; }
+
+/* ===== TEXTAREA ===== */
+textarea.answer-input {
+  width: 100%;
+  min-height: 100px;
+  padding: 14px;
+  border: 2px solid black;
+  background: white;
+  font-size: 13px;
+  font-family: 'IBM Plex Mono', monospace;
+  line-height: 1.7;
+  resize: vertical;
+  color: #171717;
+}
+textarea.answer-input:focus { outline: none; box-shadow: 0 0 0 2px var(--accent-color); }
+textarea.answer-input::placeholder { color: #a3a3a3; font-style: italic; }
+input.single-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 2px solid black;
+  background: white;
+  font-size: 13px;
+  font-family: 'IBM Plex Mono', monospace;
+  color: #171717;
+}
+input.single-input:focus { outline: none; box-shadow: 0 0 0 2px var(--accent-color); }
+input.single-input::placeholder { color: #a3a3a3; font-style: italic; }
+
+/* ===== UTILITY ===== */
+.flex { display: flex; align-items: center; }
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+.gap-4 { gap: 4px; }
+.gap-8 { gap: 8px; }
+.gap-10 { gap: 10px; }
+.gap-12 { gap: 12px; }
+.gap-16 { gap: 16px; }
+.mb-4 { margin-bottom: 4px; }
+.mb-8 { margin-bottom: 8px; }
+.mb-12 { margin-bottom: 12px; }
+.mb-16 { margin-bottom: 16px; }
+.mb-24 { margin-bottom: 24px; }
+.mt-8 { margin-top: 8px; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+.mt-24 { margin-top: 24px; }
+.text-gray { color: #737373; }
+.text-light { color: #a3a3a3; }
+.text-accent { color: var(--accent-color-dark); }
+.text-green { color: var(--pass-dark); }
+.text-xs { font-size: 11px; }
+.text-sm { font-size: 12px; }
+.fw-500 { font-weight: 500; }
+.fw-600 { font-weight: 600; }
+.fw-700 { font-weight: 700; }
+.uppercase { text-transform: uppercase; }
+.tracking { letter-spacing: 0.1em; }
+
+/* ===== LIST ITEM ===== */
+.list-item {
+  padding: 16px;
+  margin-bottom: 12px;
+  position: relative;
+  background: black;
+  clip-path: polygon(var(--chamfer-md) 0, 100% 0, 100% calc(100% - var(--chamfer-md)), calc(100% - var(--chamfer-md)) 100%, 0 100%, 0 var(--chamfer-md));
+  transition: all 0.15s;
+  cursor: pointer;
+}
+.list-item::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  background: white;
+  clip-path: polygon(calc(var(--chamfer-md) - 2px) 0, 100% 0, 100% calc(100% - var(--chamfer-md) + 2px), calc(100% - var(--chamfer-md) + 2px) 100%, 0 100%, 0 calc(var(--chamfer-md) - 2px));
+  z-index: -1;
+  transition: background 0.15s;
+}
+.list-item:hover { background: var(--accent-color); }
+
+/* ===== EXERCISE CARDS (dashboard) ===== */
+.exercise-row {
+  margin-bottom: 8px;
+  position: relative;
+  background: black;
+  clip-path: polygon(var(--chamfer-sm) 0, 100% 0, 100% calc(100% - var(--chamfer-sm)), calc(100% - var(--chamfer-sm)) 100%, 0 100%, 0 var(--chamfer-sm));
+  transition: all 0.15s;
+}
+.exercise-row::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  background: white;
+  clip-path: polygon(calc(var(--chamfer-sm) - 2px) 0, 100% 0, 100% calc(100% - var(--chamfer-sm) + 2px), calc(100% - var(--chamfer-sm) + 2px) 100%, 0 100%, 0 calc(var(--chamfer-sm) - 2px));
+  z-index: -1;
+}
+.exercise-row.state-pass { background: var(--accent-color); }
+.exercise-row.state-pass::before { background: var(--pass-bg); }
+.exercise-row.state-fail { background: var(--fail-color); }
+.exercise-row.state-fail::before { background: var(--fail-bg); }
+.exercise-row.state-active { background: var(--accent-color); }
+.exercise-row.state-pending { cursor: default; }
+.exercise-row .exercise-inner { padding: 14px 16px; }
+.exercise-row .exercise-inner-expanded { padding: 16px; }
+
+/* ===== CHAPTER ROW (book progress) ===== */
+.chapter-row {
+  margin-bottom: 6px;
+  position: relative;
+  background: black;
+  clip-path: polygon(var(--chamfer-sm) 0, 100% 0, 100% calc(100% - var(--chamfer-sm)), calc(100% - var(--chamfer-sm)) 100%, 0 100%, 0 var(--chamfer-sm));
+  overflow: hidden;
+}
+.chapter-row::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  background: white;
+  clip-path: polygon(calc(var(--chamfer-sm) - 2px) 0, 100% 0, 100% calc(100% - var(--chamfer-sm) + 2px), calc(100% - var(--chamfer-sm) + 2px) 100%, 0 100%, 0 calc(var(--chamfer-sm) - 2px));
+  z-index: -1;
+}
+.chapter-row-header {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.chapter-row-header:hover { background: #fafafa; }
+.chapter-row-detail {
+  display: none;
+  padding: 0 16px 14px 40px;
+  border-top: 1px solid #f0f0f0;
+}
+.chapter-row-detail.open { display: block; }
+
+/* ===== BOOK CARD (library) ===== */
+.book-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.book-card {
+  position: relative;
+  background: black;
+  clip-path: polygon(var(--chamfer-md) 0, 100% 0, 100% calc(100% - var(--chamfer-md)), calc(100% - var(--chamfer-md)) 100%, 0 100%, 0 var(--chamfer-md));
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.book-card::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  background: white;
+  clip-path: polygon(calc(var(--chamfer-md) - 2px) 0, 100% 0, 100% calc(100% - var(--chamfer-md) + 2px), calc(100% - var(--chamfer-md) + 2px) 100%, 0 100%, 0 calc(var(--chamfer-md) - 2px));
+  z-index: -1;
+}
+.book-card:hover { background: var(--accent-color); transform: translateY(-2px); }
+.book-card-inner { padding: 20px; }
+.book-cover {
+  width: 56px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: -1px -1px 0 rgba(0,0,0,0.3);
+  flex-shrink: 0;
+  clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+}
+
+/* ===== CONCEPT CHIPS ===== */
+.concept-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  font-size: 10px;
+  font-weight: 500;
+  margin: 2px;
+  border: 2px solid;
+}
+.concept-got { border-color: var(--accent-color); background: var(--accent-color-20); color: black; }
+.concept-missed { border-color: #d4d4d4; background: #f5f5f5; color: #525252; }
+
+/* ===== REVIEW BANNER ===== */
+.review-banner {
+  padding: 12px 16px;
+  background: var(--accent-color-20);
+  border: 2px solid var(--accent-color);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+/* ===== PAGE HEADER ===== */
+.page-header { margin-bottom: 24px; }
+.page-title { font-size: 18px; font-weight: 700; margin-bottom: 2px; }
+.page-subtitle { font-size: 12px; color: #737373; }
+</style>
+</head>
+<body>
+
+<!-- ===== TOP BAR ===== -->
+<div class="topbar">
+  <div class="logo">LEETLOOP</div>
+  <div class="tabs">
+    <button class="tab" onclick="switchMega('code')">
+      <span class="icon">&#9889;</span> LeetCode
+    </button>
+    <button class="tab active" id="mega-lang">
+      <span class="icon">&#127760;</span> Languages
+      <span class="count">2</span>
+    </button>
+    <button class="tab" onclick="switchMega('sd')">
+      <span class="icon">&#9881;</span> System Design
+    </button>
+  </div>
+</div>
+
+<!-- ===== APP SHELL ===== -->
+<div class="app-shell">
+
+  <!-- ===== SIDEBAR ===== -->
+  <div class="sidebar">
+    <div class="sidebar-section-label">Livre actif</div>
+
+    <!-- Book Selector -->
+    <div class="book-selector" id="bookSelector" onclick="toggleBookDropdown(event)">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div class="book-cover-mini" style="background:linear-gradient(135deg, #993333, #cc6666);">GP</div>
+        <div class="book-info">
+          <div class="book-title-mini" id="activeBookTitle">Grammaire Progressive</div>
+          <div class="book-meta-mini">Fran&ccedil;ais &middot; B2 &middot; 27 ch.</div>
+        </div>
+        <span class="chevron">&#9660;</span>
+      </div>
+      <!-- Dropdown -->
+      <div class="book-dropdown" id="bookDropdown">
+        <div class="book-dropdown-item active" onclick="selectBook(0, event)">
+          <div class="book-cover-mini" style="background:linear-gradient(135deg, #993333, #cc6666); width:24px; height:30px; font-size:8px;">GP</div>
+          <div>
+            <div class="dd-title">Grammaire Progressive B2</div>
+            <div class="dd-meta">8/27 chapitres &middot; 30%</div>
+          </div>
+        </div>
+        <div class="book-dropdown-item" onclick="selectBook(1, event)">
+          <div class="book-cover-mini" style="background:linear-gradient(135deg, #2563eb, #60a5fa); width:24px; height:30px; font-size:8px;">BC</div>
+          <div>
+            <div class="dd-title">Bescherelle Conjugaison</div>
+            <div class="dd-meta">Non commenc&eacute;</div>
+          </div>
+        </div>
+        <div class="book-dropdown-item" onclick="selectBook(2, event)">
+          <div class="book-cover-mini" style="background:linear-gradient(135deg, #059669, #34d399); width:24px; height:30px; font-size:8px;">VP</div>
+          <div>
+            <div class="dd-title">Vocabulaire Progressif B2</div>
+            <div class="dd-meta">3/25 chapitres &middot; 12%</div>
+          </div>
+        </div>
+        <div class="book-dropdown-item" onclick="selectBook(3, event)" style="opacity:0.5;">
+          <div class="book-cover-mini" style="background:linear-gradient(135deg, #7c3aed, #a78bfa); width:24px; height:30px; font-size:8px;">EP</div>
+          <div>
+            <div class="dd-title">Expression &Eacute;crite B2</div>
+            <div class="dd-meta">Non commenc&eacute;</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section-label" style="padding-top:12px;">Navigation</div>
+    <nav class="sidebar-nav">
+      <a class="active" onclick="switchView('dashboard', this)" id="nav-dashboard">
+        <span class="nav-icon">&#9635;</span> Tableau de bord
+      </a>
+      <a onclick="switchView('progress', this)" id="nav-progress">
+        <span class="nav-icon">&#9783;</span> Progression
+      </a>
+      <a onclick="switchView('library', this)" id="nav-library">
+        <span class="nav-icon">&#9776;</span> Biblioth&egrave;que
+      </a>
+    </nav>
+
+    <!-- Bottom stats -->
+    <div class="sidebar-stats">
+      <div class="sidebar-stat">
+        <div class="val val-accent">12</div>
+        <div class="lbl">S&eacute;rie</div>
+      </div>
+      <div class="sidebar-stat">
+        <div class="val">7.4</div>
+        <div class="lbl">Moy.</div>
+      </div>
+      <div class="sidebar-stat">
+        <div class="val">30%</div>
+        <div class="lbl">Fait</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <div class="main-content">
+    <div class="main-inner">
+
+      <!-- ============================================ -->
+      <!-- VIEW: DASHBOARD                              -->
+      <!-- ============================================ -->
+      <div class="view active" id="view-dashboard">
+        <div class="page-header">
+          <div class="flex-between">
+            <div>
+              <div class="page-title">Exercices du jour</div>
+              <div class="page-subtitle">Grammaire Progressive &middot; Ch. 9 Participe pr&eacute;sent &amp; g&eacute;rondif &middot; 28 f&eacute;vrier 2026</div>
+            </div>
+            <span class="badge badge-accent">B2</span>
+          </div>
+        </div>
+
+        <!-- Session progress -->
+        <div class="card mb-16">
+          <div class="flex-between mb-8">
+            <div class="flex gap-8">
+              <div class="status-light status-light-active"></div>
+              <span class="heading-accent">Session du jour</span>
+            </div>
+            <span style="font-size:12px; font-weight:600;">3 / 10 exercices</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:30%;"></div>
+          </div>
+          <div class="flex-between mt-8">
+            <span class="text-xs text-light">6 nouveaux &middot; 2 r&eacute;visions cibl&eacute;es &middot; 2 pratique adapt&eacute;e</span>
+            <span class="text-xs text-accent fw-600">Score moyen : 7.2</span>
+          </div>
+        </div>
+
+        <div class="section-title">R&eacute;visions cibl&eacute;es</div>
+
+        <!-- REVIEW Exercise 1: COMPLETED PASS — review of Ch.4 negation -->
+        <div class="exercise-row state-pass" style="border-left: 4px solid var(--accent-color); clip-path: none;">
+          <div style="position:absolute; inset:2px; background:var(--pass-bg); z-index:-1;"></div>
+          <div class="exercise-inner" style="display:flex; align-items:center; justify-content:space-between;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div class="status-light status-light-green"></div>
+              <span class="badge badge-accent" style="font-size:9px;">R&eacute;vision</span>
+              <span class="tag tag-green" style="font-size:9px;">Texte &agrave; trous</span>
+              <span style="font-size:12px; font-weight:500;">Compl&eacute;tez avec ne...que, ne...gu&egrave;re, ne...point</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="text-xs text-light">Ch. 4</span>
+              <span class="badge badge-pass">R&eacute;ussi</span>
+              <span style="font-size:14px; font-weight:700; color:var(--pass-dark);">7.5</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- REVIEW Exercise 2: COMPLETED FAIL — review of Ch.6 subjonctif -->
+        <div class="exercise-row state-fail" style="border-left: 4px solid var(--fail-color); clip-path: none;">
+          <div style="position:absolute; inset:2px; background:var(--fail-bg); z-index:-1;"></div>
+          <div class="exercise-inner" style="display:flex; align-items:center; justify-content:space-between;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div class="status-light" style="background:#e5e5e5;"></div>
+              <span class="badge badge-accent" style="font-size:9px;">R&eacute;vision</span>
+              <span class="tag" style="font-size:9px;">Conjugaison</span>
+              <span style="font-size:12px; font-weight:500;">Conjuguez au subjonctif : vouloir, savoir, pouvoir</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="text-xs text-light">Ch. 6</span>
+              <span class="badge badge-fail">&Agrave; revoir</span>
+              <span style="font-size:14px; font-weight:700; color:var(--fail-dark);">4.0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title mt-16">Chapitre en cours &mdash; Ch. 9 Participe pr&eacute;sent &amp; g&eacute;rondif</div>
+
+        <!-- Exercise 3: COMPLETED PASS -->
+        <div class="exercise-row state-pass">
+          <div class="exercise-inner" style="display:flex; align-items:center; justify-content:space-between;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div class="status-light status-light-green"></div>
+              <span class="tag tag-green" style="font-size:9px;">Conjugaison</span>
+              <span style="font-size:12px; font-weight:500;">Formez le participe pr&eacute;sent des verbes suivants</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="badge badge-pass">R&eacute;ussi</span>
+              <span style="font-size:14px; font-weight:700; color:var(--pass-dark);">8.5</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Exercise 4: ACTIVE — current exercise -->
+        <div class="exercise-row state-active">
+          <div class="exercise-inner-expanded">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+              <div class="status-light status-light-active"></div>
+              <span class="tag tag-accent" style="font-size:9px;">Construction</span>
+              <span class="text-xs text-light uppercase tracking">r&eacute;ponse courte &middot; ~20 mots</span>
+            </div>
+
+            <!-- Question block -->
+            <div style="padding:14px; background:#fafafa; border-left:4px solid black; margin-bottom:12px;">
+              <p style="font-size:12px; font-weight:500; color:#993333; margin-bottom:8px;">
+                Consigne : Transformez les deux phrases en une seule en utilisant le g&eacute;rondif.
+              </p>
+              <p style="font-size:13px; line-height:1.9;">
+                a) Il marche. Il &eacute;coute de la musique.<br>
+                b) Elle est tomb&eacute;e. Elle courait dans l'escalier.<br>
+                c) Nous avons appris la nouvelle. Nous lisions le journal.
+              </p>
+            </div>
+
+            <!-- Key concepts -->
+            <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:12px;">
+              <span class="concept-chip" style="border-color:#d4d4d4; background:#f5f5f5; color:#525252;">g&eacute;rondif</span>
+              <span class="concept-chip" style="border-color:#d4d4d4; background:#f5f5f5; color:#525252;">en + participe pr&eacute;sent</span>
+              <span class="concept-chip" style="border-color:#d4d4d4; background:#f5f5f5; color:#525252;">simultan&eacute;it&eacute;</span>
+            </div>
+
+            <!-- Answer area -->
+            <textarea class="answer-input" style="min-height:80px;" placeholder="Tapez votre r&eacute;ponse ici..."></textarea>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+              <span class="text-xs text-light">0 mots</span>
+              <div style="display:flex; gap:8px;">
+                <button class="btn-ghost" style="font-size:11px; padding:6px 14px;">Passer</button>
+                <button class="btn-accent">Soumettre</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Exercise 5: PENDING -->
+        <div class="exercise-row state-pending">
+          <div class="exercise-inner" style="display:flex; align-items:center; justify-content:space-between; opacity:0.5;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div class="status-light status-light-inactive"></div>
+              <span class="tag" style="font-size:9px;">Grammaire</span>
+              <span style="font-size:12px;">Distinguez participe pr&eacute;sent et adjectif verbal</span>
+            </div>
+            <span class="text-xs text-light">court</span>
+          </div>
+        </div>
+
+        <!-- Exercise 6: PENDING -->
+        <div class="exercise-row state-pending">
+          <div class="exercise-inner" style="display:flex; align-items:center; justify-content:space-between; opacity:0.5;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div class="status-light status-light-inactive"></div>
+              <span class="tag" style="font-size:9px;">Situationnel</span>
+              <span style="font-size:12px;">D&eacute;crivez un proc&eacute;d&eacute; en utilisant des g&eacute;rondifs</span>
+            </div>
+            <span class="text-xs text-light">~60 mots</span>
+          </div>
+        </div>
+
+        <!-- Exercise 7: PENDING -->
+        <div class="exercise-row state-pending">
+          <div class="exercise-inner" style="display:flex; align-items:center; justify-content:space-between; opacity:0.5;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div class="status-light status-light-inactive"></div>
+              <span class="tag" style="font-size:9px;">Compr&eacute;hension</span>
+              <span style="font-size:12px;">Lisez le texte et identifiez les formes verbales</span>
+            </div>
+            <span class="text-xs text-light">~60 mots</span>
+          </div>
+        </div>
+
+        <div class="section-title mt-16">Pratique adapt&eacute;e</div>
+
+        <!-- ADAPTIVE Exercise 8: PENDING — targets weak area from Ch.6 fail -->
+        <div class="exercise-row state-pending" style="border-left: 4px solid var(--accent-color-40); clip-path: none;">
+          <div style="position:absolute; inset:2px; background:white; z-index:-1;"></div>
+          <div class="exercise-inner" style="display:flex; align-items:center; justify-content:space-between; opacity:0.6;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div class="status-light status-light-inactive"></div>
+              <span class="badge badge-default" style="font-size:9px;">Adapt&eacute;</span>
+              <span class="tag" style="font-size:9px;">Construction</span>
+              <span style="font-size:12px;">Reformulez ces phrases en utilisant le subjonctif</span>
+            </div>
+            <span class="text-xs text-light">Ch. 6 &middot; ~20 mots</span>
+          </div>
+        </div>
+
+        <!-- ADAPTIVE Exercise 9: PENDING — targets weak area from Ch.6 -->
+        <div class="exercise-row state-pending" style="border-left: 4px solid var(--accent-color-40); clip-path: none;">
+          <div style="position:absolute; inset:2px; background:white; z-index:-1;"></div>
+          <div class="exercise-inner" style="display:flex; align-items:center; justify-content:space-between; opacity:0.6;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div class="status-light status-light-inactive"></div>
+              <span class="badge badge-default" style="font-size:9px;">Adapt&eacute;</span>
+              <span class="tag" style="font-size:9px;">Correction</span>
+              <span style="font-size:12px;">Corrigez les erreurs de subjonctif dans ces phrases</span>
+            </div>
+            <span class="text-xs text-light">Ch. 6 &middot; court</span>
+          </div>
+        </div>
+
+        <!-- Free-form -->
+        <div class="section-title mt-16">Expression libre</div>
+        <div class="exercise-row state-pending">
+          <div class="exercise-inner" style="display:flex; align-items:center; justify-content:space-between; opacity:0.5;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div class="status-light status-light-inactive"></div>
+              <span class="tag" style="font-size:9px;">Journal</span>
+              <span style="font-size:12px;">&Eacute;crivez un paragraphe en employant au moins 4 g&eacute;rondifs</span>
+            </div>
+            <span class="text-xs text-light">~150 mots</span>
+          </div>
+        </div>
+
+        <!-- Regenerate -->
+        <div style="text-align:center; margin-top:24px;">
+          <button class="btn-ghost">&#8635; R&eacute;g&eacute;n&eacute;rer les exercices</button>
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- VIEW: BOOK PROGRESS                          -->
+      <!-- ============================================ -->
+      <div class="view" id="view-progress">
+        <div class="page-header">
+          <div class="page-title">Progression du livre</div>
+          <div class="page-subtitle">Grammaire Progressive du Fran&ccedil;ais &mdash; Niveau Avanc&eacute; &middot; CLE International</div>
+        </div>
+
+        <!-- Overall stats -->
+        <div class="panel-schematic mb-16">
+          <div class="section-id mb-8">Vue d'ensemble</div>
+          <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:#e0e0e0; border:2px solid #e0e0e0;">
+            <div style="background:white; padding:14px; text-align:center;">
+              <div class="stat-value" style="font-size:24px;">8<span style="font-size:14px; color:#a3a3a3;">/27</span></div>
+              <div class="stat-label">Chapitres</div>
+            </div>
+            <div style="background:white; padding:14px; text-align:center;">
+              <div class="stat-value stat-value-accent" style="font-size:24px;">30%</div>
+              <div class="stat-label">Compl&eacute;t&eacute;</div>
+            </div>
+            <div style="background:white; padding:14px; text-align:center;">
+              <div class="stat-value" style="font-size:24px;">7.4</div>
+              <div class="stat-label">Score moyen</div>
+            </div>
+            <div style="background:white; padding:14px; text-align:center;">
+              <div class="stat-value" style="font-size:24px;">12</div>
+              <div class="stat-label">Cette semaine</div>
+            </div>
+          </div>
+          <div class="progress-bar mt-12">
+            <div class="progress-fill" style="width:30%;"></div>
+          </div>
+        </div>
+
+        <div class="section-title">Chapitres</div>
+
+        <!-- Chapter 1 -->
+        <div class="chapter-row">
+          <div class="chapter-row-header" onclick="toggleChapter(this)">
+            <div class="status-light status-light-green"></div>
+            <span style="font-size:12px; font-weight:600; flex:1;">1. Les articles</span>
+            <span class="badge badge-pass" style="font-size:9px;">8.5</span>
+            <span style="font-size:10px; color:#a3a3a3;">&#9662;</span>
+          </div>
+          <div class="chapter-row-detail">
+            <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
+              <span class="concept-chip concept-got">&#10003; articles d&eacute;finis</span>
+              <span class="concept-chip concept-got">&#10003; articles ind&eacute;finis</span>
+              <span class="concept-chip concept-got">&#10003; articles partitifs</span>
+              <span class="concept-chip concept-got">&#10003; omission de l'article</span>
+            </div>
+            <div class="text-xs text-light">Derni&egrave;re pratique : 14 f&eacute;vrier 2026</div>
+          </div>
+        </div>
+
+        <!-- Chapter 2 -->
+        <div class="chapter-row">
+          <div class="chapter-row-header" onclick="toggleChapter(this)">
+            <div class="status-light status-light-green"></div>
+            <span style="font-size:12px; font-weight:600; flex:1;">2. Les adjectifs qualificatifs</span>
+            <span class="badge badge-pass" style="font-size:9px;">7.0</span>
+            <span style="font-size:10px; color:#a3a3a3;">&#9662;</span>
+          </div>
+          <div class="chapter-row-detail">
+            <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
+              <span class="concept-chip concept-got">&#10003; place de l'adjectif</span>
+              <span class="concept-chip concept-got">&#10003; accord</span>
+              <span class="concept-chip concept-missed">&#10007; adjectifs irr&eacute;guliers</span>
+            </div>
+            <div class="text-xs text-light">Derni&egrave;re pratique : 16 f&eacute;vrier 2026</div>
+          </div>
+        </div>
+
+        <!-- Chapter 3 -->
+        <div class="chapter-row">
+          <div class="chapter-row-header" onclick="toggleChapter(this)">
+            <div class="status-light status-light-green"></div>
+            <span style="font-size:12px; font-weight:600; flex:1;">3. Les adverbes</span>
+            <span class="badge badge-pass" style="font-size:9px;">9.0</span>
+            <span style="font-size:10px; color:#a3a3a3;">&#9662;</span>
+          </div>
+          <div class="chapter-row-detail">
+            <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
+              <span class="concept-chip concept-got">&#10003; formation en -ment</span>
+              <span class="concept-chip concept-got">&#10003; place de l'adverbe</span>
+              <span class="concept-chip concept-got">&#10003; adverbes irr&eacute;guliers</span>
+            </div>
+            <div class="text-xs text-light">Derni&egrave;re pratique : 17 f&eacute;vrier 2026</div>
+          </div>
+        </div>
+
+        <!-- Chapter 4 (review due) -->
+        <div class="chapter-row" style="background:var(--accent-color-dark);">
+          <div class="chapter-row-header" onclick="toggleChapter(this)">
+            <div class="status-light status-light-green"></div>
+            <span style="font-size:12px; font-weight:600; flex:1;">4. La n&eacute;gation</span>
+            <span class="badge badge-accent" style="font-size:9px;">R&eacute;vision</span>
+            <span class="badge badge-pass" style="font-size:9px;">6.0</span>
+            <span style="font-size:10px; color:#a3a3a3;">&#9662;</span>
+          </div>
+          <div class="chapter-row-detail">
+            <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
+              <span class="concept-chip concept-got">&#10003; ne...pas</span>
+              <span class="concept-chip concept-missed">&#10007; ne...que (restriction)</span>
+              <span class="concept-chip concept-missed">&#10007; double n&eacute;gation</span>
+            </div>
+            <div class="text-xs text-accent fw-500">R&eacute;vision pr&eacute;vue aujourd'hui &middot; intervalle : 4 jours</div>
+          </div>
+        </div>
+
+        <!-- Chapter 5 -->
+        <div class="chapter-row">
+          <div class="chapter-row-header" onclick="toggleChapter(this)">
+            <div class="status-light status-light-green"></div>
+            <span style="font-size:12px; font-weight:600; flex:1;">5. Les temps de l'indicatif</span>
+            <span class="badge badge-pass" style="font-size:9px;">7.5</span>
+            <span style="font-size:10px; color:#a3a3a3;">&#9662;</span>
+          </div>
+          <div class="chapter-row-detail">
+            <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
+              <span class="concept-chip concept-got">&#10003; pr&eacute;sent</span>
+              <span class="concept-chip concept-got">&#10003; imparfait</span>
+              <span class="concept-chip concept-got">&#10003; pass&eacute; compos&eacute;</span>
+              <span class="concept-chip concept-got">&#10003; plus-que-parfait</span>
+            </div>
+            <div class="text-xs text-light">Derni&egrave;re pratique : 19 f&eacute;vrier 2026</div>
+          </div>
+        </div>
+
+        <!-- Chapter 6 (review due) -->
+        <div class="chapter-row" style="background:var(--accent-color-dark);">
+          <div class="chapter-row-header" onclick="toggleChapter(this)">
+            <div class="status-light status-light-green"></div>
+            <span style="font-size:12px; font-weight:600; flex:1;">6. Le subjonctif</span>
+            <span class="badge badge-accent" style="font-size:9px;">R&eacute;vision</span>
+            <span class="badge badge-fail" style="font-size:9px;">5.5</span>
+            <span style="font-size:10px; color:#a3a3a3;">&#9662;</span>
+          </div>
+          <div class="chapter-row-detail">
+            <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
+              <span class="concept-chip concept-got">&#10003; formation r&eacute;guli&egrave;re</span>
+              <span class="concept-chip concept-missed">&#10007; subjonctif irr&eacute;gulier</span>
+              <span class="concept-chip concept-missed">&#10007; emplois obligatoires</span>
+              <span class="concept-chip concept-missed">&#10007; indicatif vs subjonctif</span>
+            </div>
+            <div class="text-xs text-accent fw-500">R&eacute;vision pr&eacute;vue aujourd'hui &middot; intervalle : 1 jour (1re tentative)</div>
+          </div>
+        </div>
+
+        <!-- Chapter 7 -->
+        <div class="chapter-row">
+          <div class="chapter-row-header" onclick="toggleChapter(this)">
+            <div class="status-light status-light-green"></div>
+            <span style="font-size:12px; font-weight:600; flex:1;">7. Le conditionnel</span>
+            <span class="badge badge-pass" style="font-size:9px;">8.0</span>
+            <span style="font-size:10px; color:#a3a3a3;">&#9662;</span>
+          </div>
+          <div class="chapter-row-detail">
+            <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
+              <span class="concept-chip concept-got">&#10003; conditionnel pr&eacute;sent</span>
+              <span class="concept-chip concept-got">&#10003; conditionnel pass&eacute;</span>
+              <span class="concept-chip concept-got">&#10003; hypoth&egrave;se avec si</span>
+            </div>
+            <div class="text-xs text-light">Derni&egrave;re pratique : 23 f&eacute;vrier 2026</div>
+          </div>
+        </div>
+
+        <!-- Chapter 8 -->
+        <div class="chapter-row">
+          <div class="chapter-row-header" onclick="toggleChapter(this)">
+            <div class="status-light status-light-green"></div>
+            <span style="font-size:12px; font-weight:600; flex:1;">8. L'infinitif</span>
+            <span class="badge badge-pass" style="font-size:9px;">7.0</span>
+            <span style="font-size:10px; color:#a3a3a3;">&#9662;</span>
+          </div>
+          <div class="chapter-row-detail">
+            <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
+              <span class="concept-chip concept-got">&#10003; infinitif pr&eacute;sent</span>
+              <span class="concept-chip concept-got">&#10003; infinitif pass&eacute;</span>
+              <span class="concept-chip concept-missed">&#10007; faire + infinitif</span>
+            </div>
+            <div class="text-xs text-light">Derni&egrave;re pratique : 25 f&eacute;vrier 2026</div>
+          </div>
+        </div>
+
+        <!-- Chapter 9: CURRENT -->
+        <div class="chapter-row" style="background:var(--accent-color);">
+          <div class="chapter-row-header" onclick="toggleChapter(this)">
+            <div class="status-light status-light-active"></div>
+            <span style="font-size:12px; font-weight:700; flex:1;">9. Le participe pr&eacute;sent et le g&eacute;rondif</span>
+            <span class="badge badge-accent" style="font-size:9px;">En cours</span>
+            <span style="font-size:10px; color:#171717;">&#9662;</span>
+          </div>
+          <div class="chapter-row-detail">
+            <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
+              <span class="concept-chip" style="border-color:#d4d4d4; background:#f5f5f5; color:#525252;">participe pr&eacute;sent</span>
+              <span class="concept-chip" style="border-color:#d4d4d4; background:#f5f5f5; color:#525252;">g&eacute;rondif</span>
+              <span class="concept-chip" style="border-color:#d4d4d4; background:#f5f5f5; color:#525252;">en + -ant</span>
+              <span class="concept-chip" style="border-color:#d4d4d4; background:#f5f5f5; color:#525252;">adjectif verbal vs participe</span>
+            </div>
+            <div class="text-xs fw-600">3/8 exercices compl&eacute;t&eacute;s aujourd'hui</div>
+          </div>
+        </div>
+
+        <!-- Chapter 10: PENDING -->
+        <div class="chapter-row">
+          <div class="chapter-row-header" style="opacity:0.45;">
+            <div class="status-light status-light-inactive"></div>
+            <span style="font-size:12px; flex:1;">10. L'adjectif verbal</span>
+          </div>
+        </div>
+
+        <!-- Chapter 11-13: PENDING -->
+        <div class="chapter-row">
+          <div class="chapter-row-header" style="opacity:0.45;">
+            <div class="status-light status-light-inactive"></div>
+            <span style="font-size:12px; flex:1;">11. Le passif</span>
+          </div>
+        </div>
+        <div class="chapter-row">
+          <div class="chapter-row-header" style="opacity:0.45;">
+            <div class="status-light status-light-inactive"></div>
+            <span style="font-size:12px; flex:1;">12. Les formes pronominales</span>
+          </div>
+        </div>
+        <div class="chapter-row">
+          <div class="chapter-row-header" style="opacity:0.45;">
+            <div class="status-light status-light-inactive"></div>
+            <span style="font-size:12px; flex:1;">13. Le discours indirect</span>
+          </div>
+        </div>
+
+        <div style="text-align:center; padding:16px; color:#a3a3a3; font-size:11px;">
+          + 14 chapitres restants (14&ndash;27)
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- VIEW: LIBRARY                                -->
+      <!-- ============================================ -->
+      <div class="view" id="view-library">
+        <div class="page-header">
+          <div class="page-title">Biblioth&egrave;que</div>
+          <div class="page-subtitle">Vos livres de r&eacute;f&eacute;rence &middot; 5 titres</div>
+        </div>
+
+        <div class="section-title">En cours</div>
+
+        <div class="book-grid mb-24">
+          <!-- Book 1: Grammaire Progressive (active) -->
+          <div class="book-card" onclick="selectBookFromLibrary(0)">
+            <div class="book-card-inner">
+              <div style="display:flex; gap:16px; margin-bottom:14px;">
+                <div class="book-cover" style="background:linear-gradient(135deg, #993333, #cc6666);">GP</div>
+                <div style="flex:1; min-width:0;">
+                  <div style="font-size:12px; font-weight:700; margin-bottom:4px; line-height:1.4;">Grammaire Progressive du Fran&ccedil;ais</div>
+                  <div class="text-xs text-gray">Niveau Avanc&eacute;</div>
+                  <div class="flex gap-4 mt-8">
+                    <span class="badge badge-accent" style="font-size:9px;">B2</span>
+                    <span class="badge badge-default" style="font-size:9px;">27 ch.</span>
+                  </div>
+                </div>
+              </div>
+              <div class="text-xs text-gray mb-4">CLE International &middot; Fran&ccedil;ais</div>
+              <div class="progress-bar-sm mb-4">
+                <div class="progress-fill" style="width:30%;"></div>
+              </div>
+              <div class="flex-between">
+                <span class="text-xs fw-500">8/27 chapitres &middot; 30%</span>
+                <span class="badge badge-accent" style="font-size:9px;">Actif</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Book 2: Vocabulaire Progressif -->
+          <div class="book-card" onclick="selectBookFromLibrary(2)">
+            <div class="book-card-inner">
+              <div style="display:flex; gap:16px; margin-bottom:14px;">
+                <div class="book-cover" style="background:linear-gradient(135deg, #059669, #34d399);">VP</div>
+                <div style="flex:1; min-width:0;">
+                  <div style="font-size:12px; font-weight:700; margin-bottom:4px; line-height:1.4;">Vocabulaire Progressif du Fran&ccedil;ais</div>
+                  <div class="text-xs text-gray">Niveau Avanc&eacute;</div>
+                  <div class="flex gap-4 mt-8">
+                    <span class="badge badge-accent" style="font-size:9px;">B2</span>
+                    <span class="badge badge-default" style="font-size:9px;">25 ch.</span>
+                  </div>
+                </div>
+              </div>
+              <div class="text-xs text-gray mb-4">CLE International &middot; Fran&ccedil;ais</div>
+              <div class="progress-bar-sm mb-4">
+                <div class="progress-fill" style="width:12%;"></div>
+              </div>
+              <div class="flex-between">
+                <span class="text-xs fw-500">3/25 chapitres &middot; 12%</span>
+                <button class="btn-primary" style="font-size:10px; padding:4px 12px;">Continuer</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title">Non commenc&eacute;s</div>
+
+        <div class="book-grid">
+          <!-- Book 3: Bescherelle -->
+          <div class="book-card" onclick="selectBookFromLibrary(1)">
+            <div class="book-card-inner">
+              <div style="display:flex; gap:16px; margin-bottom:14px;">
+                <div class="book-cover" style="background:linear-gradient(135deg, #2563eb, #60a5fa);">BC</div>
+                <div style="flex:1; min-width:0;">
+                  <div style="font-size:12px; font-weight:700; margin-bottom:4px; line-height:1.4;">Bescherelle &mdash; La Conjugaison pour Tous</div>
+                  <div class="text-xs text-gray">R&eacute;f&eacute;rence</div>
+                  <div class="flex gap-4 mt-8">
+                    <span class="badge badge-default" style="font-size:9px;">B1</span>
+                    <span class="badge badge-default" style="font-size:9px;">12 ch.</span>
+                  </div>
+                </div>
+              </div>
+              <div class="text-xs text-gray mb-8">Hatier &middot; Fran&ccedil;ais</div>
+              <div class="flex-between">
+                <span class="text-xs text-light">Non commenc&eacute;</span>
+                <button class="btn-accent" style="font-size:10px; padding:4px 12px;">Commencer</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Book 4: Expression Écrite -->
+          <div class="book-card" onclick="selectBookFromLibrary(3)">
+            <div class="book-card-inner">
+              <div style="display:flex; gap:16px; margin-bottom:14px;">
+                <div class="book-cover" style="background:linear-gradient(135deg, #7c3aed, #a78bfa);">EE</div>
+                <div style="flex:1; min-width:0;">
+                  <div style="font-size:12px; font-weight:700; margin-bottom:4px; line-height:1.4;">Expression &Eacute;crite &mdash; Niveau Avanc&eacute;</div>
+                  <div class="text-xs text-gray">Comp&eacute;tences</div>
+                  <div class="flex gap-4 mt-8">
+                    <span class="badge badge-default" style="font-size:9px;">B2</span>
+                    <span class="badge badge-default" style="font-size:9px;">15 ch.</span>
+                  </div>
+                </div>
+              </div>
+              <div class="text-xs text-gray mb-8">CLE International &middot; Fran&ccedil;ais</div>
+              <div class="flex-between">
+                <span class="text-xs text-light">Non commenc&eacute;</span>
+                <button class="btn-accent" style="font-size:10px; padding:4px 12px;">Commencer</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Book 5: Phonétique -->
+          <div class="book-card" onclick="selectBookFromLibrary(4)">
+            <div class="book-card-inner">
+              <div style="display:flex; gap:16px; margin-bottom:14px;">
+                <div class="book-cover" style="background:linear-gradient(135deg, #d97706, #fbbf24);">PP</div>
+                <div style="flex:1; min-width:0;">
+                  <div style="font-size:12px; font-weight:700; margin-bottom:4px; line-height:1.4;">Phon&eacute;tique Progressive du Fran&ccedil;ais</div>
+                  <div class="text-xs text-gray">Interm&eacute;diaire</div>
+                  <div class="flex gap-4 mt-8">
+                    <span class="badge badge-default" style="font-size:9px;">B1</span>
+                    <span class="badge badge-default" style="font-size:9px;">20 ch.</span>
+                  </div>
+                </div>
+              </div>
+              <div class="text-xs text-gray mb-8">CLE International &middot; Fran&ccedil;ais</div>
+              <div class="flex-between">
+                <span class="text-xs text-light">Non commenc&eacute;</span>
+                <button class="btn-accent" style="font-size:10px; padding:4px 12px;">Commencer</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+// View switching
+function switchView(viewId, navEl) {
+  // Hide all views
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  // Deactivate all nav
+  document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+  // Show target
+  document.getElementById('view-' + viewId).classList.add('active');
+  if (navEl) navEl.classList.add('active');
+  // Scroll to top
+  document.querySelector('.main-content').scrollTo(0, 0);
+}
+
+// Book dropdown toggle
+function toggleBookDropdown(e) {
+  e.stopPropagation();
+  const selector = document.getElementById('bookSelector');
+  const dropdown = document.getElementById('bookDropdown');
+  selector.classList.toggle('open');
+  dropdown.classList.toggle('visible');
+}
+
+// Close dropdown on outside click
+document.addEventListener('click', function(e) {
+  const selector = document.getElementById('bookSelector');
+  const dropdown = document.getElementById('bookDropdown');
+  if (!selector.contains(e.target)) {
+    selector.classList.remove('open');
+    dropdown.classList.remove('visible');
+  }
+});
+
+// Select book from dropdown
+function selectBook(index, e) {
+  e.stopPropagation();
+  const items = document.querySelectorAll('.book-dropdown-item');
+  items.forEach(i => i.classList.remove('active'));
+  items[index].classList.add('active');
+
+  const names = ['Grammaire Progressive', 'Bescherelle Conjugaison', 'Vocabulaire Progressif', 'Expression Écrite'];
+  document.getElementById('activeBookTitle').textContent = names[index];
+
+  document.getElementById('bookSelector').classList.remove('open');
+  document.getElementById('bookDropdown').classList.remove('visible');
+
+  // Switch to dashboard
+  switchView('dashboard', document.getElementById('nav-dashboard'));
+}
+
+// Select book from library
+function selectBookFromLibrary(index) {
+  selectBook(index, { stopPropagation: function(){} });
+}
+
+// Chapter row expand/collapse
+function toggleChapter(header) {
+  const detail = header.nextElementSibling;
+  if (detail && detail.classList.contains('chapter-row-detail')) {
+    detail.classList.toggle('open');
+  }
+}
+
+// Megaview switch (placeholder for other views)
+function switchMega(view) {
+  // In real app this would switch megaviews
+  // For this mockup, just highlight the language tab
+}
+</script>
+
+</body>
+</html>

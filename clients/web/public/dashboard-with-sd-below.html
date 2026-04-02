@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard + System Design Below</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'Banquise';
+      src: url('/fonts/Banquise-Regular.woff') format('woff'),
+           url('/fonts/Banquise-Regular.otf') format('opentype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    :root {
+      --accent-color: #FF8888;
+      --accent-color-light: #FF888830;
+      --chamfer-sm: 8px;
+      --chamfer-md: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'IBM Plex Mono', monospace;
+      background-color: #d3d3d3;
+      background-size: 50px 50px;
+      background-image: linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent);
+      color: #171717;
+      font-size: 13px;
+      line-height: 1.6;
+      padding: 32px;
+    }
+
+    .container { max-width: 1100px; margin: 0 auto; }
+    .space-y-6 > * + * { margin-top: 24px; }
+
+    /* Card */
+    .card {
+      position: relative;
+      background: black;
+      padding: 24px;
+      clip-path: polygon(var(--chamfer-md) 0, 100% 0, 100% calc(100% - var(--chamfer-md)), calc(100% - var(--chamfer-md)) 100%, 0 100%, 0 var(--chamfer-md));
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: white;
+      clip-path: polygon(calc(var(--chamfer-md) - 2px) 0, 100% 0, 100% calc(100% - var(--chamfer-md) + 2px), calc(100% - var(--chamfer-md) + 2px) 100%, 0 100%, 0 calc(var(--chamfer-md) - 2px));
+      z-index: 0;
+    }
+    .card > * { position: relative; z-index: 1; }
+
+    .card-sm {
+      position: relative;
+      background: black;
+      padding: 16px;
+      clip-path: polygon(var(--chamfer-sm) 0, 100% 0, 100% calc(100% - var(--chamfer-sm)), calc(100% - var(--chamfer-sm)) 100%, 0 100%, 0 var(--chamfer-sm));
+    }
+    .card-sm::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: white;
+      clip-path: polygon(calc(var(--chamfer-sm) - 2px) 0, 100% 0, 100% calc(100% - var(--chamfer-sm) + 2px), calc(100% - var(--chamfer-sm) + 2px) 100%, 0 100%, 0 calc(var(--chamfer-sm) - 2px));
+      z-index: 0;
+    }
+    .card-sm > * { position: relative; z-index: 1; }
+
+    /* List item */
+    .list-item {
+      position: relative;
+      background: black;
+      padding: 16px;
+      margin-bottom: 8px;
+      clip-path: polygon(var(--chamfer-md) 0, 100% 0, 100% calc(100% - var(--chamfer-md)), calc(100% - var(--chamfer-md)) 100%, 0 100%, 0 var(--chamfer-md));
+      transition: background 0.15s;
+    }
+    .list-item::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: white;
+      clip-path: polygon(calc(var(--chamfer-md) - 2px) 0, 100% 0, 100% calc(100% - var(--chamfer-md) + 2px), calc(100% - var(--chamfer-md) + 2px) 100%, 0 100%, 0 calc(var(--chamfer-md) - 2px));
+      z-index: 0;
+    }
+    .list-item:hover { background: var(--accent-color); }
+    .list-item > * { position: relative; z-index: 1; }
+
+    /* Button */
+    .btn-primary {
+      position: relative;
+      background: black;
+      padding: 8px 16px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      clip-path: polygon(var(--chamfer-sm) 0, 100% 0, 100% calc(100% - var(--chamfer-sm)), calc(100% - var(--chamfer-sm)) 100%, 0 100%, 0 var(--chamfer-sm));
+    }
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: white;
+      clip-path: polygon(calc(var(--chamfer-sm) - 2px) 0, 100% 0, 100% calc(100% - var(--chamfer-sm) + 2px), calc(100% - var(--chamfer-sm) + 2px) 100%, 0 100%, 0 calc(var(--chamfer-sm) - 2px));
+      z-index: 0;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover::before { background: var(--accent-color); }
+    .btn-primary span { position: relative; z-index: 1; }
+
+    /* Progress bar */
+    .progress-bar {
+      height: 12px;
+      background: #e5e5e5;
+      position: relative;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--accent-color);
+    }
+
+    /* Tag */
+    .tag {
+      display: inline-block;
+      background: #f5f5f5;
+      border: 1px solid #e5e5e5;
+      padding: 2px 8px;
+      font-size: 10px;
+      color: #525252;
+    }
+
+    /* Typography */
+    .font-display { font-family: 'Banquise', sans-serif; font-weight: normal; }
+    .stat-value { font-family: 'Banquise', sans-serif; font-size: 28px; font-weight: normal; }
+    .stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #737373; margin-top: 4px; }
+    .section-title {
+      font-family: 'Banquise', sans-serif;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #525252;
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid black;
+      font-weight: normal;
+    }
+
+    /* Utilities */
+    .text-gray-400 { color: #a3a3a3; }
+    .text-gray-500 { color: #737373; }
+    .text-gray-600 { color: #525252; }
+    .text-green-600 { color: #16a34a; }
+    .text-yellow-600 { color: #ca8a04; }
+    .text-xs { font-size: 11px; }
+    .text-sm { font-size: 13px; }
+    .uppercase { text-transform: uppercase; }
+    .font-medium { font-weight: 500; }
+    .font-semibold { font-weight: 600; }
+    .font-bold { font-weight: 700; }
+
+    .badge { font-size: 10px; padding: 2px 6px; font-weight: 700; text-transform: uppercase; }
+    .badge-blue { background: #dbeafe; color: #1d4ed8; }
+    .badge-purple { background: #f3e8ff; color: #7c3aed; }
+    .badge-orange { background: #ffedd5; color: #c2410c; }
+
+    /* Two column layout (3/5 + 2/5) */
+    .two-col-grid {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: 32px;
+    }
+    @media (max-width: 900px) {
+      .two-col-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Checkbox */
+    .checkbox {
+      width: 12px;
+      height: 12px;
+      border: 2px solid black;
+      background: white;
+      flex-shrink: 0;
+    }
+    .checkbox.checked { background: var(--accent-color); }
+
+    /* System Design styles */
+    .card.sd-card::before {
+      background: linear-gradient(135deg, white 0%, #e0f2fe 100%);
+    }
+
+    .sd-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .sd-icon {
+      width: 24px;
+      height: 24px;
+      background: #0ea5e9;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 700;
+      color: white;
+    }
+    .sd-label { font-size: 14px; font-weight: 600; color: #0369a1; }
+    .sd-track-badge {
+      margin-left: auto;
+      font-size: 10px;
+      background: #e0f2fe;
+      color: #0369a1;
+      padding: 4px 8px;
+      border: 2px solid #0ea5e9;
+    }
+
+    .sd-topic-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      background: white;
+      border: 2px solid #bae6fd;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .sd-topic-item:hover { border-color: #0ea5e9; transform: translateX(4px); }
+    .sd-topic-name { font-weight: 600; font-size: 13px; }
+    .sd-topic-meta { font-size: 10px; color: #737373; }
+
+    /* Expandable textarea */
+    .sd-expand-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: #f0f9ff;
+      border: 2px solid #0ea5e9;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+      color: #0369a1;
+      margin-top: 12px;
+    }
+    .sd-expand-toggle:hover { background: #e0f2fe; }
+    .sd-expand-toggle.open { border-bottom: none; }
+
+    .sd-expand-content {
+      display: none;
+      border: 2px solid #0ea5e9;
+      border-top: none;
+      padding: 16px;
+      background: white;
+    }
+    .sd-expand-content.open { display: block; }
+
+    .sd-textarea {
+      width: 100%;
+      min-height: 180px;
+      border: 2px solid #e5e5e5;
+      padding: 12px;
+      font-family: inherit;
+      font-size: 13px;
+      resize: vertical;
+      margin-bottom: 12px;
+    }
+    .sd-textarea:focus { outline: none; border-color: #0ea5e9; }
+
+    .sd-actions { display: flex; justify-content: space-between; align-items: center; }
+    .sd-stats { font-size: 11px; color: #737373; }
+
+    .btn-sky {
+      background: #0ea5e9;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-sky:hover { background: #0284c7; }
+
+    .btn-outline {
+      background: white;
+      border: 2px solid #171717;
+      padding: 6px 12px;
+      font-family: inherit;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .btn-outline:hover { background: #f5f5f5; }
+
+    /* Demo banner */
+    .demo-banner {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #171717;
+      color: white;
+      padding: 10px;
+      font-size: 11px;
+      text-align: center;
+    }
+    .demo-banner strong { color: var(--accent-color); }
+  </style>
+</head>
+<body>
+
+<div class="container space-y-6">
+
+  <!-- HEADER -->
+  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+    <div>
+      <p class="text-gray-500 text-sm">Wednesday, February 4</p>
+      <h1 class="font-display" style="font-size: 20px; margin-top: 4px;">Your Daily Mission</h1>
+    </div>
+    <div class="card-sm" style="display: flex; align-items: center; gap: 8px;">
+      <span class="stat-value" style="font-size: 18px;">23</span>
+      <span class="text-xs text-gray-500">day streak</span>
+    </div>
+  </div>
+
+  <!-- DAILY OBJECTIVE CARD -->
+  <div class="card">
+    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 16px;">
+      <div style="flex: 1;">
+        <p class="text-xs uppercase text-gray-500" style="letter-spacing: 1px; margin-bottom: 8px;">Today's Focus</p>
+        <h2 class="font-semibold" style="font-size: 14px; margin-bottom: 8px;">Hash Maps & Two Pointers</h2>
+        <p class="text-gray-600 text-sm" style="line-height: 1.5;">
+          Practice problems combining hash map lookups with two-pointer techniques. Focus on O(n) solutions.
+        </p>
+      </div>
+      <button class="btn-primary"><span>Regenerate</span></button>
+    </div>
+
+    <div style="padding-top: 16px; border-top: 2px solid #e5e5e5;">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+        <span class="text-xs uppercase text-gray-500">Today's Progress</span>
+        <span class="text-sm font-medium">1 of 3</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: 33%;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TWO COLUMN GRID: Main Problems + Side Quests -->
+  <div class="two-col-grid">
+
+    <!-- MAIN COLUMN: Problems + System Design -->
+    <div>
+      <h3 class="section-title">Problems for Today</h3>
+
+      <!-- Problem 1 - Completed -->
+      <div class="list-item" style="opacity: 0.6;">
+        <div style="display: flex; align-items: flex-start; gap: 16px;">
+          <div style="width: 32px; height: 32px; border: 2px solid black; background: var(--accent-color); display: flex; align-items: center; justify-content: center;">
+            <svg style="width: 16px; height: 16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <div style="flex: 1;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <span class="font-medium text-sm" style="text-decoration: line-through; color: #a3a3a3;">Two Sum</span>
+              <span class="text-xs uppercase font-medium text-green-600">Easy</span>
+              <span class="badge badge-blue">PATH</span>
+            </div>
+            <p class="text-gray-600 text-xs" style="margin-top: 4px;">Foundation problem for hash map pattern recognition</p>
+            <div style="display: flex; gap: 6px; margin-top: 8px;">
+              <span class="tag">Arrays</span>
+              <span class="tag">Hash Table</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Problem 2 -->
+      <div class="list-item">
+        <div style="display: flex; align-items: flex-start; gap: 16px;">
+          <div style="width: 32px; height: 32px; border: 2px solid black; background: white; display: flex; align-items: center; justify-content: center; font-weight: 700;">2</div>
+          <div style="flex: 1;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <span class="font-medium text-sm">3Sum</span>
+              <span class="text-xs uppercase font-medium text-yellow-600">Medium</span>
+              <span class="badge badge-purple">REVIEW</span>
+            </div>
+            <p class="text-gray-600 text-xs" style="margin-top: 4px;">Review: struggled 3 days ago. Focus on handling duplicates.</p>
+            <div style="display: flex; gap: 6px; margin-top: 8px;">
+              <span class="tag">Arrays</span>
+              <span class="tag">Two Pointers</span>
+            </div>
+          </div>
+          <button class="btn-primary"><span>Solve</span></button>
+        </div>
+      </div>
+
+      <!-- Problem 3 -->
+      <div class="list-item">
+        <div style="display: flex; align-items: flex-start; gap: 16px;">
+          <div style="width: 32px; height: 32px; border: 2px solid black; background: white; display: flex; align-items: center; justify-content: center; font-weight: 700;">3</div>
+          <div style="flex: 1;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <span class="font-medium text-sm">Group Anagrams</span>
+              <span class="text-xs uppercase font-medium text-yellow-600">Medium</span>
+              <span class="badge badge-orange">GAP FILL</span>
+            </div>
+            <p class="text-gray-600 text-xs" style="margin-top: 4px;">New problem to expand string hashing skills</p>
+            <div style="display: flex; gap: 6px; margin-top: 8px;">
+              <span class="tag">Hash Table</span>
+              <span class="tag">Sorting</span>
+            </div>
+          </div>
+          <button class="btn-primary"><span>Solve</span></button>
+        </div>
+      </div>
+
+      <!-- SYSTEM DESIGN CARD (IN LEFT COLUMN) -->
+      <div class="card sd-card" style="margin-top: 24px;">
+    <div class="sd-header">
+      <div class="sd-icon">SD</div>
+      <span class="sd-label">System Design Practice</span>
+      <span class="sd-track-badge">ML Engineering Track</span>
+    </div>
+
+    <p class="text-sm text-gray-600" style="margin-bottom: 12px;">
+      Today's topic from your <strong>ML Engineering</strong> track:
+    </p>
+
+    <div class="sd-topic-item">
+      <div style="width: 8px; height: 8px; background: #fbbf24; border-radius: 50%;"></div>
+      <div style="flex: 1;">
+        <div class="sd-topic-name">Feature Store Design</div>
+        <div class="sd-topic-meta">Topic 3 of 8 &bull; Examples: Feast, Tecton, Hopsworks</div>
+      </div>
+      <span class="btn-sky">Start Session</span>
+    </div>
+
+    <!-- Expandable response area -->
+    <div class="sd-expand-toggle" onclick="toggleExpand(this)">
+      <span>Write your design response</span>
+      <span>+</span>
+    </div>
+    <div class="sd-expand-content">
+      <p style="font-size: 11px; color: #525252; margin-bottom: 12px; padding: 10px; background: #f9fafb; border-left: 3px solid #0ea5e9;">
+        <strong>Prompt:</strong> Design a feature store for 50+ ML models. Serve at &lt;10ms for real-time, support batch training.
+      </p>
+      <textarea class="sd-textarea" placeholder="Write your system design response here..."></textarea>
+      <div class="sd-actions">
+        <div class="sd-stats">Last: <strong>7.2/10</strong> &bull; 3 sessions this week</div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn-outline">Save Draft</button>
+          <button class="btn-sky">Submit</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size: 11px; color: #737373; margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+      <span>Last score: <strong style="color: #171717;">7.2/10</strong> &bull; 3 sessions this week</span>
+      <a href="#" style="color: #0284c7; text-decoration: none;">View all tracks →</a>
+    </div>
+      </div>
+      <!-- End of System Design card -->
+
+    </div>
+    <!-- End of left column -->
+
+    <!-- SIDE COLUMN: Side Quests -->
+    <div>
+      <h3 class="section-title">Side Quests</h3>
+
+      <!-- Side Quest 1 -->
+      <div class="list-item">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div class="checkbox"></div>
+          <div style="flex: 1;">
+            <div class="text-xs text-gray-500 uppercase" style="margin-bottom: 4px;">Review</div>
+            <div class="font-medium text-sm">Valid Parentheses</div>
+            <p class="text-gray-500 text-xs" style="margin-top: 4px;">Due for spaced repetition review</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Side Quest 2 -->
+      <div class="list-item">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div class="checkbox"></div>
+          <div style="flex: 1;">
+            <div class="text-xs text-gray-500 uppercase" style="margin-bottom: 4px;">Skill Gap</div>
+            <div class="font-medium text-sm">Merge Intervals</div>
+            <p class="text-gray-500 text-xs" style="margin-top: 4px;">Practice interval manipulation</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="card-sm" style="margin-top: 24px;">
+        <h4 class="text-xs text-gray-500 uppercase" style="letter-spacing: 1px; margin-bottom: 16px;">Quick Stats</h4>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div>
+            <p class="stat-value">23</p>
+            <p class="stat-label">Day streak</p>
+          </div>
+          <div>
+            <p class="stat-value">78%</p>
+            <p class="stat-label">This week</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End of right column -->
+
+  </div>
+  <!-- End of two-col-grid -->
+
+  <!-- AI Transparency -->
+  <p style="text-align: center; font-size: 11px; color: #a3a3a3;">
+    Mission generated by Gemini AI based on your goals, path progress, skill gaps, and system design track.
+  </p>
+
+</div>
+
+<div class="demo-banner">
+  <strong>Layout:</strong> Left column (Problems + System Design) | Right column (Side Quests + Stats)
+</div>
+
+<script>
+function toggleExpand(el) {
+  el.classList.toggle('open');
+  el.nextElementSibling.classList.toggle('open');
+  el.querySelector('span:last-child').textContent = el.classList.contains('open') ? '-' : '+';
+}
+</script>
+
+</body>
+</html>
