@@ -2,6 +2,7 @@
 
 import asyncio
 import json
+import logging
 import re
 import tempfile
 from typing import Optional
@@ -9,6 +10,9 @@ from typing import Optional
 import google.generativeai as genai
 
 from app.config import get_settings
+
+logger = logging.getLogger(__name__)
+
 from app.models.onsite_prep_schemas import (
     ConversationalFollowUpResult,
     DimensionEvidence,
@@ -69,23 +73,118 @@ class OnsitePrepGradingService:
             self.model = None
             self.configured = False
 
-    async def transcribe_and_grade(
-        self,
-        audio_bytes: bytes,
-        mime_type: str,
-        question_text: str,
-        category: str,
-        subcategory: str | None,
-        context_hint: str | None,
-        target_duration_seconds: int,
-    ) -> OnsitePrepGradeResult:
-        """Send audio to Gemini for transcription + category-specific rubric grading."""
+    async def _transcribe_audio(self, audio_bytes: bytes, mime_type: str) -> str:
+        """Pass 1: Google Cloud Speech-to-Text (Chirp 2) via GCS + BatchRecognize."""
+
+        def _run_stt():
+            import subprocess
+            import uuid
+            from google.cloud import storage
+            from google.cloud.speech_v2 import SpeechClient
+            from google.cloud.speech_v2.types import cloud_speech
+
+            project_id = "leetloop-485404"
+            location = "us-central1"
+            bucket_name = get_settings().gcs_audio_bucket
+            if not bucket_name:
+                raise RuntimeError("GCS bucket not configured (gcs_audio_bucket)")
+
+            # Chirp 2 natively supports WebM/Opus and OGG/Opus.
+            # For other formats (m4a, mp4, wav, mpeg), convert to OGG Opus via ffmpeg.
+            stt_supported = {"audio/webm", "audio/ogg"}
+            if mime_type not in stt_supported:
+                suffix = _mime_to_extension(mime_type)
+                with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp_in:
+                    tmp_in.write(audio_bytes)
+                    tmp_in_path = tmp_in.name
+                tmp_out_path = tmp_in_path + ".ogg"
+                try:
+                    result = subprocess.run(
+                        ["ffmpeg", "-i", tmp_in_path, "-c:a", "libopus", "-b:a", "32k",
+                         "-ar", "16000", "-ac", "1", tmp_out_path, "-y"],
+                        capture_output=True, timeout=60,
+                    )
+                    if result.returncode != 0:
+                        raise RuntimeError(f"ffmpeg conversion failed: {result.stderr[:200]}")
+                    with open(tmp_out_path, "rb") as f:
+                        audio_data = f.read()
+                    upload_mime = "audio/ogg"
+                    upload_ext = "ogg"
+                finally:
+                    import os
+                    os.unlink(tmp_in_path)
+                    if os.path.exists(tmp_out_path):
+                        os.unlink(tmp_out_path)
+            else:
+                audio_data = audio_bytes
+                upload_mime = mime_type
+                upload_ext = "webm" if "webm" in mime_type else "ogg"
+
+            # Upload to GCS
+            blob_path = f"stt-temp/{uuid.uuid4()}.{upload_ext}"
+            gcs_client = storage.Client()
+            bucket = gcs_client.bucket(bucket_name)
+            blob = bucket.blob(blob_path)
+            blob.upload_from_string(audio_data, content_type=upload_mime)
+            gcs_uri = f"gs://{bucket_name}/{blob_path}"
+
+            try:
+                client = SpeechClient(
+                    client_options={"api_endpoint": f"{location}-speech.googleapis.com"}
+                )
+
+                config = cloud_speech.RecognitionConfig(
+                    auto_decoding_config=cloud_speech.AutoDetectDecodingConfig(),
+                    language_codes=["en-US"],
+                    model="chirp_2",
+                    features=cloud_speech.RecognitionFeatures(
+                        enable_automatic_punctuation=True,
+                    ),
+                )
+
+                request = cloud_speech.BatchRecognizeRequest(
+                    recognizer=f"projects/{project_id}/locations/{location}/recognizers/_",
+                    config=config,
+                    files=[
+                        cloud_speech.BatchRecognizeFileMetadata(uri=gcs_uri),
+                    ],
+                    recognition_output_config=cloud_speech.RecognitionOutputConfig(
+                        inline_response_config=cloud_speech.InlineOutputConfig(),
+                    ),
+                )
+
+                operation = client.batch_recognize(request=request)
+                response = operation.result(timeout=300)
+
+                transcript_parts = []
+                for file_result in response.results.values():
+                    for result in file_result.transcript.results:
+                        if result.alternatives:
+                            transcript_parts.append(result.alternatives[0].transcript)
+
+                return " ".join(transcript_parts).strip()
+            finally:
+                try:
+                    blob.delete()
+                except Exception:
+                    pass
+
+        try:
+            transcript = await asyncio.to_thread(_run_stt)
+            if not transcript:
+                logger.warning("Speech-to-Text returned empty transcript, falling back to Gemini")
+                return await self._transcribe_audio_gemini_fallback(audio_bytes, mime_type)
+            return transcript
+        except Exception as e:
+            logger.warning("Speech-to-Text failed (%s), falling back to Gemini", e)
+            return await self._transcribe_audio_gemini_fallback(audio_bytes, mime_type)
+
+    async def _transcribe_audio_gemini_fallback(self, audio_bytes: bytes, mime_type: str) -> str:
+        """Fallback: Gemini-based transcription if Cloud STT is unavailable."""
         if not self.configured:
             raise RuntimeError("Gemini API key not configured")
 
-        prompt = self._build_rubric_prompt(
-            question_text, category, subcategory, context_hint, target_duration_seconds
-        )
+        prompt = "Transcribe this audio verbatim. Include filler words (um, uh, like). No commentary, no formatting — just the raw transcription."
 
         suffix = _mime_to_extension(mime_type)
         uploaded_file = None
@@ -102,7 +201,7 @@ class OnsitePrepGradingService:
                 self.model.generate_content, [prompt, uploaded_file]
             )
 
-            return self._parse_grade_response(response.text, category)
+            return response.text.strip()
 
         finally:
             if uploaded_file:
@@ -110,6 +209,36 @@ class OnsitePrepGradingService:
                     await asyncio.to_thread(genai.delete_file, uploaded_file.name)
                 except Exception:
                     pass
+
+    async def transcribe_and_grade(
+        self,
+        audio_bytes: bytes,
+        mime_type: str,
+        question_text: str,
+        category: str,
+        subcategory: str | None,
+        context_hint: str | None,
+        target_duration_seconds: int,
+    ) -> OnsitePrepGradeResult:
+        """Two-pass grading: transcribe audio first, then grade text-only."""
+        if not self.configured:
+            raise RuntimeError("Gemini API key not configured")
+
+        # Pass 1: Transcribe audio (no context_hint, no rubric)
+        transcript = await self._transcribe_audio(audio_bytes, mime_type)
+
+        # Pass 2: Grade transcript text-only (no audio file)
+        prompt = self._build_rubric_prompt(
+            question_text, category, subcategory, context_hint, target_duration_seconds, transcript
+        )
+
+        response = await asyncio.to_thread(
+            self.model.generate_content, [prompt]
+        )
+
+        result = self._parse_grade_response(response.text, category)
+        result.transcript = transcript
+        return result
 
     async def generate_follow_up_probes(
         self,
@@ -177,10 +306,14 @@ Respond in this exact JSON format (no markdown code fences):
         follow_up_question: str,
         category: str,
     ) -> OnsitePrepFollowUpResult:
-        """Grade a follow-up response with simplified rubric."""
+        """Two-pass follow-up grading: transcribe audio first, then grade text-only."""
         if not self.configured:
             raise RuntimeError("Gemini API key not configured")
 
+        # Pass 1: Transcribe audio
+        transcript = await self._transcribe_audio(audio_bytes, mime_type)
+
+        # Pass 2: Grade transcript text-only
         category_context = {
             "lp": "Amazon behavioral interview",
             "breadth": "ML breadth knowledge check",
@@ -199,16 +332,16 @@ Their original response (transcript):
 Based on gaps in their answer, this follow-up was asked:
 "{follow_up_question}"
 
-First, transcribe the audio response verbatim (include filler words).
+CANDIDATE'S FOLLOW-UP RESPONSE (verbatim transcript):
+"{transcript}"
 
-Then evaluate:
+Evaluate:
 1. Did the candidate adequately address the gap that prompted this follow-up?
 2. Score the response 1-5 (1=no useful content, 2=vague attempt, 3=partial answer, 4=solid answer, 5=exceptional depth)
 3. Provide 1-2 sentences of direct feedback
 
 Respond in this exact JSON format (no markdown code fences, just raw JSON):
 {{
-  "transcript": "full verbatim transcription",
   "score": 3,
   "feedback": "1-2 sentences of actionable feedback",
   "addressed_gap": true
@@ -216,29 +349,13 @@ Respond in this exact JSON format (no markdown code fences, just raw JSON):
 
 Grade now:"""
 
-        suffix = _mime_to_extension(mime_type)
-        uploaded_file = None
-        try:
-            with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
-                tmp.write(audio_bytes)
-                tmp_path = tmp.name
+        response = await asyncio.to_thread(
+            self.model.generate_content, [prompt]
+        )
 
-            uploaded_file = await asyncio.to_thread(
-                genai.upload_file, tmp_path, mime_type=mime_type
-            )
-
-            response = await asyncio.to_thread(
-                self.model.generate_content, [prompt, uploaded_file]
-            )
-
-            return self._parse_follow_up_response(response.text)
-
-        finally:
-            if uploaded_file:
-                try:
-                    await asyncio.to_thread(genai.delete_file, uploaded_file.name)
-                except Exception:
-                    pass
+        result = self._parse_follow_up_response(response.text)
+        result.transcript = transcript
+        return result
 
     async def generate_ideal_response(
         self,
@@ -317,13 +434,17 @@ Respond in this exact JSON format (no markdown code fences):
         category: str,
         previous_follow_ups: list[dict],
     ) -> dict:
-        """Grade a follow-up response AND decide whether another probe is needed.
+        """Two-pass conversational follow-up grading: transcribe audio first, then grade text-only.
 
         Returns dict with: transcript, score, feedback, addressed_gap, next_probe (str|None)
         """
         if not self.configured:
             raise RuntimeError("Gemini API key not configured")
 
+        # Pass 1: Transcribe audio
+        transcript = await self._transcribe_audio(audio_bytes, mime_type)
+
+        # Pass 2: Grade transcript text-only
         category_context = {
             "lp": "Amazon behavioral interview",
             "breadth": "ML breadth knowledge check",
@@ -354,9 +475,10 @@ Their original response (transcript):
 NOW this follow-up was asked:
 "{follow_up_question}"
 
-First, transcribe the audio response verbatim (include filler words).
+CANDIDATE'S FOLLOW-UP RESPONSE (verbatim transcript):
+"{transcript}"
 
-Then evaluate:
+Evaluate:
 1. Did the candidate adequately address the gap that prompted this follow-up?
 2. Score the response 1-5 (1=no useful content, 2=vague attempt, 3=partial answer, 4=solid answer, 5=exceptional depth)
 3. Provide 1-2 sentences of direct feedback
@@ -369,7 +491,6 @@ Finally, decide if ANOTHER follow-up probe is needed:
 
 Respond in this exact JSON format (no markdown code fences, just raw JSON):
 {{
-  "transcript": "full verbatim transcription",
   "score": 3,
   "feedback": "1-2 sentences of actionable feedback",
   "addressed_gap": true,
@@ -379,48 +500,30 @@ Respond in this exact JSON format (no markdown code fences, just raw JSON):
 
 Grade now:"""
 
-        suffix = _mime_to_extension(mime_type)
-        uploaded_file = None
-        try:
-            with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
-                tmp.write(audio_bytes)
-                tmp_path = tmp.name
+        response = await asyncio.to_thread(
+            self.model.generate_content, [prompt]
+        )
 
-            uploaded_file = await asyncio.to_thread(
-                genai.upload_file, tmp_path, mime_type=mime_type
-            )
+        json_match = re.search(r'\{[\s\S]*\}', response.text)
+        if not json_match:
+            raise ValueError(f"Could not parse JSON from Gemini response: {response.text[:200]}")
 
-            response = await asyncio.to_thread(
-                self.model.generate_content, [prompt, uploaded_file]
-            )
+        data = json.loads(json_match.group())
+        score = max(1, min(5, int(data.get("score", 1))))
 
-            json_match = re.search(r'\{[\s\S]*\}', response.text)
-            if not json_match:
-                raise ValueError(f"Could not parse JSON from Gemini response: {response.text[:200]}")
+        next_probe = data.get("next_probe")
+        # Cap at 8 total follow-ups
+        if total_follow_ups >= 8:
+            next_probe = None
 
-            data = json.loads(json_match.group())
-            score = max(1, min(5, int(data.get("score", 1))))
-
-            next_probe = data.get("next_probe")
-            # Cap at 8 total follow-ups
-            if total_follow_ups >= 8:
-                next_probe = None
-
-            return {
-                "transcript": data.get("transcript", ""),
-                "score": score,
-                "feedback": data.get("feedback", ""),
-                "addressed_gap": bool(data.get("addressed_gap", False)),
-                "ideal_answer": data.get("ideal_answer", ""),
-                "next_probe": next_probe,
-            }
-
-        finally:
-            if uploaded_file:
-                try:
-                    await asyncio.to_thread(genai.delete_file, uploaded_file.name)
-                except Exception:
-                    pass
+        return {
+            "transcript": transcript,
+            "score": score,
+            "feedback": data.get("feedback", ""),
+            "addressed_gap": bool(data.get("addressed_gap", False)),
+            "ideal_answer": data.get("ideal_answer", ""),
+            "next_probe": next_probe,
+        }
 
     def _build_rubric_prompt(
         self,
@@ -429,6 +532,7 @@ Grade now:"""
         subcategory: str | None,
         context_hint: str | None,
         target_duration_seconds: int,
+        transcript: str,
     ) -> str:
         """Dispatch to the correct category-specific prompt builder."""
         builders = {
@@ -438,9 +542,9 @@ Grade now:"""
             "design": self._build_design_rubric_prompt,
         }
         builder = builders.get(category, self._build_lp_rubric_prompt)
-        return builder(question_text, subcategory, context_hint, target_duration_seconds)
+        return builder(question_text, subcategory, context_hint, target_duration_seconds, transcript)
 
-    def _build_lp_rubric_prompt(self, question_text, subcategory, context_hint, target_seconds):
+    def _build_lp_rubric_prompt(self, question_text, subcategory, context_hint, target_seconds, transcript):
         target_min = target_seconds // 60
         return f"""You are a senior Amazon interviewer (Bar Raiser level) evaluating a BEHAVIORAL response for the "{subcategory or 'Leadership Principle'}" principle.
 
@@ -450,9 +554,10 @@ QUESTION ASKED:
 {f'MAPPED STORY CONTEXT: {context_hint}' if context_hint else ''}
 TARGET DURATION: {target_min} minutes
 
-First, transcribe the audio response verbatim (include filler words like um, uh).
+CANDIDATE'S RESPONSE (verbatim transcript):
+"{transcript}"
 
-Then grade using this rubric. CITE SPECIFIC QUOTES from the transcript to justify each score.
+Grade using this rubric. CITE SPECIFIC QUOTES from the transcript to justify each score.
 
 ## RUBRIC (each dimension scored 1-5)
 
@@ -508,7 +613,6 @@ Is the Result quantified and meaningful?
 
 Respond in this exact JSON format (no markdown code fences, just raw JSON):
 {{
-  "transcript": "full verbatim transcription",
   "dimensions": [
     {{"name": "star_structure", "score": 4, "evidence": [{{"quote": "...", "analysis": "..."}}], "summary": "..."}},
     {{"name": "specificity", "score": 3, "evidence": [{{"quote": "...", "analysis": "..."}}], "summary": "..."}},
@@ -525,7 +629,7 @@ Respond in this exact JSON format (no markdown code fences, just raw JSON):
 
 Grade now:"""
 
-    def _build_breadth_rubric_prompt(self, question_text, subcategory, context_hint, target_seconds):
+    def _build_breadth_rubric_prompt(self, question_text, subcategory, context_hint, target_seconds, transcript):
         target_min = target_seconds // 60
         return f"""You are a senior Amazon Applied Science interviewer evaluating an ML BREADTH response.
 
@@ -536,9 +640,10 @@ QUESTION ASKED:
 {f'KEY CONCEPTS: {context_hint}' if context_hint else ''}
 TARGET DURATION: {target_min} minutes
 
-First, transcribe the audio response verbatim (include filler words).
+CANDIDATE'S RESPONSE (verbatim transcript):
+"{transcript}"
 
-Then grade using this rubric. CITE SPECIFIC QUOTES from the transcript.
+Grade using this rubric. CITE SPECIFIC QUOTES from the transcript.
 
 ## RUBRIC (each dimension scored 1-5)
 
@@ -593,7 +698,6 @@ Did the candidate cover the full scope of the question?
 
 Respond in this exact JSON format (no markdown code fences, just raw JSON):
 {{
-  "transcript": "full verbatim transcription",
   "dimensions": [
     {{"name": "definition", "score": 4, "evidence": [{{"quote": "...", "analysis": "..."}}], "summary": "..."}},
     {{"name": "intuition", "score": 3, "evidence": [{{"quote": "...", "analysis": "..."}}], "summary": "..."}},
@@ -610,7 +714,7 @@ Respond in this exact JSON format (no markdown code fences, just raw JSON):
 
 Grade now:"""
 
-    def _build_depth_rubric_prompt(self, question_text, subcategory, context_hint, target_seconds):
+    def _build_depth_rubric_prompt(self, question_text, subcategory, context_hint, target_seconds, transcript):
         target_min = target_seconds // 60
         return f"""You are a senior Amazon Applied Science interviewer evaluating a DEEP TECHNICAL response about the candidate's OWN projects.
 
@@ -621,9 +725,10 @@ QUESTION ASKED:
 {f'CONTEXT: {context_hint}' if context_hint else ''}
 TARGET DURATION: {target_min} minutes
 
-First, transcribe the audio response verbatim (include filler words).
+CANDIDATE'S RESPONSE (verbatim transcript):
+"{transcript}"
 
-Then grade using this rubric. CITE SPECIFIC QUOTES.
+Grade using this rubric. CITE SPECIFIC QUOTES.
 
 ## RUBRIC (each dimension scored 1-5)
 
@@ -679,7 +784,6 @@ Does the candidate quantify results?
 
 Respond in this exact JSON format (no markdown code fences, just raw JSON):
 {{
-  "transcript": "full verbatim transcription",
   "dimensions": [
     {{"name": "architecture_clarity", "score": 4, "evidence": [{{"quote": "...", "analysis": "..."}}], "summary": "..."}},
     {{"name": "technical_depth", "score": 3, "evidence": [{{"quote": "...", "analysis": "..."}}], "summary": "..."}},
@@ -696,7 +800,7 @@ Respond in this exact JSON format (no markdown code fences, just raw JSON):
 
 Grade now:"""
 
-    def _build_design_rubric_prompt(self, question_text, subcategory, context_hint, target_seconds):
+    def _build_design_rubric_prompt(self, question_text, subcategory, context_hint, target_seconds, transcript):
         target_min = target_seconds // 60
         return f"""You are a senior Amazon system design interviewer evaluating an ML SYSTEM DESIGN walkthrough.
 
@@ -707,9 +811,10 @@ QUESTION ASKED:
 {f'CONTEXT: {context_hint}' if context_hint else ''}
 TARGET DURATION: {target_min} minutes (this is a longer-form design, not a quick answer)
 
-First, transcribe the audio response verbatim (include filler words).
+CANDIDATE'S RESPONSE (verbatim transcript):
+"{transcript}"
 
-Then grade using this rubric. CITE SPECIFIC QUOTES.
+Grade using this rubric. CITE SPECIFIC QUOTES.
 
 ## RUBRIC (each dimension scored 1-5)
 
@@ -765,7 +870,6 @@ Is the walkthrough well-structured and paced?
 
 Respond in this exact JSON format (no markdown code fences, just raw JSON):
 {{
-  "transcript": "full verbatim transcription",
   "dimensions": [
     {{"name": "problem_framing", "score": 4, "evidence": [{{"quote": "...", "analysis": "..."}}], "summary": "..."}},
     {{"name": "architecture", "score": 3, "evidence": [{{"quote": "...", "analysis": "..."}}], "summary": "..."}},

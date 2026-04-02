@@ -47,6 +47,9 @@ class Settings(BaseSettings):
     # Cron job authentication
     cron_secret: Optional[str] = None
 
+    # Google Cloud Storage (audio archival)
+    gcs_audio_bucket: Optional[str] = None
+
     # Telegram bot
     telegram_bot_token: Optional[str] = None
     telegram_webhook_secret: Optional[str] = None
