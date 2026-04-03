@@ -81,7 +81,7 @@ lp_stories = [
      "Tell me about a time you took ownership of something outside your scope.",
      "Redesigning the DS/MLOps Operating Model — changed handoff workflow so DS owns pipeline code, MLOps owns reliability. Joint design reviews, shared design docs, validation contracts."),
     ("Earn Trust",
-     "Describe a time you had to deliver difficult or unpopular feedback to a stakeholder.",
+     "Tell me about a time you made a mistake.",
      "Embedding Pipeline Bug — owned mistake immediately, ran blameless post-mortem, drafted org-wide shareout"),
     ("Have Backbone; Disagree & Commit",
      "Tell me about a time you disagreed with your manager or team on a technical direction.",
