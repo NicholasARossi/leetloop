@@ -1558,6 +1558,13 @@ export interface OnsitePrepRubricDimension {
   description: string
 }
 
+export interface OnsitePrepDesignPhase {
+  name: string
+  prompt: string
+  duration_seconds: number
+  key_areas: string[]
+}
+
 export interface OnsitePrepQuestion {
   id: string
   category: 'lp' | 'breadth' | 'depth' | 'design'
@@ -1568,6 +1575,8 @@ export interface OnsitePrepQuestion {
   target_duration_seconds: number
   sort_order: number
   ideal_answer?: IdealResponse | null
+  phases: OnsitePrepDesignPhase[]
+  structured_probes: string[]
 }
 
 export interface OnsitePrepDimensionEvidence {

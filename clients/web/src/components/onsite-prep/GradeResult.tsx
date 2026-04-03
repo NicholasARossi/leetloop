@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { OnsitePrepGradeResult, OnsitePrepQuestion, IdealResponse } from '@/lib/api'
+import { DesignPhaseGuide } from '@/components/onsite-prep/RecordingView'
 
 interface GradeResultProps {
   result: OnsitePrepGradeResult
@@ -64,6 +65,7 @@ function getVerdictLabel(verdict: string): string {
 
 export function GradeResult({ result, question, onReRecord, onFollowUps, idealResponse, idealLoading, followUpsReady }: GradeResultProps) {
   const [showFullResponse, setShowFullResponse] = useState(false)
+  const weakDimensions = result.dimensions.filter((dim) => dim.score < 4)
 
   return (
     <div>
@@ -107,11 +109,24 @@ export function GradeResult({ result, question, onReRecord, onFollowUps, idealRe
       {/* AI Feedback */}
       <div className="card">
         <div className="text-[10px] uppercase tracking-widest text-coral font-semibold mb-2">
-          AI Coach Feedback
+          Coach Debrief
         </div>
         <div className="bg-coral/10 border-l-[3px] border-coral p-4 text-xs leading-relaxed">
           {result.feedback}
         </div>
+
+        {weakDimensions.length > 0 && (
+          <div className="mt-3">
+            <div className="text-[10px] uppercase tracking-widest text-gray-500 mb-2">Focus On Next Attempt</div>
+            <div className="flex flex-wrap gap-2">
+              {weakDimensions.map((dim) => (
+                <span key={dim.name} className="badge badge-default">
+                  {DIMENSION_LABELS[dim.name] || dim.name}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
 
         {result.strongest_moment && (
           <div className="mt-3">
@@ -128,10 +143,39 @@ export function GradeResult({ result, question, onReRecord, onFollowUps, idealRe
         )}
       </div>
 
+      {question.category === 'design' && (
+        <div className="card">
+          <div className="text-[10px] uppercase tracking-widest text-gray-500 font-semibold mb-3">
+            Unlocked Coach View
+          </div>
+          <div className="text-xs text-gray-500 mb-4">
+            This structure is hidden during the cold attempt. Use it now to repair gaps, then re-record without leaning on the outline.
+          </div>
+          {question.context_hint && (
+            <div className="bg-gray-50 border-l-[3px] border-gray-300 p-3 text-xs text-gray-600 mb-4">
+              <div className="text-[10px] uppercase tracking-widest text-gray-400 mb-1">Coach Context</div>
+              {question.context_hint}
+            </div>
+          )}
+          {question.phases.length > 0 && <DesignPhaseGuide phases={question.phases} />}
+          <div className="card-sm bg-gray-50 mt-4">
+            <div className="section-title" style={{ borderBottomColor: 'var(--gray-300)' }}>Grading Rubric</div>
+            <div className="grid grid-cols-2 gap-3 mt-3">
+              {question.rubric_dimensions.map((dim) => (
+                <div key={dim.name}>
+                  <div className="text-[10px] uppercase tracking-widest text-gray-500 mb-1">{dim.label}</div>
+                  <div className="text-xs text-gray-400">{dim.description}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* What You Should Have Said */}
       <div className="card">
         <div className="text-[10px] uppercase tracking-widest text-blue-600 font-semibold mb-3">
-          What You Should Have Said
+          Model Debrief
         </div>
 
         {idealLoading && (
@@ -205,7 +249,7 @@ export function GradeResult({ result, question, onReRecord, onFollowUps, idealRe
               Loading Follow-ups...
             </span>
           ) : (
-            'Start Follow-ups \u2192'
+            'Start Adaptive Follow-ups \u2192'
           )}
         </button>
       </div>

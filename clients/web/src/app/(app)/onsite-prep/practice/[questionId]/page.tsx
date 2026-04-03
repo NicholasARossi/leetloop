@@ -203,10 +203,15 @@ export default function PracticePage() {
             <div className="text-xs text-gray-600 italic mb-4">
               &ldquo;{question.prompt_text}&rdquo;
             </div>
-            {question.context_hint && (
+            {question.category !== 'design' && question.context_hint && (
               <div className="bg-gray-50 border-l-[3px] border-gray-300 p-3 text-xs text-gray-500">
                 {question.category === 'lp' ? 'Mapped Story: ' : 'Context: '}
                 {question.context_hint}
+              </div>
+            )}
+            {question.category === 'design' && (
+              <div className="bg-gray-50 border-l-[3px] border-gray-300 p-3 text-xs text-gray-500">
+                Cold interview mode: answer from first principles first. Coaching structure and adaptive follow-ups unlock after grading.
               </div>
             )}
           </div>

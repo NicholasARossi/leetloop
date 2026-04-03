@@ -178,24 +178,310 @@ for subcat, prompt_text, context_hint in depth_questions:
     })
     sort_order += 1
 
-# ── System Design (2 prompts) ──
+# ── System Design (4 prompts, each with 5 phases + 4 structured probes) ──
+# target_duration_seconds = 1500 (25 min) per question
 
 design_questions = [
-    ("Alexa ASCI", "Design a trust & safety evaluation system for Alexa+ LLM responses.",
-     "Scope: safety taxonomy, multi-layer filtering, LLM-as-judge for safety scoring, real-time vs batch evaluation, drift monitoring, locale-specific compliance, rollback triggers. Your edge: 3-layer content safety at Walmart, locale compliance (CA/MX), drift detection."),
-    ("Prime Video Search", "Improve video discovery for Prime Video through personalized search & recommendation.",
-     "Scope: candidate generation (two-tower), ranking (cross-encoder), embedding strategy, cold-start, multi-objective optimization, A/B testing, online/offline eval gap. Your edge: two-tower retrieval, cross-encoder reranking (+0.192 NDCG), FAISS GPU eval, 8 model launches, multilingual."),
+    {
+        "subcategory": "Alexa ASCI",
+        "prompt_text": "Design a trust & safety evaluation system for Alexa+ LLM responses.",
+        "context_hint": "Scope: safety taxonomy, multi-layer filtering, LLM-as-judge for safety scoring, real-time vs batch evaluation, drift monitoring, locale-specific compliance, rollback triggers. Your edge: 3-layer content safety at Walmart, locale compliance (CA/MX), drift detection.",
+        "phases": [
+            {
+                "name": "Requirements & Scope",
+                "prompt": "Clarify the scope: what types of Alexa+ responses are in scope, who are the users (children vs adults), what are the latency constraints, and what regulatory frameworks apply.",
+                "duration_seconds": 180,
+                "key_areas": [
+                    "Response types: factual answers, creative generation, task completion, multi-turn",
+                    "User demographics: children (COPPA) vs adults — drastically different thresholds",
+                    "Latency budget: can safety add 200ms? Or must it be near-zero?",
+                    "Regulatory: COPPA, FTC guidelines, EU AI Act for global rollout",
+                ],
+            },
+            {
+                "name": "Safety Taxonomy",
+                "prompt": "Define the taxonomy of what you're detecting. Organize by severity tier and describe what falls into each tier.",
+                "duration_seconds": 180,
+                "key_areas": [
+                    "Tier 1 (block immediately): harmful content, PII leakage, CSAM, dangerous instructions",
+                    "Tier 2 (flag for review): medical/legal advice, misinformation on high-stakes topics, culturally sensitive content",
+                    "Tier 3 (monitor & learn): bias patterns, subtle stereotyping, quality degradation, off-topic",
+                    "Locale-specific tiers: what's Tier 1 in Germany may be Tier 2 in the US",
+                ],
+            },
+            {
+                "name": "Architecture: 3-Layer Pipeline",
+                "prompt": "Walk through the full architecture. Explain the three-layer pipeline, the latency budget for each layer, and the key design decision around pre- vs post-generation evaluation.",
+                "duration_seconds": 420,
+                "key_areas": [
+                    "Layer 1 (microseconds): rule-based blocklists, regex PII patterns, hard-block known dangerous query-response pairs",
+                    "Layer 2 (10-20ms): lightweight ML classifier (distilled BERT) — outputs safety probability per risk category",
+                    "Layer 3 (100-200ms): LLM safety judge for ambiguous zone between auto-pass and auto-block thresholds",
+                    "Pre-generation (streaming token filter) vs post-generation (complete response) — hybrid approach",
+                    "Only route 2-5% of traffic to Layer 3 to manage cost",
+                ],
+            },
+            {
+                "name": "Evaluation & Red-Teaming",
+                "prompt": "How do you evaluate this system? Describe offline test suite construction, adversarial red-teaming, and how you handle the false positive / false negative tradeoff.",
+                "duration_seconds": 300,
+                "key_areas": [
+                    "Offline test suites: known-unsafe and known-safe examples per risk category",
+                    "Adversarial red-teaming: designed to bypass each individual layer",
+                    "False positive cost: safe content blocked erodes trust and Alexa engagement",
+                    "False negative cost: harmful content delivered — reputational and regulatory risk",
+                    "Human review queue for borderline cases — ground truth labeling loop",
+                ],
+            },
+            {
+                "name": "Production, Drift & Compliance",
+                "prompt": "How does this system behave in production? Cover drift detection, locale compliance rollout, and rollback triggers.",
+                "duration_seconds": 300,
+                "key_areas": [
+                    "Drift monitoring: safety flag rate by category, false positive rate — alert on sudden shifts",
+                    "LLM updates change failure modes — safety system must re-evaluate when underlying model changes",
+                    "Locale compliance: separate taxonomy versions per region, phased rollout with region-specific red-teaming",
+                    "Rollback trigger: if Tier 1 miss rate spikes above threshold, auto-rollback to previous pipeline version",
+                    "Cache pre-computed safety scores for common query-response pairs to reduce Layer 3 cost",
+                ],
+            },
+        ],
+        "structured_probes": [
+            "Walk me through how you'd handle a novel jailbreak that bypasses your ML classifier but passes your rule-based filter. How does it get caught, and how do you prevent the next one?",
+            "Your LLM safety judge is flagging 40% of responses as borderline. How do you diagnose whether it's miscalibrated versus genuinely high-risk traffic? What do you do differently in each case?",
+            "Alexa+ is launching in Germany under the EU AI Act. What specific changes do you make to your safety taxonomy and compliance layer that you wouldn't need for a US-only launch?",
+            "After 6 months you discover your safety system blocks legitimate responses for users querying in minority languages at twice the rate of English. How do you detect this and what's your fix?",
+        ],
+    },
+    {
+        "subcategory": "Alexa RAG",
+        "prompt_text": "Design a retrieval-augmented generation (RAG) system to ground Alexa+ LLM responses in factual knowledge.",
+        "context_hint": "Scope: knowledge ingestion pipeline, hybrid retrieval (dense + sparse), reranking, grounding and faithfulness, knowledge freshness, query routing. Your edge: cross-encoder reranking, FAISS GPU eval, LLM-as-judge for faithfulness.",
+        "phases": [
+            {
+                "name": "Requirements & Scope",
+                "prompt": "Clarify the requirements: what knowledge domains does Alexa need to ground? What are the latency constraints for a voice assistant? How much hallucination is tolerable, and is the knowledge static or dynamic?",
+                "duration_seconds": 180,
+                "key_areas": [
+                    "Knowledge domains: Amazon product catalog, general world knowledge, real-time data (weather, news)",
+                    "Latency: voice assistant end-to-end must be <1s — RAG retrieval budget is 100-150ms",
+                    "Hallucination tolerance: zero for factual product info; higher for creative/conversational responses",
+                    "Static knowledge (indexed once) vs dynamic (updated frequently) vs real-time (live API calls)",
+                ],
+            },
+            {
+                "name": "Knowledge Ingestion & Indexing",
+                "prompt": "Describe the pipeline to ingest, chunk, embed, and index the knowledge base. What chunking strategy do you use and why?",
+                "duration_seconds": 300,
+                "key_areas": [
+                    "Document pipeline: crawl/ingest → clean → chunk → embed → index",
+                    "Chunking strategy: semantic chunking over fixed-size windows to preserve context boundaries",
+                    "Embedding model: domain-tuned bi-encoder (e.g., E5-large or fine-tuned on Amazon QA pairs)",
+                    "Index: FAISS HNSW for dense retrieval + Elasticsearch/BM25 for sparse",
+                    "Metadata filtering: source domain, freshness timestamp, locale",
+                ],
+            },
+            {
+                "name": "Retrieval Architecture",
+                "prompt": "Walk through the retrieval pipeline in detail. Cover hybrid retrieval, the two-stage approach, and how you handle voice-specific query challenges.",
+                "duration_seconds": 420,
+                "key_areas": [
+                    "Stage 1: hybrid retrieval — dense ANN (FAISS) + sparse BM25 merged via Reciprocal Rank Fusion",
+                    "Stage 2: cross-encoder reranker scores top-50 candidates jointly with query — selects top-5 passages",
+                    "Voice query rewriting: ASR transcripts contain errors — query normalization and expansion before retrieval",
+                    "Multi-hop queries: decompose into sub-queries, retrieve per-hop, merge context",
+                    "Passage selection: if top passage score < threshold, fall back to parametric LLM knowledge",
+                ],
+            },
+            {
+                "name": "Grounding & Faithfulness",
+                "prompt": "How do you ensure the LLM stays faithful to the retrieved context? Describe your grounding strategy, citation approach, and what happens when retrieval fails.",
+                "duration_seconds": 300,
+                "key_areas": [
+                    "Grounding prompt: retrieved passages prepended with explicit instruction to only use provided context",
+                    "Citation: LLM outputs claim-level source IDs; system appends source attribution in response",
+                    "Faithfulness scoring: lightweight judge model checks response against passages — flags unsupported claims",
+                    "Refusal strategy: if faithfulness score < threshold, respond with 'I don't have reliable information on that'",
+                    "Confidence calibration: surface uncertainty language proportional to retrieval confidence score",
+                ],
+            },
+            {
+                "name": "Production, Freshness & Monitoring",
+                "prompt": "How do you keep the knowledge base fresh? How do you route queries, and what do you monitor in production?",
+                "duration_seconds": 300,
+                "key_areas": [
+                    "Freshness pipeline: incremental index updates for changed documents, full re-index weekly",
+                    "Change detection: hash-based fingerprinting of source documents — only re-embed on change",
+                    "Query routing at inference: if query confidence score high + latency budget tight → parametric LLM; otherwise → RAG",
+                    "Monitoring: retrieval hit rate, faithfulness score distribution, hallucination rate (via judge), latency p50/p99",
+                    "Multi-turn context: carry retrieved passages across turns for follow-up questions in same session",
+                ],
+            },
+        ],
+        "structured_probes": [
+            "Your retrieval returns highly relevant passages but the LLM still hallucinates specific numbers and dates from those passages. Walk me through why this happens and how you fix it.",
+            "An Alexa product spec changes — the device now has 4GB RAM not 2GB. How does your system detect that the indexed knowledge is stale and ensure the update propagates before users get wrong answers?",
+            "A user asks: 'Is the director of that show I liked also directing any Amazon Prime Originals?' How does your retrieval pipeline handle this multi-hop query that requires bridging two knowledge domains?",
+            "How do you decide at query time whether to route through RAG or rely purely on the LLM's parametric knowledge? Give me the exact logic and thresholds you'd use.",
+        ],
+    },
+    {
+        "subcategory": "Prime Video Personalization",
+        "prompt_text": "Design a personalized recommendation system for Prime Video's homepage and post-play experience.",
+        "context_hint": "Scope: candidate generation (two-tower), ranking (cross-encoder), multi-objective optimization, cold-start, A/B testing, online/offline eval gap. Your edge: two-tower retrieval, cross-encoder reranking (+0.192 NDCG), FAISS GPU eval, 8 model launches, multilingual.",
+        "phases": [
+            {
+                "name": "Requirements & Success Metrics",
+                "prompt": "Clarify the surfaces, success metrics, and constraints. What does 'good' look like, and how do you measure it?",
+                "duration_seconds": 180,
+                "key_areas": [
+                    "Surfaces: homepage hero, genre rows, post-play autoplay, 'More like this' — different optimization targets per surface",
+                    "Primary metric: watch-through rate (fraction of video actually watched) — clicks are cheap",
+                    "Secondary metrics: session length, cross-genre exploration rate, subscription renewal as north star",
+                    "Scale: 200M+ users, 10K+ titles, real-time personalization required",
+                ],
+            },
+            {
+                "name": "High-Level Architecture",
+                "prompt": "Walk through the overall system architecture from user request to final ranked list. Name the stages and what each one does.",
+                "duration_seconds": 240,
+                "key_areas": [
+                    "Candidate generation (two-tower ANN) → ranking (cross-encoder) → multi-objective blending → serving",
+                    "Candidate gen: retrieves top-500 from catalog of 10K+ titles in <20ms",
+                    "Ranking: cross-encoder scores each candidate jointly with user context — top-20 selected",
+                    "Multi-objective blending: engagement + diversity + freshness + exploration signals combined",
+                    "Serving: results cached per user with 1-hour TTL, invalidated on new watch event",
+                ],
+            },
+            {
+                "name": "Candidate Generation: Two-Tower",
+                "prompt": "Deep dive into the two-tower model. Walk through the user tower, content tower, training strategy, and how you serve it at scale.",
+                "duration_seconds": 420,
+                "key_areas": [
+                    "User tower: watch sequence (recent titles, genres, completion rates), temporal features, device/time-of-day context",
+                    "Content tower: genre, cast, synopsis embedding, multimodal visual embedding from trailer keyframes (CLIP)",
+                    "Shared 128-dim embedding space trained with InfoNCE loss on (user, watched_video) positives",
+                    "FAISS HNSW index updated hourly; ANN search returns top-500 candidates in <20ms",
+                    "Hard negative mining: include titles the user skipped or abandoned — critical for quality",
+                ],
+            },
+            {
+                "name": "Ranking & Multi-Objective Optimization",
+                "prompt": "Explain the ranking stage and how you balance multiple objectives. How do you prevent engagement-only optimization from creating filter bubbles?",
+                "duration_seconds": 360,
+                "key_areas": [
+                    "Cross-encoder features: retrieval score, temporal (time since last watched this genre), social signals, business signals (Prime Original boost)",
+                    "Multi-objective: final_score = w1*engagement + w2*diversity_bonus + w3*freshness_bonus + w4*explore_bonus",
+                    "Diversity bonus: rewards genres the user hasn't watched in >30 days",
+                    "Exploration (Thompson sampling): promotes titles the model is uncertain about — decays as data accumulates",
+                    "Weights tuned per surface via online experiments — homepage needs more diversity than post-play",
+                ],
+            },
+            {
+                "name": "Cold-Start, A/B Testing & Production",
+                "prompt": "How do you handle new users and new titles? Describe your A/B testing setup and production monitoring.",
+                "duration_seconds": 300,
+                "key_areas": [
+                    "New user cold-start: popularity-based recommendations segmented by acquisition channel → personalized after 5-10 views",
+                    "New title cold-start: content tower produces embeddings from metadata alone; 2-week exploration boost that decays",
+                    "A/B testing: holdout groups with pre-registered hypotheses; ship only if watch-through rate + retention both improve",
+                    "Offline-online gap: offline NDCG predicts ranking quality but not business outcome — use both",
+                    "Monitoring: embedding staleness alerts, recommendation diversity metrics, watch-through rate by user cohort",
+                ],
+            },
+        ],
+        "structured_probes": [
+            "A new Prime Original launches with zero engagement data. How does your system decide how prominently to feature it on the homepage, and how do you prevent it from flooding recommendations for users who wouldn't like it?",
+            "After 6 months you notice users are stuck in genre filter bubbles — someone who watched one thriller now only sees thrillers. Your engagement metrics look fine. How do you detect and fix this?",
+            "A user binge-watches an entire season in one sitting. How do you update their recommendations in real-time during that session — what triggers the update and what changes in the model?",
+            "How would you evaluate this recommendation system offline before a production launch? What's your primary offline metric, what does it miss, and how do you bridge the offline-online gap?",
+        ],
+    },
+    {
+        "subcategory": "Amazon Search",
+        "prompt_text": "Design the ML ranking system for Amazon product search at scale.",
+        "context_hint": "Scope: query understanding, hybrid retrieval (BM25 + dense), learning-to-rank, personalization layer, ad integration, A/B testing, latency budget. Your edge: two-tower retrieval, cross-encoder reranking, NDCG optimization, multilingual query handling.",
+        "phases": [
+            {
+                "name": "Requirements & Scope",
+                "prompt": "Clarify the query types, success metrics, scale, and personalization requirements before designing anything.",
+                "duration_seconds": 180,
+                "key_areas": [
+                    "Query types: text (80%), voice (15%), image (5%) — different preprocessing pipelines",
+                    "Success metrics: add-to-cart rate and purchase rate, not click-through (clicks are cheap)",
+                    "Scale: billions of products, millions of QPS, 100ms p99 latency SLA",
+                    "Personalization: must account for user's purchase history, browsing behavior, geographic context",
+                ],
+            },
+            {
+                "name": "System Architecture Overview",
+                "prompt": "Walk through the full pipeline from query to ranked results. Name every stage, what it does, and its latency budget.",
+                "duration_seconds": 240,
+                "key_areas": [
+                    "Query understanding (10ms): spelling correction, query normalization, intent classification, entity extraction",
+                    "Candidate retrieval (20ms): hybrid BM25 + dense bi-encoder → top-1000 candidates via ANN",
+                    "L1 ranking (30ms): lightweight LTR model scores top-1000, selects top-100",
+                    "L2 ranking (30ms): heavy cross-encoder with full feature set scores top-100, selects top-30",
+                    "Post-ranking (10ms): ad injection, diversity enforcement, business rule application → final results",
+                ],
+            },
+            {
+                "name": "Retrieval: Hybrid Sparse + Dense",
+                "prompt": "Deep dive into the retrieval layer. Explain hybrid retrieval, how you handle product embeddings, and what makes this hard at Amazon's scale.",
+                "duration_seconds": 360,
+                "key_areas": [
+                    "BM25 (Elasticsearch): exact match, handles rare/tail queries well, fast but no semantic understanding",
+                    "Dense bi-encoder: product embedding from title + description + category + structured attributes (price range, brand)",
+                    "Hybrid fusion: Reciprocal Rank Fusion merges BM25 and dense candidates — better than either alone",
+                    "Query expansion: synonym expansion, spelling correction before retrieval — 'iphone charger' → 'iPhone USB-C cable'",
+                    "Scale challenge: index of 500M+ products; FAISS HNSW with GPU serving, shard by category for latency",
+                ],
+            },
+            {
+                "name": "Learning-to-Rank & Personalization",
+                "prompt": "Explain your ranking model architecture, training signal, feature set, and how personalization is injected.",
+                "duration_seconds": 420,
+                "key_areas": [
+                    "Training signal: (query, product, label) triples — label = purchase (3), add-to-cart (2), click (1), impression (0)",
+                    "L1 model: GBDT (XGBoost) — fast, interpretable, handles sparse features well",
+                    "L2 model: cross-encoder transformer — jointly encodes query + product title/description for deep text matching",
+                    "Feature groups: text match (BM25 score, semantic sim), behavioral (CTR, purchase rate by query-product pair), product quality (rating, review count, freshness), seller (fulfillment speed, return rate)",
+                    "Personalization: user embedding from purchase/browse history concatenated to L2 features; real-time session signals (what they viewed in last 30 min)",
+                ],
+            },
+            {
+                "name": "Production, Ads & Monitoring",
+                "prompt": "How do you integrate sponsored listings without degrading organic quality? What do you monitor, and how do you ensure fairness across sellers?",
+                "duration_seconds": 300,
+                "key_areas": [
+                    "Ad integration: sponsored products must pass a relevance threshold before insertion — prevents pure pay-to-play",
+                    "Ad placement: slots 1, 5, 9 reserved for sponsored products that pass relevance gate; organic results fill remaining slots",
+                    "Fairness monitoring: track purchase rate and add-to-cart rate by seller tier — alert if small sellers systematically disadvantaged",
+                    "Latency monitoring: p50/p95/p99 per pipeline stage — isolate which stage is causing spikes",
+                    "Experiment framework: pre-registered metrics, holdout groups, ship only if purchase rate + fairness metrics both hold",
+                ],
+            },
+        ],
+        "structured_probes": [
+            "A search for 'apple' returns mostly Apple Electronics but the user meant the fruit. Walk me through exactly how your query understanding layer detects and resolves this ambiguity.",
+            "How do you integrate sponsored product listings into the ranking pipeline without tanking organic search quality? Walk me through the exact flow and what guardrails prevent pay-to-play from dominating results.",
+            "Your p99 search latency spikes from 80ms to 800ms during a flash sale. Walk me through your systematic debugging process and the immediate mitigation steps you'd take.",
+            "After 6 months you discover your L2 ranking model systematically favors established brands over small sellers at equal quality. How do you detect this, root-cause it, and fix it without breaking relevance?",
+        ],
+    },
 ]
 
-for subcat, prompt_text, context_hint in design_questions:
+for q in design_questions:
     questions.append({
         "category": "design",
-        "subcategory": subcat,
-        "prompt_text": prompt_text,
-        "context_hint": context_hint,
+        "subcategory": q["subcategory"],
+        "prompt_text": q["prompt_text"],
+        "context_hint": q["context_hint"],
         "rubric_dimensions": DESIGN_RUBRIC,
-        "target_duration_seconds": 480,
+        "target_duration_seconds": 1500,
         "sort_order": sort_order,
+        "phases": q["phases"],
+        "structured_probes": q["structured_probes"],
     })
     sort_order += 1
 

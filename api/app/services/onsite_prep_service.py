@@ -247,6 +247,9 @@ class OnsitePrepGradingService:
         category: str,
         dimensions: list[DimensionScore],
         feedback: str,
+        subcategory: str | None = None,
+        context_hint: str | None = None,
+        structured_probes: list[str] | None = None,
     ) -> list[str]:
         """Generate targeted follow-up probes based on transcript weaknesses."""
         if not self.configured:
@@ -254,28 +257,34 @@ class OnsitePrepGradingService:
 
         weak_dims = [d for d in dimensions if d.score < 4]
         weak_summary = ", ".join(f"{d.name} ({d.score}/5)" for d in weak_dims) if weak_dims else "none identified"
+        hidden_probe_examples = "\n".join(f"- {probe}" for probe in (structured_probes or [])[:4]) or "- none"
 
         prompt = f"""You are a senior Amazon interviewer conducting a follow-up after the candidate's initial answer.
 
 ORIGINAL QUESTION: "{question_text}"
 CATEGORY: {category.upper()}
+{f'SUBCATEGORY: {subcategory}' if subcategory else ''}
+{f'HIDDEN INTERVIEWER CONTEXT: {context_hint}' if context_hint else ''}
 
 CANDIDATE'S TRANSCRIPT:
 "{transcript}"
 
 WEAK DIMENSIONS: {weak_summary}
 FEEDBACK: {feedback}
+HIDDEN EXAMPLE PROBES FOR THIS QUESTION FAMILY:
+{hidden_probe_examples}
 
 Generate 2-3 targeted follow-up probes that an interviewer would naturally ask to dig deeper into the gaps. Each probe should:
 1. Reference something specific the candidate said (or didn't say)
 2. Target a specific weakness or gap
 3. Be phrased as a direct question the interviewer would ask
-4. Include a brief note about what it targets
+4. Avoid generic repeats; if the candidate already covered an area well, move to the next most important gap
 
 For LP stories: probe "I vs we", missing STAR elements, impact quantification, commitment after disagreement
 For ML breadth: probe failure modes, practical examples, alternatives they didn't mention
 For ML depth: probe honest framing, specific implementation details, what they'd do differently
-For system design: probe data strategy, production deployment, cost tradeoffs, scale
+For system design: probe tradeoffs, failure modes, rollout strategy, scale limits, cost, and what they would prioritize first
+Use the hidden interviewer context and example probes only as background to improve realism. Do NOT copy them verbatim unless they precisely match the candidate's actual gap.
 
 Respond in this exact JSON format (no markdown code fences):
 {{
@@ -292,6 +301,8 @@ Respond in this exact JSON format (no markdown code fences):
 
         json_match = re.search(r'\{[\s\S]*\}', response.text)
         if not json_match:
+            if category == "design" and structured_probes:
+                return structured_probes[:3]
             return ["Tell me more about your specific contribution.", "What would you do differently?"]
 
         data = json.loads(json_match.group())

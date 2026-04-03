@@ -9,6 +9,13 @@ class RubricDimension(BaseModel):
     description: str
 
 
+class DesignPhase(BaseModel):
+    name: str
+    prompt: str
+    duration_seconds: int
+    key_areas: list[str] = []
+
+
 class OnsitePrepQuestion(BaseModel):
     id: str
     category: str  # lp, breadth, depth, design
@@ -19,6 +26,8 @@ class OnsitePrepQuestion(BaseModel):
     target_duration_seconds: int = 120
     sort_order: int = 0
     ideal_answer: "IdealResponse | None" = None
+    phases: list[DesignPhase] = []
+    structured_probes: list[str] = []
 
 
 class DimensionEvidence(BaseModel):

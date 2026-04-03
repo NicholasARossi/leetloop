@@ -15,6 +15,7 @@ from app.db.supabase import get_supabase
 from app.models.onsite_prep_schemas import (
     CategoryStats,
     ConversationalFollowUpResult,
+    DesignPhase,
     DimensionScore,
     IdealResponse,
     OnsitePrepAttempt,
@@ -29,6 +30,24 @@ from app.models.onsite_prep_schemas import (
 )
 
 router = APIRouter()
+
+
+def _build_question(q: dict) -> OnsitePrepQuestion:
+    """Build OnsitePrepQuestion from a DB row dict."""
+    return OnsitePrepQuestion(
+        id=q["id"],
+        category=q["category"],
+        subcategory=q.get("subcategory"),
+        prompt_text=q["prompt_text"],
+        context_hint=q.get("context_hint"),
+        rubric_dimensions=[RubricDimension(**d) for d in (q.get("rubric_dimensions") or [])],
+        target_duration_seconds=q.get("target_duration_seconds", 120),
+        sort_order=q.get("sort_order", 0),
+        ideal_answer=IdealResponse(**q["ideal_answer"]) if q.get("ideal_answer") else None,
+        phases=[DesignPhase(**p) for p in (q.get("phases") or [])],
+        structured_probes=q.get("structured_probes") or [],
+    )
+
 
 # Audio validation
 MAX_AUDIO_SIZE = 25 * 1024 * 1024  # 25MB
@@ -51,20 +70,7 @@ async def get_questions(
             query = query.eq("category", category)
         result = query.execute()
 
-        return [
-            OnsitePrepQuestion(
-                id=q["id"],
-                category=q["category"],
-                subcategory=q.get("subcategory"),
-                prompt_text=q["prompt_text"],
-                context_hint=q.get("context_hint"),
-                rubric_dimensions=[RubricDimension(**d) for d in (q.get("rubric_dimensions") or [])],
-                target_duration_seconds=q.get("target_duration_seconds", 120),
-                sort_order=q.get("sort_order", 0),
-                ideal_answer=IdealResponse(**q["ideal_answer"]) if q.get("ideal_answer") else None,
-            )
-            for q in result.data
-        ]
+        return [_build_question(q) for q in result.data]
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get questions: {str(e)}")
 
@@ -79,18 +85,7 @@ async def get_question(
         result = supabase.table("onsite_prep_questions").select("*").eq("id", str(question_id)).execute()
         if not result.data:
             raise HTTPException(status_code=404, detail="Question not found")
-        q = result.data[0]
-        return OnsitePrepQuestion(
-            id=q["id"],
-            category=q["category"],
-            subcategory=q.get("subcategory"),
-            prompt_text=q["prompt_text"],
-            context_hint=q.get("context_hint"),
-            rubric_dimensions=[RubricDimension(**d) for d in (q.get("rubric_dimensions") or [])],
-            target_duration_seconds=q.get("target_duration_seconds", 120),
-            sort_order=q.get("sort_order", 0),
-            ideal_answer=IdealResponse(**q["ideal_answer"]) if q.get("ideal_answer") else None,
-        )
+        return _build_question(result.data[0])
     except HTTPException:
         raise
     except Exception as e:
@@ -365,7 +360,6 @@ async def generate_follow_ups(
             raise HTTPException(status_code=404, detail="Question not found")
         question = q_result.data[0]
 
-        # Parse dimensions
         dimensions = [
             DimensionScore(
                 name=d["name"],
@@ -375,8 +369,6 @@ async def generate_follow_ups(
             )
             for d in (attempt.get("dimensions") or [])
         ]
-
-        # Generate probes
         service = get_onsite_prep_grading_service()
         probes = await service.generate_follow_up_probes(
             question_text=question["prompt_text"],
@@ -384,6 +376,9 @@ async def generate_follow_ups(
             category=question["category"],
             dimensions=dimensions,
             feedback=attempt.get("feedback", ""),
+            subcategory=question.get("subcategory"),
+            context_hint=question.get("context_hint"),
+            structured_probes=question.get("structured_probes") or [],
         )
 
         # Delete existing follow-ups for this attempt (idempotent)

@@ -71,9 +71,9 @@ export function FollowUpProbes({ attemptId, followUps: initialFollowUps, categor
     <div>
       <div className="mb-6">
         <div className="text-sm text-gray-400 mb-2">&larr; Grade Result</div>
-        <h1 className="text-xl font-semibold">Follow-up Probes</h1>
+        <h1 className="text-xl font-semibold">Adaptive Follow-ups</h1>
         <p className="text-sm text-gray-500 mt-1">
-          Generated from your answer &bull; New probes appear as you answer
+          Generated from your actual gaps &bull; New probes appear as you answer
         </p>
       </div>
 
