@@ -154,20 +154,27 @@ async def submit_audio(
         insert_result = supabase.table("onsite_prep_attempts").insert(attempt_data).execute()
         attempt_id = insert_result.data[0]["id"]
 
-        # Best-effort GCS upload (non-blocking for grading response)
-        from app.services.gcs_upload import upload_audio_to_gcs
-
-        gcs_path = await upload_audio_to_gcs(
-            audio_bytes=audio_bytes,
-            user_id="00000000-0000-0000-0000-000000000001",
-            question_id=str(question_id),
-            attempt_id=attempt_id,
-            mime_type=content_type,
-        )
-        if gcs_path:
-            supabase.table("onsite_prep_attempts").update(
-                {"audio_gcs_path": gcs_path}
-            ).eq("id", attempt_id).execute()
+        # Best-effort audio archival. Grading should still succeed if the helper
+        # is absent or the upload path is misconfigured in local/dev environments.
+        try:
+            from app.services.gcs_upload import upload_audio_to_gcs
+        except ImportError:
+            logger.warning("GCS upload helper unavailable; skipping audio archival for attempt %s", attempt_id)
+        else:
+            try:
+                gcs_path = await upload_audio_to_gcs(
+                    audio_bytes=audio_bytes,
+                    user_id="00000000-0000-0000-0000-000000000001",
+                    question_id=str(question_id),
+                    attempt_id=attempt_id,
+                    mime_type=content_type,
+                )
+                if gcs_path:
+                    supabase.table("onsite_prep_attempts").update(
+                        {"audio_gcs_path": gcs_path}
+                    ).eq("id", attempt_id).execute()
+            except Exception:
+                logger.exception("Failed to upload onsite prep audio for attempt %s", attempt_id)
 
         # Invalidate dashboard cache
         _dashboard_cache.clear()

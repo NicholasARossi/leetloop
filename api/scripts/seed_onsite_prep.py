@@ -178,7 +178,7 @@ for subcat, prompt_text, context_hint in depth_questions:
     })
     sort_order += 1
 
-# ── System Design (4 prompts, each with 5 phases + 4 structured probes) ──
+# ── System Design (6 prompts, each with 5 phases + 4 structured probes) ──
 # target_duration_seconds = 1500 (25 min) per question
 
 design_questions = [
@@ -467,6 +467,150 @@ design_questions = [
             "How do you integrate sponsored product listings into the ranking pipeline without tanking organic search quality? Walk me through the exact flow and what guardrails prevent pay-to-play from dominating results.",
             "Your p99 search latency spikes from 80ms to 800ms during a flash sale. Walk me through your systematic debugging process and the immediate mitigation steps you'd take.",
             "After 6 months you discover your L2 ranking model systematically favors established brands over small sellers at equal quality. How do you detect this, root-cause it, and fix it without breaking relevance?",
+        ],
+    },
+    {
+        "subcategory": "Amazon Retail Cold Start",
+        "prompt_text": "Design an ML system to recommend complementary products for brand-new catalog items with no interaction history.",
+        "context_hint": "Scope: cold-start retrieval and ranking, content-based vs generative approaches, hallucination control, evaluation before online traffic, feedback loops as data arrives. Your edge: generative retrieval, two-tower retrieval, cross-encoder reranking, LLM-generated shopping intents.",
+        "phases": [
+            {
+                "name": "Requirements & Success Metrics",
+                "prompt": "Clarify the business problem, surfaces, and success metrics. What counts as a good complementary recommendation for a brand-new item?",
+                "duration_seconds": 180,
+                "key_areas": [
+                    "Surfaces: PDP carousels, add-to-cart upsell, email follow-ups, search refinement",
+                    "Primary metric: attach rate or add-to-cart lift, not click-through alone",
+                    "Cold-start constraint: zero co-view / co-purchase history for the new item",
+                    "Guardrails: low irrelevance rate, diversity across categories, seller / price appropriateness",
+                ],
+            },
+            {
+                "name": "Candidate Generation Strategy",
+                "prompt": "How do you generate candidates when collaborative signals do not exist yet? Compare content-based retrieval, taxonomy rules, and generative retrieval.",
+                "duration_seconds": 300,
+                "key_areas": [
+                    "Content-based candidates from item title, brand, category, structured attributes, and catalog graph neighbors",
+                    "Taxonomy / rules baseline for high-precision complements in known verticals",
+                    "Generative retrieval path: LLM generates shopping intents or synthetic queries from item attributes",
+                    "Hybrid candidate pool merged from rules + dense retrieval + generated-query retrieval",
+                    "Metadata quality checks to avoid generating nonsense from bad catalog attributes",
+                ],
+            },
+            {
+                "name": "Ranking & Model Architecture",
+                "prompt": "Walk through the ranking stage. What models and features would you use when the anchor item is new but candidate items have historical data?",
+                "duration_seconds": 420,
+                "key_areas": [
+                    "Two-tower or embedding retrieval for recall, cross-encoder or LTR model for reranking",
+                    "Anchor item features: title, category, price band, brand, textual attributes, image embedding",
+                    "Candidate features: historical quality, conversion, return rate, inventory, shipping speed",
+                    "Pairwise compatibility features: category complementarity, price-range compatibility, brand / use-case coherence",
+                    "Uncertainty-aware ranking: penalize high-variance generated intents until validated",
+                ],
+            },
+            {
+                "name": "Evaluation & Launch Gating",
+                "prompt": "How would you evaluate this before sending traffic? Cover offline evaluation, human review, and online experimentation.",
+                "duration_seconds": 300,
+                "key_areas": [
+                    "Offline set from historical item launches replayed as synthetic cold-start examples",
+                    "Metrics: precision@k / NDCG plus attach-rate prediction and diversity",
+                    "Human evaluation or LLM-as-judge for semantic complementarity and irrelevance detection",
+                    "Launch gating with conservative buckets first: only high-confidence categories or traffic slices",
+                    "A/B test success requires attach-rate lift without harming main-item conversion",
+                ],
+            },
+            {
+                "name": "Production Feedback Loop",
+                "prompt": "Once the item accumulates interactions, how does the system transition from pure cold-start logic to normal recommendation logic?",
+                "duration_seconds": 300,
+                "key_areas": [
+                    "Progressive handoff from cold-start features to collaborative signals as data arrives",
+                    "Bandit or exploration policy to gather signal without flooding low-quality candidates",
+                    "Monitoring: hallucinated intents, sparse-category failures, seller bias, stale metadata",
+                    "Rollback strategy if generated intents create irrelevant or unsafe recommendations",
+                    "Retraining cadence and feature-store updates as new item interaction data accumulates",
+                ],
+            },
+        ],
+        "structured_probes": [
+            "Your LLM generates the query 'gaming setup accessories' for a desk lamp, and retrieval returns mostly irrelevant electronics. How do you detect that failure and prevent it from reaching users?",
+            "A new item has poor metadata: missing brand, sparse attributes, and a generic title. What fallback path does your system use, and how do you avoid complete cold-start failure?",
+            "How do you decide when an item has enough real interaction data to stop relying on generated intents and switch to collaborative signals?",
+            "Your online test improves attach rate but also increases product returns because the complements are semantically related but not actually compatible. How do you diagnose and fix that?",
+        ],
+    },
+    {
+        "subcategory": "LLM Judge Evaluation Platform",
+        "prompt_text": "Design an ML evaluation system that uses LLM-as-judge to assess the quality of LLM-generated recommendations or responses before launch.",
+        "context_hint": "Scope: rubric design, calibration, judge-human agreement, offline-online correlation, cost control, drift, and launch gating. Your edge: LLM-as-judge evaluation, rubric design, backtesting against failed launches, offline-to-online validation.",
+        "phases": [
+            {
+                "name": "Requirements & Quality Taxonomy",
+                "prompt": "Clarify what outputs are being judged, what quality dimensions matter, and how the evaluation will be used in launch decisions.",
+                "duration_seconds": 180,
+                "key_areas": [
+                    "Outputs: recommendation lists, generated queries, summaries, conversational answers",
+                    "Quality dimensions: relevance, diversity, novelty, safety, faithfulness, business-rule compliance",
+                    "Decision use case: regression testing, model selection, launch approval, drift detection",
+                    "Need for structured rubric per product surface rather than one universal judge prompt",
+                ],
+            },
+            {
+                "name": "Judge Architecture & Rubrics",
+                "prompt": "Describe the judge system itself. How do you structure rubrics, prompts, and outputs so the judge is reliable and actionable?",
+                "duration_seconds": 300,
+                "key_areas": [
+                    "Surface-specific rubrics with dimension-level 1-5 scoring and rationale",
+                    "Structured JSON outputs for per-dimension score, overall score, and explanation",
+                    "Context packaging: anchor item / user intent / candidate outputs / metadata",
+                    "Ensembling options: multiple judge prompts or models to reduce variance on high-stakes cases",
+                    "Cost controls: judge only sampled traffic or candidate launch sets, not all production requests",
+                ],
+            },
+            {
+                "name": "Calibration & Human Validation",
+                "prompt": "How do you know the judge is measuring something real rather than matching prompt patterns? Cover calibration against humans and disagreement handling.",
+                "duration_seconds": 420,
+                "key_areas": [
+                    "Human-labeled gold set per surface and locale with clear annotation guidelines",
+                    "Agreement metrics: weighted kappa / Spearman / pairwise win-rate vs human preference",
+                    "Calibrate thresholds so a score maps to decision classes: ship, investigate, block",
+                    "Disagreement workflow: route edge cases to human review and refine the rubric",
+                    "Bias checks by locale, language, and product category to catch systematic judge skew",
+                ],
+            },
+            {
+                "name": "Offline-Online Correlation & Launch Gates",
+                "prompt": "How does this evaluation platform connect to real business outcomes? Explain how you validate that offline judge scores predict online success.",
+                "duration_seconds": 300,
+                "key_areas": [
+                    "Backtest against prior launches with known winners / losers to measure predictive power",
+                    "Correlate judge metrics with CTR, conversion, attach rate, retention, or complaint rate depending on surface",
+                    "Use judge scores as launch gate input, not sole decision-maker, alongside business guardrails",
+                    "Detect reward hacking: models optimizing to the judge without improving real user outcomes",
+                    "Maintain holdout human review even after the judge looks strong",
+                ],
+            },
+            {
+                "name": "Production Monitoring & Drift",
+                "prompt": "Once deployed, how do you monitor the evaluation platform itself? Cover drift, cost, and incident response.",
+                "duration_seconds": 300,
+                "key_areas": [
+                    "Judge drift monitoring: score distribution shifts after base model or prompt updates",
+                    "Periodic refresh of gold sets and re-calibration after product changes",
+                    "Cost and latency budgeting with tiered evaluation depth for high-risk launches",
+                    "Fallback path if judge quality degrades: revert to human review or simpler heuristics",
+                    "Auditability: store rubric version, judge prompt version, and evidence for launch decisions",
+                ],
+            },
+        ],
+        "structured_probes": [
+            "Your judge gives high scores to a model that later fails badly in A/B testing. Walk me through the possible failure modes and how you would recalibrate the platform.",
+            "Human reviewers in Germany consistently disagree with the judge while US reviewers agree. How do you determine whether the issue is locale bias, annotation inconsistency, or prompt design?",
+            "A team starts optimizing directly against your judge score and offline results improve, but customer complaints rise. How do you detect this reward-hacking dynamic and respond?",
+            "How do you decide which launches need the expensive full judge rubric versus a cheaper heuristic or sampled evaluation path?",
         ],
     },
 ]
