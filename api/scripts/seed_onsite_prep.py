@@ -4,7 +4,8 @@
 Usage:
     cd api && python scripts/seed_onsite_prep.py
 
-Idempotent: deletes all existing questions and re-inserts.
+Idempotent: upserts all questions using (category, subcategory, prompt_text) as the
+natural key. Existing rows are updated in place — no data is deleted.
 """
 
 import os
@@ -58,6 +59,121 @@ DESIGN_RUBRIC = [
     {"name": "evaluation", "label": "Evaluation", "description": "Offline/online metrics, A/B testing, guardrails"},
     {"name": "production", "label": "Production", "description": "Deployment, monitoring, drift detection, scaling"},
     {"name": "timing_structure", "label": "Timing & Structure", "description": "Well-structured walkthrough, good time allocation"},
+]
+
+# ─── Breakdown phase templates (7 phases with per-phase rubric dimensions) ──
+
+BREAKDOWN_PHASE_TEMPLATES = [
+    {
+        "name": "Clarify Requirements",
+        "prompt": "Define the problem scope, constraints, users, and success metrics before designing anything.",
+        "duration_seconds": 180,
+        "key_areas": [
+            "User types and scale",
+            "Latency and throughput constraints",
+            "Key success metrics",
+            "Regulatory or compliance considerations",
+        ],
+        "rubric_dimensions": [
+            {"name": "scope_clarity", "label": "Scope Clarity", "description": "Clearly defines what's in and out of scope"},
+            {"name": "constraint_identification", "label": "Constraint Identification", "description": "Identifies key constraints: latency, scale, compliance"},
+        ],
+    },
+    {
+        "name": "Metrics",
+        "prompt": "Define the offline and online metrics you'll use to measure success. Discuss tradeoffs between metrics.",
+        "duration_seconds": 210,
+        "key_areas": [
+            "Primary offline metric and why",
+            "Online/business metric alignment",
+            "Metric tradeoffs (precision vs recall, engagement vs quality)",
+            "Guardrail metrics",
+        ],
+        "rubric_dimensions": [
+            {"name": "metric_selection", "label": "Metric Selection", "description": "Chooses appropriate offline and online metrics"},
+            {"name": "metric_tradeoffs", "label": "Metric Tradeoffs", "description": "Discusses tensions between competing metrics"},
+            {"name": "business_alignment", "label": "Business Alignment", "description": "Connects technical metrics to business outcomes"},
+        ],
+    },
+    {
+        "name": "High-Level Architecture",
+        "prompt": "Draw the system architecture: major components, data flow, and how they connect.",
+        "duration_seconds": 210,
+        "key_areas": [
+            "End-to-end pipeline from input to output",
+            "Key components and their responsibilities",
+            "Data flow between components",
+            "API boundaries and interfaces",
+        ],
+        "rubric_dimensions": [
+            {"name": "component_design", "label": "Component Design", "description": "Identifies the right components with clear responsibilities"},
+            {"name": "data_flow_clarity", "label": "Data Flow Clarity", "description": "Clear data flow that could be whiteboarded"},
+        ],
+    },
+    {
+        "name": "Data & Features",
+        "prompt": "Describe your data strategy: sources, labeling, feature engineering, and data quality.",
+        "duration_seconds": 360,
+        "key_areas": [
+            "Data sources and collection strategy",
+            "Feature engineering approach",
+            "Labeling strategy (explicit, implicit, synthetic)",
+            "Data quality, bias, and freshness",
+        ],
+        "rubric_dimensions": [
+            {"name": "data_strategy", "label": "Data Strategy", "description": "Sound approach to data collection, labeling, and quality"},
+            {"name": "feature_engineering", "label": "Feature Engineering", "description": "Thoughtful feature design connected to the problem"},
+            {"name": "data_quality", "label": "Data Quality", "description": "Addresses bias, freshness, and distribution issues"},
+        ],
+    },
+    {
+        "name": "Model Design",
+        "prompt": "Choose your model architecture, training strategy, and justify your choices against alternatives.",
+        "duration_seconds": 360,
+        "key_areas": [
+            "Model architecture choice and justification",
+            "Training signal and loss function",
+            "Alternatives considered and why rejected",
+            "Hyperparameter strategy and validation",
+        ],
+        "rubric_dimensions": [
+            {"name": "model_choice_justification", "label": "Model Choice", "description": "Justifies model selection with concrete tradeoffs"},
+            {"name": "training_strategy", "label": "Training Strategy", "description": "Sound training signal, loss function, and validation approach"},
+            {"name": "technical_depth", "label": "Technical Depth", "description": "Goes beyond surface-level — discusses configs, edge cases"},
+        ],
+    },
+    {
+        "name": "Serving & Scale",
+        "prompt": "How do you deploy and serve this system? Cover latency, scaling, and failure handling.",
+        "duration_seconds": 240,
+        "key_areas": [
+            "Serving architecture (batch vs real-time)",
+            "Latency budget breakdown per component",
+            "Scaling strategy (horizontal, caching, sharding)",
+            "Failure modes and fallbacks",
+        ],
+        "rubric_dimensions": [
+            {"name": "serving_architecture", "label": "Serving Architecture", "description": "Production-ready serving design with clear latency budget"},
+            {"name": "latency_awareness", "label": "Latency Awareness", "description": "Understands latency constraints and optimizations"},
+            {"name": "scalability", "label": "Scalability", "description": "Addresses scaling challenges with concrete solutions"},
+        ],
+    },
+    {
+        "name": "Evaluation & Monitoring",
+        "prompt": "How do you evaluate before launch and monitor in production? Cover testing, A/B, and drift.",
+        "duration_seconds": 180,
+        "key_areas": [
+            "Offline evaluation strategy",
+            "A/B testing and launch gating",
+            "Production monitoring and alerting",
+            "Drift detection and iteration plan",
+        ],
+        "rubric_dimensions": [
+            {"name": "eval_strategy", "label": "Evaluation Strategy", "description": "Comprehensive offline + online evaluation plan"},
+            {"name": "monitoring_plan", "label": "Monitoring Plan", "description": "Production monitoring with drift detection and alerts"},
+            {"name": "iteration_approach", "label": "Iteration Approach", "description": "Clear plan for iterating based on production feedback"},
+        ],
+    },
 ]
 
 # ─── Question definitions ─────────────────────────────────────────────────
@@ -615,7 +731,37 @@ design_questions = [
     },
 ]
 
+def _add_breakdown_phases(design_q: dict) -> dict:
+    """Add breakdown phase rubric dimensions to a design question's phases.
+
+    Maps the existing 5-phase Stand & Deliver phases into a 7-phase breakdown
+    using the BREAKDOWN_PHASE_TEMPLATES for rubric dimensions. The existing
+    phase names/prompts/key_areas are preserved; breakdown rubric dims are added.
+    """
+    # Build breakdown_phases from the template, merging question-specific key_areas
+    breakdown_phases = []
+    existing_phases = design_q.get("phases", [])
+
+    for i, template in enumerate(BREAKDOWN_PHASE_TEMPLATES):
+        phase = dict(template)
+        # If there's a matching existing phase by index, use its key_areas
+        if i < len(existing_phases):
+            phase["key_areas"] = existing_phases[i].get("key_areas", template["key_areas"])
+            # Use existing prompt if it's more specific
+            if existing_phases[i].get("prompt"):
+                phase["prompt"] = existing_phases[i]["prompt"]
+            if existing_phases[i].get("name"):
+                phase["name"] = existing_phases[i]["name"]
+            if existing_phases[i].get("duration_seconds"):
+                phase["duration_seconds"] = existing_phases[i]["duration_seconds"]
+        breakdown_phases.append(phase)
+
+    design_q["breakdown_phases"] = breakdown_phases
+    return design_q
+
+
 for q in design_questions:
+    q = _add_breakdown_phases(q)
     questions.append({
         "category": "design",
         "subcategory": q["subcategory"],
@@ -624,25 +770,26 @@ for q in design_questions:
         "rubric_dimensions": DESIGN_RUBRIC,
         "target_duration_seconds": 1500,
         "sort_order": sort_order,
-        "phases": q["phases"],
+        "phases": q["phases"],  # Original 5-phase Stand & Deliver phases
+        "breakdown_phases": q["breakdown_phases"],  # 7-phase breakdown with rubric dims
         "structured_probes": q["structured_probes"],
     })
     sort_order += 1
 
 
 def main():
-    # Delete existing questions (idempotent)
-    print("Deleting existing onsite_prep_questions...")
-    supabase.table("onsite_prep_questions").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
+    # Upsert all questions — existing rows updated in place, new rows inserted.
+    # Uses (category, prompt_text) as the natural key (unique index).
+    # NEVER deletes existing data.
+    print(f"Upserting {len(questions)} questions...")
 
-    # Insert all questions
-    print(f"Inserting {len(questions)} questions...")
-
-    # Insert in batches of 20
-    for i in range(0, len(questions), 20):
-        batch = questions[i:i+20]
-        supabase.table("onsite_prep_questions").insert(batch).execute()
-        print(f"  Inserted {min(i+20, len(questions))}/{len(questions)}")
+    for i, q in enumerate(questions):
+        supabase.table("onsite_prep_questions").upsert(
+            q,
+            on_conflict="category,prompt_text",
+        ).execute()
+        if (i + 1) % 10 == 0 or i == len(questions) - 1:
+            print(f"  Upserted {i + 1}/{len(questions)}")
 
     # Verify
     result = supabase.table("onsite_prep_questions").select("category", count="exact").execute()
@@ -653,7 +800,7 @@ def main():
         result = supabase.table("onsite_prep_questions").select("id", count="exact").eq("category", cat).execute()
         print(f"  {cat}: {result.count}")
 
-    print("\nDone!")
+    print("\nDone! (upsert — no data was deleted)")
 
 
 if __name__ == "__main__":

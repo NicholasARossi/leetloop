@@ -15,18 +15,23 @@ from app.db.supabase import get_supabase
 from app.models.onsite_prep_schemas import (
     CategoryStats,
     ConversationalFollowUpResult,
+    CreateBreakdownAttemptResponse,
     DesignPhase,
     DimensionScore,
     IdealResponse,
+    ImageUploadResponse,
     OnsitePrepAttempt,
     OnsitePrepAttemptHistory,
     OnsitePrepDashboard,
     OnsitePrepFollowUp,
     OnsitePrepFollowUpResult,
     OnsitePrepGradeResult,
+    OnsitePrepImage,
+    OnsitePrepPhaseSubmission,
     OnsitePrepQuestion,
     RubricDimension,
     SubmitAudioResponse,
+    SubmitPhaseAudioResponse,
 )
 
 router = APIRouter()
@@ -45,6 +50,7 @@ def _build_question(q: dict) -> OnsitePrepQuestion:
         sort_order=q.get("sort_order", 0),
         ideal_answer=IdealResponse(**q["ideal_answer"]) if q.get("ideal_answer") else None,
         phases=[DesignPhase(**p) for p in (q.get("phases") or [])],
+        breakdown_phases=[DesignPhase(**p) for p in (q.get("breakdown_phases") or [])],
         structured_probes=q.get("structured_probes") or [],
     )
 
@@ -52,6 +58,10 @@ def _build_question(q: dict) -> OnsitePrepQuestion:
 # Audio validation
 MAX_AUDIO_SIZE = 25 * 1024 * 1024  # 25MB
 ALLOWED_AUDIO_TYPES = {"audio/webm", "audio/mp4", "audio/x-m4a", "audio/mpeg", "audio/wav", "audio/x-wav"}
+
+# Image validation
+MAX_IMAGE_SIZE = 10 * 1024 * 1024  # 10MB
+ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
 
 # Dashboard cache
 _dashboard_cache: dict[str, tuple[float, OnsitePrepDashboard]] = {}
@@ -192,7 +202,7 @@ async def get_attempt(
     attempt_id: UUID,
     supabase: Annotated[Client, Depends(get_supabase)] = None,
 ):
-    """Get a full attempt with follow-ups."""
+    """Get a full attempt with follow-ups, phase submissions, and images."""
     try:
         result = supabase.table("onsite_prep_attempts").select("*").eq("id", str(attempt_id)).execute()
         if not result.data:
@@ -201,6 +211,12 @@ async def get_attempt(
 
         # Get follow-ups
         fu_result = supabase.table("onsite_prep_follow_ups").select("*").eq("attempt_id", str(attempt_id)).order("sort_order").execute()
+
+        # Get phase submissions
+        ps_result = supabase.table("onsite_prep_phase_submissions").select("*").eq("attempt_id", str(attempt_id)).order("phase_number").execute()
+
+        # Get images
+        img_result = supabase.table("onsite_prep_images").select("*").eq("attempt_id", str(attempt_id)).order("sort_order").execute()
 
         dimensions = None
         if a.get("dimensions"):
@@ -230,6 +246,39 @@ async def get_attempt(
             for fu in fu_result.data
         ]
 
+        phase_submissions = [
+            OnsitePrepPhaseSubmission(
+                id=ps["id"],
+                attempt_id=ps["attempt_id"],
+                phase_number=ps["phase_number"],
+                transcript=ps.get("transcript"),
+                dimensions=[DimensionScore(**d) for d in (ps.get("dimensions") or [])] if ps.get("dimensions") else None,
+                overall_score=ps.get("overall_score"),
+                verdict=ps.get("verdict"),
+                feedback=ps.get("feedback"),
+                strongest_moment=ps.get("strongest_moment"),
+                weakest_moment=ps.get("weakest_moment"),
+                audio_gcs_path=ps.get("audio_gcs_path"),
+                duration_seconds=ps.get("duration_seconds"),
+                created_at=ps.get("created_at"),
+            )
+            for ps in ps_result.data
+        ]
+
+        images = [
+            OnsitePrepImage(
+                id=img["id"],
+                attempt_id=img.get("attempt_id"),
+                phase_submission_id=img.get("phase_submission_id"),
+                gcs_path=img["gcs_path"],
+                filename=img["filename"],
+                include_in_grading=img.get("include_in_grading", False),
+                sort_order=img.get("sort_order", 0),
+                created_at=img.get("created_at"),
+            )
+            for img in img_result.data
+        ]
+
         # Parse ideal_response if present
         ideal_response = None
         if a.get("ideal_response"):
@@ -245,6 +294,8 @@ async def get_attempt(
             id=a["id"],
             user_id=a["user_id"],
             question_id=a["question_id"],
+            mode=a.get("mode", "stand_and_deliver"),
+            current_phase=a.get("current_phase", 0),
             transcript=a.get("transcript"),
             dimensions=dimensions,
             overall_score=a.get("overall_score"),
@@ -255,6 +306,8 @@ async def get_attempt(
             duration_seconds=a.get("duration_seconds"),
             follow_up_questions=a.get("follow_up_questions", []),
             follow_ups=follow_ups,
+            phase_submissions=phase_submissions,
+            images=images,
             ideal_response=ideal_response,
             audio_gcs_path=a.get("audio_gcs_path"),
             created_at=a.get("created_at"),
@@ -611,7 +664,7 @@ async def get_history(
     """Get recent practice history for a user."""
     try:
         result = supabase.table("onsite_prep_attempts").select(
-            "id, question_id, overall_score, verdict, duration_seconds, created_at"
+            "id, question_id, overall_score, verdict, duration_seconds, created_at, mode, current_phase"
         ).eq("user_id", str(user_id)).order("created_at", desc=True).limit(limit).execute()
 
         if not result.data:
@@ -628,6 +681,8 @@ async def get_history(
                 question_id=a["question_id"],
                 prompt_text=q_map.get(a["question_id"], {}).get("prompt_text", ""),
                 category=q_map.get(a["question_id"], {}).get("category", ""),
+                mode=a.get("mode", "stand_and_deliver"),
+                phases_completed=max(0, (a.get("current_phase", 1) or 1) - 1) if a.get("mode") == "breakdown" else 0,
                 overall_score=a.get("overall_score"),
                 verdict=a.get("verdict"),
                 duration_seconds=a.get("duration_seconds"),
@@ -637,3 +692,387 @@ async def get_history(
         ]
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get history: {str(e)}")
+
+
+# ─── Breakdown Mode Endpoints ───────────────────────────────────────────────
+
+
+@router.post("/onsite-prep/questions/{question_id}/start-breakdown", response_model=CreateBreakdownAttemptResponse)
+async def start_breakdown(
+    question_id: UUID,
+    supabase: Annotated[Client, Depends(get_supabase)] = None,
+):
+    """Create a new breakdown attempt for a design question."""
+    try:
+        q_result = supabase.table("onsite_prep_questions").select("category").eq("id", str(question_id)).execute()
+        if not q_result.data:
+            raise HTTPException(status_code=404, detail="Question not found")
+        if q_result.data[0]["category"] != "design":
+            raise HTTPException(status_code=400, detail="Breakdown mode is only available for design questions")
+
+        attempt_data = {
+            "user_id": "00000000-0000-0000-0000-000000000001",
+            "question_id": str(question_id),
+            "mode": "breakdown",
+            "current_phase": 1,
+            "created_at": datetime.utcnow().isoformat(),
+        }
+        insert_result = supabase.table("onsite_prep_attempts").insert(attempt_data).execute()
+        attempt = insert_result.data[0]
+
+        return CreateBreakdownAttemptResponse(
+            attempt_id=attempt["id"],
+            mode="breakdown",
+            current_phase=1,
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to start breakdown: {str(e)}")
+
+
+@router.post("/onsite-prep/attempts/{attempt_id}/phases/{phase_number}/submit-audio", response_model=SubmitPhaseAudioResponse)
+async def submit_phase_audio(
+    attempt_id: UUID,
+    phase_number: int,
+    audio: UploadFile = File(...),
+    supabase: Annotated[Client, Depends(get_supabase)] = None,
+):
+    """Submit audio for a breakdown phase. Validates phase ordering and gate."""
+    from app.services.onsite_prep_service import get_onsite_prep_grading_service, OnsitePrepGradingService
+
+    try:
+        if phase_number < 1 or phase_number > 7:
+            raise HTTPException(status_code=400, detail="Phase number must be 1-7")
+
+        content_type = audio.content_type or "audio/webm"
+        if content_type not in ALLOWED_AUDIO_TYPES:
+            raise HTTPException(status_code=400, detail=f"Unsupported audio type: {content_type}")
+
+        audio_bytes = await audio.read()
+        if len(audio_bytes) > MAX_AUDIO_SIZE:
+            raise HTTPException(status_code=400, detail="Audio too large")
+
+        # Get attempt
+        a_result = supabase.table("onsite_prep_attempts").select("*").eq("id", str(attempt_id)).execute()
+        if not a_result.data:
+            raise HTTPException(status_code=404, detail="Attempt not found")
+        attempt = a_result.data[0]
+
+        if attempt.get("mode") != "breakdown":
+            raise HTTPException(status_code=400, detail="This attempt is not in breakdown mode")
+
+        current_phase = attempt.get("current_phase", 1)
+        # Allow re-recording any phase up to and including current_phase
+        # (re-record of a passed phase, or retry of current gated phase)
+        if phase_number > current_phase:
+            raise HTTPException(status_code=400, detail=f"Expected phase {current_phase} or earlier, got {phase_number}")
+
+        # Get question for breakdown phases
+        q_result = supabase.table("onsite_prep_questions").select("*").eq("id", attempt["question_id"]).execute()
+        if not q_result.data:
+            raise HTTPException(status_code=404, detail="Question not found")
+        question = q_result.data[0]
+
+        breakdown_phases = question.get("breakdown_phases") or []
+        if phase_number > len(breakdown_phases):
+            raise HTTPException(status_code=400, detail=f"Phase {phase_number} not defined for this question")
+
+        phase_def = breakdown_phases[phase_number - 1]
+
+        # Get previous phase summaries for context
+        prev_result = supabase.table("onsite_prep_phase_submissions").select(
+            "phase_number, overall_score, feedback"
+        ).eq("attempt_id", str(attempt_id)).order("phase_number").execute()
+        previous_summaries = [
+            {
+                "phase_number": ps["phase_number"],
+                "phase_name": breakdown_phases[ps["phase_number"] - 1]["name"] if ps["phase_number"] <= len(breakdown_phases) else f"Phase {ps['phase_number']}",
+                "score": ps.get("overall_score", 0),
+                "feedback": ps.get("feedback", ""),
+            }
+            for ps in prev_result.data
+        ]
+
+        # Get images marked for grading on this phase
+        image_contents = []
+        image_mime_types = []
+        # Will be linked after phase submission is created
+
+        # Grade
+        service = get_onsite_prep_grading_service()
+        result = await service.transcribe_and_grade_phase(
+            audio_bytes=audio_bytes,
+            mime_type=content_type,
+            question_text=question["prompt_text"],
+            phase_number=phase_number,
+            phase_name=phase_def["name"],
+            phase_prompt=phase_def["prompt"],
+            phase_rubric_dimensions=phase_def.get("rubric_dimensions", []),
+            previous_phase_summaries=previous_summaries,
+            image_contents=image_contents if image_contents else None,
+            image_mime_types=image_mime_types if image_mime_types else None,
+        )
+
+        # Save phase submission (upsert in case of re-record)
+        ps_data = {
+            "attempt_id": str(attempt_id),
+            "phase_number": phase_number,
+            "transcript": result.transcript,
+            "dimensions": [
+                {"name": d.name, "score": d.score, "evidence": [{"quote": e.quote, "analysis": e.analysis} for e in d.evidence], "summary": d.summary}
+                for d in result.dimensions
+            ],
+            "overall_score": result.overall_score,
+            "verdict": result.verdict,
+            "feedback": result.feedback,
+            "strongest_moment": result.strongest_moment,
+            "weakest_moment": result.weakest_moment,
+            "created_at": datetime.utcnow().isoformat(),
+        }
+
+        # Delete existing submission for this phase (re-record)
+        supabase.table("onsite_prep_phase_submissions").delete().eq(
+            "attempt_id", str(attempt_id)
+        ).eq("phase_number", phase_number).execute()
+
+        insert_result = supabase.table("onsite_prep_phase_submissions").insert(ps_data).execute()
+        phase_sub_id = insert_result.data[0]["id"]
+
+        # Gate check: >= 3.0 to proceed
+        gate_passed = result.overall_score >= 3.0
+        next_phase = None
+        attempt_complete = False
+        overall_score = None
+        overall_verdict = None
+
+        # Re-fetch current_phase in case it was already advanced past this phase
+        a_refresh = supabase.table("onsite_prep_attempts").select("current_phase").eq("id", str(attempt_id)).execute()
+        current_phase = a_refresh.data[0]["current_phase"] if a_refresh.data else phase_number
+
+        if gate_passed:
+            if phase_number < 7:
+                next_phase = phase_number + 1
+                # Only advance current_phase forward, never regress
+                if next_phase > current_phase:
+                    supabase.table("onsite_prep_attempts").update(
+                        {"current_phase": next_phase}
+                    ).eq("id", str(attempt_id)).execute()
+            else:
+                # All 7 phases done — compute overall
+                all_ps = supabase.table("onsite_prep_phase_submissions").select(
+                    "phase_number, overall_score"
+                ).eq("attempt_id", str(attempt_id)).execute()
+                phase_scores = {ps["phase_number"]: ps["overall_score"] for ps in all_ps.data if ps.get("overall_score") is not None}
+                overall_score = OnsitePrepGradingService.compute_breakdown_overall_score(phase_scores)
+                overall_verdict = OnsitePrepGradingService._compute_verdict(overall_score)
+                attempt_complete = True
+
+                supabase.table("onsite_prep_attempts").update({
+                    "current_phase": 8,  # Signals complete
+                    "overall_score": overall_score,
+                    "verdict": overall_verdict,
+                }).eq("id", str(attempt_id)).execute()
+
+                _dashboard_cache.clear()
+
+        # Best-effort audio archival
+        try:
+            from app.services.gcs_upload import upload_audio_to_gcs
+            gcs_path = await upload_audio_to_gcs(
+                audio_bytes=audio_bytes,
+                user_id="00000000-0000-0000-0000-000000000001",
+                question_id=attempt["question_id"],
+                attempt_id=str(attempt_id),
+                mime_type=content_type,
+            )
+            if gcs_path:
+                supabase.table("onsite_prep_phase_submissions").update(
+                    {"audio_gcs_path": gcs_path}
+                ).eq("id", phase_sub_id).execute()
+        except Exception:
+            logger.exception("Failed to upload phase audio for attempt %s phase %d", attempt_id, phase_number)
+
+        return SubmitPhaseAudioResponse(
+            phase_submission_id=phase_sub_id,
+            phase_number=phase_number,
+            result=result,
+            gate_passed=gate_passed,
+            next_phase=next_phase,
+            attempt_complete=attempt_complete,
+            overall_score=overall_score,
+            overall_verdict=overall_verdict,
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception("Failed to grade phase audio for attempt %s phase %d", attempt_id, phase_number)
+        raise HTTPException(status_code=500, detail=f"Failed to grade phase audio: {str(e)}")
+
+
+@router.get("/onsite-prep/attempts/{attempt_id}/phases", response_model=list[OnsitePrepPhaseSubmission])
+async def get_phase_submissions(
+    attempt_id: UUID,
+    supabase: Annotated[Client, Depends(get_supabase)] = None,
+):
+    """Get all phase submissions for a breakdown attempt."""
+    try:
+        result = supabase.table("onsite_prep_phase_submissions").select("*").eq(
+            "attempt_id", str(attempt_id)
+        ).order("phase_number").execute()
+
+        return [
+            OnsitePrepPhaseSubmission(
+                id=ps["id"],
+                attempt_id=ps["attempt_id"],
+                phase_number=ps["phase_number"],
+                transcript=ps.get("transcript"),
+                dimensions=[DimensionScore(**d) for d in (ps.get("dimensions") or [])] if ps.get("dimensions") else None,
+                overall_score=ps.get("overall_score"),
+                verdict=ps.get("verdict"),
+                feedback=ps.get("feedback"),
+                strongest_moment=ps.get("strongest_moment"),
+                weakest_moment=ps.get("weakest_moment"),
+                audio_gcs_path=ps.get("audio_gcs_path"),
+                duration_seconds=ps.get("duration_seconds"),
+                created_at=ps.get("created_at"),
+            )
+            for ps in result.data
+        ]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get phase submissions: {str(e)}")
+
+
+# ─── Image Endpoints ────────────────────────────────────────────────────────
+
+
+@router.post("/onsite-prep/attempts/{attempt_id}/upload-image", response_model=ImageUploadResponse)
+async def upload_attempt_image(
+    attempt_id: UUID,
+    image: UploadFile = File(...),
+    supabase: Annotated[Client, Depends(get_supabase)] = None,
+):
+    """Upload an image for a Stand & Deliver attempt."""
+    try:
+        content_type = image.content_type or "image/jpeg"
+        if content_type not in ALLOWED_IMAGE_TYPES:
+            raise HTTPException(status_code=400, detail=f"Unsupported image type: {content_type}")
+
+        image_bytes = await image.read()
+        if len(image_bytes) > MAX_IMAGE_SIZE:
+            raise HTTPException(status_code=400, detail="Image too large (max 10MB)")
+
+        # Verify attempt exists
+        a_result = supabase.table("onsite_prep_attempts").select("id").eq("id", str(attempt_id)).execute()
+        if not a_result.data:
+            raise HTTPException(status_code=404, detail="Attempt not found")
+
+        from app.services.gcs_upload import upload_image_to_gcs
+        gcs_path = await upload_image_to_gcs(
+            image_bytes=image_bytes,
+            user_id="00000000-0000-0000-0000-000000000001",
+            attempt_id=str(attempt_id),
+            filename=image.filename or "image.jpg",
+            mime_type=content_type,
+        )
+
+        # Count existing images for sort order
+        existing = supabase.table("onsite_prep_images").select("id", count="exact").eq("attempt_id", str(attempt_id)).execute()
+        sort_order = existing.count or 0
+
+        img_data = {
+            "attempt_id": str(attempt_id),
+            "gcs_path": gcs_path or "",
+            "filename": image.filename or "image.jpg",
+            "include_in_grading": False,
+            "sort_order": sort_order,
+        }
+        insert_result = supabase.table("onsite_prep_images").insert(img_data).execute()
+
+        return ImageUploadResponse(
+            image_id=insert_result.data[0]["id"],
+            gcs_path=gcs_path or "",
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception("Failed to upload image for attempt %s", attempt_id)
+        raise HTTPException(status_code=500, detail=f"Failed to upload image: {str(e)}")
+
+
+@router.post("/onsite-prep/attempts/{attempt_id}/phases/{phase_number}/upload-image", response_model=ImageUploadResponse)
+async def upload_phase_image(
+    attempt_id: UUID,
+    phase_number: int,
+    image: UploadFile = File(...),
+    supabase: Annotated[Client, Depends(get_supabase)] = None,
+):
+    """Upload an image for a specific breakdown phase."""
+    try:
+        content_type = image.content_type or "image/jpeg"
+        if content_type not in ALLOWED_IMAGE_TYPES:
+            raise HTTPException(status_code=400, detail=f"Unsupported image type: {content_type}")
+
+        image_bytes = await image.read()
+        if len(image_bytes) > MAX_IMAGE_SIZE:
+            raise HTTPException(status_code=400, detail="Image too large (max 10MB)")
+
+        # Get phase submission
+        ps_result = supabase.table("onsite_prep_phase_submissions").select("id").eq(
+            "attempt_id", str(attempt_id)
+        ).eq("phase_number", phase_number).execute()
+
+        phase_sub_id = ps_result.data[0]["id"] if ps_result.data else None
+
+        from app.services.gcs_upload import upload_image_to_gcs
+        gcs_path = await upload_image_to_gcs(
+            image_bytes=image_bytes,
+            user_id="00000000-0000-0000-0000-000000000001",
+            attempt_id=str(attempt_id),
+            filename=image.filename or "image.jpg",
+            mime_type=content_type,
+            phase_number=phase_number,
+        )
+
+        img_data = {
+            "attempt_id": str(attempt_id),
+            "phase_submission_id": phase_sub_id,
+            "gcs_path": gcs_path or "",
+            "filename": image.filename or "image.jpg",
+            "include_in_grading": False,
+            "sort_order": 0,
+        }
+        insert_result = supabase.table("onsite_prep_images").insert(img_data).execute()
+
+        return ImageUploadResponse(
+            image_id=insert_result.data[0]["id"],
+            gcs_path=gcs_path or "",
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception("Failed to upload phase image for attempt %s phase %d", attempt_id, phase_number)
+        raise HTTPException(status_code=500, detail=f"Failed to upload image: {str(e)}")
+
+
+@router.patch("/onsite-prep/images/{image_id}")
+async def toggle_image_grading(
+    image_id: UUID,
+    supabase: Annotated[Client, Depends(get_supabase)] = None,
+):
+    """Toggle include_in_grading for an image."""
+    try:
+        result = supabase.table("onsite_prep_images").select("id, include_in_grading").eq("id", str(image_id)).execute()
+        if not result.data:
+            raise HTTPException(status_code=404, detail="Image not found")
+
+        current = result.data[0]["include_in_grading"]
+        supabase.table("onsite_prep_images").update(
+            {"include_in_grading": not current}
+        ).eq("id", str(image_id)).execute()
+
+        return {"id": str(image_id), "include_in_grading": not current}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to toggle image grading: {str(e)}")

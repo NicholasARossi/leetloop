@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { AudioRecorder } from '@/components/system-design/AudioRecorder'
 import type { OnsitePrepQuestion, OnsitePrepDesignPhase, SubmitAudioResponse } from '@/lib/api'
 import { leetloopApi } from '@/lib/api'
+import { ImageAttachment } from './ImageAttachment'
 
 interface RecordingViewProps {
   question: OnsitePrepQuestion
@@ -81,6 +82,7 @@ export function DesignPhaseGuide({ phases }: { phases: OnsitePrepDesignPhase[] }
 export function RecordingView({ question, onGraded, showCoaching = false }: RecordingViewProps) {
   const [isUploading, setIsUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [images, setImages] = useState<File[]>([])
 
   const suggestedMinutes = question.target_duration_seconds / 60
 
@@ -136,6 +138,14 @@ export function RecordingView({ question, onGraded, showCoaching = false }: Reco
           {error && (
             <div className="card-sm bg-red-50 text-red-700 text-sm mt-4">{error}</div>
           )}
+
+          <div className="mt-4 max-w-lg mx-auto">
+            <ImageAttachment
+              images={images}
+              onImagesChange={setImages}
+              maxImages={5}
+            />
+          </div>
         </div>
       </div>
 

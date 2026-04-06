@@ -13,9 +13,9 @@ import {
   type IdealResponse,
   type SubmitAudioResponse,
 } from '@/lib/api'
-import { RecordingView, GradeResult, FollowUpProbes } from '@/components/onsite-prep'
+import { RecordingView, GradeResult, FollowUpProbes, ModeSelector, BreakdownView, BreakdownSummary } from '@/components/onsite-prep'
 
-type FlowState = 'loading' | 'attempts' | 'record' | 'grading' | 'follow-ups'
+type FlowState = 'loading' | 'attempts' | 'record' | 'grading' | 'follow-ups' | 'breakdown' | 'breakdown-summary'
 
 const CATEGORY_ROUTES: Record<string, string> = {
   lp: '/onsite-prep/lp',
@@ -49,6 +49,14 @@ function getVerdictLabel(verdict: string | undefined): string {
   }
 }
 
+function getModeBadge(mode: string): string {
+  return mode === 'breakdown' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'
+}
+
+function getModeLabel(mode: string): string {
+  return mode === 'breakdown' ? 'Breakdown' : 'S&D'
+}
+
 export default function PracticePage() {
   const params = useParams()
   const router = useRouter()
@@ -64,6 +72,8 @@ export default function PracticePage() {
   const [idealResponse, setIdealResponse] = useState<IdealResponse | null>(null)
   const [idealLoading, setIdealLoading] = useState(false)
   const [attemptLoading, setAttemptLoading] = useState(false)
+  const [mode, setMode] = useState<'stand_and_deliver' | 'breakdown'>('stand_and_deliver')
+  const [viewingAttempt, setViewingAttempt] = useState<OnsitePrepAttempt | null>(null)
 
   useEffect(() => {
     async function load() {
@@ -86,6 +96,16 @@ export default function PracticePage() {
     setAttemptLoading(true)
     try {
       const attempt = await leetloopApi.getOnsitePrepAttempt(id)
+      setViewingAttempt(attempt)
+
+      // If this is a breakdown attempt, show breakdown summary
+      if (attempt.mode === 'breakdown') {
+        setAttemptId(id)
+        setState('breakdown-summary')
+        return
+      }
+
+      // Stand & Deliver attempt
       setAttemptId(id)
 
       // Build grade result from attempt data
@@ -102,7 +122,23 @@ export default function PracticePage() {
 
       setIdealResponse(attempt.ideal_response || question?.ideal_answer || null)
       setFollowUps(attempt.follow_ups || [])
-      setFollowUpsReady(attempt.follow_ups.length > 0)
+
+      if (attempt.follow_ups.length > 0) {
+        setFollowUpsReady(true)
+      } else {
+        // No follow-ups yet — generate them on demand
+        setFollowUpsReady(false)
+        leetloopApi.generateOnsitePrepFollowUps(id)
+          .then(fus => {
+            setFollowUps(fus)
+            setFollowUpsReady(true)
+          })
+          .catch(e => {
+            console.error('Failed to generate follow-ups:', e)
+            // Still mark ready so button is clickable (will show 0 follow-ups)
+            setFollowUpsReady(true)
+          })
+      }
       setState('grading')
     } catch (e) {
       console.error('Failed to load attempt:', e)
@@ -145,6 +181,7 @@ export default function PracticePage() {
     setIdealResponse(null)
     setFollowUps([])
     setFollowUpsReady(false)
+    setViewingAttempt(null)
     // Refresh attempts list
     leetloopApi.getOnsitePrepHistory('00000000-0000-0000-0000-000000000001', 100)
       .then(history => setAttempts(history.filter(a => a.question_id === questionId)))
@@ -171,6 +208,14 @@ export default function PracticePage() {
 
   const handleDone = () => {
     handleBackToAttempts()
+  }
+
+  const handleRecordNew = () => {
+    if (question?.category === 'design' && mode === 'breakdown') {
+      setState('breakdown')
+    } else {
+      setState('record')
+    }
   }
 
   if (state === 'loading' || !question) {
@@ -216,15 +261,20 @@ export default function PracticePage() {
             )}
           </div>
 
+          {/* Mode selector for design questions */}
+          {question.category === 'design' && question.breakdown_phases.length > 0 && (
+            <ModeSelector mode={mode} onModeChange={setMode} />
+          )}
+
           <div className="flex items-center justify-between mb-3">
             <div className="text-[10px] uppercase tracking-widest text-gray-500">
               {attempts.length} Attempt{attempts.length !== 1 ? 's' : ''}
             </div>
             <button
-              onClick={() => setState('record')}
+              onClick={handleRecordNew}
               className="btn-primary px-4 py-2 text-sm"
             >
-              Record New Attempt
+              {mode === 'breakdown' && question.category === 'design' ? 'Start Breakdown' : 'Record New Attempt'}
             </button>
           </div>
 
@@ -243,14 +293,24 @@ export default function PracticePage() {
                   className="w-full flex items-center gap-4 px-4 py-3 border-l-4 border-transparent hover:border-coral hover:bg-gray-50 transition-all text-left"
                 >
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium">
-                      {a.created_at ? new Date(a.created_at).toLocaleDateString('en-US', {
-                        month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
-                      }) : 'Unknown date'}
+                    <div className="flex items-center gap-2">
+                      <div className="text-sm font-medium">
+                        {a.created_at ? new Date(a.created_at).toLocaleDateString('en-US', {
+                          month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
+                        }) : 'Unknown date'}
+                      </div>
+                      {a.mode && (
+                        <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${getModeBadge(a.mode)}`}>
+                          {getModeLabel(a.mode)}
+                        </span>
+                      )}
                     </div>
                     {a.overall_score != null && (
                       <div className="text-xs text-gray-400 mt-0.5">
                         Score: {a.overall_score.toFixed(1)} / 5
+                        {a.mode === 'breakdown' && a.phases_completed > 0 && (
+                          <span className="ml-2">({a.phases_completed}/7 phases)</span>
+                        )}
                       </div>
                     )}
                   </div>
@@ -276,6 +336,18 @@ export default function PracticePage() {
         </div>
       )}
 
+      {state === 'breakdown' && (
+        <div>
+          <button
+            onClick={handleBackToAttempts}
+            className="text-sm text-gray-400 hover:text-gray-600 mb-4"
+          >
+            &larr; Back to attempts
+          </button>
+          <BreakdownView question={question} onDone={handleBackToAttempts} />
+        </div>
+      )}
+
       {state === 'grading' && gradeResult && (
         <div>
           <button
@@ -292,6 +364,24 @@ export default function PracticePage() {
             idealResponse={idealResponse}
             idealLoading={idealLoading}
             followUpsReady={followUpsReady}
+          />
+        </div>
+      )}
+
+      {state === 'breakdown-summary' && viewingAttempt && viewingAttempt.mode === 'breakdown' && (
+        <div>
+          <button
+            onClick={handleBackToAttempts}
+            className="text-sm text-gray-400 hover:text-gray-600 mb-4"
+          >
+            &larr; Back to attempts
+          </button>
+          <BreakdownSummary
+            phases={question.breakdown_phases}
+            submissions={viewingAttempt.phase_submissions}
+            overallScore={viewingAttempt.overall_score ?? 0}
+            overallVerdict={viewingAttempt.verdict ?? 'fail'}
+            onBack={handleBackToAttempts}
           />
         </div>
       )}

@@ -565,6 +565,78 @@ export const leetloopApi = {
   getOnsitePrepHistory: (userId: string, limit = 20) =>
     api<OnsitePrepAttemptHistory[]>(`/api/onsite-prep/history/${userId}?limit=${limit}`),
 
+  // Breakdown Mode
+  startBreakdownAttempt: (questionId: string) =>
+    api<{ attempt_id: string; mode: string; current_phase: number }>(
+      `/api/onsite-prep/questions/${questionId}/start-breakdown`,
+      { method: 'POST' }
+    ),
+
+  submitPhaseAudio: async (attemptId: string, phaseNumber: number, audioFile: Blob | File): Promise<SubmitPhaseAudioResponse> => {
+    const formData = new FormData()
+    formData.append('audio', audioFile, audioFile instanceof File ? audioFile.name : 'recording.webm')
+
+    const url = `${API_URL}/api/onsite-prep/attempts/${attemptId}/phases/${phaseNumber}/submit-audio`
+    const response = await fetchWithTimeout(url, {
+      method: 'POST',
+      body: formData,
+      timeout: 180000,
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ detail: 'Unknown error' }))
+      throw new ApiError(response.status, error.detail || response.statusText)
+    }
+
+    return response.json()
+  },
+
+  getPhaseSubmissions: (attemptId: string) =>
+    api<OnsitePrepPhaseSubmission[]>(`/api/onsite-prep/attempts/${attemptId}/phases`),
+
+  uploadAttemptImage: async (attemptId: string, imageFile: File): Promise<{ image_id: string; gcs_path: string }> => {
+    const formData = new FormData()
+    formData.append('image', imageFile, imageFile.name)
+
+    const url = `${API_URL}/api/onsite-prep/attempts/${attemptId}/upload-image`
+    const response = await fetchWithTimeout(url, {
+      method: 'POST',
+      body: formData,
+      timeout: 30000,
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ detail: 'Unknown error' }))
+      throw new ApiError(response.status, error.detail || response.statusText)
+    }
+
+    return response.json()
+  },
+
+  uploadPhaseImage: async (attemptId: string, phaseNumber: number, imageFile: File): Promise<{ image_id: string; gcs_path: string }> => {
+    const formData = new FormData()
+    formData.append('image', imageFile, imageFile.name)
+
+    const url = `${API_URL}/api/onsite-prep/attempts/${attemptId}/phases/${phaseNumber}/upload-image`
+    const response = await fetchWithTimeout(url, {
+      method: 'POST',
+      body: formData,
+      timeout: 30000,
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ detail: 'Unknown error' }))
+      throw new ApiError(response.status, error.detail || response.statusText)
+    }
+
+    return response.json()
+  },
+
+  toggleImageGrading: (imageId: string) =>
+    api<{ id: string; include_in_grading: boolean }>(`/api/onsite-prep/images/${imageId}`, {
+      method: 'PATCH',
+    }),
+
   // Life Ops
   getLifeOpsCategories: (userId: string) =>
     api<LifeOpsCategory[]>(`/api/life-ops/${userId}/categories`),
@@ -1563,6 +1635,7 @@ export interface OnsitePrepDesignPhase {
   prompt: string
   duration_seconds: number
   key_areas: string[]
+  rubric_dimensions: OnsitePrepRubricDimension[]
 }
 
 export interface OnsitePrepQuestion {
@@ -1576,6 +1649,7 @@ export interface OnsitePrepQuestion {
   sort_order: number
   ideal_answer?: IdealResponse | null
   phases: OnsitePrepDesignPhase[]
+  breakdown_phases: OnsitePrepDesignPhase[]
   structured_probes: string[]
 }
 
@@ -1642,10 +1716,58 @@ export interface OnsitePrepFollowUp {
   parent_follow_up_id?: string
 }
 
+export interface OnsitePrepPhaseSubmission {
+  id: string
+  attempt_id: string
+  phase_number: number
+  transcript?: string
+  dimensions?: OnsitePrepDimensionScore[]
+  overall_score?: number
+  verdict?: 'pass' | 'borderline' | 'fail'
+  feedback?: string
+  strongest_moment?: string
+  weakest_moment?: string
+  audio_gcs_path?: string
+  duration_seconds?: number
+  created_at?: string
+}
+
+export interface OnsitePrepImage {
+  id: string
+  attempt_id?: string
+  phase_submission_id?: string
+  gcs_path: string
+  filename: string
+  include_in_grading: boolean
+  sort_order: number
+  created_at?: string
+}
+
+export interface SubmitPhaseAudioResponse {
+  phase_submission_id: string
+  phase_number: number
+  result: {
+    transcript: string
+    dimensions: OnsitePrepDimensionScore[]
+    overall_score: number
+    verdict: 'pass' | 'borderline' | 'fail'
+    feedback: string
+    strongest_moment: string
+    weakest_moment: string
+  }
+  gate_passed: boolean
+  next_phase: number | null
+  attempt_complete: boolean
+  overall_score: number | null
+  overall_verdict: string | null
+}
+
 export interface OnsitePrepAttempt {
   id: string
   user_id: string
   question_id: string
+  mode: 'stand_and_deliver' | 'breakdown'
+  current_phase: number
   transcript?: string
   dimensions?: OnsitePrepDimensionScore[]
   overall_score?: number
@@ -1656,6 +1778,8 @@ export interface OnsitePrepAttempt {
   duration_seconds?: number
   follow_up_questions: string[]
   follow_ups: OnsitePrepFollowUp[]
+  phase_submissions: OnsitePrepPhaseSubmission[]
+  images: OnsitePrepImage[]
   ideal_response?: IdealResponse
   created_at?: string
 }
@@ -1681,6 +1805,8 @@ export interface OnsitePrepAttemptHistory {
   question_id: string
   prompt_text: string
   category: string
+  mode: 'stand_and_deliver' | 'breakdown'
+  phases_completed: number
   overall_score?: number
   verdict?: string
   duration_seconds?: number

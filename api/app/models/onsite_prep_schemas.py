@@ -14,6 +14,7 @@ class DesignPhase(BaseModel):
     prompt: str
     duration_seconds: int
     key_areas: list[str] = []
+    rubric_dimensions: list[RubricDimension] = []
 
 
 class OnsitePrepQuestion(BaseModel):
@@ -27,6 +28,7 @@ class OnsitePrepQuestion(BaseModel):
     sort_order: int = 0
     ideal_answer: "IdealResponse | None" = None
     phases: list[DesignPhase] = []
+    breakdown_phases: list[DesignPhase] = []
     structured_probes: list[str] = []
 
 
@@ -64,6 +66,69 @@ class SubmitAudioResponse(BaseModel):
     grade: OnsitePrepGradeResult
 
 
+class PhaseSubmissionResult(BaseModel):
+    """Result from grading a single breakdown phase."""
+    transcript: str
+    dimensions: list[DimensionScore]
+    overall_score: float
+    verdict: str  # pass, borderline, fail
+    feedback: str
+    strongest_moment: str = ""
+    weakest_moment: str = ""
+
+
+class SubmitPhaseAudioResponse(BaseModel):
+    """Response from submitting a breakdown phase audio."""
+    phase_submission_id: str
+    phase_number: int
+    result: PhaseSubmissionResult
+    gate_passed: bool
+    next_phase: int | None = None
+    attempt_complete: bool = False
+    overall_score: float | None = None  # Set when attempt_complete=True
+    overall_verdict: str | None = None
+
+
+class OnsitePrepPhaseSubmission(BaseModel):
+    """A single phase submission in a breakdown attempt."""
+    id: str
+    attempt_id: str
+    phase_number: int
+    transcript: str | None = None
+    dimensions: list[DimensionScore] | None = None
+    overall_score: float | None = None
+    verdict: str | None = None
+    feedback: str | None = None
+    strongest_moment: str | None = None
+    weakest_moment: str | None = None
+    audio_gcs_path: str | None = None
+    duration_seconds: int | None = None
+    created_at: str | None = None
+
+
+class OnsitePrepImage(BaseModel):
+    """An image attached to an attempt or phase submission."""
+    id: str
+    attempt_id: str | None = None
+    phase_submission_id: str | None = None
+    gcs_path: str
+    filename: str
+    include_in_grading: bool = False
+    sort_order: int = 0
+    created_at: str | None = None
+
+
+class CreateBreakdownAttemptResponse(BaseModel):
+    attempt_id: str
+    mode: str
+    current_phase: int
+
+
+class ImageUploadResponse(BaseModel):
+    image_id: str
+    gcs_path: str
+
+
 class OnsitePrepFollowUpResult(BaseModel):
     transcript: str
     score: int
@@ -97,6 +162,8 @@ class OnsitePrepAttempt(BaseModel):
     id: str
     user_id: str
     question_id: str
+    mode: str = "stand_and_deliver"
+    current_phase: int = 0
     transcript: str | None = None
     dimensions: list[DimensionScore] | None = None
     overall_score: float | None = None
@@ -107,6 +174,8 @@ class OnsitePrepAttempt(BaseModel):
     duration_seconds: int | None = None
     follow_up_questions: list[str] = []
     follow_ups: list[OnsitePrepFollowUp] = []
+    phase_submissions: list[OnsitePrepPhaseSubmission] = []
+    images: list[OnsitePrepImage] = []
     ideal_response: IdealResponse | None = None
     audio_gcs_path: str | None = None
     created_at: str | None = None
@@ -133,6 +202,8 @@ class OnsitePrepAttemptHistory(BaseModel):
     question_id: str
     prompt_text: str
     category: str
+    mode: str = "stand_and_deliver"
+    phases_completed: int = 0
     overall_score: float | None = None
     verdict: str | None = None
     duration_seconds: int | None = None

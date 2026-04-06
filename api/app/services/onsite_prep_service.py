@@ -13,6 +13,36 @@ from app.config import get_settings
 
 logger = logging.getLogger(__name__)
 
+# Valid JSON escape characters after backslash
+_VALID_JSON_ESCAPES = set('"\\/bfnrtu')
+
+
+def _fix_json_escapes(s: str) -> str:
+    """Fix invalid backslash escapes in Gemini JSON output.
+
+    Gemini sometimes produces JSON with unescaped backslashes (e.g. \\S, \\q)
+    which cause json.loads() to fail with 'Invalid \\escape'.
+    This replaces any \\X where X is not a valid JSON escape with \\\\X.
+    """
+    result = []
+    i = 0
+    while i < len(s):
+        if s[i] == '\\' and i + 1 < len(s):
+            next_char = s[i + 1]
+            if next_char in _VALID_JSON_ESCAPES:
+                result.append(s[i])
+                result.append(next_char)
+                i += 2
+            else:
+                # Invalid escape — double the backslash
+                result.append('\\\\')
+                result.append(next_char)
+                i += 2
+        else:
+            result.append(s[i])
+            i += 1
+    return ''.join(result)
+
 from app.models.onsite_prep_schemas import (
     ConversationalFollowUpResult,
     DimensionEvidence,
@@ -21,6 +51,7 @@ from app.models.onsite_prep_schemas import (
     OnsitePrepFollowUp,
     OnsitePrepFollowUpResult,
     OnsitePrepGradeResult,
+    PhaseSubmissionResult,
 )
 
 # Dimension weights per category (equal for now, can be tuned)
@@ -57,6 +88,18 @@ CATEGORY_WEIGHTS = {
         "production": 1.5,
         "timing_structure": 1.0,
     },
+}
+
+
+# Breakdown phase weights: phases 3-5 (Architecture, Data, Model) get 2x weight
+PHASE_WEIGHTS = {
+    1: 1.0,  # Clarify Requirements
+    2: 1.0,  # Metrics
+    3: 2.0,  # High-Level Architecture
+    4: 2.0,  # Data & Features
+    5: 2.0,  # Model Design
+    6: 1.0,  # Serving & Scale
+    7: 1.0,  # Evaluation & Monitoring
 }
 
 
@@ -219,26 +262,83 @@ class OnsitePrepGradingService:
         subcategory: str | None,
         context_hint: str | None,
         target_duration_seconds: int,
+        image_contents: list[bytes] | None = None,
+        image_mime_types: list[str] | None = None,
     ) -> OnsitePrepGradeResult:
-        """Two-pass grading: transcribe audio first, then grade text-only."""
+        """Two-pass grading: transcribe audio first, then grade text-only (optionally with images)."""
         if not self.configured:
             raise RuntimeError("Gemini API key not configured")
 
         # Pass 1: Transcribe audio (no context_hint, no rubric)
         transcript = await self._transcribe_audio(audio_bytes, mime_type)
 
-        # Pass 2: Grade transcript text-only (no audio file)
+        # Pass 2: Grade transcript (optionally with images as multimodal content)
         prompt = self._build_rubric_prompt(
             question_text, category, subcategory, context_hint, target_duration_seconds, transcript
         )
 
+        content_parts = [prompt]
+        if image_contents and image_mime_types:
+            for img_bytes, img_mime in zip(image_contents, image_mime_types):
+                content_parts.append({"mime_type": img_mime, "data": img_bytes})
+
         response = await asyncio.to_thread(
-            self.model.generate_content, [prompt]
+            self.model.generate_content, content_parts
         )
 
         result = self._parse_grade_response(response.text, category)
         result.transcript = transcript
         return result
+
+    async def transcribe_and_grade_phase(
+        self,
+        audio_bytes: bytes,
+        mime_type: str,
+        question_text: str,
+        phase_number: int,
+        phase_name: str,
+        phase_prompt: str,
+        phase_rubric_dimensions: list[dict],
+        previous_phase_summaries: list[dict],
+        image_contents: list[bytes] | None = None,
+        image_mime_types: list[str] | None = None,
+    ) -> PhaseSubmissionResult:
+        """Transcribe audio, then grade on phase-specific rubric dimensions."""
+        if not self.configured:
+            raise RuntimeError("Gemini API key not configured")
+
+        transcript = await self._transcribe_audio(audio_bytes, mime_type)
+
+        prompt = self._build_phase_rubric_prompt(
+            question_text, phase_number, phase_name, phase_prompt,
+            phase_rubric_dimensions, previous_phase_summaries, transcript,
+        )
+
+        content_parts = [prompt]
+        if image_contents and image_mime_types:
+            for img_bytes, img_mime in zip(image_contents, image_mime_types):
+                content_parts.append({"mime_type": img_mime, "data": img_bytes})
+
+        response = await asyncio.to_thread(
+            self.model.generate_content, content_parts
+        )
+
+        result = self._parse_phase_grade_response(response.text)
+        result.transcript = transcript
+        return result
+
+    @staticmethod
+    def compute_breakdown_overall_score(phase_scores: dict[int, float]) -> float:
+        """Weighted average across all 7 phase scores. Phases 3-5 get 2x weight."""
+        weighted_sum = 0.0
+        total_weight = 0.0
+        for phase_num, score in phase_scores.items():
+            weight = PHASE_WEIGHTS.get(phase_num, 1.0)
+            weighted_sum += score * weight
+            total_weight += weight
+        if total_weight == 0:
+            return 0.0
+        return round(weighted_sum / total_weight, 1)
 
     async def generate_follow_up_probes(
         self,
@@ -305,7 +405,7 @@ Respond in this exact JSON format (no markdown code fences):
                 return structured_probes[:3]
             return ["Tell me more about your specific contribution.", "What would you do differently?"]
 
-        data = json.loads(json_match.group())
+        data = json.loads(_fix_json_escapes(json_match.group()))
         return data.get("probes", [])
 
     async def transcribe_and_grade_follow_up(
@@ -428,7 +528,7 @@ Respond in this exact JSON format (no markdown code fences):
                 full_response="",
             )
 
-        data = json.loads(json_match.group())
+        data = json.loads(_fix_json_escapes(json_match.group()))
         return IdealResponse(
             summary=data.get("summary", ""),
             outline=data.get("outline", []),
@@ -519,7 +619,7 @@ Grade now:"""
         if not json_match:
             raise ValueError(f"Could not parse JSON from Gemini response: {response.text[:200]}")
 
-        data = json.loads(json_match.group())
+        data = json.loads(_fix_json_escapes(json_match.group()))
         score = max(1, min(5, int(data.get("score", 1))))
 
         next_probe = data.get("next_probe")
@@ -897,13 +997,118 @@ Respond in this exact JSON format (no markdown code fences, just raw JSON):
 
 Grade now:"""
 
+    def _build_phase_rubric_prompt(
+        self,
+        question_text: str,
+        phase_number: int,
+        phase_name: str,
+        phase_prompt: str,
+        phase_rubric_dimensions: list[dict],
+        previous_phase_summaries: list[dict],
+        transcript: str,
+    ) -> str:
+        """Build a grading prompt for a single breakdown phase."""
+        prev_context = ""
+        if previous_phase_summaries:
+            prev_context = "\n\nPREVIOUS PHASES:\n"
+            for ps in previous_phase_summaries:
+                prev_context += f"Phase {ps['phase_number']} ({ps['phase_name']}): score {ps['score']}/5 — {ps['feedback'][:200]}\n"
+
+        dim_descriptions = ""
+        dim_json_examples = []
+        for i, dim in enumerate(phase_rubric_dimensions, 1):
+            dim_descriptions += f"\n### {i}. {dim['label']}\n{dim['description']}\n"
+            dim_descriptions += "- 1-2: Missing or fundamentally flawed\n"
+            dim_descriptions += "- 3: Adequate but incomplete or surface-level\n"
+            dim_descriptions += "- 4: Solid coverage with some depth\n"
+            dim_descriptions += "- 5: Exceptional — production-grade detail and insight\n"
+            dim_json_examples.append(
+                f'{{"name": "{dim["name"]}", "score": 3, "evidence": [{{"quote": "...", "analysis": "..."}}], "summary": "..."}}'
+            )
+
+        dims_json = ",\n    ".join(dim_json_examples)
+
+        return f"""You are a senior Amazon system design interviewer evaluating PHASE {phase_number} of a breakdown interview.
+
+OVERALL QUESTION: "{question_text}"
+
+PHASE {phase_number}: {phase_name}
+PHASE PROMPT: "{phase_prompt}"
+{prev_context}
+
+CANDIDATE'S RESPONSE FOR THIS PHASE (verbatim transcript):
+"{transcript}"
+
+Grade using this phase-specific rubric. CITE SPECIFIC QUOTES from the transcript.
+
+## RUBRIC (each dimension scored 1-5)
+{dim_descriptions}
+
+---
+
+## GRADING RULES
+1. CITE EVIDENCE. Quote 1-2 specific phrases per dimension.
+2. DIFFERENTIATE SCORES.
+3. Grade THIS PHASE only — previous phase context is for continuity, not re-grading.
+4. A 3.0 average is the gate to proceed. Be calibrated.
+
+Respond in this exact JSON format (no markdown code fences, just raw JSON):
+{{
+  "dimensions": [
+    {dims_json}
+  ],
+  "feedback": "2-3 sentences of direct, actionable feedback for this phase",
+  "strongest_moment": "quoted from transcript",
+  "weakest_moment": "described"
+}}
+
+Grade now:"""
+
+    def _parse_phase_grade_response(self, text: str) -> PhaseSubmissionResult:
+        """Parse Gemini phase grading response."""
+        json_match = re.search(r'\{[\s\S]*\}', text)
+        if not json_match:
+            raise ValueError(f"Could not parse JSON from Gemini response: {text[:200]}")
+
+        data = json.loads(_fix_json_escapes(json_match.group()))
+
+        dimensions = []
+        for dim_data in data.get("dimensions", []):
+            evidence = [
+                DimensionEvidence(quote=e.get("quote", ""), analysis=e.get("analysis", ""))
+                for e in dim_data.get("evidence", [])
+            ]
+            dimensions.append(DimensionScore(
+                name=dim_data.get("name", ""),
+                score=int(dim_data.get("score", 1)),
+                evidence=evidence,
+                summary=dim_data.get("summary", ""),
+            ))
+
+        # Simple average of phase dimensions
+        if dimensions:
+            overall = sum(d.score for d in dimensions) / len(dimensions)
+        else:
+            overall = 0.0
+        verdict = self._compute_verdict(overall)
+
+        return PhaseSubmissionResult(
+            transcript="",
+            dimensions=dimensions,
+            overall_score=round(overall, 1),
+            verdict=verdict,
+            feedback=data.get("feedback", ""),
+            strongest_moment=data.get("strongest_moment", ""),
+            weakest_moment=data.get("weakest_moment", ""),
+        )
+
     def _parse_grade_response(self, text: str, category: str) -> OnsitePrepGradeResult:
         """Parse Gemini's JSON response and compute overall score in code."""
         json_match = re.search(r'\{[\s\S]*\}', text)
         if not json_match:
             raise ValueError(f"Could not parse JSON from Gemini response: {text[:200]}")
 
-        data = json.loads(json_match.group())
+        data = json.loads(_fix_json_escapes(json_match.group()))
 
         dimensions = []
         for dim_data in data.get("dimensions", []):
@@ -962,7 +1167,7 @@ Grade now:"""
         if not json_match:
             raise ValueError(f"Could not parse JSON from Gemini response: {text[:200]}")
 
-        data = json.loads(json_match.group())
+        data = json.loads(_fix_json_escapes(json_match.group()))
         score = max(1, min(5, int(data.get("score", 1))))
 
         return OnsitePrepFollowUpResult(
