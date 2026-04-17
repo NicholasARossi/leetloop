@@ -3,10 +3,11 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
-import { leetloopApi, type WinRateStats, type DailyFeedResponse, type SystemDesignDashboardSummary, type SystemDesignReviewItem, type ProgressTrend, type UserStats, type MLCodingDashboardSummary } from '@/lib/api'
+import { leetloopApi, type WinRateStats, type DailyFeedResponse, type SystemDesignDashboardSummary, type SystemDesignReviewItem, type ProgressTrend, type UserStats, type MLCodingDashboardSummary, type MistakeJournalEntry } from '@/lib/api'
 import { WinRateCard } from '@/components/winrate/WinRateCard'
 import { FeedSection } from '@/components/feed/FeedSection'
 import { FocusNotesCard } from '@/components/feed/FocusNotesCard'
+import { MistakeJournalCard } from '@/components/feed/MistakeJournalCard'
 import { MissionSkeleton } from '@/components/mission'
 import { SystemDesignDashboardCard } from '@/components/system-design/SystemDesignDashboardCard'
 import { MLCodingDashboardCard } from '@/components/ml-coding'
@@ -25,6 +26,8 @@ export default function DashboardPage() {
   const [trends, setTrends] = useState<ProgressTrend[]>([])
   const [userStats, setUserStats] = useState<UserStats | null>(null)
   const [focusNotes, setFocusNotes] = useState<string | null>(null)
+  const [journalEntries, setJournalEntries] = useState<MistakeJournalEntry[]>([])
+  const [journalUnaddressed, setJournalUnaddressed] = useState(0)
 
   const [feedLoading, setFeedLoading] = useState(false)
 
@@ -56,13 +59,14 @@ export default function DashboardPage() {
       }
 
       // Load remaining data in parallel (feed has longer timeout)
-      const [winRateData, feedData, sdData, mlData, progressData, focusNotesData] = await Promise.all([
+      const [winRateData, feedData, sdData, mlData, progressData, focusNotesData, journalData] = await Promise.all([
         leetloopApi.getWinRateStats(userId).catch(() => null),
         leetloopApi.getDailyFeed(userId).catch(() => null),
         leetloopApi.getSystemDesignDashboard(userId).catch(() => null),
         leetloopApi.getMLCodingDashboard(userId).catch(() => null),
         leetloopApi.getProgress(userId, 91).catch(() => null),
         leetloopApi.getFocusNotes(userId).catch(() => null),
+        leetloopApi.getJournalEntries(userId).catch(() => null),
       ])
 
       setWinRateStats(winRateData)
@@ -74,6 +78,10 @@ export default function DashboardPage() {
         setUserStats(progressData.stats)
       }
       setFocusNotes(focusNotesData?.focus_notes ?? null)
+      if (journalData) {
+        setJournalEntries(journalData.entries)
+        setJournalUnaddressed(journalData.unaddressed_count)
+      }
     } catch (err) {
       console.error('Failed to load dashboard:', err)
       setError('Failed to load dashboard. Make sure the backend is running.')
@@ -134,7 +142,7 @@ export default function DashboardPage() {
 
       {/* Win Rate Card at top */}
       {winRateStats && winRateStats.targets && (
-        <WinRateCard stats={winRateStats} />
+        <WinRateCard stats={winRateStats} period="alltime" />
       )}
 
       {/* Two Column Layout */}
@@ -149,8 +157,41 @@ export default function DashboardPage() {
               setFocusNotes(resp.focus_notes)
             }}
           />
+          <MistakeJournalCard
+            entries={journalEntries}
+            unaddressedCount={journalUnaddressed}
+            onAdd={async (text) => {
+              if (!userId) return
+              const entry = await leetloopApi.createJournalEntry(userId, {
+                entry_text: text,
+                entry_type: 'general',
+              })
+              setJournalEntries((prev) => [entry, ...prev])
+              setJournalUnaddressed((prev) => prev + 1)
+            }}
+            onDelete={async (entryId) => {
+              if (!userId) return
+              await leetloopApi.deleteJournalEntry(userId, entryId)
+              setJournalEntries((prev) => prev.filter((e) => e.id !== entryId))
+              setJournalUnaddressed((prev) => Math.max(0, prev - 1))
+            }}
+          />
           {feed ? (
-            <FeedSection feed={feed} />
+            <FeedSection
+              feed={feed}
+              onSaveMistake={async (item, text) => {
+                if (!userId) return
+                const entry = await leetloopApi.createJournalEntry(userId, {
+                  entry_text: text,
+                  entry_type: 'problem',
+                  problem_slug: item.problem_slug,
+                  problem_title: item.problem_title ?? undefined,
+                  feed_item_id: item.id,
+                })
+                setJournalEntries((prev) => [entry, ...prev])
+                setJournalUnaddressed((prev) => prev + 1)
+              }}
+            />
           ) : (
             <div className="card text-center py-8">
               {feedLoading ? (
