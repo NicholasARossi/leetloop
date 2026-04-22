@@ -9,60 +9,52 @@ import google.generativeai as genai
 
 from app.config import get_settings
 from app.models.language_schemas import (
+    DimensionScore,
+    EvidenceItem,
+    GrammarTargetHit,
     LanguageGradingResponse,
     LanguageQuestionContext,
     LanguageQuestionResponse,
+    WrittenGrading,
 )
 
-# ============ Exercise Tier Configuration ============
+# ============ Written Prompt Configuration ============
 
-EXERCISE_TIERS = {
-    "quick": {
-        "count": 3,
-        "response_format": "single_line",
-        "word_target": 3,
-        "types": ["conjugation", "fill_blank", "vocabulary"],
-    },
-    "short": {
-        "count": 2,
-        "response_format": "short_text",
-        "word_target": 20,
-        "types": ["sentence_construction", "error_correction", "grammar"],
-    },
-    "extended": {
-        "count": 2,
-        "response_format": "long_text",
-        "word_target": 60,
-        "types": ["situational", "reading_comprehension", "dialogue"],
-    },
-    "free_form": {
-        "count": 1,
-        "response_format": "free_form",
-        "word_target": 150,
-        "types": ["journal_entry", "opinion_essay", "story_continuation", "letter_writing"],
-    },
+WRITTEN_PROMPT_CONFIG = {
+    "count_per_day": 3,
+    "word_targets": [100, 150, 200],
+    "genres": ["journal_entry", "opinion_essay", "letter_writing", "story_continuation", "situational", "dialogue"],
+    "response_format": "long_text",
 }
 
-EXERCISE_TYPE_TO_TIER: dict[str, dict] = {}
-for _tier_name, _tier_info in EXERCISE_TIERS.items():
-    for _etype in _tier_info["types"]:
-        EXERCISE_TYPE_TO_TIER[_etype] = {
-            "tier": _tier_name,
-            "response_format": _tier_info["response_format"],
-            "word_target": _tier_info["word_target"],
-        }
+# Legacy tier mapping — kept for backward-compat when reading historical rows
+_LEGACY_TYPE_TO_TIER: dict[str, dict] = {
+    "conjugation": {"response_format": "single_line", "word_target": 3},
+    "fill_blank": {"response_format": "single_line", "word_target": 3},
+    "vocabulary": {"response_format": "single_line", "word_target": 3},
+    "sentence_construction": {"response_format": "short_text", "word_target": 20},
+    "error_correction": {"response_format": "short_text", "word_target": 20},
+    "grammar": {"response_format": "short_text", "word_target": 20},
+    "situational": {"response_format": "long_text", "word_target": 100},
+    "reading_comprehension": {"response_format": "long_text", "word_target": 100},
+    "dialogue": {"response_format": "long_text", "word_target": 100},
+    "journal_entry": {"response_format": "long_text", "word_target": 150},
+    "opinion_essay": {"response_format": "long_text", "word_target": 150},
+    "story_continuation": {"response_format": "long_text", "word_target": 200},
+    "letter_writing": {"response_format": "long_text", "word_target": 150},
+}
 
 
 def get_response_format(exercise_type: str) -> str:
     """Get the response format for an exercise type."""
-    info = EXERCISE_TYPE_TO_TIER.get(exercise_type)
-    return info["response_format"] if info else "single_line"
+    info = _LEGACY_TYPE_TO_TIER.get(exercise_type)
+    return info["response_format"] if info else "long_text"
 
 
 def get_word_target(exercise_type: str) -> int:
     """Get the word target for an exercise type."""
-    info = EXERCISE_TYPE_TO_TIER.get(exercise_type)
-    return info["word_target"] if info else 3
+    info = _LEGACY_TYPE_TO_TIER.get(exercise_type)
+    return info["word_target"] if info else 100
 
 
 class BookContentContext:
@@ -170,41 +162,34 @@ class LanguageService:
         user_weak_areas: list[str],
         book_contexts: dict[str, BookContentContext],
     ) -> str:
-        """Build prompt for batch exercise generation."""
+        """Build prompt for batch exercise generation using grammar-targeted open-ended prompts."""
         language_name = language.capitalize()
         level_upper = level.upper()
+        genres = WRITTEN_PROMPT_CONFIG["genres"]
+        word_targets = WRITTEN_PROMPT_CONFIG["word_targets"]
+
+        all_items = []
+        for rt in review_topics:
+            all_items.append({**rt, "is_review": True})
+        for nt in new_topics:
+            all_items.append({**nt, "is_review": False})
 
         exercises_spec = []
+        for i, item in enumerate(all_items):
+            bc = book_contexts.get(item["topic"])
+            book_note = f" (Textbook context: {bc.summary[:200]})" if bc and bc.summary else ""
+            grammar_targets = item.get("key_concepts", [])
+            vocab_targets = bc.key_concepts[:6] if bc and bc.key_concepts else []
+            genre = genres[i % len(genres)]
+            word_target = word_targets[i % len(word_targets)]
+            review_tag = "[REVIEW] " if item.get("is_review") else ""
 
-        for i, rt in enumerate(review_topics):
-            book_note = ""
-            bc = book_contexts.get(rt["topic"])
-            if bc and bc.summary:
-                book_note = f" (Textbook context: {bc.summary[:200]})"
-            etype = rt.get("exercise_type", "vocabulary")
-            tier_info = EXERCISE_TYPE_TO_TIER.get(etype, {})
-            tier_label = tier_info.get("tier", "quick").upper()
-            word_target = tier_info.get("word_target", 3)
             exercises_spec.append(
-                f'{i + 1}. [REVIEW] [{tier_label}] Topic: "{rt["topic"]}" - Type: {etype} - '
-                f'Target: ~{word_target} words. Reason: {rt.get("reason", "due for review")}. '
-                f'Key concepts: {", ".join(rt.get("key_concepts", []))}.{book_note}'
-            )
-
-        offset = len(review_topics)
-        for i, nt in enumerate(new_topics):
-            book_note = ""
-            bc = book_contexts.get(nt["topic"])
-            if bc and bc.summary:
-                book_note = f" (Textbook context: {bc.summary[:200]})"
-            etype = nt.get("exercise_type", "vocabulary")
-            tier_info = EXERCISE_TYPE_TO_TIER.get(etype, {})
-            tier_label = tier_info.get("tier", "quick").upper()
-            word_target = tier_info.get("word_target", 3)
-            exercises_spec.append(
-                f'{offset + i + 1}. [NEW] [{tier_label}] Topic: "{nt["topic"]}" - Type: {etype} - '
-                f'Target: ~{word_target} words. '
-                f'Key concepts: {", ".join(nt.get("key_concepts", []))}.{book_note}'
+                f'{i + 1}. {review_tag}Topic: "{item["topic"]}" — Genre: {genre} — '
+                f'~{word_target} words\n'
+                f'   Grammar targets: {", ".join(grammar_targets) if grammar_targets else "general grammar"}\n'
+                f'   Vocab targets: {", ".join(vocab_targets) if vocab_targets else "general vocabulary"}'
+                f'{book_note}'
             )
 
         exercises_list = "\n".join(exercises_spec)
@@ -213,40 +198,57 @@ class LanguageService:
         if user_weak_areas:
             weak_areas_note = f"\nThe student has shown weakness in: {', '.join(user_weak_areas)}. Incorporate these areas where relevant."
 
-        return f"""You are a {language_name} language teacher creating a batch of daily exercises for a {level_upper} student.
+        return f"""You are an expert {language_name} teacher designing open-ended WRITTEN practice prompts for a {level_upper} student targeting the next CEFR level.
 
-CRITICAL RULE: FULL IMMERSION. All questions, example text, and expected answers must be in {language_name}. NO English. NO translation exercises.
+CRITICAL RULE: FULL IMMERSION. All scenario text must be in {language_name}. NO English. NO translation exercises.
 
-Generate {len(exercises_spec)} exercises based on these specifications:
+Generate {len(exercises_spec)} open-ended scenario prompts based on these specifications:
 
 {exercises_list}
 {weak_areas_note}
 
-VARIETY RULES:
-- Each exercise should test different skills (don't repeat the same pattern)
-- For review exercises, use a DIFFERENT exercise type than what the student originally struggled with
-- Mix question formats across all tiers
+================ HOW TO FORCE GRAMMAR ================
 
-RESPONSE LENGTH BY TIER:
-- QUICK exercises: expect a 1-3 word answer (single conjugated form, fill-in-the-blank, vocabulary word)
-- SHORT exercises: expect 1-2 sentences (~15-25 words)
-- EXTENDED exercises: expect 3-5 sentences (~40-80 words). Include context/scenario.
-- FREE_FORM exercises: expect 8-10 sentences (~100-150 words). Give a rich, open-ended prompt.
+A good prompt does not ASK for a grammar point — it engineers a situation where avoiding
+that grammar point would produce an incoherent or unnatural response. Examples:
 
-Format your response as a JSON array. Each exercise object must have:
-- "topic": the topic name (must match the topic from the spec above)
-- "exercise_type": one of "vocabulary", "grammar", "fill_blank", "conjugation", "sentence_construction", "reading_comprehension", "error_correction", "situational", "dialogue", "journal_entry", "opinion_essay", "story_continuation", "letter_writing"
-- "question_text": the exercise prompt entirely in {language_name}
-- "expected_answer": the correct/model answer in {language_name} (or null for open-ended/free-form)
-- "focus_area": what grammar/vocabulary aspect this tests
-- "key_concepts": array of 2-4 concepts tested
-- "is_review": true if this is a review exercise, false otherwise
-- "response_format": one of "single_line", "short_text", "long_text", "free_form"
-- "word_target": approximate number of words expected in the answer
+- Subjonctif: require expressing DOUBT, EMOTION, or WISHES, or use conjunctions that
+  syntactically demand subjonctif (bien que, avant que, à condition que).
+- Passé composé + imparfait: give a NARRATIVE SEED with a rupture event against background.
+- Conditionnel passé: demand REGRET or REPROACH about a past action.
+- Pronoms relatifs composés: set up entities with non-trivial prepositional links.
+- Gérondif: frame as PROCEDURAL HOW (step-by-step instructions, concurrent actions).
+- Concordance des temps: frame as REPORTING what someone told/thought/planned earlier.
+- Accord du participe passé: narrative with FEMININE/PLURAL subjects + COD antéposés.
+- Discours indirect: REPORT someone else's speech after the fact.
+- Voix passive: centre an INSTITUTIONAL AGENT or EVENT where agent matters less than recipient.
+- Articles partitifs: DISCUSSING QUANTITIES, LACK, or NEED.
 
-Respond with ONLY the JSON array, no other text:
+================ CONSTRAINTS ================
+
+1. Do NOT name the grammar points in the scenario. Never write "utilisez le subjonctif".
+2. Do NOT list the vocabulary inside the scenario.
+3. Each scenario should be 3-5 sentences setting up a rich, open-ended writing task.
+4. The scenario must match the specified GENRE.
+5. Register: idiomatic {level_upper} {language_name}.
+
+================ OUTPUT (JSON array only) ================
+
+Each exercise object must have:
+- "topic": the topic name (must match the spec above)
+- "exercise_type": the genre from the spec
+- "question_text": the scenario prompt entirely in {language_name} (3-5 sentences)
+- "expected_answer": null
+- "focus_area": what grammar aspect this targets
+- "key_concepts": array of 2-3 grammar targets from the spec
+- "vocab_targets": array of 4-6 vocabulary items from the spec
+- "is_review": true/false per spec
+- "response_format": "long_text"
+- "word_target": the word target from the spec
+
+Respond with ONLY the JSON array:
 [
-  {{"topic": "...", "exercise_type": "...", "question_text": "...", "expected_answer": "...", "focus_area": "...", "key_concepts": [...], "is_review": false, "response_format": "single_line", "word_target": 3}},
+  {{"topic": "...", "exercise_type": "...", "question_text": "...", "expected_answer": null, "focus_area": "...", "key_concepts": [...], "vocab_targets": [...], "is_review": false, "response_format": "long_text", "word_target": 150}},
   ...
 ]"""
 
@@ -275,6 +277,7 @@ Respond with ONLY the JSON array, no other text:
                     "expected_answer": item.get("expected_answer"),
                     "focus_area": item.get("focus_area", "general"),
                     "key_concepts": item.get("key_concepts", []),
+                    "vocab_targets": item.get("vocab_targets", []),
                     "is_review": item.get("is_review", False),
                     "response_format": item.get("response_format") or get_response_format(etype),
                     "word_target": item.get("word_target") or get_word_target(etype),
@@ -391,30 +394,52 @@ Respond with ONLY the JSON array, no other text:
         focus_area: str,
         key_concepts: list[str],
         response_text: str,
-    ) -> LanguageGradingResponse:
+        vocab_targets: Optional[list[str]] = None,
+        book_context: Optional[str] = None,
+    ) -> tuple[LanguageGradingResponse, Optional[WrittenGrading]]:
         """
-        Grade a language exercise response.
+        Grade a language exercise response with 4-dimension rubric.
 
-        Rubric dimensions (weighted):
-        - Accuracy (3): Correct answer, conjugation, usage
-        - Grammar (3): Agreement, tense, word order, accents
-        - Vocabulary (2): Appropriate word choice for level
-        - Naturalness (2): Sounds like a native speaker
+        Returns a tuple of (legacy grading, written grading).
+        Legacy fields are derived from the 4-dimension rubric for backward compat.
         """
         if not self.configured:
-            return self._fallback_grading(response_text, key_concepts, language)
+            return self._fallback_grading(response_text, key_concepts, language), None
 
-        prompt = self._build_grading_prompt(
+        prompt = self._build_written_grading_prompt(
             language, level, exercise_type, question_text,
             expected_answer, focus_area, key_concepts, response_text,
+            vocab_targets=vocab_targets or [],
+            book_context=book_context or "",
         )
 
         try:
             response = await asyncio.to_thread(self.model.generate_content, prompt)
-            return self._parse_grading_response(response.text, language)
+            written_grading = self._parse_written_grading_response(response.text)
+            if written_grading:
+                legacy = self._derive_legacy_grading(written_grading, key_concepts)
+                return legacy, written_grading
+            # Fallback to legacy parsing if 4-dim parsing fails
+            return self._parse_grading_response(response.text, language), None
         except Exception as e:
             print(f"Gemini grading failed: {e}")
-            return self._fallback_grading(response_text, key_concepts, language)
+            return self._fallback_grading(response_text, key_concepts, language), None
+
+    def _derive_legacy_grading(
+        self, wg: WrittenGrading, key_concepts: list[str]
+    ) -> LanguageGradingResponse:
+        """Derive legacy grading fields from WrittenGrading."""
+        verdict_map = {"strong": "pass", "developing": "borderline", "needs_work": "fail"}
+        verdict = verdict_map.get(wg.verdict, "borderline")
+        missed = [hit.target for hit in wg.grammar_target_hits if not hit.correct]
+
+        return LanguageGradingResponse(
+            score=wg.overall_score,
+            verdict=verdict,
+            feedback=wg.feedback,
+            corrections=None,
+            missed_concepts=missed,
+        )
 
     def _build_exercise_prompt(
         self,
@@ -593,6 +618,161 @@ Format your response EXACTLY as JSON:
 Note: verdict must be "pass" (score >= 7), "borderline" (5-7), or "fail" (< 5)
 
 Grade now:"""
+
+    def _build_written_grading_prompt(
+        self,
+        language: str,
+        level: str,
+        exercise_type: str,
+        question_text: str,
+        expected_answer: Optional[str],
+        focus_area: str,
+        key_concepts: list[str],
+        response_text: str,
+        vocab_targets: list[str] = None,
+        book_context: str = "",
+    ) -> str:
+        """Build prompt for 4-dimension written grading."""
+        language_name = language.capitalize()
+        level_upper = level.upper()
+
+        expected_note = ""
+        if expected_answer:
+            expected_note = f"\nEXPECTED ANSWER:\n{expected_answer}"
+
+        grammar_targets_str = ", ".join(key_concepts) if key_concepts else "general grammar"
+        vocab_targets_str = ", ".join(vocab_targets) if vocab_targets else "none specified"
+        book_note = f"\nBOOK CONTEXT:\n{book_context}" if book_context else ""
+
+        return f"""You are a strict but fair {language_name} teacher grading a {level_upper} student's written exercise using a 4-dimension rubric.
+
+EXERCISE TYPE: {exercise_type}
+FOCUS AREA: {focus_area}
+GRAMMAR TARGETS: {grammar_targets_str}
+VOCAB TARGETS: {vocab_targets_str}
+
+QUESTION:
+{question_text}
+{expected_note}
+{book_note}
+
+STUDENT'S RESPONSE:
+{response_text}
+
+---
+
+Grade using these 4 dimensions (each scored 1-10):
+
+1. **Grammar** — Did the student use correct grammar? Focus especially on the grammar targets listed above. Were verb tenses, agreements, and structures used correctly?
+2. **Lexical** — Did the student use varied, level-appropriate vocabulary? Did they incorporate the vocab targets naturally?
+3. **Discourse** — Is the response coherent and well-organized? Does it flow logically with appropriate connectors?
+4. **Task** — Did the student fully address the prompt? Is the response the right length and genre?
+
+For each dimension, provide:
+- A score (1-10)
+- 1-3 evidence quotes from the student's text with analysis
+- A one-sentence summary
+
+Additionally:
+- For each grammar target, indicate whether the student used it, whether it was correct, and provide evidence.
+- List which vocab targets appeared in the response.
+- Compute an overall_score as a weighted average: grammar (30%), lexical (25%), discourse (20%), task (25%).
+- Assign a verdict: "strong" (>=7), "developing" (5-7), "needs_work" (<5).
+
+IMPORTANT: Write all feedback and analysis in {language_name} to maintain immersion.
+
+Format your response EXACTLY as JSON:
+{{
+  "scores": {{
+    "grammar": {{
+      "score": 7.0,
+      "evidence": [{{"quote": "...", "analysis": "..."}}],
+      "summary": "..."
+    }},
+    "lexical": {{
+      "score": 7.0,
+      "evidence": [{{"quote": "...", "analysis": "..."}}],
+      "summary": "..."
+    }},
+    "discourse": {{
+      "score": 7.0,
+      "evidence": [{{"quote": "...", "analysis": "..."}}],
+      "summary": "..."
+    }},
+    "task": {{
+      "score": 7.0,
+      "evidence": [{{"quote": "...", "analysis": "..."}}],
+      "summary": "..."
+    }}
+  }},
+  "overall_score": 7.0,
+  "verdict": "strong",
+  "feedback": "Overall feedback in {language_name}...",
+  "grammar_target_hits": [
+    {{"target": "...", "used": true, "correct": true, "evidence": "..."}}
+  ],
+  "vocab_target_hits": ["word1", "word2"]
+}}
+
+Grade now:"""
+
+    def _parse_written_grading_response(self, text: str) -> Optional[WrittenGrading]:
+        """Parse Gemini's 4-dimension grading response."""
+        try:
+            json_match = re.search(r'\{[\s\S]*\}', text)
+            if not json_match:
+                return None
+
+            data = json.loads(json_match.group())
+
+            scores = {}
+            for dim_key in ("grammar", "lexical", "discourse", "task"):
+                dim_data = data.get("scores", {}).get(dim_key, {})
+                if isinstance(dim_data, dict):
+                    evidence = []
+                    for ev in dim_data.get("evidence", []):
+                        if isinstance(ev, dict):
+                            evidence.append(EvidenceItem(
+                                quote=ev.get("quote", ""),
+                                analysis=ev.get("analysis", ""),
+                            ))
+                    scores[dim_key] = DimensionScore(
+                        score=min(10, max(1, dim_data.get("score", 5.0))),
+                        evidence=evidence,
+                        summary=dim_data.get("summary", ""),
+                    )
+
+            grammar_hits = []
+            for hit in data.get("grammar_target_hits", []):
+                if isinstance(hit, dict):
+                    grammar_hits.append(GrammarTargetHit(
+                        target=hit.get("target", ""),
+                        used=hit.get("used", False),
+                        correct=hit.get("correct", False),
+                        evidence=hit.get("evidence", ""),
+                    ))
+
+            overall_score = min(10, max(1, data.get("overall_score", 5.0)))
+            verdict = data.get("verdict", "")
+            if verdict not in ("strong", "developing", "needs_work"):
+                if overall_score >= 7:
+                    verdict = "strong"
+                elif overall_score >= 5:
+                    verdict = "developing"
+                else:
+                    verdict = "needs_work"
+
+            return WrittenGrading(
+                scores=scores,
+                overall_score=overall_score,
+                verdict=verdict,
+                feedback=data.get("feedback", ""),
+                grammar_target_hits=grammar_hits,
+                vocab_target_hits=data.get("vocab_target_hits", []),
+            )
+        except (json.JSONDecodeError, KeyError, ValueError) as e:
+            print(f"Failed to parse written grading response: {e}")
+            return None
 
     def _parse_exercise_response(
         self, text: str, context: LanguageQuestionContext

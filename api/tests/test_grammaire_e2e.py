@@ -279,29 +279,20 @@ def make_exercise_row(
     }
 
 
-def build_grammaire_pending_batch(count=8):
-    """Build pending exercises with Grammaire topics and correct tier distribution."""
+def build_grammaire_pending_batch(count=3):
+    """Build pending exercises with Grammaire topics — 3 open-ended long_text exercises."""
     topics = CHAPTER_TITLES[:3]  # First 3 chapters for day 1
-    types_and_formats = [
-        ("conjugation", "single_line", 3),
-        ("fill_blank", "single_line", 3),
-        ("vocabulary", "single_line", 3),
-        ("sentence_construction", "short_text", 20),
-        ("error_correction", "short_text", 20),
-        ("situational", "long_text", 60),
-        ("reading_comprehension", "long_text", 60),
-        ("journal_entry", "free_form", 150),
-    ]
+    genres = ["journal_entry", "opinion_essay", "letter_writing", "story_continuation", "situational", "dialogue"]
+    word_targets = [100, 150, 200]
     rows = []
     for i in range(count):
-        etype, fmt, wt = types_and_formats[i % len(types_and_formats)]
         rows.append(make_exercise_row(
             topic=topics[i % len(topics)],
-            exercise_type=etype,
+            exercise_type=genres[i % len(genres)],
             sort_order=i,
             is_review=False,
-            response_format=fmt,
-            word_target=wt,
+            response_format="long_text",
+            word_target=word_targets[i % len(word_targets)],
         ))
     return rows
 
@@ -328,13 +319,13 @@ def mock_language_service():
     service.generate_batch_exercises = AsyncMock(return_value=GRAMMAIRE_BATCH_RESPONSE)
 
     from app.models.language_schemas import LanguageGradingResponse
-    service.grade_exercise = AsyncMock(return_value=LanguageGradingResponse(
+    service.grade_exercise = AsyncMock(return_value=(LanguageGradingResponse(
         score=8.5,
         verdict="pass",
         feedback="Très bien! L'article est correct.",
         corrections=None,
         missed_concepts=[],
-    ))
+    ), None))
     return service
 
 
@@ -344,13 +335,13 @@ def mock_language_service_fail():
     service.configured = True
 
     from app.models.language_schemas import LanguageGradingResponse
-    service.grade_exercise = AsyncMock(return_value=LanguageGradingResponse(
+    service.grade_exercise = AsyncMock(return_value=(LanguageGradingResponse(
         score=4.0,
         verdict="fail",
         feedback="L'article utilisé n'est pas correct. Révisez les articles partitifs.",
         corrections="de l'eau (et non *du eau)",
         missed_concepts=["article partitif", "élision"],
-    ))
+    ), None))
     return service
 
 
@@ -525,7 +516,7 @@ class TestDay1ExerciseGeneration:
     @pytest.mark.asyncio
     async def test_generates_8_exercises(self, mock_sb, mock_language_service):
         """GET daily-exercises generates a batch of 8 pending exercises."""
-        generated_rows = build_grammaire_pending_batch(8)
+        generated_rows = build_grammaire_pending_batch(3)
 
         table_call_counts = {}
         table_responses = {
@@ -559,14 +550,14 @@ class TestDay1ExerciseGeneration:
         assert response.status_code == 200
         data = response.json()
         assert data["generated_date"] == TODAY
-        assert len(data["exercises"]) == 8
-        assert data["total_count"] == 8
+        assert len(data["exercises"]) == 3
+        assert data["total_count"] == 3
         assert data["completed_count"] == 0
 
     @pytest.mark.asyncio
     async def test_exercises_use_book_content(self, mock_sb, mock_language_service):
         """Verify book_content is fetched and passed to generate_batch_exercises."""
-        generated_rows = build_grammaire_pending_batch(8)
+        generated_rows = build_grammaire_pending_batch(3)
         table_call_counts = {}
         book_content_queried = {"called": False}
 
@@ -611,7 +602,7 @@ class TestDay1ExerciseGeneration:
     @pytest.mark.asyncio
     async def test_no_review_exercises_on_day_1(self, mock_sb, mock_language_service):
         """New user on day 1 has no reviews due → all exercises are is_review=False."""
-        generated_rows = build_grammaire_pending_batch(8)
+        generated_rows = build_grammaire_pending_batch(3)
 
         table_call_counts = {}
 
@@ -651,9 +642,9 @@ class TestDay1ExerciseGeneration:
         assert len(review_exercises) == 0, "Day 1 should have no review exercises"
 
     @pytest.mark.asyncio
-    async def test_tier_distribution(self, mock_sb):
-        """Batch has correct tier distribution: 3 quick + 2 short + 2 extended + 1 free-form."""
-        existing = build_grammaire_pending_batch(8)
+    async def test_all_long_text(self, mock_sb):
+        """All exercises are open-ended long_text format."""
+        existing = build_grammaire_pending_batch(3)
         mock_sb.table.return_value = make_chain(existing)
 
         with patch("app.routers.language._daily_exercises_cache", {}):
@@ -664,20 +655,14 @@ class TestDay1ExerciseGeneration:
             app.dependency_overrides.clear()
 
         data = response.json()
-        format_counts = {}
         for ex in data["exercises"]:
-            fmt = ex.get("response_format", "single_line")
-            format_counts[fmt] = format_counts.get(fmt, 0) + 1
-
-        assert format_counts.get("single_line", 0) == 3
-        assert format_counts.get("short_text", 0) == 2
-        assert format_counts.get("long_text", 0) == 2
-        assert format_counts.get("free_form", 0) == 1
+            assert ex.get("response_format", "long_text") == "long_text"
+        assert len(data["exercises"]) == 3
 
     @pytest.mark.asyncio
     async def test_second_call_returns_cached(self, mock_sb):
         """Second GET same day returns cached batch without re-generating."""
-        existing = build_grammaire_pending_batch(8)
+        existing = build_grammaire_pending_batch(3)
         mock_sb.table.return_value = make_chain(existing)
 
         with patch("app.routers.language._daily_exercises_cache", {}):
@@ -985,7 +970,7 @@ class TestSpacedRepetition:
     async def test_day_2_includes_review_exercises(self, mock_sb, mock_language_service):
         """Failed topics from day 1 appear as is_review=True on day 2."""
         # Build a batch where some exercises are reviews
-        generated_rows = build_grammaire_pending_batch(8)
+        generated_rows = build_grammaire_pending_batch(3)
         generated_rows[0]["is_review"] = True
         generated_rows[0]["review_topic_reason"] = "Failed on day 1"
         generated_rows[0]["topic"] = "LES NÉGATIONS PARTICULIÈRES"
@@ -1309,7 +1294,7 @@ class TestFullUserJourney:
         assert r2.json()["success"] is True
 
         # --- Step 3: Generate daily exercises ---
-        generated_rows = build_grammaire_pending_batch(8)
+        generated_rows = build_grammaire_pending_batch(3)
         table_call_counts = {}
 
         def gen_handler(table_name):
@@ -1343,7 +1328,7 @@ class TestFullUserJourney:
 
         assert r3.status_code == 200
         exercises = r3.json()["exercises"]
-        assert len(exercises) == 8
+        assert len(exercises) == 3
         assert r3.json()["completed_count"] == 0
 
         # --- Step 4: Submit exercises (2 pass, 1 fail) ---
@@ -1361,21 +1346,21 @@ class TestFullUserJourney:
 
             if is_fail:
                 mock_language_service.grade_exercise = AsyncMock(
-                    return_value=LanguageGradingResponse(
+                    return_value=(LanguageGradingResponse(
                         score=4.0, verdict="fail",
                         feedback="Erreur d'article.",
                         corrections="la grande maison",
                         missed_concepts=["place de l'adjectif"],
-                    )
+                    ), None)
                 )
             else:
                 mock_language_service.grade_exercise = AsyncMock(
-                    return_value=LanguageGradingResponse(
+                    return_value=(LanguageGradingResponse(
                         score=8.5, verdict="pass",
                         feedback="Très bien!",
                         corrections=None,
                         missed_concepts=[],
-                    )
+                    ), None)
                 )
 
             with patch("app.routers.language.get_language_service", return_value=mock_language_service), \

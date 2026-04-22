@@ -37,6 +37,7 @@ from app.models.language_schemas import (
     SetActiveTrackRequest,
     SubmitDailyExerciseRequest,
     SubmitLanguageAttemptRequest,
+    WrittenGrading,
 )
 from app.services.language_service import (
     BookContentContext,
@@ -479,7 +480,7 @@ async def submit_attempt(
         service = get_language_service()
         track_data = attempt.get("language_tracks", {})
 
-        grading_result = await service.grade_exercise(
+        grading_result, _ = await service.grade_exercise(
             language=track_data.get("language", "french"),
             level=track_data.get("level", "a1"),
             exercise_type=attempt["exercise_type"],
@@ -971,7 +972,7 @@ async def submit_daily_exercise(
         service = get_language_service()
         track_data = exercise.get("language_tracks") or {}
 
-        grading_result = await service.grade_exercise(
+        grading_result, written_grading = await service.grade_exercise(
             language=track_data.get("language", "french"),
             level=track_data.get("level", "a1"),
             exercise_type=exercise["exercise_type"],
@@ -980,6 +981,7 @@ async def submit_daily_exercise(
             focus_area=exercise.get("focus_area") or "general",
             key_concepts=exercise.get("key_concepts") or [],
             response_text=request.response_text,
+            vocab_targets=exercise.get("vocab_targets") or [],
         )
 
         # Update exercise record
@@ -991,6 +993,7 @@ async def submit_daily_exercise(
             "feedback": grading_result.feedback,
             "corrections": grading_result.corrections,
             "missed_concepts": grading_result.missed_concepts,
+            "written_grading": written_grading.model_dump() if written_grading else None,
             "status": "completed",
             "completed_at": datetime.utcnow().isoformat(),
         }
@@ -1060,6 +1063,7 @@ async def submit_daily_exercise(
             feedback=grading_result.feedback,
             corrections=grading_result.corrections,
             missed_concepts=grading_result.missed_concepts,
+            written_grading=written_grading,
         )
 
     except HTTPException:
@@ -1349,6 +1353,20 @@ def _build_batch_response(exercises_data: list[dict], today: str) -> DailyExerci
         if track_id is None and ex.get("track_id"):
             track_id = ex["track_id"]
         etype = ex["exercise_type"]
+        # grammar_targets = key_concepts (renamed at API boundary)
+        key_concepts = ex.get("key_concepts") or []
+        # vocab_targets from dedicated JSONB column
+        vocab_targets_raw = ex.get("vocab_targets") or []
+        vocab_targets = vocab_targets_raw if isinstance(vocab_targets_raw, list) else []
+        # written_grading from JSONB column (populated after grading)
+        wg_raw = ex.get("written_grading")
+        written_grading = None
+        if isinstance(wg_raw, dict):
+            try:
+                written_grading = WrittenGrading(**wg_raw)
+            except Exception:
+                pass
+
         exercises.append(DailyExercise(
             id=ex["id"],
             topic=ex["topic"],
@@ -1356,7 +1374,9 @@ def _build_batch_response(exercises_data: list[dict], today: str) -> DailyExerci
             question_text=ex["question_text"],
             expected_answer=ex.get("expected_answer"),
             focus_area=ex.get("focus_area"),
-            key_concepts=ex.get("key_concepts") or [],
+            key_concepts=key_concepts,
+            grammar_targets=key_concepts,
+            vocab_targets=vocab_targets,
             is_review=ex.get("is_review", False),
             review_topic_reason=ex.get("review_topic_reason"),
             status=ex["status"],
@@ -1369,6 +1389,7 @@ def _build_batch_response(exercises_data: list[dict], today: str) -> DailyExerci
             feedback=ex.get("feedback"),
             corrections=ex.get("corrections"),
             missed_concepts=ex.get("missed_concepts") or [],
+            written_grading=written_grading,
             completed_at=ex.get("completed_at"),
         ))
         if ex["status"] == "completed":

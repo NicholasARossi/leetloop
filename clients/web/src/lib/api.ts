@@ -255,6 +255,27 @@ export const leetloopApi = {
       body: JSON.stringify({ focus_notes: focusNotes }),
     }),
 
+  // Mistake Journal
+  getJournalEntries: (userId: string, includeAddressed = false) =>
+    api<MistakeJournalListResponse>(`/api/journal/${userId}${includeAddressed ? '?include_addressed=true' : ''}`),
+
+  createJournalEntry: (userId: string, data: {
+    entry_text: string
+    entry_type?: 'problem' | 'general'
+    problem_slug?: string
+    problem_title?: string
+    feed_item_id?: string
+  }) =>
+    api<MistakeJournalEntry>(`/api/journal/${userId}`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  deleteJournalEntry: (userId: string, entryId: string) =>
+    api<{ success: boolean }>(`/api/journal/${userId}/${entryId}`, {
+      method: 'DELETE',
+    }),
+
   // Onboarding
   getOnboardingStatus: (userId: string) =>
     api<OnboardingStatus>(`/api/onboarding/${userId}`),
@@ -691,6 +712,44 @@ export const leetloopApi = {
 
   getLifeOpsStats: (userId: string) =>
     api<LifeOpsStatsResponse>(`/api/life-ops/${userId}/stats`),
+
+  // Language Oral Practice
+  getLanguageOralDashboard: (userId: string) =>
+    api<LanguageOralDashboard>(`/api/language/oral/${userId}/dashboard`),
+
+  createLanguageOralSession: (userId: string, promptId: string) =>
+    api<LanguageOralSession>(`/api/language/oral/${userId}/sessions`, {
+      method: 'POST',
+      body: JSON.stringify({ prompt_id: promptId }),
+    }),
+
+  uploadLanguageOralAudio: async (sessionId: string, audioFile: Blob | File): Promise<{ session_id: string; status: string }> => {
+    const formData = new FormData()
+    formData.append('audio', audioFile, audioFile instanceof File ? audioFile.name : 'recording.webm')
+
+    const url = `${API_URL}/api/language/oral/sessions/${sessionId}/upload-audio`
+    const response = await fetchWithTimeout(url, {
+      method: 'POST',
+      body: formData,
+      timeout: 30000, // 30s — async grading, just upload time
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ detail: 'Unknown error' }))
+      throw new ApiError(response.status, error.detail || response.statusText)
+    }
+
+    return response.json()
+  },
+
+  getLanguageOralSession: (sessionId: string) =>
+    api<LanguageOralSession>(`/api/language/oral/sessions/${sessionId}`),
+
+  getLanguageOralSessions: (userId: string, limit = 20) =>
+    api<LanguageOralSession[]>(`/api/language/oral/${userId}/sessions?limit=${limit}`),
+
+  getLanguageOralStreak: (userId: string) =>
+    api<LanguageOralStreakInfo>(`/api/language/oral/${userId}/streak`),
 }
 
 // Types (matching backend schemas)
@@ -703,6 +762,7 @@ export interface UserStats {
   problems_attempted: number
   streak_days: number
   reviews_due: number
+  best_day_count: number
 }
 
 export interface SkillScore {
@@ -989,6 +1049,25 @@ export interface FocusNotesResponse {
   user_id: string
   focus_notes: string | null
   updated_at: string | null
+}
+
+export interface MistakeJournalEntry {
+  id: string
+  user_id: string
+  problem_slug?: string
+  problem_title?: string
+  entry_text: string
+  tags: string[]
+  entry_type: 'problem' | 'general'
+  is_addressed: boolean
+  feed_item_id?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface MistakeJournalListResponse {
+  entries: MistakeJournalEntry[]
+  unaddressed_count: number
 }
 
 // Onboarding Types
@@ -1381,11 +1460,13 @@ export interface DailyExercise {
   expected_answer?: string
   focus_area?: string
   key_concepts: string[]
+  grammar_targets: string[]
+  vocab_targets: string[]
   is_review: boolean
   review_topic_reason?: string
   status: 'pending' | 'completed' | 'skipped'
   sort_order: number
-  response_format: 'single_line' | 'short_text' | 'long_text' | 'free_form'
+  response_format: 'long_text' | 'free_form'
   word_target: number
   response_text?: string
   score?: number
@@ -1393,6 +1474,7 @@ export interface DailyExercise {
   feedback?: string
   corrections?: string
   missed_concepts: string[]
+  written_grading?: WrittenGrading
   completed_at?: string
 }
 
@@ -1405,12 +1487,40 @@ export interface DailyExerciseBatch {
   average_score: number | null
 }
 
+export interface EvidenceItem {
+  quote: string
+  analysis: string
+}
+
+export interface DimensionScore {
+  score: number
+  evidence: EvidenceItem[]
+  summary: string
+}
+
+export interface GrammarTargetHit {
+  target: string
+  used: boolean
+  correct: boolean
+  evidence: string
+}
+
+export interface WrittenGrading {
+  scores: Record<string, DimensionScore>
+  overall_score: number
+  verdict: string
+  feedback: string
+  grammar_target_hits: GrammarTargetHit[]
+  vocab_target_hits: string[]
+}
+
 export interface DailyExerciseGrade {
   score: number
   verdict: string
   feedback: string
   corrections?: string
   missed_concepts: string[]
+  written_grading?: WrittenGrading
 }
 
 // Book Progress Types
@@ -1811,6 +1921,77 @@ export interface OnsitePrepAttemptHistory {
   verdict?: string
   duration_seconds?: number
   created_at?: string
+}
+
+// Language Oral Practice Types
+export interface LanguageOralPrompt {
+  id: string
+  track_id: string
+  chapter_ref: string
+  chapter_order: number
+  prompt_text: string
+  theme?: string
+  grammar_targets: string[]
+  vocab_targets: string[]
+  suggested_duration_seconds: number
+  sort_order: number
+}
+
+export interface LanguageOralDimensionEvidence {
+  quote: string
+  analysis: string
+}
+
+export interface LanguageOralDimensionScore {
+  name: string
+  score: number
+  evidence: LanguageOralDimensionEvidence[]
+  summary: string
+}
+
+export interface LanguageOralGrading {
+  transcript: string
+  scores: Record<string, LanguageOralDimensionScore>
+  overall_score: number
+  verdict: 'strong' | 'developing' | 'needs_work'
+  feedback: string
+  strongest_moment: string
+  weakest_moment: string
+}
+
+export interface LanguageOralSession {
+  id: string
+  user_id: string
+  prompt_id: string
+  track_id: string
+  chapter_ref: string
+  prompt?: LanguageOralPrompt
+  grading?: LanguageOralGrading
+  audio_duration_seconds?: number
+  status: 'prompted' | 'recorded' | 'grading' | 'graded' | 'failed'
+  created_at?: string
+  graded_at?: string
+}
+
+export interface LanguageOralStreakInfo {
+  current_streak: number
+  longest_streak: number
+  last_practice_date?: string
+}
+
+export interface LanguageOralChapterInfo {
+  name: string
+  order: number
+  total_chapters: number
+  completion_percentage: number
+}
+
+export interface LanguageOralDashboard {
+  chapter?: LanguageOralChapterInfo
+  streak: LanguageOralStreakInfo
+  todays_prompts: LanguageOralPrompt[]
+  pending_sessions: LanguageOralSession[]
+  recent_sessions: LanguageOralSession[]
 }
 
 export { ApiError }

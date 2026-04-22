@@ -1,12 +1,13 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useLanguageTrack } from '@/contexts/LanguageTrackContext'
 import {
   leetloopApi,
   type DailyExerciseBatch,
   type DailyExerciseGrade,
+  type LanguageOralDashboard,
 } from '@/lib/api'
 import {
   ExerciseDashboard,
@@ -20,16 +21,22 @@ export default function LanguagePage() {
   const [error, setError] = useState<string | null>(null)
   const [batch, setBatch] = useState<DailyExerciseBatch | null>(null)
   const [isRegenerating, setIsRegenerating] = useState(false)
+  const [oralDashboard, setOralDashboard] = useState<LanguageOralDashboard | null>(null)
+  const pollRef = useRef<NodeJS.Timeout | null>(null)
 
-  const loadExercises = useCallback(async () => {
+  const loadAll = useCallback(async () => {
     if (!userId || !activeTrackId) return
 
     setLoading(true)
     setError(null)
 
     try {
-      const data = await leetloopApi.getDailyExercises(userId)
-      setBatch(data)
+      const [exerciseData, oralData] = await Promise.all([
+        leetloopApi.getDailyExercises(userId),
+        leetloopApi.getLanguageOralDashboard(userId).catch(() => null),
+      ])
+      setBatch(exerciseData)
+      setOralDashboard(oralData)
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err)
       setError(message || 'Échec du chargement des exercices.')
@@ -38,9 +45,34 @@ export default function LanguagePage() {
     }
   }, [userId, activeTrackId])
 
+  const loadOralOnly = useCallback(async () => {
+    if (!userId) return
+    try {
+      const data = await leetloopApi.getLanguageOralDashboard(userId)
+      setOralDashboard(data)
+    } catch {
+      // non-blocking
+    }
+  }, [userId])
+
   useEffect(() => {
-    loadExercises()
-  }, [loadExercises])
+    loadAll()
+  }, [loadAll])
+
+  // Poll for pending oral sessions
+  useEffect(() => {
+    const hasPending = oralDashboard?.pending_sessions && oralDashboard.pending_sessions.length > 0
+    if (hasPending) {
+      pollRef.current = setInterval(loadOralOnly, 15000)
+    }
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current)
+    }
+  }, [oralDashboard?.pending_sessions, loadOralOnly])
+
+  const handleOralSessionStarted = useCallback(() => {
+    setTimeout(loadOralOnly, 1000)
+  }, [loadOralOnly])
 
   async function handleSubmitExercise(exerciseId: string, responseText: string): Promise<void> {
     const grade: DailyExerciseGrade = await leetloopApi.submitDailyExercise(exerciseId, responseText)
@@ -58,6 +90,7 @@ export default function LanguagePage() {
             feedback: grade.feedback,
             corrections: grade.corrections,
             missed_concepts: grade.missed_concepts,
+            written_grading: grade.written_grading,
           }
         }
         return ex
@@ -116,7 +149,7 @@ export default function LanguagePage() {
         <div className="card mb-4" style={{ borderLeftWidth: '4px', borderLeftColor: 'var(--accent-color)' }}>
           <p style={{ color: 'var(--accent-color-dark)' }} className="text-sm">{error}</p>
           <button
-            onClick={loadExercises}
+            onClick={loadAll}
             className="btn-primary mt-2 text-xs px-3 py-1"
           >
             <span className="relative z-10">Réessayer</span>
@@ -134,6 +167,9 @@ export default function LanguagePage() {
             onSubmitExercise={handleSubmitExercise}
             onRegenerate={handleRegenerate}
             isRegenerating={isRegenerating}
+            oralDashboard={oralDashboard}
+            userId={userId ?? undefined}
+            onOralSessionStarted={handleOralSessionStarted}
           />
         </div>
       )}

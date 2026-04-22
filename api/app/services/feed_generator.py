@@ -34,6 +34,22 @@ class FeedGenerator:
 
         return await self.generate_feed(user_id, feed_date)
 
+    def _get_journal_entries(self, user_id: UUID) -> list[dict]:
+        """Fetch up to 5 unaddressed journal entries for prompt context."""
+        try:
+            resp = (
+                self.supabase.table("mistake_journal")
+                .select("entry_text, tags")
+                .eq("user_id", str(user_id))
+                .eq("is_addressed", False)
+                .order("created_at", desc=True)
+                .limit(5)
+                .execute()
+            )
+            return resp.data or []
+        except Exception:
+            return []
+
     def _get_focus_notes(self, user_id: UUID) -> Optional[str]:
         """Fetch user's focus notes from user_settings."""
         try:
@@ -56,25 +72,36 @@ class FeedGenerator:
 
         user_id_str = str(user_id)
         focus_notes = self._get_focus_notes(user_id)
+        journal_entries = self._get_journal_entries(user_id)
 
         # Get practice and metric problems in parallel
         practice_problems, metric_problems = await asyncio.gather(
             self._get_practice_problems(user_id, self.PRACTICE_COUNT, focus_notes=focus_notes),
-            self._get_metric_problems(user_id, self.METRIC_COUNT, focus_notes=focus_notes),
+            self._get_metric_problems(user_id, self.METRIC_COUNT, focus_notes=focus_notes, journal_entries=journal_entries),
         )
 
         # Build feed items
         items = []
         sort_order = 0
 
-        # Interleave: every 3rd item is a metric problem
+        # Interleave: first 3 are metric (new), then alternate 1 metric / 2 practice
         practice_iter = iter(practice_problems)
         metric_iter = iter(metric_problems)
         practice_done = False
         metric_done = False
 
+        # Lead with 3 metric (new) problems
+        for _ in range(3):
+            try:
+                m = next(metric_iter)
+                items.append(self._build_metric_item(user_id_str, feed_date, m, sort_order))
+                sort_order += 1
+            except StopIteration:
+                metric_done = True
+                break
+
+        # Then alternate: 2 practice, 1 metric
         while not practice_done or not metric_done:
-            # Add 2 practice problems
             for _ in range(2):
                 try:
                     p = next(practice_iter)
@@ -83,7 +110,6 @@ class FeedGenerator:
                 except StopIteration:
                     practice_done = True
 
-            # Add 1 metric problem
             try:
                 m = next(metric_iter)
                 items.append(self._build_metric_item(user_id_str, feed_date, m, sort_order))
@@ -136,53 +162,154 @@ class FeedGenerator:
         feed_date = date.today()
         user_id_str = str(user_id)
 
-        # Count regenerations today
+        # Get existing items
         existing_resp = (
             self.supabase.table("daily_problem_feed")
-            .select("id, status")
+            .select("id, status, problem_slug")
             .eq("user_id", user_id_str)
             .eq("feed_date", feed_date.isoformat())
             .execute()
         )
 
-        # Delete pending items only
+        completed_slugs = set()
         if existing_resp.data:
             pending_ids = [item["id"] for item in existing_resp.data if item["status"] == "pending"]
+            completed_slugs = {item["problem_slug"] for item in existing_resp.data if item["status"] == "completed"}
             if pending_ids:
                 self.supabase.table("daily_problem_feed").delete().in_("id", pending_ids).execute()
 
-        # Generate new feed (completed items remain)
-        return await self.generate_feed(user_id, feed_date)
+        # Generate new feed, excluding completed slugs so we don't get unique constraint violations
+        focus_notes = self._get_focus_notes(user_id)
+        journal_entries = self._get_journal_entries(user_id)
+
+        practice_problems, metric_problems = await asyncio.gather(
+            self._get_practice_problems(user_id, self.PRACTICE_COUNT, excluded=completed_slugs, focus_notes=focus_notes),
+            self._get_metric_problems(user_id, self.METRIC_COUNT, excluded=completed_slugs, focus_notes=focus_notes, journal_entries=journal_entries),
+        )
+
+        # Build items, starting sort_order after any completed items
+        items = []
+        sort_order = len(completed_slugs)
+
+        # Lead with 3 metric (new) problems
+        practice_iter = iter(practice_problems)
+        metric_iter = iter(metric_problems)
+        practice_done = False
+        metric_done = False
+
+        for _ in range(3):
+            try:
+                m = next(metric_iter)
+                items.append(self._build_metric_item(user_id_str, feed_date, m, sort_order))
+                sort_order += 1
+            except StopIteration:
+                metric_done = True
+                break
+
+        while not practice_done or not metric_done:
+            for _ in range(2):
+                try:
+                    p = next(practice_iter)
+                    items.append(self._build_practice_item(user_id_str, feed_date, p, sort_order))
+                    sort_order += 1
+                except StopIteration:
+                    practice_done = True
+            try:
+                m = next(metric_iter)
+                items.append(self._build_metric_item(user_id_str, feed_date, m, sort_order))
+                sort_order += 1
+            except StopIteration:
+                metric_done = True
+
+        # Deduplicate: remove collisions with completed items and internal duplicates
+        seen_slugs = set(completed_slugs)
+        deduped = []
+        for item in items:
+            slug = item["problem_slug"]
+            if slug not in seen_slugs:
+                seen_slugs.add(slug)
+                deduped.append(item)
+        items = deduped
+
+        if items:
+            self.supabase.table("daily_problem_feed").insert(items).execute()
+
+        return self._get_existing_feed(user_id, feed_date)
 
     async def _get_practice_problems(
         self, user_id: UUID, count: int, excluded: set = None, focus_notes: Optional[str] = None
     ) -> list[dict]:
+        """Get analogous practice problems — NEW problems targeting the same weak concepts."""
         excluded = excluded or set()
+        user_id_str = str(user_id)
 
-        recommendations = await self.recommendation_engine.get_recommendations(
-            user_id, limit=count + 10, focus_notes=focus_notes
+        # Get context about what needs practice (weak skills, patterns, review topics)
+        practice_context = await self.recommendation_engine.get_practice_context(user_id, limit=count)
+
+        # Get all previously seen slugs to exclude
+        solved_resp = (
+            self.supabase.table("submissions")
+            .select("problem_slug")
+            .eq("user_id", user_id_str)
+            .execute()
         )
+        seen_slugs = {s["problem_slug"] for s in (solved_resp.data or [])}
+        all_excluded = excluded | seen_slugs
 
-        problems = []
-        for rec in recommendations:
-            if rec.problem_slug in excluded:
-                continue
-            excluded.add(rec.problem_slug)
-            problems.append({
-                "problem_slug": rec.problem_slug,
-                "problem_title": rec.problem_title,
-                "difficulty": rec.difficulty.value if rec.difficulty else None,
-                "tags": rec.tags,
-                "source": rec.source,
-                "reason": rec.reason,
-            })
-            if len(problems) >= count:
-                break
+        # Also exclude previous practice slugs from recent feeds
+        prev_feed_resp = (
+            self.supabase.table("daily_problem_feed")
+            .select("problem_slug")
+            .eq("user_id", user_id_str)
+            .eq("feed_type", "practice")
+            .order("feed_date", desc=True)
+            .limit(100)
+            .execute()
+        )
+        all_excluded |= {p["problem_slug"] for p in (prev_feed_resp.data or [])}
 
-        return problems
+        if not self.gemini.configured:
+            return self._fallback_practice_problems(count, all_excluded, practice_context)
+
+        prompt = self._build_practice_prompt(count, list(all_excluded)[:200], practice_context, focus_notes)
+
+        try:
+            response = await asyncio.to_thread(self.gemini.model.generate_content, prompt)
+            text = response.text.strip()
+
+            if "```json" in text:
+                text = text.split("```json")[1].split("```")[0]
+            elif "```" in text:
+                text = text.split("```")[1].split("```")[0]
+
+            result = json.loads(text)
+            problems = result.get("problems", [])
+
+            filtered = []
+            for p in problems:
+                slug = p.get("slug", "")
+                if slug and slug not in all_excluded:
+                    filtered.append({
+                        "problem_slug": slug,
+                        "problem_title": p.get("title"),
+                        "difficulty": p.get("difficulty"),
+                        "tags": p.get("tags", []),
+                        "source": "analogous",
+                        "reason": p.get("rationale", "Analogous practice problem"),
+                    })
+                    all_excluded.add(slug)
+                if len(filtered) >= count:
+                    break
+
+            return filtered
+
+        except Exception as e:
+            print(f"Gemini practice problem selection failed: {e}")
+            return self._fallback_practice_problems(count, all_excluded, practice_context)
 
     async def _get_metric_problems(
-        self, user_id: UUID, count: int, excluded: set = None, focus_notes: Optional[str] = None
+        self, user_id: UUID, count: int, excluded: set = None, focus_notes: Optional[str] = None,
+        journal_entries: list[dict] = None,
     ) -> list[dict]:
         excluded = excluded or set()
         user_id_str = str(user_id)
@@ -234,7 +361,8 @@ class FeedGenerator:
             return self._fallback_metric_problems(count, all_excluded)
 
         prompt = self._build_metric_prompt(
-            count, list(all_excluded)[:200], skill_context, targets, focus_notes=focus_notes
+            count, list(all_excluded)[:200], skill_context, targets,
+            focus_notes=focus_notes, journal_entries=journal_entries,
         )
 
         try:
@@ -273,7 +401,7 @@ class FeedGenerator:
 
     def _build_metric_prompt(
         self, count: int, excluded_slugs: list, skill_context: list, targets: dict,
-        focus_notes: Optional[str] = None,
+        focus_notes: Optional[str] = None, journal_entries: list[dict] = None,
     ) -> str:
         skills_text = ""
         if skill_context:
@@ -293,6 +421,11 @@ class FeedGenerator:
         if focus_notes:
             focus_section = f"\n## User Focus Notes\nThe user has requested the following focus areas. Prioritize problems that align with these notes:\n{focus_notes}\n"
 
+        journal_section = ""
+        if journal_entries:
+            entries_text = "\n".join(f"- {e['entry_text']}" for e in journal_entries[:5])
+            journal_section = f"\n## User's Self-Identified Mistakes\nThe user has logged these specific mistakes and weak areas. Prioritize problems that address them:\n{entries_text}\n"
+
         return f"""You are a LeetCode problem selector. Select {count} REAL LeetCode problems that the user has NOT seen before. These are "metric" problems to measure true ability on unseen problems.
 
 ## Requirements
@@ -304,7 +437,7 @@ class FeedGenerator:
 ## User Context
 {skills_text}
 Target win rates: Easy {targets.get('easy_target', 0.9)*100:.0f}%, Medium {targets.get('medium_target', 0.7)*100:.0f}%, Hard {targets.get('hard_target', 0.5)*100:.0f}%
-{focus_section}
+{focus_section}{journal_section}
 ## Output Format (JSON only)
 {{
   "problems": [
@@ -319,6 +452,121 @@ Target win rates: Easy {targets.get('easy_target', 0.9)*100:.0f}%, Medium {targe
 }}
 
 Only output JSON, nothing else."""
+
+    def _build_practice_prompt(
+        self, count: int, excluded_slugs: list, context: dict, focus_notes: Optional[str] = None,
+    ) -> str:
+        """Build Gemini prompt for analogous practice problems."""
+        sections = []
+
+        if context.get("weak_skills"):
+            skills = ", ".join(f"{s['tag']} (score: {s['score']:.0f})" for s in context["weak_skills"])
+            sections.append(f"Weak skill areas needing reinforcement: {skills}")
+
+        if context.get("due_review_topics"):
+            topics = []
+            for r in context["due_review_topics"][:5]:
+                tags_str = ", ".join(r["tags"]) if r["tags"] else "unknown"
+                topics.append(f"- {r['original_slug']} (tags: {tags_str}, reason: {r['reason']})")
+            sections.append("Problems due for review (find ANALOGOUS problems, NOT these exact ones):\n" + "\n".join(topics))
+
+        if context.get("recurring_patterns"):
+            patterns = ", ".join(f"{p['pattern']} ({p['count']}x)" for p in context["recurring_patterns"])
+            sections.append(f"Recurring mistake patterns: {patterns}")
+
+        if context.get("journal_topics"):
+            entries = "\n".join(f"- {j['text']}" for j in context["journal_topics"])
+            sections.append(f"Self-identified mistakes:\n{entries}")
+
+        if focus_notes:
+            sections.append(f"User focus notes: {focus_notes}")
+
+        context_text = "\n\n".join(sections) if sections else "No specific weakness data available. Select a diverse mix."
+
+        return f"""You are a LeetCode problem selector. Select {count} REAL LeetCode problems for targeted practice.
+
+## Key Principle
+These are ANALOGOUS practice problems. The user has weaknesses in certain areas — select NEW problems that exercise the SAME concepts and patterns, but are DIFFERENT problems they haven't seen. Think: "if they struggled with Two Sum, suggest Three Sum or Two Sum II."
+
+## User's Weak Areas
+{context_text}
+
+## Requirements
+- Select REAL LeetCode problems with correct slugs (e.g., "two-sum", "three-sum-ii-input-array-is-sorted")
+- Problems must target the identified weak areas and patterns
+- Mix difficulties: ~30% Easy, ~50% Medium, ~20% Hard
+- Each problem should include a rationale explaining which weakness it addresses
+- DO NOT select any of these already-seen slugs: {excluded_slugs[:100]}
+
+## Output Format (JSON only)
+{{
+  "problems": [
+    {{
+      "slug": "problem-slug",
+      "title": "Problem Title",
+      "difficulty": "Easy|Medium|Hard",
+      "tags": ["Array", "Two Pointers"],
+      "rationale": "Practices [concept] — analogous to [original problem] which you struggled with"
+    }}
+  ]
+}}
+
+Only output JSON, nothing else."""
+
+    def _fallback_practice_problems(self, count: int, excluded: set, context: dict) -> list[dict]:
+        """Fallback practice problems when Gemini is unavailable, grouped by common weak areas."""
+        fallback_pool = [
+            {"slug": "two-sum-ii-input-array-is-sorted", "title": "Two Sum II", "difficulty": "Medium", "tags": ["Array", "Two Pointers"]},
+            {"slug": "3sum", "title": "3Sum", "difficulty": "Medium", "tags": ["Array", "Two Pointers", "Sorting"]},
+            {"slug": "container-with-most-water", "title": "Container With Most Water", "difficulty": "Medium", "tags": ["Array", "Two Pointers"]},
+            {"slug": "best-time-to-buy-and-sell-stock-ii", "title": "Best Time to Buy and Sell Stock II", "difficulty": "Medium", "tags": ["Array", "DP", "Greedy"]},
+            {"slug": "rotate-array", "title": "Rotate Array", "difficulty": "Medium", "tags": ["Array"]},
+            {"slug": "move-zeroes", "title": "Move Zeroes", "difficulty": "Easy", "tags": ["Array", "Two Pointers"]},
+            {"slug": "house-robber", "title": "House Robber", "difficulty": "Medium", "tags": ["DP"]},
+            {"slug": "coin-change", "title": "Coin Change", "difficulty": "Medium", "tags": ["DP"]},
+            {"slug": "unique-paths", "title": "Unique Paths", "difficulty": "Medium", "tags": ["DP"]},
+            {"slug": "binary-tree-level-order-traversal", "title": "Binary Tree Level Order Traversal", "difficulty": "Medium", "tags": ["Tree", "BFS"]},
+            {"slug": "validate-binary-search-tree", "title": "Validate BST", "difficulty": "Medium", "tags": ["Tree", "DFS"]},
+            {"slug": "number-of-islands", "title": "Number of Islands", "difficulty": "Medium", "tags": ["Graph", "BFS", "DFS"]},
+            {"slug": "clone-graph", "title": "Clone Graph", "difficulty": "Medium", "tags": ["Graph", "BFS", "DFS"]},
+            {"slug": "implement-trie-prefix-tree", "title": "Implement Trie", "difficulty": "Medium", "tags": ["Trie"]},
+            {"slug": "kth-largest-element-in-an-array", "title": "Kth Largest Element", "difficulty": "Medium", "tags": ["Heap", "Sorting"]},
+            {"slug": "top-k-frequent-elements", "title": "Top K Frequent Elements", "difficulty": "Medium", "tags": ["Hash Table", "Heap"]},
+            {"slug": "daily-temperatures", "title": "Daily Temperatures", "difficulty": "Medium", "tags": ["Stack"]},
+            {"slug": "longest-common-subsequence", "title": "Longest Common Subsequence", "difficulty": "Medium", "tags": ["DP", "String"]},
+            {"slug": "palindromic-substrings", "title": "Palindromic Substrings", "difficulty": "Medium", "tags": ["DP", "String"]},
+            {"slug": "search-in-rotated-sorted-array", "title": "Search in Rotated Sorted Array", "difficulty": "Medium", "tags": ["Binary Search", "Array"]},
+        ]
+
+        # Score fallback problems by relevance to weak areas
+        weak_tags = {s["tag"].lower() for s in context.get("weak_skills", [])}
+        review_tags = set()
+        for r in context.get("due_review_topics", []):
+            for tag in (r.get("tags") or []):
+                review_tags.add(tag.lower())
+        target_tags = weak_tags | review_tags
+
+        def relevance(p: dict) -> int:
+            return sum(1 for t in p["tags"] if t.lower() in target_tags)
+
+        # Sort by relevance, then take top N
+        ranked = sorted(
+            [p for p in fallback_pool if p["slug"] not in excluded],
+            key=relevance,
+            reverse=True,
+        )
+
+        return [
+            {
+                "problem_slug": p["slug"],
+                "problem_title": p["title"],
+                "difficulty": p["difficulty"],
+                "tags": p["tags"],
+                "source": "analogous",
+                "reason": "Analogous practice (from curated pool)",
+            }
+            for p in ranked[:count]
+        ]
 
     def _fallback_metric_problems(self, count: int, excluded: set) -> list[dict]:
         """Fallback metric problems when Gemini is unavailable."""

@@ -271,6 +271,44 @@ class LanguageQuestionResponse(BaseModel):
     key_concepts: list[str] = []
 
 
+# ============ Written Grading Models ============
+
+
+class EvidenceItem(BaseModel):
+    """A quote + analysis pair from the student's response."""
+
+    quote: str
+    analysis: str
+
+
+class DimensionScore(BaseModel):
+    """Score for a single grading dimension."""
+
+    score: float
+    evidence: list[EvidenceItem] = []
+    summary: str = ""
+
+
+class GrammarTargetHit(BaseModel):
+    """Whether a specific grammar target was used correctly."""
+
+    target: str
+    used: bool = False
+    correct: bool = False
+    evidence: str = ""
+
+
+class WrittenGrading(BaseModel):
+    """Full 4-dimension rubric grading for written exercises."""
+
+    scores: dict[str, DimensionScore] = {}  # grammar, lexical, discourse, task
+    overall_score: float
+    verdict: str  # strong, developing, needs_work
+    feedback: str
+    grammar_target_hits: list[GrammarTargetHit] = []
+    vocab_target_hits: list[str] = []
+
+
 # ============ Daily Exercise Models ============
 
 
@@ -284,12 +322,14 @@ class DailyExercise(BaseModel):
     expected_answer: Optional[str] = None
     focus_area: Optional[str] = None
     key_concepts: list[str] = []
+    grammar_targets: list[str] = []
+    vocab_targets: list[str] = []
     is_review: bool = False
     review_topic_reason: Optional[str] = None
     status: str = "pending"
     sort_order: int = 0
-    response_format: str = "single_line"
-    word_target: int = 3
+    response_format: str = "long_text"
+    word_target: int = 100
     # Response/grading (filled after submission)
     response_text: Optional[str] = None
     score: Optional[float] = None
@@ -297,6 +337,7 @@ class DailyExercise(BaseModel):
     feedback: Optional[str] = None
     corrections: Optional[str] = None
     missed_concepts: list[str] = []
+    written_grading: Optional[WrittenGrading] = None
     completed_at: Optional[datetime] = None
 
 
@@ -325,6 +366,7 @@ class DailyExerciseGrade(BaseModel):
     feedback: str
     corrections: Optional[str] = None
     missed_concepts: list[str] = []
+    written_grading: Optional[WrittenGrading] = None
 
 
 # ============ Book Progress Models ============

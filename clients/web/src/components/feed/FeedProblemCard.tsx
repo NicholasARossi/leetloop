@@ -1,10 +1,12 @@
 'use client'
 
+import { useState } from 'react'
 import { clsx } from 'clsx'
 import type { FeedItem } from '@/lib/api'
 
 interface FeedProblemCardProps {
   item: FeedItem
+  onSaveMistake?: (item: FeedItem, text: string) => Promise<void>
 }
 
 const difficultyColors: Record<string, string> = {
@@ -13,10 +15,27 @@ const difficultyColors: Record<string, string> = {
   Hard: 'text-black font-bold',
 }
 
-export function FeedProblemCard({ item }: FeedProblemCardProps) {
+export function FeedProblemCard({ item, onSaveMistake }: FeedProblemCardProps) {
+  const [showMistakeInput, setShowMistakeInput] = useState(false)
+  const [mistakeText, setMistakeText] = useState('')
+  const [savingMistake, setSavingMistake] = useState(false)
+
   const leetcodeUrl = `https://leetcode.com/problems/${item.problem_slug}/`
   const isCompleted = item.status === 'completed'
   const isMetric = item.feed_type === 'metric'
+  const isJournal = item.practice_source === 'journal'
+
+  const handleSaveMistake = async () => {
+    if (!mistakeText.trim() || !onSaveMistake || savingMistake) return
+    setSavingMistake(true)
+    try {
+      await onSaveMistake(item, mistakeText.trim())
+      setMistakeText('')
+      setShowMistakeInput(false)
+    } finally {
+      setSavingMistake(false)
+    }
+  }
 
   return (
     <div
@@ -81,6 +100,13 @@ export function FeedProblemCard({ item }: FeedProblemCardProps) {
               {isMetric ? 'Metric' : 'Practice'}
             </span>
 
+            {/* Journal badge */}
+            {isJournal && (
+              <span className="text-[10px] px-1.5 py-0.5 font-bold uppercase bg-amber-100 text-amber-700 border border-amber-300">
+                Journal
+              </span>
+            )}
+
             {/* Optimal badge for completed metric items */}
             {isCompleted && isMetric && item.was_optimal && (
               <span className="text-[10px] px-1.5 py-0.5 font-bold uppercase bg-green-100 text-green-700 border border-green-300">
@@ -109,6 +135,43 @@ export function FeedProblemCard({ item }: FeedProblemCardProps) {
               {item.tags.map((tag) => (
                 <span key={tag} className="tag text-[10px]">{tag}</span>
               ))}
+            </div>
+          )}
+
+          {/* Log Mistake (completed items only) */}
+          {isCompleted && onSaveMistake && !showMistakeInput && (
+            <button
+              onClick={() => setShowMistakeInput(true)}
+              className="text-[10px] text-gray-400 hover:text-accent mt-1"
+            >
+              Log Mistake
+            </button>
+          )}
+          {showMistakeInput && (
+            <div className="flex items-center gap-1.5 mt-1.5">
+              <input
+                type="text"
+                value={mistakeText}
+                onChange={(e) => setMistakeText(e.target.value.slice(0, 1000))}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleSaveMistake() }}
+                placeholder="What went wrong?"
+                className="flex-1 border border-gray-200 rounded px-1.5 py-1 text-[11px] text-black placeholder:text-gray-400 focus:outline-none focus:border-accent"
+                autoFocus
+                disabled={savingMistake}
+              />
+              <button
+                onClick={handleSaveMistake}
+                disabled={!mistakeText.trim() || savingMistake}
+                className="text-[10px] text-accent hover:underline"
+              >
+                Save
+              </button>
+              <button
+                onClick={() => { setShowMistakeInput(false); setMistakeText('') }}
+                className="text-[10px] text-gray-400 hover:text-black"
+              >
+                Cancel
+              </button>
             </div>
           )}
         </div>

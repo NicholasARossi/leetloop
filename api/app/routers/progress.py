@@ -60,6 +60,9 @@ async def get_user_progress(
         )
         reviews_due = reviews_response.count or 0
 
+        # Get best single-day submission count
+        best_day_count = await _get_best_day_count(supabase, user_id)
+
         stats = UserStats(
             total_submissions=stats_data.get("total_submissions") or 0,
             accepted_count=stats_data.get("accepted_count") or 0,
@@ -69,6 +72,7 @@ async def get_user_progress(
             problems_attempted=stats_data.get("problems_attempted") or 0,
             streak_days=stats_data.get("streak_days") or 0,
             reviews_due=reviews_due,
+            best_day_count=best_day_count,
         )
 
         # Get skill scores
@@ -126,6 +130,8 @@ async def get_user_stats(
         )
         reviews_due = reviews_response.count or 0
 
+        best_day_count = await _get_best_day_count(supabase, user_id)
+
         return UserStats(
             total_submissions=stats_data.get("total_submissions") or 0,
             accepted_count=stats_data.get("accepted_count") or 0,
@@ -135,6 +141,7 @@ async def get_user_stats(
             problems_attempted=stats_data.get("problems_attempted") or 0,
             streak_days=stats_data.get("streak_days") or 0,
             reviews_due=reviews_due,
+            best_day_count=best_day_count,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get stats: {str(e)}")
@@ -240,3 +247,25 @@ async def _get_submission_trends(
         return trends
     except Exception:
         return []
+
+
+async def _get_best_day_count(supabase: Client, user_id: UUID) -> int:
+    """Get the maximum number of submissions in a single day."""
+    try:
+        response = (
+            supabase.table("submissions")
+            .select("submitted_at")
+            .eq("user_id", str(user_id))
+            .execute()
+        )
+        if not response.data:
+            return 0
+
+        daily_counts: dict[str, int] = {}
+        for sub in response.data:
+            date = sub["submitted_at"][:10]
+            daily_counts[date] = daily_counts.get(date, 0) + 1
+
+        return max(daily_counts.values()) if daily_counts else 0
+    except Exception:
+        return 0

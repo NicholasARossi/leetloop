@@ -46,91 +46,39 @@ SAMPLE_TRACK_DATA = {
 SAMPLE_GEMINI_BATCH_RESPONSE = json.dumps([
     {
         "topic": "Present Tense",
-        "exercise_type": "conjugation",
-        "question_text": "Conjuguez le verbe 'parler' au présent pour toutes les personnes.",
-        "expected_answer": "je parle, tu parles, il parle, nous parlons, vous parlez, ils parlent",
-        "focus_area": "conjugaison régulière -er",
-        "key_concepts": ["conjugation", "-er verbs"],
-        "is_review": False,
-        "response_format": "single_line",
-        "word_target": 3,
-    },
-    {
-        "topic": "Past Tense",
-        "exercise_type": "fill_blank",
-        "question_text": "Hier, nous ___ (aller) au marché.",
-        "expected_answer": "sommes allés",
-        "focus_area": "passé composé avec être",
-        "key_concepts": ["passé composé", "auxiliaire être"],
-        "is_review": False,
-        "response_format": "single_line",
-        "word_target": 3,
-    },
-    {
-        "topic": "Future Tense",
-        "exercise_type": "vocabulary",
-        "question_text": "Utilisez 'demain' dans une phrase au futur.",
-        "expected_answer": "Demain, j'irai au cinéma.",
-        "focus_area": "futur simple",
-        "key_concepts": ["futur simple", "futur proche"],
-        "is_review": False,
-        "response_format": "single_line",
-        "word_target": 3,
-    },
-    {
-        "topic": "Present Tense",
-        "exercise_type": "sentence_construction",
-        "question_text": "Construisez une phrase avec le subjonctif et 'il faut que'.",
-        "expected_answer": "Il faut que je fasse mes devoirs.",
-        "focus_area": "subjonctif présent",
-        "key_concepts": ["subjonctif", "expressions de nécessité"],
-        "is_review": True,
-        "response_format": "short_text",
-        "word_target": 20,
-    },
-    {
-        "topic": "Past Tense",
-        "exercise_type": "error_correction",
-        "question_text": "Corrigez: 'Les fleurs que j'ai acheté sont très belle.'",
-        "expected_answer": "Les fleurs que j'ai achetées sont très belles.",
-        "focus_area": "accord du participe passé",
-        "key_concepts": ["accord", "participe passé"],
-        "is_review": False,
-        "response_format": "short_text",
-        "word_target": 20,
-    },
-    {
-        "topic": "Future Tense",
-        "exercise_type": "situational",
-        "question_text": "Vous êtes dans un hôtel. Votre chambre a un problème. Expliquez à la réception.",
-        "expected_answer": None,
-        "focus_area": "conditionnel + politesse",
-        "key_concepts": ["conditionnel", "politesse"],
-        "is_review": False,
-        "response_format": "long_text",
-        "word_target": 60,
-    },
-    {
-        "topic": "Present Tense",
-        "exercise_type": "reading_comprehension",
-        "question_text": "Marie habite à Lyon depuis cinq ans. Chaque matin, elle prend le tramway. Hier, le tramway était en panne. Pourquoi Marie a-t-elle pris le bus ?",
-        "expected_answer": None,
-        "focus_area": "compréhension écrite",
-        "key_concepts": ["compréhension", "passé composé"],
-        "is_review": True,
-        "response_format": "long_text",
-        "word_target": 60,
-    },
-    {
-        "topic": "Past Tense",
         "exercise_type": "journal_entry",
-        "question_text": "Racontez un souvenir d'enfance qui vous a marqué. Utilisez l'imparfait et le passé composé.",
+        "question_text": "Imaginez que vous êtes un(e) étudiant(e) qui vient de passer une journée difficile. Décrivez cette journée dans votre journal intime, en expliquant ce qui s'est passé et comment vous vous êtes senti(e).",
         "expected_answer": None,
-        "focus_area": "expression écrite libre",
-        "key_concepts": ["imparfait", "passé composé", "connecteurs"],
+        "focus_area": "conjugaison au passé et expression des émotions",
+        "key_concepts": ["conjugation", "-er verbs"],
+        "vocab_targets": ["néanmoins", "souligner", "envisager"],
         "is_review": False,
-        "response_format": "free_form",
+        "response_format": "long_text",
+        "word_target": 100,
+    },
+    {
+        "topic": "Past Tense",
+        "exercise_type": "opinion_essay",
+        "question_text": "Certains pensent que l'apprentissage en ligne remplacera un jour l'enseignement traditionnel. D'autres estiment qu'il est essentiel que les cours en présentiel soient maintenus. Rédigez un court essai où vous exprimez votre opinion sur ce sujet.",
+        "expected_answer": None,
+        "focus_area": "subjonctif et argumentation",
+        "key_concepts": ["passé composé", "auxiliaire"],
+        "vocab_targets": ["par ailleurs", "certes", "en revanche"],
+        "is_review": False,
+        "response_format": "long_text",
         "word_target": 150,
+    },
+    {
+        "topic": "Future Tense",
+        "exercise_type": "letter_writing",
+        "question_text": "Votre ami(e) Sophie a récemment échoué à un examen important. Écrivez-lui une lettre de réconfort dans laquelle vous lui donnez des conseils pour la prochaine fois, tout en exprimant ce que vous auriez fait à sa place.",
+        "expected_answer": None,
+        "focus_area": "conditionnel et expression du conseil",
+        "key_concepts": ["futur simple", "futur proche"],
+        "vocab_targets": ["j'aurais préféré", "dans l'idéal", "à ta place"],
+        "is_review": False,
+        "response_format": "long_text",
+        "word_target": 200,
     },
 ])
 
@@ -209,6 +157,7 @@ def make_exercise_row(
         "expected_answer": f"Expected answer for {topic}",
         "focus_area": f"Focus on {topic}",
         "key_concepts": ["concept1", "concept2"],
+        "vocab_targets": [],
         "is_review": is_review,
         "review_topic_reason": "Due for review" if is_review else None,
         "status": status,
@@ -224,15 +173,13 @@ def make_exercise_row(
     }
 
 
-def build_pending_batch(count=8):
-    """Build a list of pending exercise rows with tier-aware types."""
+def build_pending_batch(count=3):
+    """Build a list of pending exercise rows with open-ended genre types."""
     topics = ["Present Tense", "Past Tense", "Future Tense"]
-    # Tier-aware sequence: 3 quick, 2 short, 2 extended, 1 free-form
+    # All open-ended genre-based types
     types = [
-        "conjugation", "fill_blank", "vocabulary",         # quick
-        "sentence_construction", "error_correction",        # short
-        "situational", "reading_comprehension",             # extended
-        "journal_entry",                                    # free-form
+        "journal_entry", "opinion_essay", "letter_writing",
+        "story_continuation", "situational", "dialogue",
     ]
     rows = []
     for i in range(count):
@@ -240,7 +187,7 @@ def build_pending_batch(count=8):
             topic=topics[i % len(topics)],
             exercise_type=types[i % len(types)],
             sort_order=i,
-            is_review=(i == 3 or i == 7),
+            is_review=(i == 0),  # First exercise is review
         ))
     return rows
 
@@ -271,15 +218,15 @@ def mock_language_service():
     batch_data = json.loads(SAMPLE_GEMINI_BATCH_RESPONSE)
     service.generate_batch_exercises = AsyncMock(return_value=batch_data)
 
-    # Default grading response
+    # Default grading response (tuple: legacy, written_grading)
     from app.models.language_schemas import LanguageGradingResponse
-    service.grade_exercise = AsyncMock(return_value=LanguageGradingResponse(
+    service.grade_exercise = AsyncMock(return_value=(LanguageGradingResponse(
         score=8.5,
         verdict="pass",
         feedback="Très bien! Votre conjugaison est correcte.",
         corrections=None,
         missed_concepts=[],
-    ))
+    ), None))
 
     return service
 
@@ -291,13 +238,13 @@ def mock_language_service_fail_grade():
     service.configured = True
 
     from app.models.language_schemas import LanguageGradingResponse
-    service.grade_exercise = AsyncMock(return_value=LanguageGradingResponse(
+    service.grade_exercise = AsyncMock(return_value=(LanguageGradingResponse(
         score=4.0,
         verdict="fail",
         feedback="Il y a plusieurs erreurs.",
         corrections="je parle, tu parles, il parle",
         missed_concepts=["conjugation", "-er verbs"],
-    ))
+    ), None))
 
     return service
 
@@ -313,7 +260,7 @@ class TestGetDailyExercises:
     @pytest.mark.asyncio
     async def test_get_daily_exercises_generates_on_first_call(self, mock_sb, mock_language_service):
         """When no exercises exist for today, generates a batch and returns it."""
-        generated_rows = build_pending_batch(8)
+        generated_rows = build_pending_batch(3)
 
         call_count = {"table": 0, "rpc": 0}
         table_responses = {
@@ -361,14 +308,14 @@ class TestGetDailyExercises:
         assert response.status_code == 200
         data = response.json()
         assert data["generated_date"] == TODAY
-        assert len(data["exercises"]) == 8
-        assert data["total_count"] == 8
+        assert len(data["exercises"]) == 3
+        assert data["total_count"] == 3
         assert data["completed_count"] == 0
 
     @pytest.mark.asyncio
     async def test_get_daily_exercises_returns_cached_on_same_day(self, mock_sb):
         """When exercises already exist for today, returns them without regenerating."""
-        existing = build_pending_batch(8)
+        existing = build_pending_batch(3)
 
         mock_sb.table.return_value = make_chain(existing)
 
@@ -382,7 +329,7 @@ class TestGetDailyExercises:
 
         assert response.status_code == 200
         data = response.json()
-        assert len(data["exercises"]) == 8
+        assert len(data["exercises"]) == 3
 
     @pytest.mark.asyncio
     async def test_get_daily_exercises_includes_reviews(self, mock_sb, mock_language_service):
@@ -495,7 +442,7 @@ class TestGetDailyExercises:
     @pytest.mark.asyncio
     async def test_get_daily_exercises_mixed_types(self, mock_sb):
         """Batch contains a mix of exercise types (not all the same)."""
-        existing = build_pending_batch(8)
+        existing = build_pending_batch(3)
         mock_sb.table.return_value = make_chain(existing)
 
         with patch("app.routers.language._daily_exercises_cache", {}):
@@ -511,8 +458,8 @@ class TestGetDailyExercises:
 
     @pytest.mark.asyncio
     async def test_get_daily_exercises_count(self, mock_sb):
-        """Returns exercises within expected range (5-10)."""
-        existing = build_pending_batch(8)
+        """Returns exactly 3 open-ended exercises."""
+        existing = build_pending_batch(3)
         mock_sb.table.return_value = make_chain(existing)
 
         with patch("app.routers.language._daily_exercises_cache", {}):
@@ -524,7 +471,7 @@ class TestGetDailyExercises:
 
         data = response.json()
         count = len(data["exercises"])
-        assert 5 <= count <= 10, f"Expected 5-10 exercises, got {count}"
+        assert count == 3, f"Expected 3 exercises, got {count}"
 
     @pytest.mark.asyncio
     async def test_get_daily_exercises_no_active_track(self, mock_sb):
@@ -583,7 +530,7 @@ class TestGetDailyExercises:
     @pytest.mark.asyncio
     async def test_get_daily_exercises_response_format_and_word_target(self, mock_sb):
         """Each exercise has correct response_format and word_target based on exercise_type."""
-        existing = build_pending_batch(8)
+        existing = build_pending_batch(3)
         mock_sb.table.return_value = make_chain(existing)
 
         with patch("app.routers.language._daily_exercises_cache", {}):
@@ -605,9 +552,9 @@ class TestGetDailyExercises:
                 f"word_target should be positive, got {exercise['word_target']}"
 
     @pytest.mark.asyncio
-    async def test_get_daily_exercises_tier_distribution(self, mock_sb):
-        """Batch of 8 exercises has correct tier distribution: 3 quick, 2 short, 2 extended, 1 free-form."""
-        existing = build_pending_batch(8)
+    async def test_get_daily_exercises_all_long_text(self, mock_sb):
+        """All 3 exercises are open-ended long_text format (no single_line or short_text)."""
+        existing = build_pending_batch(3)
         mock_sb.table.return_value = make_chain(existing)
 
         with patch("app.routers.language._daily_exercises_cache", {}):
@@ -618,15 +565,9 @@ class TestGetDailyExercises:
             app.dependency_overrides.clear()
 
         data = response.json()
-        format_counts = {}
         for ex in data["exercises"]:
-            fmt = ex["response_format"]
-            format_counts[fmt] = format_counts.get(fmt, 0) + 1
-
-        assert format_counts.get("single_line", 0) == 3, f"Expected 3 quick, got {format_counts}"
-        assert format_counts.get("short_text", 0) == 2, f"Expected 2 short, got {format_counts}"
-        assert format_counts.get("long_text", 0) == 2, f"Expected 2 extended, got {format_counts}"
-        assert format_counts.get("free_form", 0) == 1, f"Expected 1 free-form, got {format_counts}"
+            assert ex["response_format"] == "long_text", \
+                f"Expected all long_text, got {ex['response_format']} for {ex['exercise_type']}"
 
 
 # ---------------------------------------------------------------------------
@@ -938,7 +879,7 @@ class TestRegenerateDailyExercises:
     @pytest.mark.asyncio
     async def test_regenerate_replaces_pending(self, mock_sb, mock_language_service):
         """Pending exercises are deleted, new ones generated."""
-        new_rows = build_pending_batch(8)
+        new_rows = build_pending_batch(3)
 
         table_call_counts = {}
 
@@ -983,7 +924,7 @@ class TestRegenerateDailyExercises:
 
         assert response.status_code == 200
         data = response.json()
-        assert len(data["exercises"]) == 8
+        assert len(data["exercises"]) == 3
 
     @pytest.mark.asyncio
     async def test_regenerate_keeps_completed(self, mock_sb, mock_language_service):
@@ -1001,8 +942,8 @@ class TestRegenerateDailyExercises:
             ),
         ]
 
-        # New exercises to fill remaining slots
-        new_exercises = build_pending_batch(6)
+        # New exercises to fill remaining slots (3 total - 2 completed = 1 new)
+        new_exercises = build_pending_batch(1)
         for i, ex in enumerate(new_exercises):
             ex["sort_order"] = len(completed_exercises) + i
 
@@ -1049,7 +990,7 @@ class TestRegenerateDailyExercises:
 
         assert response.status_code == 200
         data = response.json()
-        assert data["total_count"] == 8
+        assert data["total_count"] == 3
         assert data["completed_count"] == 2
 
         # Completed exercises should be at the beginning
@@ -1058,26 +999,25 @@ class TestRegenerateDailyExercises:
 
     @pytest.mark.asyncio
     async def test_regenerate_fills_remaining_slots(self, mock_sb, mock_language_service):
-        """New exercises fill up to target total (8)."""
-        # 3 completed already
+        """New exercises fill up to target total (3)."""
+        # 1 completed already
         completed = [
             make_exercise_row(
-                sort_order=i, status="completed", score=8.0, verdict="pass",
-                feedback="Good", response_text=f"Answer {i}", completed_at=datetime.utcnow().isoformat(),
+                sort_order=0, status="completed", score=8.0, verdict="pass",
+                feedback="Good", response_text="Answer 0", completed_at=datetime.utcnow().isoformat(),
             )
-            for i in range(3)
         ]
 
-        # 5 new ones should be generated
-        new_ex = build_pending_batch(5)
+        # 2 new ones should be generated
+        new_ex = build_pending_batch(2)
         for i, ex in enumerate(new_ex):
-            ex["sort_order"] = 3 + i
+            ex["sort_order"] = 1 + i
 
         all_ex = completed + new_ex
 
-        # Mock should generate exactly 5 exercises
-        batch_5 = json.loads(SAMPLE_GEMINI_BATCH_RESPONSE)[:5]
-        mock_language_service.generate_batch_exercises = AsyncMock(return_value=batch_5)
+        # Mock should generate exactly 2 exercises
+        batch_2 = json.loads(SAMPLE_GEMINI_BATCH_RESPONSE)[:2]
+        mock_language_service.generate_batch_exercises = AsyncMock(return_value=batch_2)
 
         table_call_counts = {}
 
@@ -1118,8 +1058,8 @@ class TestRegenerateDailyExercises:
 
         assert response.status_code == 200
         data = response.json()
-        assert data["total_count"] == 8
-        assert data["completed_count"] == 3
+        assert data["total_count"] == 3
+        assert data["completed_count"] == 1
 
 
 # ---------------------------------------------------------------------------

@@ -1,13 +1,14 @@
 'use client'
 
-import type { DailyFeedResponse } from '@/lib/api'
+import type { DailyFeedResponse, FeedItem } from '@/lib/api'
 import { FeedProblemCard } from './FeedProblemCard'
 
 interface FeedSectionProps {
   feed: DailyFeedResponse
+  onSaveMistake?: (item: FeedItem, text: string) => Promise<void>
 }
 
-export function FeedSection({ feed }: FeedSectionProps) {
+export function FeedSection({ feed, onSaveMistake }: FeedSectionProps) {
   // Sort: pending first, then completed
   const sortedItems = [...feed.items].sort((a, b) => {
     if (a.status === 'completed' && b.status !== 'completed') return 1
@@ -45,7 +46,7 @@ export function FeedSection({ feed }: FeedSectionProps) {
       ) : (
         <div className="space-y-1">
           {sortedItems.map((item) => (
-            <FeedProblemCard key={item.id} item={item} />
+            <FeedProblemCard key={item.id} item={item} onSaveMistake={onSaveMistake} />
           ))}
         </div>
       )}

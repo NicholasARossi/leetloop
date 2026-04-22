@@ -119,6 +119,7 @@ class UserStats(BaseModel):
     problems_attempted: int = 0
     streak_days: int = 0
     reviews_due: int = 0
+    best_day_count: int = 0
 
 
 class ProgressTrend(BaseModel):
@@ -574,6 +575,46 @@ class FocusNotesResponse(BaseModel):
     user_id: UUID
     focus_notes: Optional[str] = None
     updated_at: Optional[datetime] = None
+
+
+class MistakeJournalEntry(BaseModel):
+    """A mistake journal entry."""
+
+    id: UUID
+    user_id: UUID
+    problem_slug: Optional[str] = None
+    problem_title: Optional[str] = None
+    entry_text: str
+    tags: list[str] = []
+    entry_type: str = "general"
+    is_addressed: bool = False
+    feed_item_id: Optional[UUID] = None
+    created_at: datetime
+    updated_at: datetime
+
+
+class CreateMistakeJournalRequest(BaseModel):
+    """Request to create a mistake journal entry."""
+
+    entry_text: str = Field(..., max_length=1000)
+    problem_slug: Optional[str] = None
+    problem_title: Optional[str] = None
+    entry_type: str = "general"
+    feed_item_id: Optional[UUID] = None
+
+
+class UpdateMistakeJournalRequest(BaseModel):
+    """Request to update a mistake journal entry."""
+
+    entry_text: Optional[str] = Field(None, max_length=1000)
+    is_addressed: Optional[bool] = None
+
+
+class MistakeJournalListResponse(BaseModel):
+    """Response containing a list of journal entries."""
+
+    entries: list[MistakeJournalEntry]
+    unaddressed_count: int
 
 
 class PatternInsight(BaseModel):

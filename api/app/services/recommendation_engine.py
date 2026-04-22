@@ -44,7 +44,16 @@ class RecommendationEngine:
                 )
             )
 
-        # 2. Get insight-driven recommendations (recurring pattern types)
+        # 2. Get journal-driven recommendations (priority 90, between reviews and insights)
+        if len(recommendations) < limit:
+            journal_problems = await self._get_journal_recommendations(
+                user_id,
+                limit=min(3, limit - len(recommendations)),
+                exclude=[r.problem_slug for r in recommendations],
+            )
+            recommendations.extend(journal_problems)
+
+        # 3. Get insight-driven recommendations (recurring pattern types)
         if len(recommendations) < limit:
             insight_problems = await self._get_insight_recommendations(
                 user_id,
@@ -53,7 +62,7 @@ class RecommendationEngine:
             )
             recommendations.extend(insight_problems)
 
-        # 3. Get weak skill recommendations
+        # 4. Get weak skill recommendations
         if len(recommendations) < limit:
             weak_problems = await self._get_weak_skill_problems(
                 user_id,
@@ -61,7 +70,7 @@ class RecommendationEngine:
             )
             recommendations.extend(weak_problems)
 
-        # 4. Fill with progression problems if needed
+        # 5. Fill with progression problems if needed
         if len(recommendations) < limit:
             progression = await self._get_progression_problems(
                 user_id,
@@ -69,7 +78,7 @@ class RecommendationEngine:
             )
             recommendations.extend(progression)
 
-        # 5. Boost priority for problems matching focus notes
+        # 6. Boost priority for problems matching focus notes
         if focus_notes:
             focus_tags = self._extract_focus_tags(user_id, focus_notes)
             if focus_tags:
@@ -99,6 +108,85 @@ class RecommendationEngine:
             return [tag for tag in all_tags if tag.lower() in notes_lower]
         except Exception:
             return []
+
+    async def _get_journal_recommendations(
+        self,
+        user_id: UUID,
+        limit: int = 3,
+        exclude: list[str] = None,
+    ) -> list[RecommendedProblem]:
+        """Get recommendations based on unaddressed mistake journal entries."""
+        try:
+            journal_resp = (
+                self.supabase.table("mistake_journal")
+                .select("entry_text, tags, problem_slug")
+                .eq("user_id", str(user_id))
+                .eq("is_addressed", False)
+                .order("created_at", desc=True)
+                .limit(10)
+                .execute()
+            )
+        except Exception:
+            return []
+
+        if not journal_resp.data:
+            return []
+
+        # Collect all tags from journal entries
+        all_tags = set()
+        for entry in journal_resp.data:
+            for tag in (entry.get("tags") or []):
+                all_tags.add(tag)
+
+        if not all_tags:
+            return []
+
+        # Find failed submissions matching those tags
+        exclude = exclude or []
+        recommendations = []
+        seen = set(exclude)
+
+        for tag in list(all_tags)[:5]:
+            failed = (
+                self.supabase.table("submissions")
+                .select("problem_slug, problem_title, difficulty, tags")
+                .eq("user_id", str(user_id))
+                .neq("status", "Accepted")
+                .contains("tags", [tag])
+                .order("submitted_at", desc=True)
+                .limit(3)
+                .execute()
+            )
+
+            for problem in (failed.data or []):
+                slug = problem["problem_slug"]
+                if slug in seen:
+                    continue
+                seen.add(slug)
+
+                # Find matching journal entry text for the reason
+                matching_entry = next(
+                    (e for e in journal_resp.data if tag in (e.get("tags") or [])),
+                    None,
+                )
+                reason_text = matching_entry["entry_text"][:80] if matching_entry else tag
+
+                recommendations.append(
+                    RecommendedProblem(
+                        problem_slug=slug,
+                        problem_title=problem.get("problem_title"),
+                        difficulty=problem.get("difficulty"),
+                        tags=problem.get("tags", []),
+                        reason=f"Journal: {reason_text}",
+                        priority=90.0,
+                        source="journal",
+                    )
+                )
+
+                if len(recommendations) >= limit:
+                    return recommendations
+
+        return recommendations
 
     async def _get_insight_recommendations(
         self,
@@ -183,6 +271,84 @@ class RecommendationEngine:
                 break
 
         return recommendations
+
+    async def get_practice_context(self, user_id: UUID, limit: int = 10) -> dict:
+        """Extract weak areas, review topics, and patterns as context for analogous problem generation."""
+        user_id_str = str(user_id)
+        context = {"weak_skills": [], "due_review_topics": [], "recurring_patterns": [], "journal_topics": []}
+
+        # Due reviews — extract tags/concepts, not the problems themselves
+        reviews = await self._get_due_reviews(user_id, limit=limit)
+        for review in reviews:
+            slug = review.get("problem_slug", "")
+            tags = review.get("tags") or []
+            reason = review.get("reason", "")
+            context["due_review_topics"].append({
+                "original_slug": slug,
+                "tags": tags,
+                "reason": reason,
+            })
+
+        # Weak skills
+        weak_skills = (
+            self.supabase.table("skill_scores")
+            .select("tag, score")
+            .eq("user_id", user_id_str)
+            .order("score")
+            .limit(5)
+            .execute()
+        )
+        context["weak_skills"] = [
+            {"tag": s["tag"], "score": s["score"]}
+            for s in (weak_skills.data or [])
+            if s["score"] < 70
+        ]
+
+        # Recurring patterns from insights
+        try:
+            insights = (
+                self.supabase.table("submission_insights")
+                .select("pattern_type, concept_gap")
+                .eq("user_id", user_id_str)
+                .order("created_at", desc=True)
+                .limit(20)
+                .execute()
+            )
+            pattern_counts = {}
+            for insight in (insights.data or []):
+                pt = insight.get("pattern_type")
+                cg = insight.get("concept_gap")
+                if pt:
+                    pattern_counts[pt] = pattern_counts.get(pt, 0) + 1
+                if cg:
+                    pattern_counts[cg] = pattern_counts.get(cg, 0) + 1
+            context["recurring_patterns"] = [
+                {"pattern": p, "count": c}
+                for p, c in sorted(pattern_counts.items(), key=lambda x: -x[1])
+                if c >= 2
+            ][:5]
+        except Exception:
+            pass
+
+        # Journal entries
+        try:
+            journal_resp = (
+                self.supabase.table("mistake_journal")
+                .select("entry_text, tags")
+                .eq("user_id", user_id_str)
+                .eq("is_addressed", False)
+                .order("created_at", desc=True)
+                .limit(5)
+                .execute()
+            )
+            context["journal_topics"] = [
+                {"text": e["entry_text"][:100], "tags": e.get("tags") or []}
+                for e in (journal_resp.data or [])
+            ]
+        except Exception:
+            pass
+
+        return context
 
     async def get_weak_areas(self, user_id: UUID) -> list[str]:
         """Get list of user's weakest skill areas."""

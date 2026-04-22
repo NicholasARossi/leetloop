@@ -3,6 +3,7 @@
 import { SideQuest, ProgressTrend, UserStats } from '@/lib/api'
 import { SideQuestCard } from './SideQuestCard'
 import { ActivityHeatmap } from '@/components/charts/ActivityHeatmap'
+import { VelocityChart } from '@/components/charts/VelocityChart'
 
 interface SideQuestColumnProps {
   quests: SideQuest[]
@@ -47,8 +48,8 @@ export function SideQuestColumn({ quests, streak, trends, stats }: SideQuestColu
           <span className="text-[9px] uppercase tracking-widest text-gray-400 px-2 whitespace-nowrap">Performance</span>
         </div>
 
-        {/* Even 3-column data grid */}
-        <div className="grid grid-cols-3 gap-px bg-black border-2 border-black">
+        {/* Even 4-column data grid */}
+        <div className="grid grid-cols-4 gap-px bg-black border-2 border-black">
           <div className="bg-white py-3 px-2 text-center">
             <p className="stat-value text-2xl leading-none">{streak}</p>
             <p className="stat-label mt-1">Streak</p>
@@ -61,7 +62,18 @@ export function SideQuestColumn({ quests, streak, trends, stats }: SideQuestColu
             <p className="stat-value text-2xl leading-none">{stats ? `${Math.round(stats.success_rate * 100)}%` : '—'}</p>
             <p className="stat-label mt-1">Success</p>
           </div>
+          <div className="bg-white py-3 px-2 text-center">
+            <p className="stat-value text-2xl leading-none">{stats?.best_day_count ?? '—'}</p>
+            <p className="stat-label mt-1">Best Day</p>
+          </div>
         </div>
+
+        {/* Velocity chart */}
+        {trends && trends.length > 0 && (
+          <div className="mt-3">
+            <VelocityChart trends={trends} />
+          </div>
+        )}
       </div>
     </div>
   )
