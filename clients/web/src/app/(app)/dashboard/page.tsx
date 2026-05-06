@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
-import { leetloopApi, type WinRateStats, type DailyFeedResponse, type SystemDesignDashboardSummary, type SystemDesignReviewItem, type ProgressTrend, type UserStats, type MLCodingDashboardSummary, type MistakeJournalEntry } from '@/lib/api'
+import { leetloopApi, type WinRateStats, type DailyFeedResponse, type SystemDesignDashboardSummary, type SystemDesignReviewItem, type ProgressTrend, type UserStats, type MLCodingDashboardSummary, type MistakeJournalEntry, type PathProgressResponse } from '@/lib/api'
 import { WinRateCard } from '@/components/winrate/WinRateCard'
 import { FeedSection } from '@/components/feed/FeedSection'
 import { FocusNotesCard } from '@/components/feed/FocusNotesCard'
@@ -12,6 +12,7 @@ import { MissionSkeleton } from '@/components/mission'
 import { SystemDesignDashboardCard } from '@/components/system-design/SystemDesignDashboardCard'
 import { MLCodingDashboardCard } from '@/components/ml-coding'
 import { SideQuestColumn } from '@/components/mission/SideQuestColumn'
+import { NeetCodeGoalBar } from '@/components/neetcode/NeetCodeGoalBar'
 import { format } from 'date-fns'
 
 export default function DashboardPage() {
@@ -28,6 +29,7 @@ export default function DashboardPage() {
   const [focusNotes, setFocusNotes] = useState<string | null>(null)
   const [journalEntries, setJournalEntries] = useState<MistakeJournalEntry[]>([])
   const [journalUnaddressed, setJournalUnaddressed] = useState(0)
+  const [pathProgress, setPathProgress] = useState<PathProgressResponse | null>(null)
 
   const [feedLoading, setFeedLoading] = useState(false)
 
@@ -59,7 +61,7 @@ export default function DashboardPage() {
       }
 
       // Load remaining data in parallel (feed has longer timeout)
-      const [winRateData, feedData, sdData, mlData, progressData, focusNotesData, journalData] = await Promise.all([
+      const [winRateData, feedData, sdData, mlData, progressData, focusNotesData, journalData, pathProgressData] = await Promise.all([
         leetloopApi.getWinRateStats(userId).catch(() => null),
         leetloopApi.getDailyFeed(userId).catch(() => null),
         leetloopApi.getSystemDesignDashboard(userId).catch(() => null),
@@ -67,6 +69,7 @@ export default function DashboardPage() {
         leetloopApi.getProgress(userId, 91).catch(() => null),
         leetloopApi.getFocusNotes(userId).catch(() => null),
         leetloopApi.getJournalEntries(userId).catch(() => null),
+        leetloopApi.getPathProgress('11111111-1111-1111-1111-111111111150', userId).catch(() => null),
       ])
 
       setWinRateStats(winRateData)
@@ -82,6 +85,7 @@ export default function DashboardPage() {
         setJournalEntries(journalData.entries)
         setJournalUnaddressed(journalData.unaddressed_count)
       }
+      setPathProgress(pathProgressData)
     } catch (err) {
       console.error('Failed to load dashboard:', err)
       setError('Failed to load dashboard. Make sure the backend is running.')
@@ -140,7 +144,17 @@ export default function DashboardPage() {
         <h1 className="text-xl font-display mt-1">Dashboard</h1>
       </div>
 
-      {/* Win Rate Card at top */}
+      {/* NeetCode 150 Goal Bar */}
+      {pathProgress && (
+        <NeetCodeGoalBar
+          completed={pathProgress.completed_count}
+          total={pathProgress.path.total_problems}
+          deadline="May 31"
+          categoriesProgress={pathProgress.categories_progress}
+        />
+      )}
+
+      {/* Win Rate Card */}
       {winRateStats && winRateStats.targets && (
         <WinRateCard stats={winRateStats} period="alltime" />
       )}
