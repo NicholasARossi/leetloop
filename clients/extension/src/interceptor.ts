@@ -105,7 +105,7 @@ window.fetch = async function (input: RequestInfo | URL, init?: RequestInit): Pr
   }
 
   // Watch for submission check responses (polling endpoint)
-  const checkMatch = url.match(/\/submissions\/detail\/(\d+)\/check/);
+  const checkMatch = url.match(/\/submissions\/detail\/(\d+)\/(?:v2\/)?check/);
   if (checkMatch?.[1]) {
     const submissionId = checkMatch[1];
     const response = await originalFetch.call(window, input, init);

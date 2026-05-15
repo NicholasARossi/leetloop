@@ -18,7 +18,7 @@ router = APIRouter()
 def _get_supabase():
     from supabase import create_client
     settings = get_settings()
-    return create_client(settings.supabase_url, settings.supabase_key)
+    return create_client(settings.supabase_url, settings.supabase_anon_key)
 
 
 def _extract_tags(user_id: str, entry_text: str, supabase) -> list[str]:

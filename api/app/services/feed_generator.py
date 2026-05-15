@@ -117,8 +117,20 @@ class FeedGenerator:
             except StopIteration:
                 metric_done = True
 
+        # Deduplicate before inserting
+        seen_slugs = set()
+        deduped = []
+        for item in items:
+            slug = item["problem_slug"]
+            if slug not in seen_slugs:
+                seen_slugs.add(slug)
+                deduped.append(item)
+        items = deduped
+
         if items:
-            self.supabase.table("daily_problem_feed").insert(items).execute()
+            self.supabase.table("daily_problem_feed").upsert(
+                items, on_conflict="user_id,feed_date,problem_slug"
+            ).execute()
 
         return self._format_feed_response(user_id, feed_date, items)
 
@@ -153,7 +165,9 @@ class FeedGenerator:
             sort_order += 1
 
         if items:
-            self.supabase.table("daily_problem_feed").insert(items).execute()
+            self.supabase.table("daily_problem_feed").upsert(
+                items, on_conflict="user_id,feed_date,problem_slug"
+            ).execute()
 
         # Return full feed
         return self._get_existing_feed(user_id, feed_date)
@@ -232,7 +246,9 @@ class FeedGenerator:
         items = deduped
 
         if items:
-            self.supabase.table("daily_problem_feed").insert(items).execute()
+            self.supabase.table("daily_problem_feed").upsert(
+                items, on_conflict="user_id,feed_date,problem_slug"
+            ).execute()
 
         return self._get_existing_feed(user_id, feed_date)
 
